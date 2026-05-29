@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Crm;
 
 use App\Application\CRM\Actions\LogContactActivityAction;
+use App\Application\CRM\Actions\MatchBuyersToListingAction;
 use App\Application\CRM\Actions\ScoreLeadAction;
 use App\Infrastructure\Persistence\Models\Contact;
 use Livewire\Component;
@@ -26,6 +27,15 @@ class ContactDetailPage extends Component
     public string $status = '';
     public string $notes = '';
 
+    // Buyer preferences
+    public bool $showPreferencesForm = false;
+    public string $pref_min_budget = '';
+    public string $pref_max_budget = '';
+    public string $pref_min_bedrooms = '';
+    public string $pref_areas = '';
+    public string $pref_property_types = '';
+    public string $pref_must_have_features = '';
+
     protected $rules = [
         'first_name' => 'required|string|max:255',
         'last_name' => 'required|string|max:255',
@@ -42,12 +52,20 @@ class ContactDetailPage extends Component
         $this->contact = $contact;
         $this->fill([
             'first_name' => $contact->first_name,
-            'last_name' => $contact->last_name,
-            'email' => $contact->email ?? '',
-            'phone' => $contact->phone ?? '',
-            'status' => $contact->status,
-            'notes' => $contact->notes ?? '',
+            'last_name'  => $contact->last_name,
+            'email'      => $contact->email ?? '',
+            'phone'      => $contact->phone ?? '',
+            'status'     => $contact->status,
+            'notes'      => $contact->notes ?? '',
         ]);
+
+        $prefs = $contact->preferences ?? [];
+        $this->pref_min_budget        = (string) ($prefs['min_budget'] ?? '');
+        $this->pref_max_budget        = (string) ($prefs['max_budget'] ?? '');
+        $this->pref_min_bedrooms      = (string) ($prefs['min_bedrooms'] ?? '');
+        $this->pref_areas             = implode(', ', (array) ($prefs['areas'] ?? []));
+        $this->pref_property_types    = implode(', ', (array) ($prefs['property_types'] ?? []));
+        $this->pref_must_have_features = implode(', ', (array) ($prefs['must_have_features'] ?? []));
     }
 
     public function saveActivity(LogContactActivityAction $logAction)
@@ -94,12 +112,41 @@ class ContactDetailPage extends Component
         $this->contact->refresh();
     }
 
-    public function render()
+    public function savePreferences(): void
+    {
+        $this->validate([
+            'pref_max_budget'   => 'nullable|numeric|min:0',
+            'pref_min_budget'   => 'nullable|numeric|min:0',
+            'pref_min_bedrooms' => 'nullable|integer|min:0',
+        ]);
+
+        $this->contact->update([
+            'preferences' => [
+                'min_budget'          => $this->pref_min_budget ? (float) $this->pref_min_budget : null,
+                'max_budget'          => $this->pref_max_budget ? (float) $this->pref_max_budget : null,
+                'min_bedrooms'        => $this->pref_min_bedrooms ? (int) $this->pref_min_bedrooms : null,
+                'areas'               => array_filter(array_map('trim', explode(',', $this->pref_areas))),
+                'property_types'      => array_filter(array_map('trim', explode(',', $this->pref_property_types))),
+                'must_have_features'  => array_filter(array_map('trim', explode(',', $this->pref_must_have_features))),
+            ],
+        ]);
+
+        $this->showPreferencesForm = false;
+        $this->contact->refresh();
+        $this->dispatch('notify', message: 'Buyer preferences saved.', type: 'success');
+    }
+
+    public function render(MatchBuyersToListingAction $matchAction)
     {
         $activities = $this->contact->activities()->with('user')->get();
 
+        $matchedListings = in_array($this->contact->type, ['buyer', 'investor', 'tenant'])
+            ? $matchAction->matchListingsForBuyer($this->contact)
+            : collect();
+
         return view('livewire.crm.contact-detail-page', [
-            'activities' => $activities,
+            'activities'     => $activities,
+            'matchedListings' => $matchedListings,
         ])->layout('layouts.app');
     }
 }

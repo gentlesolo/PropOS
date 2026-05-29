@@ -26,19 +26,25 @@ class ProfilePage extends Component
     public string $new_password_confirmation = '';
 
     // Agency fields
-    public string $agency_name = '';
-    public string $agency_phone = '';
-    public string $agency_email = '';
+    public string $agency_name    = '';
+    public string $agency_phone   = '';
+    public string $agency_email   = '';
     public string $agency_website = '';
     public string $agency_address = '';
-    public string $timezone = '';
-    public string $currency = '';
-    public string $primary_color = '';
+    public string $timezone       = '';
+    public string $currency       = '';
+    public string $primary_color  = '';
     public $agency_logo;
 
-    // Team
+    // Commission split configuration
+    public string $default_commission_rate  = '5';
+    public string $split_agent_pct          = '50';
+    public string $split_principal_pct      = '40';
+    public string $split_referral_pct       = '10';
+
+    // Team (kept for backward compat — full management is on /settings/team)
     public string $invite_email = '';
-    public string $invite_role = 'agent';
+    public string $invite_role  = 'agent';
     public bool $showInviteForm = false;
 
     public function mount()
@@ -54,16 +60,21 @@ class ProfilePage extends Component
         ]);
 
         if ($user->agency) {
-            $agency = $user->agency;
+            $agency  = $user->agency;
+            $splits  = $agency->commission_splits ?? [];
             $this->fill([
-                'agency_name' => $agency->name,
-                'agency_phone' => $agency->phone ?? '',
-                'agency_email' => $agency->email ?? '',
+                'agency_name'    => $agency->name,
+                'agency_phone'   => $agency->phone ?? '',
+                'agency_email'   => $agency->email ?? '',
                 'agency_website' => $agency->website ?? '',
                 'agency_address' => $agency->address ?? '',
-                'timezone' => $agency->timezone ?? 'UTC',
-                'currency' => $agency->currency ?? 'NGN',
-                'primary_color' => $agency->primary_color ?? '#1E40AF',
+                'timezone'       => $agency->timezone ?? 'UTC',
+                'currency'       => $agency->currency ?? 'NGN',
+                'primary_color'  => $agency->primary_color ?? '#1E40AF',
+                'default_commission_rate' => (string) ($agency->default_commission_rate ?? '5'),
+                'split_agent_pct'      => (string) ($splits['agent'] ?? '50'),
+                'split_principal_pct'  => (string) ($splits['principal'] ?? '40'),
+                'split_referral_pct'   => (string) ($splits['referral'] ?? '10'),
             ]);
         }
     }
@@ -153,7 +164,7 @@ class ProfilePage extends Component
     {
         $this->validate([
             'invite_email' => 'required|email|max:255',
-            'invite_role' => 'required|in:principal,agent,admin,viewer',
+            'invite_role'  => 'required|in:agent,senior_agent,branch_manager,marketing_manager,admin,principal',
         ]);
 
         $existing = \App\Infrastructure\Persistence\Models\TeamInvitation::where('email', $this->invite_email)
@@ -186,6 +197,33 @@ class ProfilePage extends Component
         \App\Infrastructure\Persistence\Models\TeamInvitation::where('id', $invitationId)
             ->where('agency_id', auth()->user()->agency_id)
             ->delete();
+    }
+
+    public function saveCommissionSplits(): void
+    {
+        $this->validate([
+            'default_commission_rate' => 'required|numeric|min:0|max:100',
+            'split_agent_pct'         => 'required|numeric|min:0|max:100',
+            'split_principal_pct'     => 'required|numeric|min:0|max:100',
+            'split_referral_pct'      => 'required|numeric|min:0|max:100',
+        ]);
+
+        $total = (float) $this->split_agent_pct + (float) $this->split_principal_pct + (float) $this->split_referral_pct;
+        if (abs($total - 100) > 0.01) {
+            $this->addError('split_agent_pct', "Split percentages must add up to 100% (currently {$total}%).");
+            return;
+        }
+
+        auth()->user()->agency->update([
+            'default_commission_rate' => $this->default_commission_rate,
+            'commission_splits' => [
+                'agent'     => (float) $this->split_agent_pct,
+                'principal' => (float) $this->split_principal_pct,
+                'referral'  => (float) $this->split_referral_pct,
+            ],
+        ]);
+
+        session()->flash('commission_saved', 'Commission split configuration saved.');
     }
 
     public function render()

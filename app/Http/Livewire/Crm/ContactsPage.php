@@ -123,6 +123,42 @@ class ContactsPage extends Component
         $this->duplicates = [];
     }
 
+    /**
+     * Merge $sourceId into $targetId: move all activities, deals, viewings to target, then delete source.
+     */
+    public function mergeContacts(int $targetId, int $sourceId): void
+    {
+        $agencyId = auth()->user()->agency_id;
+
+        $target = Contact::where('id', $targetId)->where('agency_id', $agencyId)->firstOrFail();
+        $source = Contact::where('id', $sourceId)->where('agency_id', $agencyId)->firstOrFail();
+
+        // Move related records
+        \DB::table('contact_activities')->where('contact_id', $sourceId)->update(['contact_id' => $targetId]);
+        \DB::table('deals')->where('contact_id', $sourceId)->update(['contact_id' => $targetId]);
+        \DB::table('viewings')->where('contact_id', $sourceId)->update(['contact_id' => $targetId]);
+        \DB::table('follow_up_sequences')->where('contact_id', $sourceId)->update(['contact_id' => $targetId]);
+
+        // Merge email/phone if target is missing them
+        $updates = [];
+        if (! $target->email && $source->email) {
+            $updates['email'] = $source->email;
+        }
+        if (! $target->phone && $source->phone) {
+            $updates['phone'] = $source->phone;
+        }
+        if ($source->intent_score > $target->intent_score) {
+            $updates['intent_score'] = $source->intent_score;
+        }
+        if (! empty($updates)) {
+            $target->update($updates);
+        }
+
+        $source->forceDelete();
+
+        $this->dispatch('notify', message: "Contacts merged successfully.", type: 'success');
+    }
+
     public function render()
     {
         $contacts = Contact::with('agent')

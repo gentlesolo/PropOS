@@ -4,6 +4,7 @@ namespace App\Infrastructure\Persistence\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use App\Infrastructure\Persistence\Scopes\BelongsToAgencyScope;
 
 class Viewing extends Model
@@ -17,9 +18,18 @@ class Viewing extends Model
         'duration_minutes' => 'integer',
     ];
 
-    protected static function booted()
+    protected static function booted(): void
     {
         static::addGlobalScope(new BelongsToAgencyScope);
+
+        static::creating(function (self $viewing) {
+            $viewing->feedback_token ??= Str::random(32);
+        });
+    }
+
+    public function assignedAgent()
+    {
+        return $this->belongsTo(User::class, 'assigned_agent_id');
     }
 
     public function agency()

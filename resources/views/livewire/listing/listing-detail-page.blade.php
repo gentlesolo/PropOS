@@ -286,7 +286,13 @@
                     </div>
                     <div class="flex justify-between">
                         <dt class="text-text-secondary">Days on Market</dt>
-                        <dd class="font-medium text-text-primary">{{ $listing->mandate_start_date ? $listing->mandate_start_date->diffInDays(now()) : '—' }}</dd>
+                        <dd class="font-medium text-text-primary">{{ $listing->days_on_market ?? ($listing->mandate_start_date ? $listing->mandate_start_date->diffInDays(now()) : '—') }}</dd>
+                    </div>
+                    <div class="flex justify-between">
+                        <dt class="text-text-secondary">Health Score</dt>
+                        <dd class="font-medium {{ ($listing->health_score ?? 0) >= 70 ? 'text-success-600' : (($listing->health_score ?? 0) >= 40 ? 'text-warning-600' : 'text-danger-600') }}">
+                            {{ $listing->health_score ? $listing->health_score.'/100' : '—' }}
+                        </dd>
                     </div>
                     <div class="flex justify-between">
                         <dt class="text-text-secondary">Photos</dt>
@@ -297,6 +303,78 @@
                         <dd class="font-medium text-text-primary">{{ $listing->agent?->first_name ?? 'Unassigned' }}</dd>
                     </div>
                 </dl>
+
+                <!-- PDF Seller Report -->
+                <div class="mt-4 pt-4 border-t border-border-default/60">
+                    <a href="{{ route('reports.seller-pdf', $listing) }}" target="_blank"
+                       class="flex items-center justify-center gap-2 w-full py-2 rounded-lg border border-border-default/60 text-xs font-medium text-text-secondary hover:border-brand-primary hover:text-brand-primary transition">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        Download Seller Report (PDF)
+                    </a>
+                </div>
+            </div>
+
+            <!-- Social Media Graphics -->
+            <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="text-sm font-semibold text-text-primary">Social Media Graphics</h3>
+                        <p class="text-xs text-text-tertiary mt-0.5">Branded visuals ready to post</p>
+                    </div>
+                    <button wire:click="generateSocialGraphics" wire:loading.attr="disabled"
+                            class="flex items-center gap-1.5 px-3 py-1.5 bg-brand-primary text-white text-xs font-semibold rounded-lg hover:bg-brand-secondary transition disabled:opacity-60">
+                        <svg wire:loading.remove wire:target="generateSocialGraphics" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                        <svg wire:loading wire:target="generateSocialGraphics" class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                        <span wire:loading.remove wire:target="generateSocialGraphics">
+                            {{ $graphics->isEmpty() ? 'Generate' : 'Regenerate' }}
+                        </span>
+                        <span wire:loading wire:target="generateSocialGraphics">Working…</span>
+                    </button>
+                </div>
+
+                @if($graphics->isEmpty())
+                <div class="rounded-xl bg-surface-sunken/40 border border-dashed border-border-default/60 p-6 text-center">
+                    <svg class="w-8 h-8 text-text-tertiary mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M21 12l-5.25-5.25L12 9.75"/>
+                    </svg>
+                    <p class="text-xs text-text-tertiary">Click Generate to create Instagram, Facebook &amp; Story graphics with AI captions.</p>
+                </div>
+                @else
+                <div class="grid grid-cols-3 gap-2">
+                    @foreach($graphics as $graphic)
+                    <div class="relative rounded-xl overflow-hidden group border border-border-default/40 bg-surface-raised">
+                        <img src="{{ asset('storage/'.$graphic->file_path) }}"
+                             alt="{{ $graphic->format }}"
+                             class="w-full aspect-square object-cover">
+
+                        <!-- Hover: download + delete -->
+                        <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                            <a href="{{ asset('storage/'.$graphic->file_path) }}" download
+                               class="p-1.5 bg-white rounded-lg" title="Download">
+                                <svg class="w-4 h-4 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                            </a>
+                            <button wire:click="deleteSocialGraphic({{ $graphic->id }})"
+                                    class="p-1.5 bg-red-600 rounded-lg" title="Delete">
+                                <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            </button>
+                        </div>
+
+                        <!-- Format label -->
+                        <span class="absolute bottom-1 left-1 text-[9px] font-bold bg-black/60 text-white px-1.5 py-0.5 rounded uppercase">
+                            {{ $graphic->format }}
+                        </span>
+                    </div>
+                    @endforeach
+                </div>
+
+                <a href="{{ route('marketing.social') }}" class="block mt-3 text-center text-xs text-brand-primary hover:underline">
+                    Open full Social Studio →
+                </a>
+                @endif
             </div>
         </div>
     </div>

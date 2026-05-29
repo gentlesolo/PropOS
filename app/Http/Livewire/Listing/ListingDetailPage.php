@@ -2,9 +2,13 @@
 
 namespace App\Http\Livewire\Listing;
 
+use App\Application\CRM\Actions\MatchBuyersToListingAction;
 use App\Application\Listing\Actions\GenerateListingDescriptionAction;
 use App\Application\Listing\Actions\SyncListingToPortalAction;
+use App\Application\Marketing\Actions\GenerateListingGraphicAction;
+use App\Application\Marketing\Actions\GenerateSocialPostCopyAction;
 use App\Infrastructure\Persistence\Models\Listing;
+use App\Infrastructure\Persistence\Models\ListingGraphic;
 use App\Infrastructure\Persistence\Models\ListingMedia;
 use App\Infrastructure\Persistence\Models\Portal;
 use Livewire\Component;
@@ -44,7 +48,7 @@ class ListingDetailPage extends Component
 
     public function mount(Listing $listing)
     {
-        $this->listing = $listing->load('property', 'media', 'portalSyncs.portal');
+        $this->listing = $listing->load('property', 'media', 'portalSyncs.portal', 'graphics');
 
         $this->headline = $listing->headline ?? '';
         $this->description_short = $listing->description_short ?? '';
@@ -174,12 +178,48 @@ class ListingDetailPage extends Component
         $this->listing->load('portalSyncs.portal');
     }
 
-    public function render()
+    public function generateSocialGraphics(
+        GenerateListingGraphicAction $graphicAction,
+        GenerateSocialPostCopyAction $copyAction,
+    ): void {
+        $this->listing->refresh()->load('property', 'agency', 'media', 'coverPhoto');
+
+        foreach (['square', 'landscape', 'story'] as $format) {
+            try {
+                $graphic = $graphicAction->execute($this->listing, $format);
+                $copyAction->attachToGraphic($graphic, $this->listing);
+            } catch (\Exception $e) {
+                $this->dispatch('notify', message: "Could not generate {$format}: " . $e->getMessage(), type: 'error');
+            }
+        }
+
+        $this->listing->refresh()->load('graphics');
+        $this->dispatch('notify', message: 'Social media graphics generated!', type: 'success');
+    }
+
+    public function deleteSocialGraphic(int $graphicId): void
     {
-        $portals = Portal::where('is_active', true)->get();
+        $graphic = ListingGraphic::where('id', $graphicId)
+            ->where('listing_id', $this->listing->id)
+            ->first();
+
+        if ($graphic) {
+            \Storage::disk('public')->delete($graphic->file_path);
+            $graphic->delete();
+            $this->listing->refresh()->load('graphics');
+        }
+    }
+
+    public function render(MatchBuyersToListingAction $matchAction)
+    {
+        $portals       = Portal::where('is_active', true)->get();
+        $matchedBuyers = $matchAction->execute($this->listing);
+        $graphics      = $this->listing->graphics ?? collect();
 
         return view('livewire.listing.listing-detail-page', [
-            'portals' => $portals,
+            'portals'       => $portals,
+            'matchedBuyers' => $matchedBuyers,
+            'graphics'      => $graphics,
         ])->layout('layouts.app');
     }
 }

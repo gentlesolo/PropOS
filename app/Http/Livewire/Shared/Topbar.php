@@ -2,30 +2,54 @@
 
 namespace App\Http\Livewire\Shared;
 
+use App\Infrastructure\Notifications\NotificationService;
 use App\Infrastructure\Persistence\Models\Notification;
 use Livewire\Component;
 
 class Topbar extends Component
 {
-    public function render()
+    public bool $showNotifications = false;
+
+    public function toggleNotifications(): void
     {
-        $notificationsCount = 0;
-        $user = auth()->user();
+        $this->showNotifications = ! $this->showNotifications;
 
-        if ($user) {
-            $notificationsCount = Notification::where('user_id', $user->id)
+        // Auto-mark visible notifications as read when panel opens
+        if ($this->showNotifications) {
+            Notification::where('user_id', auth()->id())
                 ->whereNull('read_at')
-                ->count();
+                ->update(['read_at' => now()]);
         }
-
-        return view('livewire.shared.topbar', [
-            'notificationsCount' => $notificationsCount,
-        ]);
     }
 
-    public function logout()
+    public function deleteNotification(int $notificationId): void
+    {
+        Notification::where('id', $notificationId)
+            ->where('user_id', auth()->id())
+            ->delete();
+    }
+
+    public function logout(): mixed
     {
         auth()->logout();
         return redirect()->route('login');
+    }
+
+    public function render()
+    {
+        $user = auth()->user();
+
+        $notifications = $user
+            ? Notification::where('user_id', $user->id)
+                ->latest()
+                ->limit(25)
+                ->get()
+            : collect();
+
+        $unreadCount = $user
+            ? Notification::where('user_id', $user->id)->whereNull('read_at')->count()
+            : 0;
+
+        return view('livewire.shared.topbar', compact('notifications', 'unreadCount'));
     }
 }

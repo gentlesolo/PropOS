@@ -82,10 +82,60 @@ class DeepSeekTextGeneration implements TextGenerationInterface
     public function stream(string $prompt, array $options = []): iterable
     {
         if (empty($this->apiKey)) {
-            yield "[Mock DeepSeek Stream Token]";
+            yield "[DeepSeek API key not configured. Set DEEPSEEK_API_KEY in .env]";
             return;
         }
 
-        yield "[DeepSeek Stream placeholder]";
+        try {
+            $response = Http::withToken($this->apiKey)
+                ->withOptions(['stream' => true])
+                ->post("{$this->baseUrl}/chat/completions", [
+                    'model' => $this->model,
+                    'messages' => [
+                        ['role' => 'user', 'content' => $prompt],
+                    ],
+                    'temperature' => $options['temperature'] ?? 0.7,
+                    'stream' => true,
+                ]);
+
+            $body = $response->getBody();
+
+            while (! $body->eof()) {
+                $line = $this->readStreamLine($body);
+
+                if (! str_starts_with($line, 'data: ')) {
+                    continue;
+                }
+
+                $data = ltrim($line, 'data: ');
+
+                if ($data === '[DONE]') {
+                    return;
+                }
+
+                $decoded = json_decode($data, true);
+                $token = $decoded['choices'][0]['delta']['content'] ?? null;
+
+                if ($token !== null) {
+                    yield $token;
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error('DeepSeek stream exception: ' . $e->getMessage());
+            yield "[Stream error: {$e->getMessage()}]";
+        }
+    }
+
+    private function readStreamLine($body): string
+    {
+        $line = '';
+        while (! $body->eof()) {
+            $char = $body->read(1);
+            if ($char === "\n") {
+                return rtrim($line);
+            }
+            $line .= $char;
+        }
+        return rtrim($line);
     }
 }

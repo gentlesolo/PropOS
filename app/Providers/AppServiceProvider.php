@@ -39,6 +39,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        \App\Infrastructure\Persistence\Models\Listing::observe(
+            \App\Infrastructure\Persistence\Observers\ListingObserver::class
+        );
     }
 }

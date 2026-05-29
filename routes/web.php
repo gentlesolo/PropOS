@@ -7,6 +7,10 @@ Route::get('/', function () {
     return auth()->check() ? redirect()->route('dashboard') : redirect()->route('login');
 });
 
+// ── Public routes (no auth required) ────────────────────────────────────────
+Route::get('/book/{listing}', \App\Http\Livewire\Viewing\PublicBookingPage::class)->name('viewing.book');
+Route::get('/feedback/{viewing}/{token}', \App\Http\Livewire\Viewing\PublicFeedbackPage::class)->name('viewing.feedback');
+
 // Guest routes
 Route::middleware(['tenant', 'guest'])->group(function () {
     Route::get('/login', \App\Http\Livewire\Auth\LoginPage::class)->name('login');
@@ -28,57 +32,93 @@ Route::post('/logout', function () {
 
 // Authenticated Application Routes
 Route::middleware(['auth', 'tenant'])->group(function () {
+
+    // ── Dashboard (all authenticated users) ──────────────────────────────────
     Route::get('/dashboard', \App\Http\Livewire\DashboardPage::class)->name('dashboard');
     Route::get('/dashboard-v2', \App\Http\Livewire\DashboardPageV2::class)->name('dashboard.v2');
 
-    // CRM
-    Route::get('/contacts', \App\Http\Livewire\Crm\ContactsPage::class)->name('crm.contacts');
-    Route::get('/contacts/{contact}', \App\Http\Livewire\Crm\ContactDetailPage::class)->name('crm.contact.detail');
-    Route::get('/pipeline', \App\Http\Livewire\Crm\PipelineBoard::class)->name('crm.pipeline');
+    // ── CRM — requires contacts.view_own ─────────────────────────────────────
+    Route::middleware('permission:contacts.view_own')->group(function () {
+        Route::get('/contacts', \App\Http\Livewire\Crm\ContactsPage::class)->name('crm.contacts');
+        Route::get('/contacts/{contact}', \App\Http\Livewire\Crm\ContactDetailPage::class)->name('crm.contact.detail');
+        Route::get('/pipeline', \App\Http\Livewire\Crm\PipelineBoard::class)->name('crm.pipeline');
+        Route::get('/pipeline/deals/{deal}', \App\Http\Livewire\Crm\DealDetailPage::class)->name('crm.deal.detail');
+    });
 
-    // Listings
-    Route::get('/listings', \App\Http\Livewire\Listing\IndexPage::class)->name('listing.index');
-    Route::get('/listings/{listing}', \App\Http\Livewire\Listing\ListingDetailPage::class)->name('listing.detail');
+    // ── Listings — requires listings.view_own ─────────────────────────────────
+    Route::middleware('permission:listings.view_own')->group(function () {
+        Route::get('/listings', \App\Http\Livewire\Listing\IndexPage::class)->name('listing.index');
+        Route::get('/listings/{listing}', \App\Http\Livewire\Listing\ListingDetailPage::class)->name('listing.detail');
+    });
 
-    // Marketing
-    Route::get('/marketing/campaigns', \App\Http\Livewire\Marketing\CampaignListPage::class)->name('marketing.campaigns');
-    Route::get('/marketing/campaign/new', \App\Http\Livewire\Marketing\CampaignWizard::class)->name('marketing.campaign.new');
-    Route::get('/marketing/calendar', \App\Http\Livewire\Marketing\ContentCalendarPage::class)->name('marketing.calendar');
+    // ── Marketing — requires campaigns.view_own or campaigns.view_all ────────
+    Route::middleware('permission:campaigns.view_all|campaigns.view_own')->group(function () {
+        Route::get('/marketing/campaigns', \App\Http\Livewire\Marketing\CampaignListPage::class)->name('marketing.campaigns');
+        Route::get('/marketing/campaign/new', \App\Http\Livewire\Marketing\CampaignWizard::class)->name('marketing.campaign.new');
+        Route::get('/marketing/calendar', \App\Http\Livewire\Marketing\ContentCalendarPage::class)->name('marketing.calendar');
+        Route::get('/marketing/whatsapp', \App\Http\Livewire\Marketing\WhatsAppPage::class)->name('marketing.whatsapp');
+        Route::get('/marketing/social', \App\Http\Livewire\Marketing\SocialPostsPage::class)->name('marketing.social');
+    });
+    Route::middleware('permission:campaigns.manage')->group(function () {
+        Route::get('/marketing/meta-ads', \App\Http\Livewire\Marketing\MetaAdsPage::class)->name('marketing.meta-ads');
+    });
 
-    // CRM — Phase 2
-    Route::get('/pipeline/deals/{deal}', \App\Http\Livewire\Crm\DealDetailPage::class)->name('crm.deal.detail');
+    // ── Viewings — requires dashboard.view ───────────────────────────────────
+    Route::middleware('permission:dashboard.view')->group(function () {
+        Route::get('/viewings/day', \App\Http\Livewire\Viewing\DayViewPage::class)->name('viewing.day');
+        Route::get('/viewings/open-houses', \App\Http\Livewire\Viewing\OpenHousePage::class)->name('viewing.open-houses');
+        Route::get('/ai-planner', \App\Http\Livewire\Ai\PlannerPage::class)->name('ai.planner');
+    });
 
-    // Viewings
-    Route::get('/viewings/day', \App\Http\Livewire\Viewing\DayViewPage::class)->name('viewing.day');
+    // ── Analytics — basic (all agents) ───────────────────────────────────────
+    Route::middleware('permission:dashboard.view')->group(function () {
+        Route::get('/analytics/scorecard', \App\Http\Livewire\Intelligence\AgentScorecardPage::class)->name('analytics.scorecard');
+        Route::get('/analytics/listing-health', \App\Http\Livewire\Intelligence\ListingHealthDashboard::class)->name('analytics.listing-health');
+        Route::get('/analytics/market-intelligence', \App\Http\Livewire\Intelligence\MarketIntelligencePage::class)->name('analytics.market-intelligence');
+        Route::get('/analytics/sentiment', \App\Http\Livewire\Intelligence\SentimentMonitoringPage::class)->name('analytics.sentiment');
+        Route::get('/analytics/predictions', \App\Http\Livewire\Intelligence\PredictionDashboardPage::class)->name('analytics.predictions');
+    });
 
-    // Analytics / Intelligence
-    Route::get('/analytics/scorecard', \App\Http\Livewire\Intelligence\AgentScorecardPage::class)->name('analytics.scorecard');
-    Route::get('/analytics/listing-health', \App\Http\Livewire\Intelligence\ListingHealthDashboard::class)->name('analytics.listing-health');
-    Route::get('/analytics/forecast', \App\Http\Livewire\Intelligence\RevenueForecastPage::class)->name('analytics.forecast');
-    Route::get('/compliance/transactions', \App\Http\Livewire\Compliance\TransactionCenterPage::class)->name('compliance.transactions');
-    Route::get('/compliance/transactions/{transaction}', \App\Http\Livewire\Compliance\TransactionDetailPage::class)->name('compliance.transaction.detail');
-    Route::get('/compliance/attorneys', \App\Http\Livewire\Compliance\AttorneyPortalPage::class)->name('compliance.attorneys');
-    Route::get('/finance/commissions', \App\Http\Livewire\Intelligence\CommissionLedgerPage::class)->name('finance.commissions');
-    Route::get('/analytics/market-intelligence', \App\Http\Livewire\Intelligence\MarketIntelligencePage::class)->name('analytics.market-intelligence');
-    Route::get('/training/skills-library', \App\Http\Livewire\Training\SkillsLibraryPage::class)->name('training.skills-library');
-    Route::get('/training/role-play', \App\Http\Livewire\Training\RolePlayPage::class)->name('training.role-play');
+    // ── Analytics — manager/principal only ────────────────────────────────────
+    Route::middleware('permission:pipeline.view_team')->group(function () {
+        Route::get('/analytics/forecast', \App\Http\Livewire\Intelligence\RevenueForecastPage::class)->name('analytics.forecast');
+    });
 
-    // Phase 4 — Training
-    Route::get('/training', \App\Http\Livewire\Training\TrainingDashboardPage::class)->name('training.dashboard');
-    Route::get('/training/objections', \App\Http\Livewire\Training\ObjectionHandlerPage::class)->name('training.objections');
-    Route::get('/training/skills', \App\Http\Livewire\Training\SkillsLibraryPage::class)->name('training.skills');
-    Route::get('/training/roleplay', \App\Http\Livewire\Training\RolePlayPage::class)->name('training.roleplay');
+    // ── Compliance — requires transactions.view_own ───────────────────────────
+    Route::middleware('permission:transactions.view_own')->group(function () {
+        Route::get('/compliance/transactions', \App\Http\Livewire\Compliance\TransactionCenterPage::class)->name('compliance.transactions');
+        Route::get('/compliance/transactions/{transaction}', \App\Http\Livewire\Compliance\TransactionDetailPage::class)->name('compliance.transaction.detail');
+        Route::get('/compliance/attorneys', \App\Http\Livewire\Compliance\AttorneyPortalPage::class)->name('compliance.attorneys');
+    });
 
-    // Phase 4 — Intelligence
-    Route::get('/analytics/sentiment', \App\Http\Livewire\Intelligence\SentimentMonitoringPage::class)->name('analytics.sentiment');
-    Route::get('/analytics/predictions', \App\Http\Livewire\Intelligence\PredictionDashboardPage::class)->name('analytics.predictions');
+    // ── Commissions — requires commission.view_own ────────────────────────────
+    Route::middleware('permission:commission.view_own')->group(function () {
+        Route::get('/finance/commissions', \App\Http\Livewire\Intelligence\CommissionLedgerPage::class)->name('finance.commissions');
+    });
 
-    // Phase 4 — Marketing
-    Route::get('/marketing/meta-ads', \App\Http\Livewire\Marketing\MetaAdsPage::class)->name('marketing.meta-ads');
-    Route::get('/marketing/whatsapp', \App\Http\Livewire\Marketing\WhatsAppPage::class)->name('marketing.whatsapp');
-    Route::get('/ai-planner', \App\Http\Livewire\Ai\PlannerPage::class)->name('ai.planner');
+    // ── Training — requires training.view ────────────────────────────────────
+    Route::middleware('permission:training.view')->group(function () {
+        Route::get('/training', \App\Http\Livewire\Training\TrainingDashboardPage::class)->name('training.dashboard');
+        Route::get('/training/objections', \App\Http\Livewire\Training\ObjectionHandlerPage::class)->name('training.objections');
+        Route::get('/training/skills-library', \App\Http\Livewire\Training\SkillsLibraryPage::class)->name('training.skills-library');
+        Route::get('/training/skills', \App\Http\Livewire\Training\SkillsLibraryPage::class)->name('training.skills');
+        Route::get('/training/role-play', \App\Http\Livewire\Training\RolePlayPage::class)->name('training.role-play');
+        Route::get('/training/roleplay', \App\Http\Livewire\Training\RolePlayPage::class)->name('training.roleplay');
+    });
+
+    // ── Settings — profile & 2FA (all users) ─────────────────────────────────
     Route::get('/settings', \App\Http\Livewire\Settings\ProfilePage::class)->name('settings.profile');
     Route::get('/settings/two-factor', \App\Http\Livewire\Auth\TwoFactorSetupPage::class)->name('two-factor.setup');
+
+    // ── Team Management — requires agency.manage ──────────────────────────────
+    Route::middleware('permission:agency.manage')->group(function () {
+        Route::get('/settings/team', \App\Http\Livewire\Settings\TeamPage::class)->name('settings.team');
+    });
+
+    // ── PDF Reports ───────────────────────────────────────────────────────────
+    Route::get('/listings/{listing}/report/seller-pdf', [\App\Http\Controllers\Api\ReportController::class, 'sellerReport'])
+        ->name('reports.seller-pdf')
+        ->middleware('permission:listings.view_own');
 
     // Team invitation accept
     Route::get('/invitations/{token}/accept', function (string $token) {
@@ -86,12 +126,25 @@ Route::middleware(['auth', 'tenant'])->group(function () {
             ->whereNull('accepted_at')
             ->firstOrFail();
 
-        if (auth()->check() && auth()->user()->email === $invitation->email) {
+        $user = auth()->user();
+
+        if ($user && $user->email === $invitation->email) {
+            // Scope permissions to this agency before assigning the role
+            setPermissionsTeamId($invitation->agency_id);
+
             $invitation->update(['accepted_at' => now()]);
-            auth()->user()->assignRole($invitation->role);
-            return redirect()->route('dashboard')->with('success', 'You have joined the team!');
+
+            // Update user's agency if they're joining a different one
+            if ($user->agency_id !== $invitation->agency_id) {
+                $user->update(['agency_id' => $invitation->agency_id, 'status' => 'active']);
+            }
+
+            $user->syncRoles([$invitation->role]);
+
+            return redirect()->route('dashboard')->with('success', 'Welcome to the team!');
         }
 
+        // Not logged in — send to register with token in session so RegisterPage can auto-accept
         return redirect()->route('register')->with('invitation_token', $token);
     })->name('invitations.accept');
 });

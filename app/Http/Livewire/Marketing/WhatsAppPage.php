@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Marketing;
 
+use App\Infrastructure\ExternalServices\WhatsApp\WhatsAppApiClient;
 use App\Infrastructure\Persistence\Models\Contact;
 use App\Infrastructure\Persistence\Models\WhatsAppMessage;
 use App\Infrastructure\Persistence\Models\WhatsAppTemplate;
@@ -29,22 +30,24 @@ class WhatsAppPage extends Component
         'compose_to' => 'required|string|max:20',
     ];
 
-    public function sendMessage(): void
+    public function sendMessage(WhatsAppApiClient $whatsApp): void
     {
         $this->validate($this->composeRules);
 
-        WhatsAppMessage::create([
-            'agency_id' => auth()->user()->agency_id,
+        $message = WhatsAppMessage::create([
+            'agency_id'  => auth()->user()->agency_id,
             'contact_id' => $this->compose_contact_id ?: null,
             'template_id' => $this->compose_template_id ?: null,
-            'to_number' => $this->compose_to,
-            'body' => $this->compose_body,
-            'direction' => 'outbound',
-            'status' => 'queued',
+            'to_number'  => $this->compose_to,
+            'body'       => $this->compose_body,
+            'direction'  => 'outbound',
+            'status'     => 'queued',
         ]);
 
+        $whatsApp->sendTextMessage($message);
+
         $this->reset(['compose_to', 'compose_body', 'compose_contact_id', 'compose_template_id', 'showCompose']);
-        $this->dispatch('notify', message: 'Message queued for delivery.', type: 'success');
+        $this->dispatch('notify', message: 'Message sent.', type: 'success');
     }
 
     public function saveTemplate(): void

@@ -6,11 +6,11 @@
             <h1 class="text-4xl font-black tracking-tight text-text-primary">Good Morning, {{ $user->first_name }}.</h1>
         </div>
         <div class="hidden sm:flex space-x-3">
-            <button class="px-5 py-2.5 rounded-xl bg-surface-raised border border-border-default text-sm font-bold text-text-primary hover:border-brand-primary/50 transition-colors shadow-sm flex items-center space-x-2">
+            <button class="px-5 py-2.5 rounded-xl bg-surface-raised border border-border-default text-sm font-bold text-text-primary hover:border-brand-primary/50 hover:text-brand-primary transition-colors shadow-sm flex items-center space-x-2 hover-spring">
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                 <span>New Mandate</span>
             </button>
-            <button class="px-5 py-2.5 rounded-xl bg-brand-primary text-white text-sm font-bold hover:bg-brand-secondary transition-colors shadow-brand-md flex items-center space-x-2">
+            <button class="px-5 py-2.5 rounded-xl bg-brand-primary text-white text-sm font-bold hover:bg-brand-secondary transition-colors shadow-brand-md flex items-center space-x-2 hover-spring hover:shadow-brand-lg">
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
                 <span>Sync</span>
             </button>
@@ -20,7 +20,7 @@
     <!-- KPI Metrics - Bento Box Style -->
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-10">
         <!-- Metric 1: Pipeline (Hero Style) -->
-        <div class="p-6 rounded-[2rem] bg-gradient-hero text-white shadow-xl relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
+        <div class="p-6 rounded-[2rem] bg-gradient-hero text-white shadow-xl relative overflow-hidden group hover:scale-[1.02] hover:shadow-brand-lg transition-all duration-300">
             <div class="absolute inset-0 bg-brand-primary opacity-20 mix-blend-overlay pointer-events-none"></div>
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-8">
@@ -43,7 +43,9 @@
         </div>
 
         <!-- Metric 2: Active Listings -->
-        <div class="p-6 rounded-[2rem] bg-surface-card border border-border-default/60 shadow-sm hover:border-info-500/50 transition-colors group">
+        <div class="p-6 rounded-[2rem] bg-surface-card border border-border-default/60 shadow-sm hover:border-info-500/50 hover:shadow-md hover-spring group transition-all duration-300 relative overflow-hidden">
+            <!-- Subtle gradient flair on hover -->
+            <div class="absolute inset-0 bg-gradient-to-br from-info-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
             <div class="flex items-center justify-between mb-8">
                 <p class="text-xs font-bold tracking-widest uppercase text-text-secondary">Listings</p>
                 <div class="p-2.5 bg-info-500/10 rounded-xl text-info-500 group-hover:scale-110 transition-transform">
@@ -57,7 +59,8 @@
         </div>
 
         <!-- Metric 3: New Leads -->
-        <div class="p-6 rounded-[2rem] bg-surface-card border border-border-default/60 shadow-sm hover:border-brand-primary/50 transition-colors group">
+        <div class="p-6 rounded-[2rem] bg-surface-card border border-border-default/60 shadow-sm hover:border-brand-primary/50 hover:shadow-md hover-spring group transition-all duration-300 relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-br from-brand-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
             <div class="flex items-center justify-between mb-8">
                 <p class="text-xs font-bold tracking-widest uppercase text-text-secondary">New Leads</p>
                 <div class="p-2.5 bg-brand-primary/10 rounded-xl text-brand-primary group-hover:scale-110 transition-transform">
@@ -71,7 +74,8 @@
         </div>
 
         <!-- Metric 4: Hot Buyers -->
-        <div class="p-6 rounded-[2rem] bg-surface-card border border-border-default/60 shadow-sm hover:border-warning-500/50 transition-colors group">
+        <div class="p-6 rounded-[2rem] bg-surface-card border border-border-default/60 shadow-sm hover:border-warning-500/50 hover:shadow-md hover-spring group transition-all duration-300 relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-br from-warning-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
             <div class="flex items-center justify-between mb-8">
                 <p class="text-xs font-bold tracking-widest uppercase text-text-secondary">Hot Buyers</p>
                 <div class="p-2.5 bg-warning-500/10 rounded-xl text-warning-500 group-hover:scale-110 transition-transform">
@@ -100,7 +104,8 @@
                 </div>
                 <div class="divide-y divide-border-default/40">
                     @forelse($recentListings as $listing)
-                        <div class="px-8 py-5 flex items-center justify-between hover:bg-surface-sunken/30 transition-colors group">
+                        <div class="px-8 py-5 flex items-center justify-between hover:bg-brand-primary/5 border-l-2 border-transparent hover:border-brand-primary transition-all duration-300 group cursor-pointer relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-r from-brand-primary/0 to-brand-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                             <div class="flex items-center space-x-5">
                                 <div class="h-12 w-12 rounded-xl bg-surface-raised border border-border-default/60 flex items-center justify-center text-text-tertiary flex-shrink-0 group-hover:text-brand-primary transition-colors">
                                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
@@ -133,7 +138,8 @@
                 </div>
                 <div class="divide-y divide-border-default/40">
                     @forelse($recentContacts as $contact)
-                        <div class="px-8 py-5 flex items-center justify-between hover:bg-surface-sunken/30 transition-colors group cursor-pointer">
+                        <div class="px-8 py-5 flex items-center justify-between hover:bg-brand-primary/5 border-l-2 border-transparent hover:border-brand-primary transition-all duration-300 group cursor-pointer relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-r from-brand-primary/0 to-brand-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                             <div class="flex items-center space-x-4">
                                 <div class="h-10 w-10 rounded-full bg-brand-primary/10 text-brand-primary font-black text-xs flex items-center justify-center">
                                     {{ substr($contact->first_name, 0, 1) }}{{ substr($contact->last_name, 0, 1) }}
@@ -163,7 +169,7 @@
         <div class="space-y-8">
             
             <!-- AI Copilot Intelligence Feed -->
-            <div class="rounded-[2rem] bg-surface-card border border-border-default/60 shadow-md relative overflow-hidden flex flex-col h-[600px]">
+            <div class="rounded-[2rem] glass-panel border border-border-default/60 shadow-brand-md relative overflow-hidden flex flex-col h-[600px] transition-all duration-300 hover:shadow-brand-lg">
                 <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-primary via-info-500 to-brand-primary"></div>
                 <div class="px-6 py-5 border-b border-border-default/40 flex items-center justify-between bg-surface-sunken/30">
                     <div class="flex items-center space-x-2">
@@ -177,7 +183,7 @@
                 
                 <div class="flex-1 overflow-y-auto p-6 space-y-6">
                     <!-- Suggestion 1 -->
-                    <div class="p-5 rounded-2xl bg-surface-sunken border border-border-default/60">
+                    <div class="p-5 rounded-2xl bg-surface-sunken/50 border border-border-default/60 hover:bg-surface-card hover:border-brand-primary/30 hover:shadow-md transition-all duration-300 hover-spring cursor-pointer group">
                         <div class="flex items-center space-x-2 mb-3">
                             <svg class="w-4 h-4 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                             <span class="text-[10px] font-black uppercase tracking-widest text-brand-primary">Lead Match</span>
@@ -188,7 +194,7 @@
                     </div>
                     
                     <!-- Suggestion 2 -->
-                    <div class="p-5 rounded-2xl bg-surface-sunken border border-border-default/60">
+                    <div class="p-5 rounded-2xl bg-surface-sunken/50 border border-border-default/60 hover:bg-surface-card hover:border-warning-500/30 hover:shadow-md transition-all duration-300 hover-spring cursor-pointer group">
                         <div class="flex items-center space-x-2 mb-3">
                             <svg class="w-4 h-4 text-warning-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                             <span class="text-[10px] font-black uppercase tracking-widest text-warning-500">Optimization</span>

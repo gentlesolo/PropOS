@@ -60,4 +60,14 @@ class Listing extends Model
     {
         return $this->hasMany(ListingPortalSync::class);
     }
+
+    public function graphics()
+    {
+        return $this->hasMany(\App\Infrastructure\Persistence\Models\ListingGraphic::class);
+    }
+
+    public function viewings()
+    {
+        return $this->hasMany(\App\Infrastructure\Persistence\Models\Viewing::class);
+    }
 }
