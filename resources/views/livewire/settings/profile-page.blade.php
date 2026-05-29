@@ -1,0 +1,304 @@
+<div>
+    <div class="mb-8">
+        <h1 class="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">Settings</h1>
+        <p class="mt-2 text-slate-600 dark:text-slate-400">Manage your profile, agency branding, and team members.</p>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="flex gap-1 mb-6 border-b border-border-default/60">
+        @foreach(['profile' => 'My Profile', 'agency' => 'Agency', 'team' => 'Team', 'security' => 'Security'] as $tab => $label)
+        <button wire:click="$set('activeTab', '{{ $tab }}')"
+            class="px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px
+            {{ $activeTab === $tab ? 'border-brand-primary text-brand-primary' : 'border-transparent text-text-secondary hover:text-text-primary' }}">
+            {{ $label }}
+        </button>
+        @endforeach
+    </div>
+
+    <!-- Flash Messages -->
+    @foreach(['profile_saved' => 'Profile updated.', 'password_saved' => 'Password changed.', 'agency_saved' => 'Agency settings saved.', 'invite_sent' => null] as $key => $default)
+    @if(session($key))
+    <div class="mb-4 p-3 bg-success-50 border border-success-200 rounded-xl text-sm text-success-800">
+        {{ session($key) ?? $default }}
+    </div>
+    @endif
+    @endforeach
+
+    <!-- Profile Tab -->
+    @if($activeTab === 'profile')
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2">
+            <div class="glass-panel rounded-2xl border border-border-default/60 p-6">
+                <h2 class="text-base font-semibold text-text-primary mb-5">Personal Information</h2>
+                <form wire:submit.prevent="saveProfile" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-1">First Name *</label>
+                            <input wire:model.defer="first_name" type="text" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                            @error('first_name') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-1">Last Name *</label>
+                            <input wire:model.defer="last_name" type="text" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                            @error('last_name') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-primary mb-1">Email Address *</label>
+                        <input wire:model.defer="email" type="email" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                        @error('email') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-primary mb-1">Phone</label>
+                        <input wire:model.defer="phone" type="text" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-primary mb-1">Job Title</label>
+                        <input wire:model.defer="job_title" type="text" placeholder="e.g. Senior Agent, Branch Manager" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-primary mb-1">Bio</label>
+                        <textarea wire:model.defer="bio" rows="3" placeholder="A brief bio shown on listings and reports..." class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary resize-none"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-primary mb-1">Profile Photo</label>
+                        <input wire:model="avatar" type="file" accept="image/*" class="w-full text-sm text-text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-brand-primary/10 file:text-brand-primary hover:file:bg-brand-primary/20">
+                        <div wire:loading wire:target="avatar" class="text-xs text-brand-primary mt-1">Uploading preview...</div>
+                    </div>
+                    <div class="pt-4 border-t border-border-default/60 flex justify-end">
+                        <button type="submit" class="px-5 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">
+                            <span wire:loading.remove wire:target="saveProfile">Save Profile</span>
+                            <span wire:loading wire:target="saveProfile">Saving...</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="lg:col-span-1">
+            <div class="glass-panel rounded-2xl border border-border-default/60 p-6 text-center">
+                <div class="h-24 w-24 rounded-full bg-brand-primary/10 flex items-center justify-center mx-auto text-brand-primary text-3xl font-bold mb-3">
+                    {{ strtoupper(substr(auth()->user()->first_name,0,1).substr(auth()->user()->last_name,0,1)) }}
+                </div>
+                <p class="font-semibold text-text-primary">{{ auth()->user()->first_name }} {{ auth()->user()->last_name }}</p>
+                <p class="text-sm text-text-secondary">{{ auth()->user()->job_title ?? 'Agent' }}</p>
+                <p class="text-xs text-text-secondary mt-1">{{ auth()->user()->email }}</p>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <!-- Agency Tab -->
+    @if($activeTab === 'agency')
+    <div class="glass-panel rounded-2xl border border-border-default/60 p-6 max-w-2xl">
+        <h2 class="text-base font-semibold text-text-primary mb-5">Agency Details</h2>
+        <form wire:submit.prevent="saveAgency" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-text-primary mb-1">Agency Name *</label>
+                <input wire:model.defer="agency_name" type="text" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                @error('agency_name') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-text-primary mb-1">Contact Email *</label>
+                    <input wire:model.defer="agency_email" type="email" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    @error('agency_email') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-text-primary mb-1">Phone</label>
+                    <input wire:model.defer="agency_phone" type="text" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-text-primary mb-1">Website</label>
+                <input wire:model.defer="agency_website" type="url" placeholder="https://..." class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-text-primary mb-1">Address</label>
+                <textarea wire:model.defer="agency_address" rows="2" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary resize-none"></textarea>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-text-primary mb-1">Timezone</label>
+                    <select wire:model.defer="timezone" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                        <option value="UTC">UTC</option>
+                        <option value="Africa/Lagos">Africa/Lagos (WAT)</option>
+                        <option value="Africa/Johannesburg">Africa/Johannesburg (SAST)</option>
+                        <option value="Africa/Nairobi">Africa/Nairobi (EAT)</option>
+                        <option value="Africa/Accra">Africa/Accra (GMT)</option>
+                        <option value="Europe/London">Europe/London</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-text-primary mb-1">Currency</label>
+                    <select wire:model.defer="currency" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                        <option value="NGN">NGN (₦ Naira)</option>
+                        <option value="ZAR">ZAR (R Rand)</option>
+                        <option value="GHS">GHS (₵ Cedi)</option>
+                        <option value="KES">KES (KSh Shilling)</option>
+                        <option value="USD">USD ($ Dollar)</option>
+                        <option value="GBP">GBP (£ Pound)</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-text-primary mb-1">Brand Primary Color</label>
+                <div class="flex items-center gap-3">
+                    <input wire:model.defer="primary_color" type="color" class="h-10 w-20 rounded-lg border border-border-default cursor-pointer">
+                    <input wire:model.defer="primary_color" type="text" placeholder="#1E40AF" class="flex-1 rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary text-sm font-mono">
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-text-primary mb-1">Agency Logo</label>
+                <input wire:model="agency_logo" type="file" accept="image/*" class="w-full text-sm text-text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-brand-primary/10 file:text-brand-primary hover:file:bg-brand-primary/20">
+            </div>
+            <div class="pt-4 border-t border-border-default/60 flex justify-end">
+                <button type="submit" class="px-5 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">
+                    <span wire:loading.remove wire:target="saveAgency">Save Agency Settings</span>
+                    <span wire:loading wire:target="saveAgency">Saving...</span>
+                </button>
+            </div>
+        </form>
+    </div>
+    @endif
+
+    <!-- Team Tab -->
+    @if($activeTab === 'team')
+    <div class="space-y-5">
+        <div class="flex items-center justify-between">
+            <h2 class="text-base font-semibold text-text-primary">Team Members</h2>
+            <button wire:click="$toggle('showInviteForm')" class="px-4 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">
+                + Invite Member
+            </button>
+        </div>
+
+        @if($showInviteForm)
+        <div class="glass-panel rounded-2xl border border-border-default/60 p-5 max-w-lg">
+            <h3 class="text-sm font-semibold text-text-primary mb-4">Send Team Invitation</h3>
+            <form wire:submit.prevent="sendInvitation" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-text-primary mb-1">Email Address *</label>
+                    <input wire:model.defer="invite_email" type="email" placeholder="colleague@example.com" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    @error('invite_email') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-text-primary mb-1">Role *</label>
+                    <select wire:model.defer="invite_role" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                        <option value="agent">Agent</option>
+                        <option value="admin">Admin</option>
+                        <option value="viewer">Viewer (Read-only)</option>
+                        <option value="principal">Principal</option>
+                    </select>
+                </div>
+                <div class="flex gap-3">
+                    <button type="submit" class="px-4 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">
+                        <span wire:loading.remove wire:target="sendInvitation">Send Invitation</span>
+                        <span wire:loading wire:target="sendInvitation">Sending...</span>
+                    </button>
+                    <button type="button" wire:click="$set('showInviteForm', false)" class="px-4 py-2 border border-border-default text-text-secondary rounded-xl text-sm font-medium hover:bg-surface-sunken transition-colors">Cancel</button>
+                </div>
+            </form>
+        </div>
+        @endif
+
+        <!-- Current Members -->
+        <div class="glass-panel rounded-2xl border border-border-default/60 overflow-hidden">
+            <div class="px-6 py-3 bg-surface-sunken/30 border-b border-border-default/60">
+                <h3 class="text-sm font-semibold text-text-primary">Active Members ({{ $teamMembers->count() }})</h3>
+            </div>
+            @forelse($teamMembers as $member)
+            <div class="flex items-center justify-between px-6 py-4 border-b border-border-default/40 last:border-0">
+                <div class="flex items-center gap-3">
+                    <div class="h-9 w-9 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary text-sm font-bold">
+                        {{ strtoupper(substr($member->first_name,0,1).substr($member->last_name,0,1)) }}
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-text-primary">{{ $member->first_name }} {{ $member->last_name }}
+                            @if($member->id === auth()->id()) <span class="text-xs text-text-secondary ml-1">(You)</span> @endif
+                        </p>
+                        <p class="text-xs text-text-secondary">{{ $member->email }}</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    @if($member->roles->isNotEmpty())
+                    <span class="px-2 py-0.5 bg-brand-primary/10 text-brand-primary rounded-full text-xs font-medium capitalize">
+                        {{ $member->roles->first()->name }}
+                    </span>
+                    @endif
+                    <span class="h-2 w-2 rounded-full {{ $member->status === 'active' ? 'bg-success-500' : 'bg-slate-300' }}"></span>
+                </div>
+            </div>
+            @empty
+            <div class="px-6 py-8 text-center text-sm text-text-secondary">No team members yet.</div>
+            @endforelse
+        </div>
+
+        <!-- Pending Invitations -->
+        @if($pendingInvitations->isNotEmpty())
+        <div class="glass-panel rounded-2xl border border-border-default/60 overflow-hidden">
+            <div class="px-6 py-3 bg-surface-sunken/30 border-b border-border-default/60">
+                <h3 class="text-sm font-semibold text-text-primary">Pending Invitations</h3>
+            </div>
+            @foreach($pendingInvitations as $invite)
+            <div class="flex items-center justify-between px-6 py-3 border-b border-border-default/40 last:border-0">
+                <div>
+                    <p class="text-sm text-text-primary">{{ $invite->email }}</p>
+                    <p class="text-xs text-text-secondary capitalize">{{ $invite->role }} · Invited {{ $invite->created_at->diffForHumans() }}</p>
+                </div>
+                <button wire:click="revokeInvitation({{ $invite->id }})" wire:confirm="Revoke this invitation?" class="text-xs text-danger-600 hover:text-danger-700 font-medium">Revoke</button>
+            </div>
+            @endforeach
+        </div>
+        @endif
+    </div>
+    @endif
+
+    <!-- Security Tab -->
+    @if($activeTab === 'security')
+    <div class="space-y-5 max-w-lg">
+        <div class="glass-panel rounded-2xl border border-border-default/60 p-6">
+            <h2 class="text-base font-semibold text-text-primary mb-5">Change Password</h2>
+            <form wire:submit.prevent="savePassword" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-text-primary mb-1">Current Password</label>
+                    <input wire:model.defer="current_password" type="password" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    @error('current_password') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-text-primary mb-1">New Password</label>
+                    <input wire:model.defer="new_password" type="password" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    @error('new_password') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-text-primary mb-1">Confirm New Password</label>
+                    <input wire:model.defer="new_password_confirmation" type="password" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                </div>
+                <div class="pt-2">
+                    <button type="submit" class="px-5 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">
+                        <span wire:loading.remove wire:target="savePassword">Update Password</span>
+                        <span wire:loading wire:target="savePassword">Updating...</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="glass-panel rounded-2xl border border-border-default/60 p-6">
+            <div class="flex items-start justify-between">
+                <div>
+                    <h2 class="text-base font-semibold text-text-primary">Two-Factor Authentication</h2>
+                    <p class="text-sm text-text-secondary mt-1">Add an extra layer of security to your account using a TOTP authenticator app.</p>
+                </div>
+                @if(auth()->user()->two_factor_enabled)
+                <span class="px-2 py-0.5 bg-success-100 text-success-700 rounded-full text-xs font-medium">Enabled</span>
+                @else
+                <span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full text-xs font-medium">Disabled</span>
+                @endif
+            </div>
+            <div class="mt-4">
+                <a href="{{ route('two-factor.setup') }}" class="px-4 py-2 border border-brand-primary text-brand-primary rounded-xl text-sm font-medium hover:bg-brand-primary/5 transition-colors inline-block">
+                    {{ auth()->user()->two_factor_enabled ? 'Manage 2FA' : 'Enable 2FA' }}
+                </a>
+            </div>
+        </div>
+    </div>
+    @endif
+</div>

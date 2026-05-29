@@ -11,7 +11,13 @@
     "require": {
         "php": "^8.3",
         "laravel/framework": "^13.8",
-        "laravel/tinker": "^3.0"
+        "laravel/sanctum": "*",
+        "laravel/tinker": "^3.0",
+        "livewire/livewire": "*",
+        "openai-php/laravel": "*",
+        "simplesoftwareio/simple-qrcode": "*",
+        "spatie/laravel-permission": "*",
+        "spomky-labs/otphp": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

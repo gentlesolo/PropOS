@@ -11,14 +11,52 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('agencies', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('slug')->unique();
+            $table->string('custom_domain')->nullable()->unique();
+            $table->string('logo_path')->nullable();
+            $table->string('primary_color', 7)->default('#1E40AF');
+            $table->string('secondary_color', 7)->nullable();
+            $table->string('accent_color', 7)->nullable();
+            $table->string('tagline')->nullable();
+            $table->text('address')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('email');
+            $table->string('website')->nullable();
+            $table->string('timezone')->default('UTC');
+            $table->string('currency', 3)->default('USD');
+            $table->string('country_code', 2)->default('US');
+            $table->string('subscription_plan')->default('starter'); // free/starter/pro/enterprise
+            $table->string('subscription_status')->default('trialing'); // active/trialing/past_due/cancelled
+            $table->json('settings')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('agency_id')->constrained('agencies')->onDelete('cascade');
+            $table->string('first_name');
+            $table->string('last_name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->string('phone')->nullable();
             $table->string('password');
+            $table->string('avatar_path')->nullable();
+            $table->string('job_title')->nullable();
+            $table->text('bio')->nullable();
+            $table->string('status')->default('invited'); // active/suspended/invited/deactivated
+            $table->timestamp('email_verified_at')->nullable();
+            $table->boolean('two_factor_enabled')->default(false);
+            $table->text('two_factor_secret')->nullable();
+            $table->json('notification_preferences')->nullable();
+            $table->timestamp('last_login_at')->nullable();
+            $table->timestamp('last_active_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
+
+            $table->index('agency_id');
+            $table->index(['agency_id', 'status']);
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
@@ -42,8 +80,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('users');
+        Schema::dropIfExists('agencies');
     }
 };
