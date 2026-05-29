@@ -66,7 +66,7 @@
                     </div>
                     <div>
                         <div class="flex justify-between text-xs mb-1"><span class="text-text-secondary">Sentiment Score</span><span class="font-bold">{{ $aiSummary['sentiment_score'] }}/100</span></div>
-                        <div class="w-full bg-slate-200 rounded-full h-2">
+                        <div class="w-full bg-surface-raised rounded-full h-2">
                             <div class="h-2 rounded-full {{ $aiSummary['sentiment_score'] >= 70 ? 'bg-success-500' : ($aiSummary['sentiment_score'] >= 50 ? 'bg-warning-500' : 'bg-danger-500') }}" style="width: {{ $aiSummary['sentiment_score'] }}%"></div>
                         </div>
                     </div>
@@ -109,7 +109,7 @@
                     @foreach(array_reverse([1,2,3,4,5]) as $star)
                     <div class="flex items-center gap-3">
                         <span class="text-xs font-bold text-warning-500 w-6">{{ str_repeat('★', $star) }}</span>
-                        <div class="flex-1 bg-slate-200 rounded-full h-3">
+                        <div class="flex-1 bg-surface-raised rounded-full h-3">
                             <div class="h-3 rounded-full bg-warning-400 transition-all" style="width: {{ ($ratingDist[$star] / $maxCount) * 100 }}%"></div>
                         </div>
                         <span class="text-xs text-text-secondary w-5 text-right">{{ $ratingDist[$star] }}</span>

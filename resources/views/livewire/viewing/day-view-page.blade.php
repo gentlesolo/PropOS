@@ -1,7 +1,7 @@
 <div class="h-[calc(100vh-8rem)] flex flex-col md:flex-row gap-8">
     <!-- Map Section (Left) -->
     <div class="hidden md:block w-full md:w-7/12 lg:w-2/3 h-full rounded-3xl overflow-hidden glass-panel border border-border-default/60 shadow-md relative group">
-        <div class="absolute inset-0 bg-slate-100 dark:bg-slate-800" style="background-image: url('data:image/svg+xml,%3Csvg width=%2240%22 height=%2240%22 viewBox=%220 0 40 40%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cpath d=%22M0 0h40v40H0V0zm20 20h20v20H20V20zM0 20h20v20H0V20z%22 fill=%22%239C92AC%22 fill-opacity=%220.05%22 fill-rule=%22evenodd%22/%3E%3C/svg%3E');"></div>
+        <div class="absolute inset-0 bg-surface-sunken dark:bg-surface-raised" style="background-image: url('data:image/svg+xml,%3Csvg width=%2240%22 height=%2240%22 viewBox=%220 0 40 40%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cpath d=%22M0 0h40v40H0V0zm20 20h20v20H20V20zM0 20h20v20H0V20z%22 fill=%22%239C92AC%22 fill-opacity=%220.05%22 fill-rule=%22evenodd%22/%3E%3C/svg%3E');"></div>
         <div class="absolute inset-0 p-12">
             <svg class="w-full h-full text-brand-primary/40 stroke-current" fill="none" stroke-width="4" stroke-dasharray="8 8" stroke-linecap="round">
                 <path d="M 150 100 Q 250 150 200 300 T 400 450" />
@@ -10,7 +10,7 @@
                 @php $positions = [['top'=>'20%','left'=>'30%'],['top'=>'45%','left'=>'40%'],['top'=>'60%','left'=>'65%'],['top'=>'80%','left'=>'50%']]; $pos = $positions[$index % 4]; @endphp
                 <div class="absolute group/pin hover-spring cursor-pointer" style="top: {{ $pos['top'] }}; left: {{ $pos['left'] }};">
                     <div class="relative -left-1/2 -top-full">
-                        <div class="w-10 h-10 rounded-full border-4 border-white shadow-lg flex items-center justify-center font-black text-sm text-white {{ $viewing->status === 'completed' ? 'bg-emerald-500' : 'bg-brand-primary' }} hover:scale-110 transition-transform">{{ $index + 1 }}</div>
+                        <div class="w-10 h-10 rounded-full border-4 border-white shadow-lg flex items-center justify-center font-black text-sm text-white {{ $viewing->status === 'completed' ? 'bg-success-500' : 'bg-brand-primary' }} hover:scale-110 transition-transform">{{ $index + 1 }}</div>
                         <div class="w-0.5 h-6 bg-brand-primary mx-auto -mt-1 shadow-sm"></div>
                         <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-3 w-48 p-3 bg-surface-card border border-border-default/60 shadow-xl rounded-2xl opacity-0 group-hover/pin:opacity-100 transition-opacity pointer-events-none z-10">
                             <p class="text-xs font-bold text-text-primary mb-1">{{ $viewing->scheduled_at->format('H:i') }}</p>
@@ -53,7 +53,7 @@
         <!-- Feedback Modal -->
         @if($feedbackViewingId)
         <div class="fixed inset-0 z-50 flex items-center justify-center">
-            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+            <div class="absolute inset-0 bg-surface-overlay backdrop-blur-sm"></div>
             <div class="relative bg-surface-card rounded-2xl border border-border-default/60 shadow-2xl w-full max-w-md mx-4 p-6 overflow-y-auto max-h-[90vh]">
                 <h2 class="text-lg font-bold text-text-primary mb-4">Post-Viewing Feedback</h2>
                 <form wire:submit.prevent="saveFeedback" class="space-y-4">
@@ -121,7 +121,7 @@
         <!-- Reschedule Modal -->
         @if($reschedulingId)
         <div class="fixed inset-0 z-50 flex items-center justify-center">
-            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" wire:click="$set('reschedulingId', null)"></div>
+            <div class="absolute inset-0 bg-surface-overlay backdrop-blur-sm" wire:click="$set('reschedulingId', null)"></div>
             <div class="relative bg-surface-card rounded-2xl border border-border-default/60 shadow-2xl w-full max-w-sm mx-4 p-6">
                 <h2 class="text-lg font-bold text-text-primary mb-4">Reschedule Viewing</h2>
                 <form wire:submit.prevent="saveReschedule" class="space-y-4">
@@ -162,7 +162,7 @@
                 @foreach($viewings as $index => $viewing)
                 <div class="relative flex items-start group">
                     <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-surface-page shadow shrink-0 z-10 mr-4
-                        {{ $viewing->status === 'completed' ? 'bg-emerald-500 text-white' : ($index === 0 ? 'bg-brand-primary text-white ring-4 ring-brand-primary/20' : 'bg-surface-raised text-text-secondary') }}">
+                        {{ $viewing->status === 'completed' ? 'bg-success-500 text-white' : ($index === 0 ? 'bg-brand-primary text-white ring-4 ring-brand-primary/20' : 'bg-surface-raised text-text-secondary') }}">
                         @if($viewing->status === 'completed')
                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                         @else
@@ -175,14 +175,14 @@
                             <div>
                                 <h3 class="text-lg font-black text-text-primary leading-tight">{{ $viewing->scheduled_at->format('H:i') }} <span class="text-text-tertiary text-sm font-semibold ml-1">({{ $viewing->duration_minutes }}m)</span></h3>
                                 <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider mt-1
-                                    {{ $viewing->status === 'completed' ? 'bg-emerald-500/10 text-emerald-600' : ($viewing->status === 'confirmed' ? 'bg-brand-primary/10 text-brand-primary' : 'bg-surface-raised text-text-secondary') }}">
+                                    {{ $viewing->status === 'completed' ? 'bg-success-500/10 text-success-600' : ($viewing->status === 'confirmed' ? 'bg-brand-primary/10 text-brand-primary' : 'bg-surface-raised text-text-secondary') }}">
                                     {{ str_replace('_', ' ', $viewing->status) }}
                                 </span>
                             </div>
                             @if($viewing->feedback)
                             <div class="flex items-center gap-0.5 text-warning-500">
                                 @for($i = 1; $i <= 5; $i++)
-                                <span class="text-sm {{ $i <= $viewing->feedback->overall_rating ? 'text-warning-500' : 'text-slate-200' }}">★</span>
+                                <span class="text-sm {{ $i <= $viewing->feedback->overall_rating ? 'text-warning-500' : 'text-border-default' }}">★</span>
                                 @endfor
                             </div>
                             @endif

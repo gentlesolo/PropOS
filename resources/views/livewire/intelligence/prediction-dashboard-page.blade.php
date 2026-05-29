@@ -91,14 +91,14 @@
                                 @if($contact->status === 'qualified') bg-success-100 text-success-700
                                 @elseif($contact->status === 'active') bg-brand-primary/10 text-brand-primary
                                 @elseif($contact->status === 'nurturing') bg-warning-100 text-warning-700
-                                @else bg-slate-100 text-slate-600 @endif">
+                                @else bg-surface-sunken text-text-secondary @endif">
                                 {{ $contact->status }}
                             </span>
                         </td>
                         <td class="py-4 px-5 text-sm text-text-secondary">{{ $contact->activities_count ?? $contact->activities->count() }}</td>
                         <td class="py-4 px-5">
                             <div class="flex items-center gap-3 min-w-[120px]">
-                                <div class="flex-1 bg-slate-200 rounded-full h-2">
+                                <div class="flex-1 bg-surface-raised rounded-full h-2">
                                     <div class="{{ $barColor }} h-2 rounded-full transition-all duration-500" style="width: {{ $score }}%"></div>
                                 </div>
                                 <span class="text-sm font-black {{ $scoreColor }} px-2 py-0.5 rounded-lg min-w-[44px] text-center">
@@ -166,7 +166,7 @@
                         <td class="py-4 px-5 text-sm text-text-secondary">{{ $deal->activities->count() }}</td>
                         <td class="py-4 px-5">
                             <div class="flex items-center gap-3 min-w-[140px]">
-                                <div class="flex-1 bg-slate-200 rounded-full h-2">
+                                <div class="flex-1 bg-surface-raised rounded-full h-2">
                                     <div class="{{ $barColor }} h-2 rounded-full transition-all duration-500" style="width: {{ $score }}%"></div>
                                 </div>
                                 <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $labelClass }}">

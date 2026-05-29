@@ -52,28 +52,28 @@
 
         <!-- Metric 3: New Leads -->
         <div class="glass-panel p-6 rounded-3xl hover-spring cursor-pointer group relative overflow-hidden">
-            <div class="absolute -right-4 -top-4 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-colors"></div>
+            <div class="absolute -right-4 -top-4 w-24 h-24 bg-brand-primary/10 rounded-full blur-2xl group-hover:bg-brand-primary/20 transition-colors"></div>
             <div class="relative z-10 flex items-center justify-between">
                 <div>
                     <p class="text-xs font-bold tracking-wider uppercase text-text-secondary">New Leads</p>
                     <p class="mt-2 text-3xl font-black text-text-primary tracking-tight">{{ $metrics['new_leads'] }}</p>
                 </div>
-                <div class="p-3 bg-surface-raised rounded-2xl group-hover:bg-purple-500/10 border border-border-default/60 transition-colors shadow-sm">
-                    <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <div class="p-3 bg-surface-raised rounded-2xl group-hover:bg-brand-primary/10 border border-border-default/60 transition-colors shadow-sm">
+                    <svg class="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                 </div>
             </div>
         </div>
 
         <!-- Metric 4: Hot Buyers -->
         <div class="glass-panel p-6 rounded-3xl hover-spring cursor-pointer group relative overflow-hidden">
-            <div class="absolute -right-4 -top-4 w-24 h-24 bg-orange-500/10 rounded-full blur-2xl group-hover:bg-orange-500/20 transition-colors"></div>
+            <div class="absolute -right-4 -top-4 w-24 h-24 bg-warning-500/10 rounded-full blur-2xl group-hover:bg-warning-500/20 transition-colors"></div>
             <div class="relative z-10 flex items-center justify-between">
                 <div>
                     <p class="text-xs font-bold tracking-wider uppercase text-text-secondary">Hot Buyers</p>
                     <p class="mt-2 text-3xl font-black text-text-primary tracking-tight">{{ $metrics['hot_buyers'] }}</p>
                 </div>
-                <div class="p-3 bg-surface-raised rounded-2xl group-hover:bg-orange-500/10 border border-border-default/60 transition-colors shadow-sm">
-                    <svg class="w-6 h-6 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path></svg>
+                <div class="p-3 bg-surface-raised rounded-2xl group-hover:bg-warning-500/10 border border-border-default/60 transition-colors shadow-sm">
+                    <svg class="w-6 h-6 text-warning-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path></svg>
                 </div>
             </div>
         </div>
@@ -84,7 +84,7 @@
         <div class="lg:col-span-2 space-y-8">
             
             <!-- AI Copilot Intelligence Feed (Stunning Visual Variant) -->
-            <div class="rounded-3xl border border-border-default/60 overflow-hidden relative shadow-lg group transition-all duration-300 hover:shadow-brand">
+            <div class="rounded-3xl border border-border-default/60 overflow-hidden relative shadow-md group transition-all duration-300 hover:shadow-brand-lg">
                 <!-- Background Gradient (Subtle shifting) -->
                 <div class="absolute inset-0 bg-gradient-subtle dark:bg-gradient-hero opacity-20 pointer-events-none transition-opacity group-hover:opacity-30"></div>
                 
@@ -94,7 +94,7 @@
                 <div class="relative z-10 glass-panel border-none rounded-3xl backdrop-blur-3xl h-full">
                     <div class="px-8 py-5 border-b border-border-default/40 flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                            <div class="h-3 w-3 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)] animate-pulse"></div>
+                            <div class="h-3 w-3 rounded-full bg-success-500 shadow-[0_0_10px_rgba(16,185,129,0.8)] animate-pulse"></div>
                             <h2 class="text-sm font-black uppercase tracking-widest text-text-primary">PropOS Copilot</h2>
                         </div>
                         <span class="text-[10px] font-mono text-text-tertiary font-bold px-2 py-1 bg-surface-raised rounded-md border border-border-subtle">LIVE STREAM</span>
@@ -119,8 +119,8 @@
                             
                             <!-- Suggestion 2 -->
                             <div class="relative">
-                                <div class="absolute -left-8 top-1 h-7 w-7 rounded-full bg-orange-500/10 border border-orange-500/30 flex items-center justify-center backdrop-blur-sm z-10">
-                                    <svg class="h-3.5 w-3.5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                <div class="absolute -left-8 top-1 h-7 w-7 rounded-full bg-warning-500/10 border border-warning-500/30 flex items-center justify-center backdrop-blur-sm z-10">
+                                    <svg class="h-3.5 w-3.5 text-warning-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                                 </div>
                                 <div class="p-5 rounded-2xl bg-surface-card border border-border-default/60 shadow-sm hover:shadow transition-shadow">
                                     <h4 class="text-sm font-bold text-text-primary mb-1">Price Reduction Recommended</h4>
@@ -185,7 +185,7 @@
                                         {{ substr($contact->first_name, 0, 1) }}{{ substr($contact->last_name, 0, 1) }}
                                     </div>
                                     @if($contact->intent_score >= 80)
-                                        <div class="absolute -top-1 -right-1 h-4 w-4 bg-orange-500 rounded-full border-2 border-surface-card flex items-center justify-center">
+                                        <div class="absolute -top-1 -right-1 h-4 w-4 bg-warning-500 rounded-full border-2 border-surface-card flex items-center justify-center">
                                             <svg class="h-2.5 w-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path></svg>
                                         </div>
                                     @endif
@@ -197,7 +197,7 @@
                                     <div class="flex items-center mt-1 space-x-2">
                                         <span class="text-[10px] font-bold uppercase tracking-wider text-text-tertiary">{{ $contact->type }}</span>
                                         <span class="h-1 w-1 rounded-full bg-border-default"></span>
-                                        <span class="text-xs font-semibold {{ $contact->intent_score >= 80 ? 'text-orange-500' : 'text-text-secondary' }}">{{ $contact->intent_score }}% Intent</span>
+                                        <span class="text-xs font-semibold {{ $contact->intent_score >= 80 ? 'text-warning-500' : 'text-text-secondary' }}">{{ $contact->intent_score }}% Intent</span>
                                     </div>
                                 </div>
                                 <div>

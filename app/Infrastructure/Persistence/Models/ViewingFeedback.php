@@ -10,6 +10,8 @@ class ViewingFeedback extends Model
 {
     use HasFactory;
 
+    protected $table = 'viewing_feedbacks';
+
     protected $guarded = ['id'];
 
     protected $casts = [

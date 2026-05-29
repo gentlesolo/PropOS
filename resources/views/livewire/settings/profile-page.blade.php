@@ -1,7 +1,7 @@
 <div>
     <div class="mb-8">
-        <h1 class="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">Settings</h1>
-        <p class="mt-2 text-slate-600 dark:text-slate-400">Manage your profile, agency branding, and team members.</p>
+        <h1 class="text-3xl font-extrabold tracking-tight text-text-primary dark:text-white">Settings</h1>
+        <p class="mt-2 text-text-secondary dark:text-text-tertiary">Manage your profile, agency branding, and team members.</p>
     </div>
 
     <!-- Tab Navigation -->
@@ -224,7 +224,7 @@
                         {{ $member->roles->first()->name }}
                     </span>
                     @endif
-                    <span class="h-2 w-2 rounded-full {{ $member->status === 'active' ? 'bg-success-500' : 'bg-slate-300' }}"></span>
+                    <span class="h-2 w-2 rounded-full {{ $member->status === 'active' ? 'bg-success-500' : 'bg-border-strong' }}"></span>
                 </div>
             </div>
             @empty
@@ -290,7 +290,7 @@
                 @if(auth()->user()->two_factor_enabled)
                 <span class="px-2 py-0.5 bg-success-100 text-success-700 rounded-full text-xs font-medium">Enabled</span>
                 @else
-                <span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full text-xs font-medium">Disabled</span>
+                <span class="px-2 py-0.5 bg-surface-sunken text-text-secondary rounded-full text-xs font-medium">Disabled</span>
                 @endif
             </div>
             <div class="mt-4">

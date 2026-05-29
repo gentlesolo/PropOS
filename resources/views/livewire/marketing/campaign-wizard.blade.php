@@ -8,7 +8,7 @@
         <div class="mt-8 flex items-center justify-center space-x-4">
             @foreach(['Listing', 'Goal', 'Channels', 'Generate', 'Review'] as $idx => $label)
                 <div class="flex items-center">
-                    <div class="h-10 w-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 {{ $step > ($idx + 1) ? 'bg-emerald-500 text-white shadow-md' : ($step === ($idx + 1) ? 'bg-brand-primary text-white shadow-lg ring-4 ring-brand-primary/20 scale-110' : 'bg-surface-card border border-border-default/60 text-text-tertiary') }}">
+                    <div class="h-10 w-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 {{ $step > ($idx + 1) ? 'bg-success-500 text-white shadow-md' : ($step === ($idx + 1) ? 'bg-brand-primary text-white shadow-lg ring-4 ring-brand-primary/20 scale-110' : 'bg-surface-card border border-border-default/60 text-text-tertiary') }}">
                         @if($step > ($idx + 1))
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                         @else
@@ -16,7 +16,7 @@
                         @endif
                     </div>
                     @if($idx < 4)
-                        <div class="h-1 w-12 mx-2 rounded-full transition-colors duration-300 {{ $step > ($idx + 1) ? 'bg-emerald-500' : 'bg-border-default/60' }}"></div>
+                        <div class="h-1 w-12 mx-2 rounded-full transition-colors duration-300 {{ $step > ($idx + 1) ? 'bg-success-500' : 'bg-border-default/60' }}"></div>
                     @endif
                 </div>
             @endforeach
@@ -99,7 +99,7 @@
                                 <span class="text-lg font-bold text-text-primary capitalize">{{ $channel }}</span>
                             </div>
                             @if($channels[$channel])
-                                <span class="px-3 py-1 bg-emerald-500/10 text-emerald-500 text-xs font-bold uppercase tracking-wider rounded-lg">Selected</span>
+                                <span class="px-3 py-1 bg-success-500/10 text-success-500 text-xs font-bold uppercase tracking-wider rounded-lg">Selected</span>
                             @endif
                         </label>
                     @endforeach

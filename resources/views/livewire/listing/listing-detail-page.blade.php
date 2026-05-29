@@ -1,12 +1,12 @@
 <div>
     <!-- Breadcrumb -->
     <div class="flex items-center gap-3 mb-6">
-        <a href="{{ route('listing.index') }}" class="text-slate-500 hover:text-brand-primary text-sm flex items-center gap-1">
+        <a href="{{ route('listing.index') }}" class="text-text-tertiary hover:text-brand-primary text-sm flex items-center gap-1">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
             Listings
         </a>
-        <span class="text-slate-400">/</span>
-        <span class="text-sm text-slate-700 font-medium">{{ $listing->property->address_line_1 }}</span>
+        <span class="text-text-tertiary">/</span>
+        <span class="text-sm text-text-secondary font-medium">{{ $listing->property->address_line_1 }}</span>
     </div>
 
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
@@ -24,8 +24,8 @@
                             <span class="px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider
                                 @if($listing->status === 'active') bg-success-100 text-success-800
                                 @elseif($listing->status === 'under_offer') bg-warning-100 text-warning-800
-                                @elseif($listing->status === 'draft') bg-slate-100 text-slate-700
-                                @else bg-slate-100 text-slate-700 @endif">
+                                @elseif($listing->status === 'draft') bg-surface-sunken text-text-secondary
+                                @else bg-surface-sunken text-text-secondary @endif">
                                 {{ $listing->status }}
                             </span>
                             <span class="text-sm text-text-secondary capitalize">{{ $listing->mandate_type }} mandate</span>
@@ -130,7 +130,7 @@
                 @if($listing->media->count() > 0)
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
                     @foreach($listing->media as $media)
-                    <div class="relative group rounded-xl overflow-hidden aspect-video bg-slate-100">
+                    <div class="relative group rounded-xl overflow-hidden aspect-video bg-surface-sunken">
                         <img src="{{ asset('storage/' . $media->file_path) }}" alt="{{ $media->alt_text ?? $media->file_name }}"
                             class="w-full h-full object-cover">
                         @if($media->is_cover)
@@ -140,7 +140,7 @@
                         @endif
                         <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                             @if(!$media->is_cover)
-                            <button wire:click="setCover({{ $media->id }})" class="px-2 py-1 bg-white/90 text-slate-800 rounded text-xs font-medium hover:bg-white">
+                            <button wire:click="setCover({{ $media->id }})" class="px-2 py-1 bg-white/90 text-text-primary rounded text-xs font-medium hover:bg-white">
                                 Set Cover
                             </button>
                             @endif
@@ -159,7 +159,7 @@
                 <div class="border-2 border-dashed border-border-default rounded-xl p-6 text-center">
                     <input wire:model="photos" type="file" id="photo-upload" multiple accept="image/*" class="hidden">
                     <label for="photo-upload" class="cursor-pointer">
-                        <svg class="mx-auto h-10 w-10 text-slate-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg class="mx-auto h-10 w-10 text-text-tertiary mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
                         <p class="text-sm text-text-secondary">Click to upload photos <span class="text-text-secondary/60">(JPG, PNG, max 10MB each)</span></p>
@@ -242,7 +242,7 @@
                                 @if($sync->status === 'synced') bg-success-500
                                 @elseif($sync->status === 'failed') bg-danger-500
                                 @elseif($sync->status === 'pending' || $sync->status === 'syncing') bg-warning-500
-                                @else bg-slate-400 @endif"></div>
+                                @else bg-text-tertiary @endif"></div>
                             <span class="text-xs text-text-secondary capitalize">{{ $sync->status }}</span>
                             @if($sync->last_synced_at)
                             <span class="text-xs text-text-secondary">· {{ $sync->last_synced_at->diffForHumans() }}</span>
@@ -255,7 +255,7 @@
                     <div class="flex items-center gap-2">
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" wire:model="portalSelections.{{ $portal->id }}" class="sr-only peer" value="1">
-                            <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-primary"></div>
+                            <div class="w-9 h-5 bg-surface-raised peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-primary"></div>
                         </label>
                         <button wire:click="syncPortal({{ $portal->id }})" class="text-xs text-brand-primary hover:text-brand-secondary font-medium">
                             <span wire:loading.remove wire:target="syncPortal({{ $portal->id }})">Sync</span>

@@ -45,7 +45,7 @@
                             <div class="flex items-start justify-between">
                                 <div class="flex items-start space-x-4">
                                     <!-- Status Checkbox -->
-                                    <button wire:click="completeAction({{ $index }})" @if($action['completed']) disabled @endif class="mt-1 h-6 w-6 rounded-lg border flex items-center justify-center transition-colors {{ $action['completed'] ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-border-default hover:border-brand-primary text-transparent hover:text-brand-primary' }}">
+                                    <button wire:click="completeAction({{ $index }})" @if($action['completed']) disabled @endif class="mt-1 h-6 w-6 rounded-lg border flex items-center justify-center transition-colors {{ $action['completed'] ? 'bg-success-500 border-success-500 text-white' : 'border-border-default hover:border-brand-primary text-transparent hover:text-brand-primary' }}">
                                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                                     </button>
                                     
@@ -92,7 +92,7 @@
                     @foreach($brief->deal_alerts as $alert)
                         <div class="p-5 rounded-2xl bg-surface-card border border-border-default/60 hover-spring">
                             <div class="flex items-center space-x-3 mb-3">
-                                <div class="h-2 w-2 rounded-full {{ $alert['severity'] === 'warning' ? 'bg-orange-500 animate-pulse' : 'bg-emerald-500' }}"></div>
+                                <div class="h-2 w-2 rounded-full {{ $alert['severity'] === 'warning' ? 'bg-warning-500 animate-pulse' : 'bg-success-500' }}"></div>
                                 <h4 class="text-sm font-bold text-text-primary">{{ $alert['title'] }}</h4>
                             </div>
                             <p class="text-xs font-semibold text-text-secondary mb-2">{{ $alert['property'] }}</p>

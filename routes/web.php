@@ -29,6 +29,7 @@ Route::post('/logout', function () {
 // Authenticated Application Routes
 Route::middleware(['auth', 'tenant'])->group(function () {
     Route::get('/dashboard', \App\Http\Livewire\DashboardPage::class)->name('dashboard');
+    Route::get('/dashboard-v2', \App\Http\Livewire\DashboardPageV2::class)->name('dashboard.v2');
 
     // CRM
     Route::get('/contacts', \App\Http\Livewire\Crm\ContactsPage::class)->name('crm.contacts');

@@ -97,7 +97,7 @@
                                 <div class="flex items-center justify-between border-t border-border-default/40 pt-3">
                                     <span class="text-sm font-black tracking-tight text-text-primary">₦{{ number_format($deal->value) }}</span>
                                     <div class="flex items-center space-x-1 px-2 py-0.5 rounded-lg border
-                                        {{ $deal->momentum_score >= 70 ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600' : ($deal->momentum_score >= 40 ? 'bg-orange-500/10 border-orange-500/20 text-orange-600' : 'bg-rose-500/10 border-rose-500/20 text-rose-600') }}">
+                                        {{ $deal->momentum_score >= 70 ? 'bg-success-500/10 border-success-500/20 text-success-600' : ($deal->momentum_score >= 40 ? 'bg-warning-500/10 border-warning-500/20 text-warning-600' : 'bg-danger-500/10 border-danger-500/20 text-danger-600') }}">
                                         <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
                                         <span class="text-[10px] font-bold">{{ $deal->momentum_score }}</span>
                                     </div>
@@ -113,7 +113,7 @@
     <!-- New Deal Modal -->
     @if($showNewDealModal)
     <div class="fixed inset-0 z-50 flex items-center justify-center">
-        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" wire:click="$set('showNewDealModal', false)"></div>
+        <div class="absolute inset-0 bg-surface-overlay backdrop-blur-sm" wire:click="$set('showNewDealModal', false)"></div>
         <div class="relative bg-surface-card rounded-2xl border border-border-default/60 shadow-2xl w-full max-w-md mx-4 p-6">
             <div class="flex items-center justify-between mb-5">
                 <h2 class="text-lg font-bold text-text-primary">New Deal</h2>

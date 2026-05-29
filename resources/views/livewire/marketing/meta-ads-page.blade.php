@@ -106,8 +106,8 @@
                             <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase
                                 @if($ad->status === 'active') bg-success-100 text-success-700
                                 @elseif($ad->status === 'paused') bg-warning-100 text-warning-700
-                                @elseif($ad->status === 'draft') bg-slate-100 text-slate-600
-                                @else bg-slate-100 text-slate-500 @endif">
+                                @elseif($ad->status === 'draft') bg-surface-sunken text-text-secondary
+                                @else bg-surface-sunken text-text-tertiary @endif">
                                 {{ $ad->status }}
                             </span>
                         </td>

@@ -119,7 +119,7 @@
                         <span class="text-text-secondary">FICA Progress</span>
                         <span class="text-text-primary">{{ $transaction->ficaProgress }}%</span>
                     </div>
-                    <div class="w-full bg-slate-200 rounded-full h-2">
+                    <div class="w-full bg-surface-raised rounded-full h-2">
                         <div class="h-2 rounded-full transition-all
                             @if($transaction->ficaProgress >= 100) bg-success-500
                             @elseif($transaction->ficaProgress >= 60) bg-warning-500

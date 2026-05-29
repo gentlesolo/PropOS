@@ -1,12 +1,12 @@
 <div>
     <!-- Breadcrumb -->
     <div class="flex items-center gap-3 mb-6">
-        <a href="{{ route('crm.pipeline') }}" class="text-slate-500 hover:text-brand-primary text-sm flex items-center gap-1">
+        <a href="{{ route('crm.pipeline') }}" class="text-text-tertiary hover:text-brand-primary text-sm flex items-center gap-1">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
             Pipeline
         </a>
-        <span class="text-slate-400">/</span>
-        <span class="text-sm font-medium text-slate-700">{{ $deal->title }}</span>
+        <span class="text-text-tertiary">/</span>
+        <span class="text-sm font-medium text-text-secondary">{{ $deal->title }}</span>
     </div>
 
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
@@ -201,7 +201,7 @@
                     <div class="flex items-center justify-between mb-1.5">
                         <p class="text-xs font-medium text-text-primary">{{ $seq->name }}</p>
                         <span class="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase
-                            {{ $seq->status === 'active' ? 'bg-success-100 text-success-700' : 'bg-slate-100 text-slate-600' }}">
+                            {{ $seq->status === 'active' ? 'bg-success-100 text-success-700' : 'bg-surface-sunken text-text-secondary' }}">
                             {{ $seq->status }}
                         </span>
                     </div>
@@ -254,8 +254,8 @@
                                 @case('call') bg-success-100 text-success-700 @break
                                 @case('email') bg-info-100 text-info-700 @break
                                 @case('meeting') bg-warning-100 text-warning-700 @break
-                                @case('system') bg-slate-100 text-slate-500 @break
-                                @default bg-slate-100 text-slate-600
+                                @case('system') bg-surface-sunken text-text-tertiary @break
+                                @default bg-surface-sunken text-text-secondary
                             @endswitch">
                             @switch($activity->type)
                                 @case('call') 📞 @break

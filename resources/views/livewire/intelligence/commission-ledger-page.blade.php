@@ -110,7 +110,7 @@
                                 @if($commission->payment_status === 'paid') bg-success-100 text-success-700
                                 @elseif($commission->payment_status === 'processing') bg-warning-100 text-warning-700
                                 @elseif($commission->payment_status === 'disputed') bg-danger-100 text-danger-700
-                                @else bg-slate-100 text-slate-600 @endif">
+                                @else bg-surface-sunken text-text-secondary @endif">
                                 {{ str_replace('_', ' ', $commission->payment_status) }}
                             </span>
                             @if($commission->paid_at)

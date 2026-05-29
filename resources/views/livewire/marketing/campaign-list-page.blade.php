@@ -29,7 +29,7 @@
         <div class="px-6 py-4 border-b border-border-default/60 flex items-center justify-between bg-surface-sunken/30 gap-4">
             <div class="w-1/3">
                 <input wire:model.debounce.300ms="search" type="text" placeholder="Search campaigns..."
-                    class="w-full px-3 py-2 border border-slate-300 rounded-lg bg-white/50 focus:ring-2 focus:ring-brand-primary text-sm">
+                    class="w-full px-3 py-2 border border-border-strong rounded-lg bg-white/50 focus:ring-2 focus:ring-brand-primary text-sm">
             </div>
             <div class="flex gap-2">
                 @foreach(['' => 'All', 'draft' => 'Draft', 'scheduled' => 'Scheduled', 'active' => 'Active', 'completed' => 'Completed'] as $val => $label)
@@ -58,8 +58,8 @@
                         <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider
                             @if($campaign->status === 'active') bg-success-100 text-success-700
                             @elseif($campaign->status === 'scheduled') bg-info-100 text-info-700
-                            @elseif($campaign->status === 'draft') bg-slate-100 text-slate-600
-                            @else bg-purple-100 text-purple-700 @endif">
+                            @elseif($campaign->status === 'draft') bg-surface-sunken text-text-secondary
+                            @else bg-brand-primary/10 text-brand-primary @endif">
                             {{ $campaign->status }}
                         </span>
                     </div>

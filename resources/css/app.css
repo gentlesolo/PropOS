@@ -1,6 +1,8 @@
 @import 'tailwindcss';
 @import './tokens.css';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
@@ -154,8 +156,8 @@
 
 /* Light mode refinement for glass effects */
 html:not(.dark) .glass-panel {
-    border-color: rgba(15, 118, 110, 0.14); /* Crisp teal brand tint for border */
-    box-shadow: 0 10px 40px -10px rgba(15, 23, 42, 0.08), 0 2px 8px -2px rgba(15, 118, 110, 0.04);
+    border-color: rgba(16, 185, 129, 0.14); /* Crisp emerald brand tint for border */
+    box-shadow: 0 10px 40px -10px rgba(24, 24, 27, 0.08), 0 2px 8px -2px rgba(16, 185, 129, 0.04);
 }
 
 /* Dark mode refinement for glass effects */

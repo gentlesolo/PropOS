@@ -14,11 +14,15 @@
 
     <!-- Theme Initialization script to prevent FOUC -->
     <script>
-        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
+        function applyTheme() {
+            if (localStorage.getItem('color-theme') === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
         }
+        applyTheme();
+        document.addEventListener('livewire:navigated', applyTheme);
     </script>
 
     <!-- Styles -->
@@ -39,7 +43,7 @@
     </style>
 </head>
 <body class="h-full font-sans antialiased text-text-primary bg-surface-page transition-colors duration-300">
-    <div class="flex h-screen overflow-hidden">
+    <div x-data="{ sidebarOpen: false }" class="flex h-screen overflow-hidden">
         <!-- Sidebar Navigation -->
         <livewire:shared.sidebar />
 

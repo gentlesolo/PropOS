@@ -1,7 +1,12 @@
 <header class="flex items-center justify-between h-16 px-6 bg-surface-card/80 backdrop-blur-xl border-b border-border-default/60 flex-shrink-0 transition-colors duration-300">
-    <!-- Search Bar -->
-    <div class="flex flex-1">
-        <div class="w-full max-w-xs relative text-text-secondary focus-within:text-text-primary">
+    <!-- Mobile Menu Button & Search -->
+    <div class="flex flex-1 items-center space-x-4">
+        <button type="button" @click="sidebarOpen = true" class="md:hidden p-2 -ml-2 rounded-xl text-text-secondary hover:text-text-primary hover:bg-surface-raised transition-colors focus:outline-none">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+        </button>
+        <div class="w-full max-w-xs relative text-text-secondary focus-within:text-text-primary hidden sm:block">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.602 10.602Z" />
@@ -32,7 +37,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
             </svg>
             @if($notificationsCount > 0)
-                <span class="absolute top-1.5 right-1.5 flex h-2 w-2 rounded-full bg-rose-500 ring-2 ring-surface-card"></span>
+                <span class="absolute top-1.5 right-1.5 flex h-2 w-2 rounded-full bg-danger-500 ring-2 ring-surface-card"></span>
             @endif
         </button>
 

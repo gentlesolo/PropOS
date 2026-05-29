@@ -1,21 +1,20 @@
 /*
  * PropOS Design Tokens
  * ─────────────────────────────────────────────────────────────────────────────
- * Brand:     Teal (primary) · Blue (secondary) · Copper/Orange (accent)
- * Audience:  Real estate agencies in African & emerging markets
- * Philosophy: AI-native · Mobile-first · Unified
+ * Brand:     Emerald (primary) · Zinc (secondary) · Amber (accent)
+ * Audience:  Real estate agencies & Fintech platforms
+ * Philosophy: AI-native · Mobile-first · Premium Dark
  * ─────────────────────────────────────────────────────────────────────────────
  *
  * BRAND PALETTE:
  *
- *   Primary   #0F766E  Teal-700    — Sophisticated, luxury real estate, trustworthy
- *   Secondary #1D4ED8  Blue-700    — Corporate depth, institutional confidence
- *   Accent    #C2410C  Orange-700  — Copper warmth, energy, premium calls-to-action
+ *   Primary   #10B981  Emerald-500 — Growth, wealth, clear action
+ *   Secondary #18181B  Zinc-900    — Corporate depth, premium monochrome
+ *   Accent    #F59E0B  Amber-500   — Warmth, energy, premium calls-to-action
  *
  * Alternatives:
- *   Violet    #6D28D9  Violet-700  + #B45309 Amber-700  (AI-forward, more vibrant)
- *   Cobalt    #1D4ED8  Blue-700    + #059669 Emerald-600 (corporate/institutional)
- *   Royal     #4C1D95  Violet-900  + #C2410C Orange-700  (darkest, most regal)
+ *   Mint      #34D399  Emerald-400 + #27272A Zinc-800  (Lighter tech feel)
+ *   Obsidian  #09090B  Zinc-950    + #059669 Emerald-600 (Darkest, most regal)
  */
 
 :root {
@@ -24,9 +23,9 @@
        1. BRAND  — dynamically overridden per-tenant
        ========================================================================= */
 
-    --brand-primary:    #0F766E;  /* Teal-700   */
-    --brand-secondary:  #1D4ED8;  /* Blue-700   */
-    --brand-accent:     #C2410C;  /* Orange-700 */
+    --brand-primary:    #10B981;  /* Emerald-500 */
+    --brand-secondary:  #18181B;  /* Zinc-900  */
+    --brand-accent:     #F59E0B;  /* Amber-500 */
 
     --brand-primary-fg:   #ffffff;
     --brand-secondary-fg: #ffffff;
@@ -36,57 +35,57 @@
        2. PRIMITIVE COLOR SCALES
        ========================================================================= */
 
-    /* Primary — Teal */
-    --color-primary-50:  #F0FDFA;
-    --color-primary-100: #CCFBF1;
-    --color-primary-200: #99F6E4;
-    --color-primary-300: #5EEAD4;
-    --color-primary-400: #2DD4BF;
-    --color-primary-500: #14B8A6;
-    --color-primary-600: #0D9488;
-    --color-primary-700: #0F766E;
-    --color-primary-800: #115E59;
-    --color-primary-900: #134E4A;
-    --color-primary-950: #042F2E;
+    /* Primary — Emerald */
+    --color-primary-50:  #ECFDF5;
+    --color-primary-100: #D1FAE5;
+    --color-primary-200: #A7F3D0;
+    --color-primary-300: #6EE7B7;
+    --color-primary-400: #34D399;
+    --color-primary-500: #10B981;
+    --color-primary-600: #059669;
+    --color-primary-700: #047857;
+    --color-primary-800: #065F46;
+    --color-primary-900: #064E3B;
+    --color-primary-950: #022C22;
 
-    /* Secondary — Blue */
-    --color-secondary-50:  #EFF6FF;
-    --color-secondary-100: #DBEAFE;
-    --color-secondary-200: #BFDBFE;
-    --color-secondary-300: #93C5FD;
-    --color-secondary-400: #60A5FA;
-    --color-secondary-500: #3B82F6;
-    --color-secondary-600: #2563EB;
-    --color-secondary-700: #1D4ED8;
-    --color-secondary-800: #1E40AF;
-    --color-secondary-900: #1E3A8A;
-    --color-secondary-950: #172554;
+    /* Secondary — Zinc */
+    --color-secondary-50:  #FAFAFA;
+    --color-secondary-100: #F4F4F5;
+    --color-secondary-200: #E4E4E7;
+    --color-secondary-300: #D4D4D8;
+    --color-secondary-400: #A1A1AA;
+    --color-secondary-500: #71717A;
+    --color-secondary-600: #52525B;
+    --color-secondary-700: #3F3F46;
+    --color-secondary-800: #27272A;
+    --color-secondary-900: #18181B;
+    --color-secondary-950: #09090B;
 
-    /* Accent — Orange (Copper) */
-    --color-accent-50:  #FFF7ED;
-    --color-accent-100: #FFEDD5;
-    --color-accent-200: #FED7AA;
-    --color-accent-300: #FDBA74;
-    --color-accent-400: #FB923C;
-    --color-accent-500: #F97316;
-    --color-accent-600: #EA580C;
-    --color-accent-700: #C2410C;
-    --color-accent-800: #9A3412;
-    --color-accent-900: #7C2D12;
-    --color-accent-950: #431407;
+    /* Accent — Amber */
+    --color-accent-50:  #FFFBEB;
+    --color-accent-100: #FEF3C7;
+    --color-accent-200: #FDE68A;
+    --color-accent-300: #FCD34D;
+    --color-accent-400: #FBBF24;
+    --color-accent-500: #F59E0B;
+    --color-accent-600: #D97706;
+    --color-accent-700: #B45309;
+    --color-accent-800: #92400E;
+    --color-accent-900: #78350F;
+    --color-accent-950: #451A03;
 
-    /* Neutral — Slate */
-    --color-neutral-50:  #F8FAFC;
-    --color-neutral-100: #F1F5F9;
-    --color-neutral-200: #E2E8F0;
-    --color-neutral-300: #CBD5E1;
-    --color-neutral-400: #94A3B8;
-    --color-neutral-500: #64748B;
-    --color-neutral-600: #475569;
-    --color-neutral-700: #334155;
-    --color-neutral-800: #1E293B;
-    --color-neutral-900: #0F172A;
-    --color-neutral-950: #020617;
+    /* Neutral — Zinc */
+    --color-neutral-50:  #FAFAFA;
+    --color-neutral-100: #F4F4F5;
+    --color-neutral-200: #E4E4E7;
+    --color-neutral-300: #D4D4D8;
+    --color-neutral-400: #A1A1AA;
+    --color-neutral-500: #71717A;
+    --color-neutral-600: #52525B;
+    --color-neutral-700: #3F3F46;
+    --color-neutral-800: #27272A;
+    --color-neutral-900: #18181B;
+    --color-neutral-950: #09090B;
 
     /* Success — Green */
     --color-success-50:  #F0FDF4;
@@ -334,9 +333,9 @@
     --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
 
     /* Brand-tinted glow shadows */
-    --shadow-brand-sm: 0 2px 12px 0 rgba(15, 118, 110, 0.18);
-    --shadow-brand-md: 0 4px 20px 0 rgba(15, 118, 110, 0.22);
-    --shadow-brand-lg: 0 8px 32px 0 rgba(15, 118, 110, 0.28);
+    --shadow-brand-sm: 0 2px 12px 0 rgba(16, 185, 129, 0.18);
+    --shadow-brand-md: 0 4px 20px 0 rgba(16, 185, 129, 0.22);
+    --shadow-brand-lg: 0 8px 32px 0 rgba(16, 185, 129, 0.28);
 
     /* =========================================================================
        9. TRANSITIONS & ANIMATIONS
@@ -381,7 +380,7 @@
     --gradient-hero:          linear-gradient(135deg, var(--color-primary-950) 0%, var(--color-primary-700) 50%, var(--color-secondary-700) 100%);
     --gradient-subtle:        linear-gradient(135deg, var(--color-primary-50) 0%, var(--color-secondary-50) 100%);
     --gradient-surface:       linear-gradient(180deg, var(--color-neutral-50) 0%, #ffffff 100%);
-    --gradient-card-border:   linear-gradient(135deg, rgba(15,118,110,0.3) 0%, rgba(29,78,216,0.3) 100%);
+    --gradient-card-border:   linear-gradient(135deg, rgba(16,185,129,0.3) 0%, rgba(24,24,27,0.3) 100%);
 
     /* =========================================================================
        11. GLASS EFFECTS
@@ -513,81 +512,6 @@
     --scrollbar-track:       var(--color-neutral-100);
 }
 
-/* =============================================================================
-   DARK MODE
-   ============================================================================= */
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        /* Surfaces */
-        --surface-page:    var(--color-neutral-950);
-        --surface-card:    var(--color-neutral-900);
-        --surface-raised:  var(--color-neutral-800);
-        --surface-sunken:  var(--color-neutral-950);
-        --surface-input:   var(--color-neutral-800);
-        --surface-overlay: rgba(2, 6, 23, 0.80);
-
-        /* Text */
-        --text-primary:    var(--color-neutral-50);
-        --text-secondary:  var(--color-neutral-400);
-        --text-tertiary:   var(--color-neutral-500);
-        --text-disabled:   var(--color-neutral-700);
-        --text-link:       var(--color-primary-400);
-        --text-link-hover: var(--color-primary-300);
-
-        /* Borders */
-        --border-subtle:  var(--color-neutral-900);
-        --border-default: var(--color-neutral-800);
-        --border-strong:  var(--color-neutral-700);
-
-        /* Glass */
-        --glass-bg:     var(--glass-bg-dark);
-        --glass-border: var(--glass-border-dark);
-
-        /* Feedback semantic surfaces */
-        --color-success-bg:     var(--color-success-900);
-        --color-success-text:   var(--color-success-400);
-        --color-success-border: rgba(74, 222, 128, 0.20);
-
-        --color-info-bg:     var(--color-info-900);
-        --color-info-text:   var(--color-info-400);
-        --color-info-border: rgba(56, 189, 248, 0.20);
-
-        --color-warning-bg:     var(--color-warning-900);
-        --color-warning-text:   var(--color-warning-400);
-        --color-warning-border: rgba(251, 191, 36, 0.20);
-
-        --color-danger-bg:     var(--color-danger-900);
-        --color-danger-text:   var(--color-danger-400);
-        --color-danger-border: rgba(251, 113, 133, 0.20);
-
-        /* Interactive states */
-        --state-hover-bg:      rgba(255, 255, 255, 0.06);
-        --state-active-bg:     rgba(255, 255, 255, 0.10);
-        --state-selected-bg:   var(--color-primary-950);
-        --state-selected-text: var(--color-primary-400);
-        --state-focus-bg:      var(--color-primary-950);
-
-        /* Brand-derived tints */
-        --brand-primary-tint:  var(--color-primary-950);
-        --brand-primary-muted: var(--color-primary-900);
-
-        --brand-secondary-tint:  var(--color-secondary-950);
-        --brand-secondary-muted: var(--color-secondary-900);
-
-        --brand-accent-tint:  var(--color-accent-950);
-        --brand-accent-muted: var(--color-accent-900);
-
-        /* Gradients */
-        --gradient-surface: linear-gradient(180deg, var(--color-neutral-950) 0%, var(--color-neutral-900) 100%);
-        --gradient-subtle:  linear-gradient(135deg, var(--color-primary-950) 0%, var(--color-secondary-950) 100%);
-
-        /* Scrollbars */
-        --scrollbar-thumb:       var(--color-neutral-700);
-        --scrollbar-thumb-hover: var(--color-neutral-600);
-        --scrollbar-track:       var(--color-neutral-900);
-    }
-}
 
 /* Tailwind dark-class variant */
 .dark {

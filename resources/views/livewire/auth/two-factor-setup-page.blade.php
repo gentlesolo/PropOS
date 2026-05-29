@@ -1,11 +1,11 @@
 <div class="max-w-lg mx-auto">
     <div class="flex items-center gap-3 mb-6">
-        <a href="{{ route('settings.profile') }}" class="text-slate-500 hover:text-brand-primary text-sm flex items-center gap-1">
+        <a href="{{ route('settings.profile') }}" class="text-text-tertiary hover:text-brand-primary text-sm flex items-center gap-1">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
             Settings
         </a>
-        <span class="text-slate-400">/</span>
-        <span class="text-sm font-medium text-slate-700">Two-Factor Authentication</span>
+        <span class="text-text-tertiary">/</span>
+        <span class="text-sm font-medium text-text-secondary">Two-Factor Authentication</span>
     </div>
 
     <div class="glass-panel rounded-2xl border border-border-default/60 p-6">

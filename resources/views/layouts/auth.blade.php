@@ -14,11 +14,15 @@
 
     <!-- Theme Initialization script to prevent FOUC -->
     <script>
-        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
+        function applyTheme() {
+            if (localStorage.getItem('color-theme') === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
         }
+        applyTheme();
+        document.addEventListener('livewire:navigated', applyTheme);
     </script>
 
     <!-- Styles -->
@@ -76,7 +80,7 @@
                         <!-- Tiny header representing an active agency context -->
                         <div class="flex items-center justify-between mb-6">
                             <div class="flex items-center space-x-2">
-                                <div class="h-2 w-2 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse"></div>
+                                <div class="h-2 w-2 rounded-full bg-success-500 dark:bg-success-400 animate-pulse"></div>
                                 <span class="text-xs font-semibold tracking-wider uppercase text-text-secondary">PropOS Copilot Active</span>
                             </div>
                             <span class="text-[10px] font-mono text-text-tertiary">v1.2.0-stable</span>
@@ -84,7 +88,7 @@
                         
                         <div class="space-y-4">
                             <div class="p-3.5 bg-white/45 dark:bg-white/5 rounded-xl border border-border-default/60 dark:border-white/10 flex items-start space-x-3 transition-colors duration-300">
-                                <div class="mt-0.5 h-6 w-6 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-success-200 flex items-center justify-center text-xs font-bold">✓</div>
+                                <div class="mt-0.5 h-6 w-6 rounded-lg bg-success-500/10 text-success-600 dark:text-success-200 flex items-center justify-center text-xs font-bold">✓</div>
                                 <div>
                                     <div class="text-sm font-semibold text-text-primary">Lead Auto-Responded</div>
                                     <div class="text-xs text-text-secondary">WhatsApp response dispatched to Sarah K. for luxury listing.</div>
@@ -92,7 +96,7 @@
                             </div>
                             
                             <div class="p-3.5 bg-white/45 dark:bg-white/5 rounded-xl border border-border-default/60 dark:border-white/10 flex items-start space-x-3 transition-colors duration-300">
-                                <div class="mt-0.5 h-6 w-6 rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-info-200 flex items-center justify-center text-xs font-bold">⚡</div>
+                                <div class="mt-0.5 h-6 w-6 rounded-lg bg-brand-primary/10 text-brand-primary dark:text-brand-primary-muted flex items-center justify-center text-xs font-bold">⚡</div>
                                 <div>
                                     <div class="text-sm font-semibold text-text-primary">AI Negotiation Complete</div>
                                     <div class="text-xs text-text-secondary">Recommended counters generated for Nairobi Heights project.</div>

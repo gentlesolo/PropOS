@@ -136,7 +136,7 @@
             </div>
             <p class="text-xl font-black text-text-primary">₦{{ number_format($stageData['weighted'] / 1000000, 1) }}M</p>
             <p class="text-[10px] text-text-secondary mt-0.5">weighted · ₦{{ number_format($stageData['value'] / 1000000, 1) }}M total</p>
-            <div class="w-full bg-slate-200 rounded-full h-1.5 mt-3">
+            <div class="w-full bg-surface-raised rounded-full h-1.5 mt-3">
                 <div class="bg-brand-primary h-1.5 rounded-full" style="width: {{ $data['weighted_forecast'] > 0 ? min(100, ($stageData['weighted'] / $data['weighted_forecast']) * 100) : 0 }}%"></div>
             </div>
         </div>

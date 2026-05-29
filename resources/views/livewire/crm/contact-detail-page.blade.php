@@ -1,11 +1,11 @@
 <div>
     <div class="flex items-center gap-3 mb-6">
-        <a href="{{ route('crm.contacts') }}" class="text-slate-500 hover:text-brand-primary text-sm flex items-center gap-1">
+        <a href="{{ route('crm.contacts') }}" class="text-text-tertiary hover:text-brand-primary text-sm flex items-center gap-1">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
             Contacts
         </a>
-        <span class="text-slate-400">/</span>
-        <span class="text-sm text-slate-700 dark:text-slate-300 font-medium">{{ $contact->full_name }}</span>
+        <span class="text-text-tertiary">/</span>
+        <span class="text-sm text-text-secondary dark:text-text-secondary font-medium">{{ $contact->full_name }}</span>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -66,7 +66,7 @@
                 @else
                 <div>
                     <h2 class="text-xl font-bold text-text-primary">{{ $contact->full_name }}</h2>
-                    <span class="inline-block mt-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 uppercase tracking-wider">{{ $contact->type }}</span>
+                    <span class="inline-block mt-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-surface-sunken text-text-secondary uppercase tracking-wider">{{ $contact->type }}</span>
                     <div class="mt-4 space-y-2.5 text-sm">
                         @if($contact->email)
                         <div class="flex items-center gap-2 text-text-secondary">
@@ -92,7 +92,7 @@
                             <span class="text-xs font-medium text-text-secondary">Intent Score</span>
                             <span class="text-xs font-bold text-text-primary">{{ $contact->intent_score }}%</span>
                         </div>
-                        <div class="w-full bg-slate-200 rounded-full h-2">
+                        <div class="w-full bg-surface-raised rounded-full h-2">
                             <div class="h-2 rounded-full transition-all duration-500
                                 @if($contact->intent_score >= 80) bg-success-500
                                 @elseif($contact->intent_score >= 50) bg-warning-500
@@ -170,9 +170,9 @@
                                 @case('call') bg-success-100 text-success-700 @break
                                 @case('email') bg-info-100 text-info-700 @break
                                 @case('meeting') bg-warning-100 text-warning-700 @break
-                                @case('sms') bg-purple-100 text-purple-700 @break
-                                @case('status_change') bg-slate-100 text-slate-600 @break
-                                @default bg-slate-100 text-slate-600
+                                @case('sms') bg-brand-primary/10 text-brand-primary @break
+                                @case('status_change') bg-surface-sunken text-text-secondary @break
+                                @default bg-surface-sunken text-text-secondary
                             @endswitch">
                             @switch($activity->type)
                                 @case('call') 📞 @break

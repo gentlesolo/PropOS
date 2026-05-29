@@ -53,8 +53,8 @@
                     <div class="flex items-center gap-4 px-5 py-4">
                         <div class="h-8 w-8 rounded-full flex items-center justify-center text-sm font-black shrink-0
                             @if($i === 0) bg-warning-400 text-warning-900
-                            @elseif($i === 1) bg-slate-300 text-slate-700
-                            @elseif($i === 2) bg-orange-300 text-orange-800
+                            @elseif($i === 1) bg-border-strong text-text-secondary
+                            @elseif($i === 2) bg-warning-300 text-warning-800
                             @else bg-surface-raised text-text-tertiary @endif">
                             {{ $i === 0 ? '🥇' : ($i === 1 ? '🥈' : ($i === 2 ? '🥉' : $i + 1)) }}
                         </div>
@@ -69,7 +69,7 @@
                                 </p>
                                 <span class="text-xs font-bold text-text-secondary ml-2 shrink-0">{{ $entry['pct'] }}%</span>
                             </div>
-                            <div class="w-full bg-slate-200 rounded-full h-1.5">
+                            <div class="w-full bg-surface-raised rounded-full h-1.5">
                                 <div class="h-1.5 rounded-full bg-brand-primary transition-all" style="width: {{ $entry['pct'] }}%"></div>
                             </div>
                         </div>

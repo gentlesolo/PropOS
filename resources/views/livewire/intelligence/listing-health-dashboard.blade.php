@@ -31,7 +31,7 @@
         <div class="px-5 py-4 border-b border-border-default/60 flex items-center justify-between bg-surface-sunken/30 gap-4">
             <div class="flex-1 max-w-xs">
                 <input wire:model.debounce.300ms="search" type="text" placeholder="Search by address..."
-                    class="w-full px-3 py-2 border border-slate-300 rounded-lg bg-white/50 focus:ring-2 focus:ring-brand-primary text-sm">
+                    class="w-full px-3 py-2 border border-border-strong rounded-lg bg-white/50 focus:ring-2 focus:ring-brand-primary text-sm">
             </div>
             <div class="flex gap-2">
                 @foreach(['' => 'All', 'at_risk' => 'At Risk', 'moderate' => 'Moderate', 'healthy' => 'Healthy'] as $val => $label)
@@ -78,7 +78,7 @@
                         </td>
                         <td class="py-4 px-5">
                             <div class="flex items-center gap-2">
-                                <div class="w-14 bg-slate-200 rounded-full h-2">
+                                <div class="w-14 bg-surface-raised rounded-full h-2">
                                     <div class="h-2 rounded-full
                                         @if($listing->health_score >= 80) bg-success-500
                                         @elseif($listing->health_score >= 50) bg-warning-500

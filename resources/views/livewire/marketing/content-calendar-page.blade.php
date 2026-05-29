@@ -59,11 +59,11 @@
                                 class="w-full text-left px-1.5 py-0.5 rounded text-[9px] font-bold truncate transition-colors
                                 @if($selectedContentId === $content->id) ring-1 ring-brand-primary @endif
                                 @switch($content->channel)
-                                    @case('instagram') bg-purple-100 text-purple-700 @break
-                                    @case('facebook') bg-blue-100 text-blue-700 @break
-                                    @case('linkedin') bg-sky-100 text-sky-700 @break
+                                    @case('instagram') bg-brand-primary/10 text-brand-primary @break
+                                    @case('facebook') bg-brand-secondary/10 text-brand-secondary @break
+                                    @case('linkedin') bg-info-100 text-info-700 @break
                                     @case('email') bg-success-100 text-success-700 @break
-                                    @default bg-slate-100 text-slate-600
+                                    @default bg-surface-sunken text-text-secondary
                                 @endswitch">
                                 {{ strtoupper(substr($content->channel, 0, 2)) }} · {{ $content->campaign?->name }}
                             </button>
@@ -80,7 +80,7 @@
 
             <!-- Channel Legend -->
             <div class="mt-4 flex gap-3 flex-wrap">
-                @foreach(['instagram' => ['bg-purple-100 text-purple-700', 'Instagram'], 'facebook' => ['bg-blue-100 text-blue-700', 'Facebook'], 'linkedin' => ['bg-sky-100 text-sky-700', 'LinkedIn'], 'email' => ['bg-success-100 text-success-700', 'Email']] as $channel => [$classes, $label])
+                @foreach(['instagram' => ['bg-brand-primary/10 text-brand-primary', 'Instagram'], 'facebook' => ['bg-brand-secondary/10 text-brand-secondary', 'Facebook'], 'linkedin' => ['bg-info-100 text-info-700', 'LinkedIn'], 'email' => ['bg-success-100 text-success-700', 'Email']] as $channel => [$classes, $label])
                 <div class="flex items-center gap-1.5">
                     <div class="h-3 w-3 rounded {{ $classes }} inline-block"></div>
                     <span class="text-xs text-text-secondary font-medium">{{ $label }}</span>
@@ -109,11 +109,11 @@
                             <p class="text-xs font-medium text-text-secondary">Channel</p>
                             <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase
                                 @switch($selectedContent->channel)
-                                    @case('instagram') bg-purple-100 text-purple-700 @break
-                                    @case('facebook') bg-blue-100 text-blue-700 @break
-                                    @case('linkedin') bg-sky-100 text-sky-700 @break
+                                    @case('instagram') bg-brand-primary/10 text-brand-primary @break
+                                    @case('facebook') bg-brand-secondary/10 text-brand-secondary @break
+                                    @case('linkedin') bg-info-100 text-info-700 @break
                                     @case('email') bg-success-100 text-success-700 @break
-                                    @default bg-slate-100 text-slate-600
+                                    @default bg-surface-sunken text-text-secondary
                                 @endswitch">
                                 {{ $selectedContent->channel }}
                             </span>

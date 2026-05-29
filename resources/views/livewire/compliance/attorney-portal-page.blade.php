@@ -25,7 +25,7 @@
     <!-- Search -->
     <div class="mb-4">
         <input wire:model.debounce.300ms="search" type="text" placeholder="Search transactions by deal title..."
-            class="w-full max-w-sm px-3 py-2 border border-slate-300 rounded-xl bg-white/50 focus:ring-2 focus:ring-brand-primary text-sm">
+            class="w-full max-w-sm px-3 py-2 border border-border-strong rounded-xl bg-white/50 focus:ring-2 focus:ring-brand-primary text-sm">
     </div>
 
     <!-- Transaction List -->
@@ -39,7 +39,7 @@
                         <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase shrink-0
                             @if($transaction->status === 'completed') bg-success-100 text-success-700
                             @elseif($transaction->status === 'conveyancing') bg-brand-primary/10 text-brand-primary
-                            @elseif($transaction->status === 'registration') bg-purple-100 text-purple-700
+                            @elseif($transaction->status === 'registration') bg-brand-primary/10 text-brand-primary
                             @else bg-warning-100 text-warning-700 @endif">
                             {{ str_replace('_', ' ', $transaction->status) }}
                         </span>

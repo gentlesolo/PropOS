@@ -15,7 +15,7 @@
     <form wire:submit.prevent="submit" class="space-y-5">
         <!-- Agency Details -->
         <div class="border-b border-border-subtle pb-5 mb-5">
-            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Agency Details</h3>
+            <h3 class="text-xs font-bold text-text-tertiary uppercase tracking-wider mb-4">Agency Details</h3>
             
             <div class="space-y-4">
                 <div>
@@ -38,7 +38,7 @@
 
         <!-- Principal Details -->
         <div>
-            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Owner Profile</h3>
+            <h3 class="text-xs font-bold text-text-tertiary uppercase tracking-wider mb-4">Owner Profile</h3>
 
             <div class="space-y-4">
                 <div class="grid grid-cols-2 gap-4">

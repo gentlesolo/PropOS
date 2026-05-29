@@ -1,8 +1,8 @@
 <div>
     <div class="flex items-center justify-between mb-8">
         <div>
-            <h1 class="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">Contacts CRM</h1>
-            <p class="mt-2 text-slate-600 dark:text-slate-400">Track agency customer relationships, buyer/seller leads, and communication history.</p>
+            <h1 class="text-3xl font-extrabold tracking-tight text-text-primary dark:text-white">Contacts CRM</h1>
+            <p class="mt-2 text-text-secondary dark:text-text-tertiary">Track agency customer relationships, buyer/seller leads, and communication history.</p>
         </div>
         <div class="flex space-x-3">
             <button wire:click="$set('showCreateModal', true)" class="px-4 py-2 bg-brand-primary text-white rounded-lg hover:bg-brand-secondary font-medium text-sm transition-colors hover-spring">
@@ -14,19 +14,19 @@
     <!-- Quick Stats -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div class="glass-panel p-6 rounded-2xl border border-border-default/60">
-            <h3 class="text-sm font-medium text-slate-500 dark:text-slate-400">Total Active Contacts</h3>
-            <p class="mt-2 text-3xl font-bold text-slate-900 dark:text-white">{{ $totalActive }}</p>
+            <h3 class="text-sm font-medium text-text-tertiary dark:text-text-tertiary">Total Active Contacts</h3>
+            <p class="mt-2 text-3xl font-bold text-text-primary dark:text-white">{{ $totalActive }}</p>
         </div>
         <div class="glass-panel p-6 rounded-2xl border border-border-default/60">
-            <h3 class="text-sm font-medium text-slate-500 dark:text-slate-400">New Leads (This Week)</h3>
+            <h3 class="text-sm font-medium text-text-tertiary dark:text-text-tertiary">New Leads (This Week)</h3>
             <p class="mt-2 text-3xl font-bold text-success-600 dark:text-success-400">{{ $newThisWeek }}</p>
         </div>
         <div class="glass-panel p-6 rounded-2xl border border-border-default/60">
-            <h3 class="text-sm font-medium text-slate-500 dark:text-slate-400">Hot Buyers</h3>
-            <p class="mt-2 text-3xl font-bold text-orange-600 dark:text-orange-400">{{ $hotBuyers }}</p>
+            <h3 class="text-sm font-medium text-text-tertiary dark:text-text-tertiary">Hot Buyers</h3>
+            <p class="mt-2 text-3xl font-bold text-warning-600 dark:text-warning-400">{{ $hotBuyers }}</p>
         </div>
         <div class="glass-panel p-6 rounded-2xl border border-border-default/60">
-            <h3 class="text-sm font-medium text-slate-500 dark:text-slate-400">Sellers (Pending)</h3>
+            <h3 class="text-sm font-medium text-text-tertiary dark:text-text-tertiary">Sellers (Pending)</h3>
             <p class="mt-2 text-3xl font-bold text-info-600 dark:text-info-400">{{ $pendingSellers }}</p>
         </div>
     </div>
@@ -36,10 +36,10 @@
         <div class="px-6 py-4 border-b border-border-default/60 flex items-center justify-between bg-surface-sunken/30 gap-4">
             <div class="w-1/3">
                 <input wire:model.debounce.300ms="search" type="text" placeholder="Search by name, email, or phone..."
-                    class="w-full px-3 py-2 border border-slate-300 rounded-lg bg-white/50 focus:ring-2 focus:ring-brand-primary focus:border-brand-primary text-sm">
+                    class="w-full px-3 py-2 border border-border-strong rounded-lg bg-white/50 focus:ring-2 focus:ring-brand-primary focus:border-brand-primary text-sm">
             </div>
             <div class="flex space-x-2">
-                <select wire:model="filterType" class="px-3 py-2 border border-slate-300 rounded-lg bg-white text-slate-700 text-sm">
+                <select wire:model="filterType" class="px-3 py-2 border border-border-strong rounded-lg bg-white text-text-secondary text-sm">
                     <option value="">All Types</option>
                     <option value="buyer">Buyers</option>
                     <option value="seller">Sellers</option>
@@ -47,7 +47,7 @@
                     <option value="tenant">Tenants</option>
                     <option value="investor">Investors</option>
                 </select>
-                <select wire:model="filterStatus" class="px-3 py-2 border border-slate-300 rounded-lg bg-white text-slate-700 text-sm">
+                <select wire:model="filterStatus" class="px-3 py-2 border border-border-strong rounded-lg bg-white text-text-secondary text-sm">
                     <option value="">All Statuses</option>
                     <option value="new">New</option>
                     <option value="active">Active</option>
@@ -62,12 +62,12 @@
             <table class="min-w-full divide-y divide-border-default/60">
                 <thead class="bg-surface-sunken/20">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Name & Contact</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Type</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Assigned To</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Intent</th>
-                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-text-tertiary uppercase tracking-wider">Name & Contact</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-text-tertiary uppercase tracking-wider">Type</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-text-tertiary uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-text-tertiary uppercase tracking-wider">Assigned To</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-text-tertiary uppercase tracking-wider">Intent</th>
+                        <th class="px-6 py-3 text-right text-xs font-semibold text-text-tertiary uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-border-default/60 bg-white/10">
@@ -79,13 +79,13 @@
                                     {{ strtoupper(substr($contact->first_name,0,1).substr($contact->last_name,0,1)) }}
                                 </div>
                                 <div class="ml-4">
-                                    <div class="text-sm font-medium text-slate-900 dark:text-white">{{ $contact->first_name }} {{ $contact->last_name }}</div>
-                                    <div class="text-sm text-slate-500">{{ $contact->email ?? $contact->phone ?? '—' }}</div>
+                                    <div class="text-sm font-medium text-text-primary dark:text-white">{{ $contact->first_name }} {{ $contact->last_name }}</div>
+                                    <div class="text-sm text-text-tertiary">{{ $contact->email ?? $contact->phone ?? '—' }}</div>
                                 </div>
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-slate-100 text-slate-800 uppercase tracking-wider">
+                            <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-surface-sunken text-text-primary uppercase tracking-wider">
                                 {{ str_replace('_', ' ', $contact->type) }}
                             </span>
                         </td>
@@ -94,23 +94,23 @@
                                 @if($contact->status === 'qualified') bg-success-100 text-success-800
                                 @elseif($contact->status === 'active') bg-info-100 text-info-800
                                 @elseif($contact->status === 'nurturing') bg-warning-100 text-warning-800
-                                @else bg-slate-100 text-slate-800 @endif uppercase tracking-wider">
+                                @else bg-surface-sunken text-text-primary @endif uppercase tracking-wider">
                                 {{ $contact->status }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-text-tertiary">
                             {{ $contact->agent ? $contact->agent->first_name : 'Unassigned' }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center gap-2">
-                                <div class="w-16 bg-slate-200 rounded-full h-1.5">
+                                <div class="w-16 bg-surface-raised rounded-full h-1.5">
                                     <div class="h-1.5 rounded-full
                                         @if($contact->intent_score >= 80) bg-success-500
                                         @elseif($contact->intent_score >= 50) bg-warning-500
-                                        @else bg-slate-400 @endif"
+                                        @else bg-text-tertiary @endif"
                                         style="width: {{ $contact->intent_score }}%"></div>
                                 </div>
-                                <span class="text-xs text-slate-500">{{ $contact->intent_score }}%</span>
+                                <span class="text-xs text-text-tertiary">{{ $contact->intent_score }}%</span>
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -122,8 +122,8 @@
                         <td colspan="6" class="px-6 py-12 text-center">
                             <div class="flex flex-col items-center justify-center">
                                 <div class="h-12 w-12 rounded-full bg-brand-primary/10 flex items-center justify-center mb-3 text-xl">👥</div>
-                                <h3 class="text-sm font-medium text-slate-900 dark:text-white">No contacts found</h3>
-                                <p class="mt-1 text-sm text-slate-500">
+                                <h3 class="text-sm font-medium text-text-primary dark:text-white">No contacts found</h3>
+                                <p class="mt-1 text-sm text-text-tertiary">
                                     @if($search || $filterType || $filterStatus)
                                         Try adjusting your filters.
                                     @else
@@ -151,7 +151,7 @@
     <!-- Create Contact Slide-over -->
     @if($showCreateModal)
     <div class="relative z-50" role="dialog" aria-modal="true">
-        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+        <div class="fixed inset-0 bg-surface-overlay backdrop-blur-sm"></div>
         <div class="fixed inset-0 overflow-hidden">
             <div class="absolute inset-0 overflow-hidden">
                 <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">

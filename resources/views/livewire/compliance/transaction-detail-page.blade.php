@@ -1,12 +1,12 @@
 <div>
     <!-- Breadcrumb -->
     <div class="flex items-center gap-3 mb-6">
-        <a href="{{ route('compliance.transactions') }}" class="text-slate-500 hover:text-brand-primary text-sm flex items-center gap-1">
+        <a href="{{ route('compliance.transactions') }}" class="text-text-tertiary hover:text-brand-primary text-sm flex items-center gap-1">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
             Transactions
         </a>
-        <span class="text-slate-400">/</span>
-        <span class="text-sm font-medium text-slate-700">{{ $transaction->reference }}</span>
+        <span class="text-text-tertiary">/</span>
+        <span class="text-sm font-medium text-text-secondary">{{ $transaction->reference }}</span>
     </div>
 
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
@@ -58,7 +58,7 @@
                 </dl>
 
                 <!-- FICA Progress Bar -->
-                <div class="w-full bg-slate-200 rounded-full h-2 mb-4">
+                <div class="w-full bg-surface-raised rounded-full h-2 mb-4">
                     <div class="h-2 rounded-full transition-all duration-500
                         @if($transaction->ficaProgress >= 100) bg-success-500
                         @elseif($transaction->ficaProgress >= 60) bg-warning-500
@@ -214,11 +214,11 @@
                                     @if($doc->status === 'approved') bg-success-100 text-success-700
                                     @elseif($doc->status === 'rejected') bg-danger-100 text-danger-700
                                     @elseif($doc->status === 'under_review') bg-warning-100 text-warning-700
-                                    @else bg-slate-100 text-slate-600 @endif">
+                                    @else bg-surface-sunken text-text-secondary @endif">
                                     {{ $doc->status }}
                                 </span>
                                 @if($doc->is_fica_required)
-                                <span class="text-[10px] font-medium bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded uppercase">FICA</span>
+                                <span class="text-[10px] font-medium bg-brand-primary/10 text-brand-primary px-1.5 py-0.5 rounded uppercase">FICA</span>
                                 @endif
                                 <span class="text-[10px] text-text-secondary">{{ $doc->uploadedBy?->first_name ?? 'System' }} · {{ $doc->created_at->diffForHumans() }}</span>
                             </div>
@@ -263,7 +263,7 @@
                     <span class="px-2.5 py-1 rounded-full text-xs font-bold uppercase
                         @if($transaction->commission->payment_status === 'paid') bg-success-100 text-success-700
                         @elseif($transaction->commission->payment_status === 'processing') bg-warning-100 text-warning-700
-                        @else bg-slate-100 text-slate-600 @endif">
+                        @else bg-surface-sunken text-text-secondary @endif">
                         {{ str_replace('_', ' ', $transaction->commission->payment_status) }}
                     </span>
                     <a href="{{ route('finance.commissions') }}" class="text-xs text-brand-primary hover:text-brand-secondary font-medium">View in Ledger →</a>

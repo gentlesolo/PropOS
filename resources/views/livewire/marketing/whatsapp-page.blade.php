@@ -107,7 +107,7 @@
                                 @if($msg->status === 'delivered' || $msg->status === 'read') bg-success-100 text-success-700
                                 @elseif($msg->status === 'sent') bg-info-100 text-info-700
                                 @elseif($msg->status === 'failed') bg-danger-100 text-danger-700
-                                @else bg-slate-100 text-slate-600 @endif">
+                                @else bg-surface-sunken text-text-secondary @endif">
                                 {{ $msg->status }}
                             </span>
                         </td>
@@ -166,7 +166,7 @@
                 <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase
                     @if($template->status === 'approved') bg-success-100 text-success-700
                     @elseif($template->status === 'pending_approval') bg-warning-100 text-warning-700
-                    @else bg-slate-100 text-slate-600 @endif">
+                    @else bg-surface-sunken text-text-secondary @endif">
                     {{ str_replace('_', ' ', $template->status) }}
                 </span>
             </div>
