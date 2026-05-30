@@ -34,12 +34,16 @@ class Agency extends Model
         'subscription_plan',
         'subscription_status',
         'settings',
+        'commission_splits',
+        'default_commission_rate',
     ];
 
     protected function casts(): array
     {
         return [
             'settings' => 'array',
+            'commission_splits' => 'array',
+            'default_commission_rate' => 'decimal:2',
         ];
     }
 

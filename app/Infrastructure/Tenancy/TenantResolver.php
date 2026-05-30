@@ -13,10 +13,7 @@ class TenantResolver
     public function resolve(Request $request): ?Agency
     {
         if (config('tenancy.mode') === 'self_hosted') {
-            // Self-hosted: always load agency ID 1
-            $agency = Cache::remember('tenant_self_hosted', 3600, function () {
-                return Agency::first() ?? Agency::factory()->create(['id' => 1, 'slug' => 'default']);
-            });
+            $agency = Agency::first() ?? Agency::factory()->create(['id' => 1, 'slug' => 'default']);
             static::$currentAgency = $agency;
             return $agency;
         }

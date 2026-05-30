@@ -52,6 +52,36 @@ class Deal extends Model
         return $this->hasMany(ContactActivity::class)->orderByDesc('occurred_at');
     }
 
+    public function transaction()
+    {
+        return $this->hasOne(Transaction::class);
+    }
+
+    public function offers()
+    {
+        return $this->hasMany(Offer::class)->orderByDesc('created_at');
+    }
+
+    public function acceptedOffer()
+    {
+        return $this->hasOne(Offer::class)->where('status', 'accepted');
+    }
+
+    public function contract()
+    {
+        return $this->hasOne(Contract::class);
+    }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class)->orderBy('due_at');
+    }
+
+    public function inspections()
+    {
+        return $this->hasMany(Inspection::class)->orderByDesc('scheduled_at');
+    }
+
     public function checklistItems()
     {
         return $this->hasMany(StageChecklistItem::class)->orderBy('order');

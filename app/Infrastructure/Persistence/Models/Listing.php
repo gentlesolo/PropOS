@@ -70,4 +70,44 @@ class Listing extends Model
     {
         return $this->hasMany(\App\Infrastructure\Persistence\Models\Viewing::class);
     }
+
+    public function offers()
+    {
+        return $this->hasMany(Offer::class)->orderByDesc('created_at');
+    }
+
+    public function inspections()
+    {
+        return $this->hasMany(Inspection::class)->orderByDesc('scheduled_at');
+    }
+
+    public function contracts()
+    {
+        return $this->hasMany(Contract::class);
+    }
+
+    public function tenants()
+    {
+        return $this->hasMany(Tenant::class);
+    }
+
+    public function leases()
+    {
+        return $this->hasMany(Lease::class)->orderByDesc('start_date');
+    }
+
+    public function activeLease()
+    {
+        return $this->hasOne(Lease::class)->where('status', 'active')->latest();
+    }
+
+    public function cmaReports()
+    {
+        return $this->hasMany(CmaReport::class)->orderByDesc('created_at');
+    }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class)->orderBy('due_at');
+    }
 }

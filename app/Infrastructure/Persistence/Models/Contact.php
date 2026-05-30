@@ -40,6 +40,31 @@ class Contact extends Model
         return $this->hasMany(ContactActivity::class)->orderByDesc('occurred_at');
     }
 
+    public function tasks()
+    {
+        return $this->hasMany(Task::class)->orderBy('due_at');
+    }
+
+    public function offers()
+    {
+        return $this->hasMany(Offer::class)->orderByDesc('created_at');
+    }
+
+    public function emailLogs()
+    {
+        return $this->hasMany(EmailLog::class)->orderByDesc('created_at');
+    }
+
+    public function smsMessages()
+    {
+        return $this->hasMany(SmsMessage::class)->orderByDesc('created_at');
+    }
+
+    public function tenant()
+    {
+        return $this->hasOne(Tenant::class);
+    }
+
     public function getFullNameAttribute(): string
     {
         return trim("{$this->first_name} {$this->last_name}");

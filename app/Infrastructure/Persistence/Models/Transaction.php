@@ -42,6 +42,10 @@ class Transaction extends Model
     public function documents(): HasMany { return $this->hasMany(ComplianceDocument::class); }
     public function commission(): HasOne { return $this->hasOne(Commission::class); }
 
+    public function contract(): HasOne { return $this->hasOne(Contract::class); }
+    public function inspections(): HasMany { return $this->hasMany(Inspection::class)->orderByDesc('scheduled_at'); }
+    public function tasks(): HasMany { return $this->hasMany(Task::class)->orderBy('due_at'); }
+
     public function ficaDocuments(): HasMany
     {
         return $this->documents()->where('is_fica_required', true);

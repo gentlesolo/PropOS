@@ -84,7 +84,7 @@
                         <!-- Input Area -->
                         <div class="p-4 bg-surface-card border-t border-border-default/60">
                             <form wire:submit.prevent="sendMessage" class="relative">
-                                <input wire:model.defer="newMessage" type="text" class="w-full pl-4 pr-12 py-3 bg-surface-input border border-border-default/60 rounded-xl text-sm text-text-primary placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all" placeholder="Ask Copilot anything..." autocomplete="off" />
+                                <input wire:model="newMessage" type="text" class="w-full pl-4 pr-12 py-3 bg-surface-input border border-border-default/60 rounded-xl text-sm text-text-primary placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all" placeholder="Ask Copilot anything..." autocomplete="off" />
                                 <button type="submit" class="absolute right-2 top-1.5 bottom-1.5 aspect-square rounded-lg bg-brand-primary hover:bg-brand-secondary transition-colors text-white flex items-center justify-center disabled:opacity-50" wire:loading.attr="disabled">
                                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
                                 </button>

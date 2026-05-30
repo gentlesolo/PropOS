@@ -74,6 +74,9 @@
     <!-- Global AI Chat Panel (Floating) -->
     <livewire:ai.chat-panel />
 
+    <!-- Global Spotlight Search (Cmd+K) -->
+    <livewire:shared.global-search />
+
     <!-- Theme Toggle Alpine Store -->
     <script>
         document.addEventListener('alpine:init', () => {

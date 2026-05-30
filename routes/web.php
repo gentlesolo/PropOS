@@ -58,6 +58,7 @@ Route::middleware(['auth', 'tenant'])->group(function () {
         Route::get('/marketing/calendar', \App\Http\Livewire\Marketing\ContentCalendarPage::class)->name('marketing.calendar');
         Route::get('/marketing/whatsapp', \App\Http\Livewire\Marketing\WhatsAppPage::class)->name('marketing.whatsapp');
         Route::get('/marketing/social', \App\Http\Livewire\Marketing\SocialPostsPage::class)->name('marketing.social');
+        Route::get('/marketing/sequences', \App\Http\Livewire\Marketing\FollowUpSequencesPage::class)->name('marketing.sequences');
     });
     Route::middleware('permission:campaigns.manage')->group(function () {
         Route::get('/marketing/meta-ads', \App\Http\Livewire\Marketing\MetaAdsPage::class)->name('marketing.meta-ads');
@@ -113,6 +114,54 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     // ── Team Management — requires agency.manage ──────────────────────────────
     Route::middleware('permission:agency.manage')->group(function () {
         Route::get('/settings/team', \App\Http\Livewire\Settings\TeamPage::class)->name('settings.team');
+    });
+
+    // ── Offers ───────────────────────────────────────────────────────────────
+    Route::middleware('permission:contacts.view_own')->group(function () {
+        Route::get('/offers', \App\Http\Livewire\Offers\OffersPage::class)->name('offers.index');
+    });
+
+    // ── Contracts ─────────────────────────────────────────────────────────────
+    Route::middleware('permission:transactions.view_own')->group(function () {
+        Route::get('/contracts', \App\Http\Livewire\Contracts\ContractsPage::class)->name('contracts.index');
+    });
+
+    // ── Tasks ─────────────────────────────────────────────────────────────────
+    Route::middleware('permission:dashboard.view')->group(function () {
+        Route::get('/tasks', \App\Http\Livewire\Tasks\TaskBoardPage::class)->name('tasks.board');
+    });
+
+    // ── Property Management ───────────────────────────────────────────────────
+    Route::middleware('permission:transactions.view_own')->group(function () {
+        Route::get('/property-management/tenants', \App\Http\Livewire\PropertyManagement\TenantManagementPage::class)->name('pm.tenants');
+        Route::get('/property-management/leases', \App\Http\Livewire\PropertyManagement\LeaseManagementPage::class)->name('pm.leases');
+    });
+
+    // ── Inspections ───────────────────────────────────────────────────────────
+    Route::middleware('permission:transactions.view_own')->group(function () {
+        Route::get('/compliance/inspections', \App\Http\Livewire\Compliance\InspectionsPage::class)->name('compliance.inspections');
+    });
+
+    // ── Messaging Inbox ───────────────────────────────────────────────────────
+    Route::middleware('permission:campaigns.view_own|campaigns.view_all')->group(function () {
+        Route::get('/marketing/inbox', \App\Http\Livewire\Marketing\MessagingInboxPage::class)->name('marketing.inbox');
+        Route::get('/marketing/email-templates', \App\Http\Livewire\Marketing\EmailTemplatesPage::class)->name('marketing.email-templates');
+    });
+
+    // ── CMA Reports ───────────────────────────────────────────────────────────
+    Route::middleware('permission:listings.view_own')->group(function () {
+        Route::get('/analytics/cma', \App\Http\Livewire\Intelligence\CmaReportPage::class)->name('analytics.cma');
+    });
+
+    // ── Bulk Import/Export ────────────────────────────────────────────────────
+    Route::middleware('permission:contacts.manage')->group(function () {
+        Route::get('/crm/import', \App\Http\Livewire\Crm\BulkImportPage::class)->name('crm.import');
+    });
+
+    // ── Settings: Commission Splits & Lead Routing ────────────────────────────
+    Route::middleware('permission:agency.manage')->group(function () {
+        Route::get('/settings/commission-splits', \App\Http\Livewire\Settings\CommissionSplitPage::class)->name('settings.commission-splits');
+        Route::get('/settings/lead-routing', \App\Http\Livewire\Settings\LeadRoutingPage::class)->name('settings.lead-routing');
     });
 
     // ── PDF Reports ───────────────────────────────────────────────────────────
