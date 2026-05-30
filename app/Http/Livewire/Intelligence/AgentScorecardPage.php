@@ -73,8 +73,6 @@ class AgentScorecardPage extends Component
             ->count();
 
         $newLeads = Contact::where('assigned_agent_id', $agentId)
-            ->orWhere(fn($q) => $q->where('agency_id', auth()->user()->agency_id)
-                ->where('created_at', '>=', $queryStart))
             ->where('created_at', '>=', $queryStart)
             ->count();
 

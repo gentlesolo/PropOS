@@ -79,7 +79,7 @@ class WhatsAppWebhookController extends Controller
 
         if (!$waId || !$newStatus) return;
 
-        WhatsAppMessage::where('whatsapp_message_id', $waId)
+        WhatsAppMessage::where('external_message_id', $waId)
             ->update(['status' => $newStatus]);
     }
 }

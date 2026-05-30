@@ -301,4 +301,45 @@
         </div>
     </div>
     @endif
+
+    {{-- ── Integrations ──────────────────────────────────────────────────────── --}}
+    <div class="glass-panel rounded-2xl border border-border-default/60 p-6">
+        <h2 class="text-base font-semibold text-text-primary mb-4">Integrations</h2>
+
+        {{-- Google Calendar --}}
+        @php
+            $googleCred = \App\Infrastructure\Persistence\Models\IntegrationCredential::where('user_id', auth()->id())
+                ->where('provider', 'google_calendar')
+                ->first();
+        @endphp
+        <div class="flex items-center justify-between py-4 border-b border-border-default/60 last:border-0">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-surface-sunken flex items-center justify-center">
+                    <svg class="w-5 h-5 text-text-secondary" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19.5 3h-3V1.5h-1.5V3h-6V1.5H7.5V3h-3A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zm0 16.5h-15V9h15v10.5zM7.5 4.5V6H9V4.5h6V6h1.5V4.5H19.5V7.5h-15V4.5H7.5z"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-text-primary">Google Calendar</p>
+                    <p class="text-xs text-text-secondary">Sync viewings and tasks to your Google Calendar.</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                @if($googleCred)
+                    <span class="px-2 py-0.5 bg-success-100 text-success-700 rounded-full text-xs font-medium">Connected</span>
+                    <a href="{{ route('google-calendar.disconnect') }}"
+                       onclick="return confirm('Disconnect Google Calendar?')"
+                       class="px-3 py-1.5 border border-danger-300 text-danger-600 rounded-lg text-xs font-medium hover:bg-danger-50 transition-colors">
+                        Disconnect
+                    </a>
+                @else
+                    <span class="px-2 py-0.5 bg-surface-sunken text-text-secondary rounded-full text-xs font-medium">Not connected</span>
+                    <a href="{{ route('google-calendar.redirect') }}"
+                       class="px-3 py-1.5 bg-brand-primary text-white rounded-lg text-xs font-medium hover:bg-brand-secondary transition-colors">
+                        Connect
+                    </a>
+                @endif
+            </div>
+        </div>
+    </div>
 </div>

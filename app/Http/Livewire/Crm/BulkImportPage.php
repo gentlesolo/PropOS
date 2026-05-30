@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Crm;
 
 use App\Infrastructure\Persistence\Models\Contact;
 use App\Infrastructure\Persistence\Models\Listing;
+use App\Infrastructure\Persistence\Models\Property;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -91,13 +92,27 @@ class BulkImportPage extends Component
 
     private function importListing(array $data, int $agencyId): void
     {
+        $property = Property::create([
+            'agency_id'      => $agencyId,
+            'address_line_1' => $data['address_line_1'] ?? $data['address'] ?? 'Unknown Address',
+            'city'           => $data['city'] ?? '',
+            'state_province' => $data['state'] ?? $data['state_province'] ?? '',
+            'country'        => $data['country'] ?? 'NG',
+            'property_type'  => $data['property_type'] ?? 'house',
+            'bedrooms'       => isset($data['bedrooms']) ? (int) $data['bedrooms'] : null,
+            'bathrooms'      => isset($data['bathrooms']) ? (int) $data['bathrooms'] : null,
+            'floor_area_sqm' => isset($data['floor_area_sqm']) ? (float) $data['floor_area_sqm'] : null,
+            'land_area_sqm'  => isset($data['land_area_sqm']) ? (float) $data['land_area_sqm'] : null,
+        ]);
+
         Listing::create([
-            'agency_id' => $agencyId,
-            'agent_id' => auth()->id(),
+            'agency_id'     => $agencyId,
+            'property_id'   => $property->id,
+            'agent_id'      => auth()->id(),
             'listing_price' => $data['listing_price'] ?? 0,
-            'status' => $data['status'] ?? 'active',
-            'mandate_type' => $data['mandate_type'] ?? 'sole',
-            'type' => $data['type'] ?? 'sale',
+            'status'        => $data['status'] ?? 'active',
+            'mandate_type'  => $data['mandate_type'] ?? 'sole',
+            'type'          => $data['type'] ?? 'sale',
         ]);
     }
 

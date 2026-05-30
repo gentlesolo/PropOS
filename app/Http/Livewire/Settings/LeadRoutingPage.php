@@ -18,7 +18,11 @@ class LeadRoutingPage extends Component
 
     public function addCondition(): void
     {
-        $this->conditions[] = ['field' => 'type', 'operator' => 'equals', 'value' => ''];
+        if ($this->strategy === 'territory') {
+            $this->conditions[] = ['field' => 'city', 'operator' => 'territory', 'value' => '', 'agent_id' => null];
+        } else {
+            $this->conditions[] = ['field' => 'type', 'operator' => 'equals', 'value' => ''];
+        }
     }
 
     public function removeCondition(int $index): void

@@ -26,6 +26,7 @@
                         <option value="round_robin">Round Robin</option>
                         <option value="load_balanced">Load Balanced (fewest contacts)</option>
                         <option value="specific_agent">Specific Agent</option>
+                        <option value="territory">Territory (city / state)</option>
                     </select>
                 </div>
             </div>
@@ -47,23 +48,62 @@
             <!-- Conditions -->
             <div>
                 <div class="flex items-center justify-between mb-2">
-                    <label class="text-xs font-medium text-text-secondary">Conditions (optional — leave empty to catch all)</label>
-                    <button type="button" wire:click="addCondition" class="text-xs text-brand-primary hover:underline">+ Add Condition</button>
+                    <label class="text-xs font-medium text-text-secondary">
+                        @if($strategy === 'territory')
+                            Territory Mappings — map each city/state to a specific agent
+                        @else
+                            Conditions (optional — leave empty to catch all)
+                        @endif
+                    </label>
+                    <button type="button" wire:click="addCondition" class="text-xs text-brand-primary hover:underline">+ Add</button>
                 </div>
+
                 @foreach($conditions as $i => $cond)
+                @if($strategy === 'territory')
+                {{-- Territory condition row: field (city/state) · territory value · assigned agent --}}
+                <div class="grid grid-cols-[130px_1fr_1fr_auto] gap-2 mb-2 items-center">
+                    <select wire:model="conditions.{{ $i }}.field"
+                            class="rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-sm text-text-primary focus:border-brand-primary">
+                        <option value="city">City</option>
+                        <option value="state_province">State / Province</option>
+                    </select>
+                    <input wire:model="conditions.{{ $i }}.value" type="text"
+                           class="rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-sm text-text-primary focus:border-brand-primary"
+                           placeholder="e.g. Lagos">
+                    <select wire:model="conditions.{{ $i }}.agent_id"
+                            class="rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-sm text-text-primary focus:border-brand-primary">
+                        <option value="">— Assign agent —</option>
+                        @foreach($agents as $agent)
+                        <option value="{{ $agent->id }}">{{ $agent->first_name }} {{ $agent->last_name }}</option>
+                        @endforeach
+                    </select>
+                    <button type="button" wire:click="removeCondition({{ $i }})" class="px-2 text-danger-500 hover:text-danger-700">×</button>
+                </div>
+                @else
+                {{-- Standard condition row --}}
                 <div class="flex gap-2 mb-2">
-                    <select wire:model="conditions.{{ $i }}.field" class="rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-sm text-text-primary focus:border-brand-primary">
+                    <select wire:model="conditions.{{ $i }}.field"
+                            class="rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-sm text-text-primary focus:border-brand-primary">
                         <option value="type">Contact Type</option>
                         <option value="source">Lead Source</option>
                     </select>
-                    <select wire:model="conditions.{{ $i }}.operator" class="rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-sm text-text-primary focus:border-brand-primary">
+                    <select wire:model="conditions.{{ $i }}.operator"
+                            class="rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-sm text-text-primary focus:border-brand-primary">
                         <option value="equals">equals</option>
                         <option value="contains">contains</option>
+                        <option value="in">in (comma-separated)</option>
                     </select>
-                    <input wire:model="conditions.{{ $i }}.value" type="text" class="flex-1 rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-sm text-text-primary focus:border-brand-primary" placeholder="value…">
+                    <input wire:model="conditions.{{ $i }}.value" type="text"
+                           class="flex-1 rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-sm text-text-primary focus:border-brand-primary"
+                           placeholder="value…">
                     <button type="button" wire:click="removeCondition({{ $i }})" class="px-2 text-danger-500 hover:text-danger-700">×</button>
                 </div>
+                @endif
                 @endforeach
+
+                @if($strategy === 'territory' && empty($conditions))
+                <p class="text-xs text-text-tertiary mt-1">Add territory rows above. Unmatched contacts fall back to round-robin over the agent pool.</p>
+                @endif
             </div>
 
             <div class="flex gap-3 pt-2">

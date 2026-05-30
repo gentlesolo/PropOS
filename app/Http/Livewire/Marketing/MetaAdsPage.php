@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Marketing;
 
+use App\Infrastructure\ExternalServices\Meta\MetaAdsApiClient;
 use App\Infrastructure\Persistence\Models\Campaign;
 use App\Infrastructure\Persistence\Models\MetaAdCampaign;
 use Livewire\Component;
@@ -25,20 +26,23 @@ class MetaAdsPage extends Component
         'campaign_id' => 'nullable|exists:campaigns,id',
     ];
 
-    public function createCampaign(): void
+    public function createCampaign(MetaAdsApiClient $metaClient): void
     {
         $this->validate();
 
-        MetaAdCampaign::create([
-            'agency_id' => auth()->user()->agency_id,
+        $adCampaign = MetaAdCampaign::create([
+            'agency_id'   => auth()->user()->agency_id,
             'campaign_id' => $this->campaign_id ?: null,
-            'name' => $this->name,
-            'objective' => $this->objective,
+            'name'        => $this->name,
+            'objective'   => $this->objective,
             'budget_daily' => $this->budget_daily,
-            'start_date' => $this->start_date,
-            'end_date' => $this->end_date ?: null,
-            'status' => 'draft',
+            'start_date'  => $this->start_date,
+            'end_date'    => $this->end_date ?: null,
+            'status'      => 'draft',
         ]);
+
+        // Push to Meta Marketing API if credentials are configured
+        $metaClient->createCampaign($adCampaign);
 
         $this->reset(['name', 'objective', 'budget_daily', 'start_date', 'end_date', 'campaign_id', 'showCreateForm']);
         $this->dispatch('notify', message: 'Meta Ad campaign created.', type: 'success');

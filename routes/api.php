@@ -3,13 +3,23 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\DealController;
+use App\Http\Controllers\Api\EmailWebhookController;
 use App\Http\Controllers\Api\ListingController;
+use App\Http\Controllers\Api\SmsWebhookController;
 use App\Http\Controllers\Api\WhatsAppWebhookController;
 use Illuminate\Support\Facades\Route;
 
 // WhatsApp webhook (public — verified by token, not Sanctum)
 Route::get('/webhooks/whatsapp', [WhatsAppWebhookController::class, 'verify']);
 Route::post('/webhooks/whatsapp', [WhatsAppWebhookController::class, 'receive']);
+
+// SMS inbound webhooks (public — provider-signed)
+Route::post('/webhooks/sms/twilio', [SmsWebhookController::class, 'twilio']);
+Route::post('/webhooks/sms/africastalking', [SmsWebhookController::class, 'africasTalking']);
+
+// Email event webhooks (open/click tracking)
+Route::post('/webhooks/email/mailgun', [EmailWebhookController::class, 'mailgun']);
+Route::post('/webhooks/email/sendgrid', [EmailWebhookController::class, 'sendgrid']);
 
 // Public auth
 Route::post('/auth/login', [AuthController::class, 'login']);

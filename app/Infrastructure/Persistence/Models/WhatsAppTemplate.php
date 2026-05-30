@@ -11,6 +11,8 @@ class WhatsAppTemplate extends Model
 {
     use HasFactory, BelongsToAgency;
 
+    protected $table = 'whatsapp_templates';
+
     protected $guarded = ['id'];
 
     protected $casts = ['variables' => 'array'];

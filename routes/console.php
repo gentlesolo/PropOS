@@ -9,6 +9,7 @@ use App\Infrastructure\Queue\Jobs\GenerateSellerReportJob;
 use App\Infrastructure\Queue\Jobs\ProcessFollowUpSequenceJob;
 use App\Infrastructure\Queue\Jobs\SendViewingFeedbackSurveyJob;
 use App\Infrastructure\Queue\Jobs\SendViewingRemindersJob;
+use App\Infrastructure\Queue\Jobs\SyncMetaAdsInsightsJob;
 use App\Infrastructure\Queue\Jobs\UpdateListingHealthScoresJob;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -50,3 +51,6 @@ Schedule::job(new SendViewingFeedbackSurveyJob)->hourly()->withoutOverlapping()-
 
 // Generate proactive performance nudges for agents — weekdays at 09:00
 Schedule::job(new GeneratePerformanceNudgesJob)->weekdays()->at('09:00')->withoutOverlapping()->name('performance-nudges');
+
+// Pull Meta Ads spend/impressions/leads metrics — every hour
+Schedule::job(new SyncMetaAdsInsightsJob)->hourly()->withoutOverlapping()->name('sync-meta-ads-insights');

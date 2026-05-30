@@ -11,6 +11,8 @@ class WhatsAppMessage extends Model
 {
     use HasFactory, BelongsToAgency;
 
+    protected $table = 'whatsapp_messages';
+
     protected $guarded = ['id'];
 
     protected $casts = [

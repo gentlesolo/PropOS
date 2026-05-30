@@ -40,7 +40,7 @@ class CmaReportService
 
     public function generatePdf(CmaReport $report): string
     {
-        $pdf = Pdf::loadView('pdf.cma-report', ['report' => $report]);
+        $pdf = Pdf::loadView('pdfs.cma-report', ['report' => $report]);
         return $pdf->output();
     }
 }

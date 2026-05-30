@@ -11,6 +11,11 @@ Route::get('/', function () {
 Route::get('/book/{listing}', \App\Http\Livewire\Viewing\PublicBookingPage::class)->name('viewing.book');
 Route::get('/feedback/{viewing}/{token}', \App\Http\Livewire\Viewing\PublicFeedbackPage::class)->name('viewing.feedback');
 
+// Google Calendar OAuth callback — must be public (Google redirects here; auth is still active via session)
+Route::get('/integrations/google-calendar/callback', [\App\Http\Controllers\GoogleCalendarController::class, 'callback'])
+    ->middleware('auth')
+    ->name('google-calendar.callback');
+
 // Guest routes
 Route::middleware(['tenant', 'guest'])->group(function () {
     Route::get('/login', \App\Http\Livewire\Auth\LoginPage::class)->name('login');
@@ -168,6 +173,12 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::get('/listings/{listing}/report/seller-pdf', [\App\Http\Controllers\Api\ReportController::class, 'sellerReport'])
         ->name('reports.seller-pdf')
         ->middleware('permission:listings.view_own');
+
+    // ── Google Calendar OAuth ─────────────────────────────────────────────────
+    Route::get('/integrations/google-calendar/connect', [\App\Http\Controllers\GoogleCalendarController::class, 'redirect'])
+        ->name('google-calendar.redirect');
+    Route::get('/integrations/google-calendar/disconnect', [\App\Http\Controllers\GoogleCalendarController::class, 'disconnect'])
+        ->name('google-calendar.disconnect');
 
     // Team invitation accept
     Route::get('/invitations/{token}/accept', function (string $token) {
