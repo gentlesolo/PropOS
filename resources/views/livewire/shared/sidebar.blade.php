@@ -47,7 +47,7 @@
                 {{-- Group items --}}
                 <ul class="space-y-0.5">
                     @foreach($group['items'] as $item)
-                    @php $active = request()->routeIs($item['route']); @endphp
+                    @php $active = $item['active'] ?? request()->routeIs($item['route']); @endphp
                     <li>
                         <a href="{{ route($item['route']) }}"
                            class="relative flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 group

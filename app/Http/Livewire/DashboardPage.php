@@ -23,7 +23,7 @@ class DashboardPage extends Component
 
         // Recent Activity / Data
         $recentContacts = Contact::latest()->take(5)->get();
-        $recentListings = Listing::with('property')->latest()->take(4)->get();
+        $recentListings = Listing::with(['property', 'coverPhoto'])->latest()->take(4)->get();
 
         $metrics = [
             'active_listings' => $activeListings,

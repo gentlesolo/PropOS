@@ -8,6 +8,20 @@
         <span class="text-sm text-text-secondary dark:text-text-secondary font-medium">{{ $contact->full_name }}</span>
     </div>
 
+    <!-- AI Next Best Action Banner -->
+    @if($nextActionSuggestion)
+    <div class="mb-5 flex items-start gap-3 p-4 rounded-2xl border border-brand-primary/30 bg-brand-primary/5">
+        <div class="shrink-0 h-8 w-8 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary text-sm">✦</div>
+        <div class="flex-1 min-w-0">
+            <p class="text-xs font-semibold text-brand-primary mb-0.5">AI Suggestion</p>
+            <p class="text-sm text-text-primary">{{ $nextActionSuggestion }}</p>
+        </div>
+        <button wire:click="dismissNextAction" class="shrink-0 text-text-tertiary hover:text-text-secondary">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+    </div>
+    @endif
+
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         <!-- Left: Profile Card -->
@@ -17,9 +31,18 @@
                     <div class="h-16 w-16 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary text-2xl font-bold">
                         {{ $contact->initials }}
                     </div>
-                    <button wire:click="$toggle('showEditForm')" class="text-xs text-brand-primary border border-brand-primary/30 rounded-lg px-3 py-1.5 hover:bg-brand-primary/5 transition-colors">
-                        {{ $showEditForm ? 'Cancel' : 'Edit' }}
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <button wire:click="loadNextAction"
+                            wire:loading.attr="disabled"
+                            wire:target="loadNextAction"
+                            class="text-xs text-brand-primary border border-brand-primary/30 rounded-lg px-2.5 py-1.5 hover:bg-brand-primary/5 transition-colors disabled:opacity-50">
+                            <span wire:loading.remove wire:target="loadNextAction">✦ AI</span>
+                            <span wire:loading wire:target="loadNextAction">...</span>
+                        </button>
+                        <button wire:click="$toggle('showEditForm')" class="text-xs text-brand-primary border border-brand-primary/30 rounded-lg px-3 py-1.5 hover:bg-brand-primary/5 transition-colors">
+                            {{ $showEditForm ? 'Cancel' : 'Edit' }}
+                        </button>
+                    </div>
                 </div>
 
                 @if($showEditForm)
@@ -100,6 +123,7 @@
                                 style="width: {{ $contact->intent_score }}%">
                             </div>
                         </div>
+                        <p class="mt-1 text-[10px] text-text-tertiary">AI-blended score</p>
                     </div>
 
                     @if($contact->notes)
@@ -121,6 +145,101 @@
                 </div>
                 @endif
             </div>
+
+            <!-- Buyer Preferences (if applicable) -->
+            @if(in_array($contact->type, ['buyer', 'investor', 'tenant']))
+            <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-sm font-semibold text-text-primary">Buyer Preferences</h3>
+                    <button wire:click="$toggle('showPreferencesForm')" class="text-xs text-brand-primary border border-brand-primary/30 rounded-lg px-2.5 py-1.5 hover:bg-brand-primary/5 transition-colors">
+                        {{ $showPreferencesForm ? 'Cancel' : 'Edit' }}
+                    </button>
+                </div>
+                @if($showPreferencesForm)
+                <form wire:submit.prevent="savePreferences" class="space-y-3">
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs font-medium text-text-secondary mb-1">Min Budget (₦)</label>
+                            <input wire:model.defer="pref_min_budget" type="number" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-text-secondary mb-1">Max Budget (₦)</label>
+                            <input wire:model.defer="pref_max_budget" type="number" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-text-secondary mb-1">Min Bedrooms</label>
+                        <input wire:model.defer="pref_min_bedrooms" type="number" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-text-secondary mb-1">Preferred Areas <span class="font-normal text-text-tertiary">(comma-separated)</span></label>
+                        <input wire:model.defer="pref_areas" type="text" placeholder="Lekki, Victoria Island" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-text-secondary mb-1">Property Types <span class="font-normal text-text-tertiary">(comma-separated)</span></label>
+                        <input wire:model.defer="pref_property_types" type="text" placeholder="Apartment, Detached" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-text-secondary mb-1">Must-Have Features <span class="font-normal text-text-tertiary">(comma-separated)</span></label>
+                        <input wire:model.defer="pref_must_have_features" type="text" placeholder="Pool, Generator" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    </div>
+                    <button type="submit" class="w-full py-2 bg-brand-primary text-white rounded-lg text-sm font-medium hover:bg-brand-secondary transition-colors">Save Preferences</button>
+                </form>
+                @else
+                @php $prefs = $contact->preferences ?? []; @endphp
+                @if(!empty($prefs))
+                <dl class="space-y-1.5 text-xs">
+                    @if(!empty($prefs['min_budget']) || !empty($prefs['max_budget']))
+                    <div class="flex justify-between">
+                        <dt class="text-text-secondary">Budget</dt>
+                        <dd class="font-medium text-text-primary">
+                            ₦{{ number_format($prefs['min_budget'] ?? 0) }} – ₦{{ number_format($prefs['max_budget'] ?? 0) }}
+                        </dd>
+                    </div>
+                    @endif
+                    @if(!empty($prefs['min_bedrooms']))
+                    <div class="flex justify-between">
+                        <dt class="text-text-secondary">Min beds</dt>
+                        <dd class="font-medium text-text-primary">{{ $prefs['min_bedrooms'] }}+</dd>
+                    </div>
+                    @endif
+                    @if(!empty($prefs['areas']))
+                    <div class="flex justify-between gap-2">
+                        <dt class="text-text-secondary shrink-0">Areas</dt>
+                        <dd class="font-medium text-text-primary text-right">{{ implode(', ', (array) $prefs['areas']) }}</dd>
+                    </div>
+                    @endif
+                    @if(!empty($prefs['property_types']))
+                    <div class="flex justify-between gap-2">
+                        <dt class="text-text-secondary shrink-0">Types</dt>
+                        <dd class="font-medium text-text-primary text-right">{{ implode(', ', (array) $prefs['property_types']) }}</dd>
+                    </div>
+                    @endif
+                </dl>
+                @else
+                <p class="text-xs text-text-tertiary">No preferences set.</p>
+                @endif
+                @endif
+            </div>
+
+            <!-- Matched Listings -->
+            @if($matchedListings->isNotEmpty())
+            <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+                <h3 class="text-sm font-semibold text-text-primary mb-3">Matched Listings <span class="text-text-tertiary font-normal">({{ $matchedListings->count() }})</span></h3>
+                <div class="space-y-2">
+                    @foreach($matchedListings->take(5) as $match)
+                    <div class="p-2.5 rounded-lg bg-surface-sunken/40 border border-border-default/30">
+                        <div class="flex items-center justify-between mb-1">
+                            <p class="text-xs font-medium text-text-primary truncate">{{ $match['listing']->property->address_line_1 ?? 'Property' }}</p>
+                            <span class="shrink-0 ml-2 text-[10px] font-bold text-brand-primary bg-brand-primary/10 rounded px-1.5 py-0.5">{{ $match['score'] }}%</span>
+                        </div>
+                        <p class="text-[10px] text-text-secondary">{{ implode(' · ', $match['reasons']) }}</p>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+            @endif
         </div>
 
         <!-- Right: Activity Timeline -->
@@ -131,7 +250,6 @@
                     <h3 class="text-sm font-semibold text-text-primary">Log Activity</h3>
                 </div>
 
-                <!-- Type tabs -->
                 <div class="flex gap-2 mb-3 flex-wrap">
                     @foreach(['note' => 'Note', 'call' => 'Call', 'email' => 'Email', 'meeting' => 'Meeting', 'sms' => 'SMS'] as $val => $label)
                     <button wire:click="$set('activityType', '{{ $val }}')"
@@ -186,9 +304,21 @@
                     </div>
                     <div class="flex-1 min-w-0">
                         <div class="flex items-baseline justify-between gap-2">
-                            <p class="text-sm font-medium text-text-primary capitalize">
-                                {{ $activity->subject ?: ucfirst($activity->type) }}
-                            </p>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <p class="text-sm font-medium text-text-primary capitalize">
+                                    {{ $activity->subject ?: ucfirst($activity->type) }}
+                                </p>
+                                @php $sentiment = $activity->metadata['sentiment'] ?? null; @endphp
+                                @if($sentiment)
+                                <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold
+                                    @if($sentiment === 'positive') bg-success-100 text-success-700
+                                    @elseif($sentiment === 'negative') bg-danger-100 text-danger-700
+                                    @elseif($sentiment === 'urgent') bg-warning-100 text-warning-700
+                                    @else bg-surface-sunken text-text-secondary @endif">
+                                    {{ ucfirst($sentiment) }}
+                                </span>
+                                @endif
+                            </div>
                             <span class="text-xs text-text-secondary shrink-0">{{ $activity->occurred_at->diffForHumans() }}</span>
                         </div>
                         @if($activity->body)

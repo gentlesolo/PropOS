@@ -3,9 +3,13 @@
 namespace App\Http\Livewire\Crm;
 
 use App\Application\CRM\Actions\CalculateDealMomentumAction;
-use App\Application\CRM\Actions\LogContactActivityAction;
 use App\Application\CRM\Actions\CreateFollowUpSequenceAction;
+use App\Application\CRM\Actions\GenerateFollowUpMessageAction;
+use App\Application\CRM\Actions\LogContactActivityAction;
+use App\Application\CRM\Actions\SuggestNextActionAction;
+use App\Infrastructure\Persistence\Models\ContactActivity;
 use App\Infrastructure\Persistence\Models\Deal;
+use App\Infrastructure\Persistence\Models\FollowUpSequence;
 use App\Infrastructure\Persistence\Models\PipelineStage;
 use App\Infrastructure\Persistence\Models\StageChecklistItem;
 use Livewire\Component;
@@ -36,6 +40,13 @@ class DealDetailPage extends Component
         ['type' => 'email', 'subject' => '', 'message_template' => '', 'delay_days' => 1],
     ];
 
+    // AI next best action
+    public ?string $nextActionSuggestion = null;
+    public bool $loadingNextAction = false;
+
+    // AI message generation per-step (keyed by step index)
+    public array $generatingMessage = [];
+
     public function mount(Deal $deal)
     {
         $this->deal = $deal->load('contact', 'listing.property', 'stage', 'agent', 'activities.user', 'checklistItems');
@@ -64,6 +75,7 @@ class DealDetailPage extends Component
         $momentum->execute($this->deal->fresh());
         $this->showEditForm = false;
         $this->deal->refresh()->load('stage', 'activities.user', 'checklistItems');
+        $this->nextActionSuggestion = null;
     }
 
     public function logActivity(LogContactActivityAction $logAction)
@@ -78,24 +90,23 @@ class DealDetailPage extends Component
             ['deal_id' => $this->deal->id]
         );
 
-        // Also create a deal-linked activity directly
-        \App\Infrastructure\Persistence\Models\ContactActivity::create([
-            'agency_id' => $this->deal->agency_id,
+        ContactActivity::create([
+            'agency_id'  => $this->deal->agency_id,
             'contact_id' => $this->deal->contact_id,
-            'deal_id' => $this->deal->id,
-            'user_id' => auth()->id(),
-            'type' => $this->activityType,
-            'subject' => $this->activitySubject ?: null,
-            'body' => $this->activityBody,
+            'deal_id'    => $this->deal->id,
+            'user_id'    => auth()->id(),
+            'type'       => $this->activityType,
+            'subject'    => $this->activitySubject ?: null,
+            'body'       => $this->activityBody,
             'occurred_at' => now(),
         ]);
 
-        // Recalculate momentum after activity
         app(CalculateDealMomentumAction::class)->execute($this->deal->fresh());
 
         $this->reset(['activityBody', 'activitySubject']);
         $this->activityType = 'note';
         $this->deal->refresh()->load('activities.user', 'checklistItems');
+        $this->nextActionSuggestion = null;
     }
 
     public function addChecklistItem()
@@ -103,15 +114,18 @@ class DealDetailPage extends Component
         $this->validate(['newChecklistItem' => 'required|string|max:255']);
 
         StageChecklistItem::create([
-            'agency_id' => $this->deal->agency_id,
+            'agency_id'         => $this->deal->agency_id,
             'pipeline_stage_id' => $this->deal->pipeline_stage_id,
-            'deal_id' => $this->deal->id,
-            'title' => $this->newChecklistItem,
-            'order' => $this->deal->checklistItems()->count() + 1,
+            'deal_id'           => $this->deal->id,
+            'title'             => $this->newChecklistItem,
+            'order'             => $this->deal->checklistItems()->count() + 1,
         ]);
 
         $this->newChecklistItem = '';
         $this->deal->refresh()->load('checklistItems');
+
+        // Suggest advancing stage if all items now complete
+        $this->checkChecklistCompletion();
     }
 
     public function toggleChecklistItem(int $itemId)
@@ -119,12 +133,13 @@ class DealDetailPage extends Component
         $item = StageChecklistItem::find($itemId);
         if ($item && $item->deal_id === $this->deal->id) {
             $item->update([
-                'completed' => !$item->completed,
+                'completed'    => !$item->completed,
                 'completed_at' => !$item->completed ? now() : null,
                 'completed_by' => !$item->completed ? auth()->id() : null,
             ]);
         }
         $this->deal->refresh()->load('checklistItems');
+        $this->checkChecklistCompletion();
     }
 
     public function deleteChecklistItem(int $itemId)
@@ -141,6 +156,21 @@ class DealDetailPage extends Component
     public function removeFollowUpStep(int $index)
     {
         array_splice($this->followUpSteps, $index, 1);
+        unset($this->generatingMessage[$index]);
+    }
+
+    public function generateStepMessage(int $index, GenerateFollowUpMessageAction $generator)
+    {
+        $this->generatingMessage[$index] = true;
+
+        $stepType = $this->followUpSteps[$index]['type'] ?? 'email';
+        $result = $generator->execute($this->deal->contact, $stepType, $this->deal);
+
+        $this->followUpSteps[$index]['subject'] = $result['subject'];
+        $this->followUpSteps[$index]['message_template'] = $result['body'];
+
+        unset($this->generatingMessage[$index]);
+        $this->dispatch('notify', message: 'AI message generated. Review and edit before saving.', type: 'info');
     }
 
     public function saveFollowUpSequence(CreateFollowUpSequenceAction $action)
@@ -158,7 +188,31 @@ class DealDetailPage extends Component
         $this->showFollowUpForm = false;
         $this->followUpName = '';
         $this->followUpSteps = [['type' => 'email', 'subject' => '', 'message_template' => '', 'delay_days' => 1]];
+        $this->generatingMessage = [];
         $this->dispatch('notify', message: 'Follow-up sequence created!', type: 'success');
+    }
+
+    public function loadNextAction(SuggestNextActionAction $suggester)
+    {
+        $this->loadingNextAction = true;
+        $this->nextActionSuggestion = $suggester->forDeal($this->deal);
+        $this->loadingNextAction = false;
+    }
+
+    public function dismissNextAction()
+    {
+        $this->nextActionSuggestion = null;
+    }
+
+    private function checkChecklistCompletion(): void
+    {
+        $this->deal->refresh()->load('checklistItems');
+        $total = $this->deal->checklistItems->count();
+        $done = $this->deal->checklistItems->where('completed', true)->count();
+
+        if ($total > 0 && $done === $total) {
+            $this->dispatch('notify', message: 'All checklist items complete — consider advancing to the next stage.', type: 'success');
+        }
     }
 
     public function render()
@@ -167,7 +221,7 @@ class DealDetailPage extends Component
             ->orderBy('order')
             ->get();
 
-        $followUpSequences = \App\Infrastructure\Persistence\Models\FollowUpSequence::where('contact_id', $this->deal->contact_id)
+        $followUpSequences = FollowUpSequence::where('contact_id', $this->deal->contact_id)
             ->with('steps')
             ->latest()
             ->get();

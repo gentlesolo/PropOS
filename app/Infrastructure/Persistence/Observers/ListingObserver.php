@@ -4,6 +4,7 @@ namespace App\Infrastructure\Persistence\Observers;
 
 use App\Infrastructure\Persistence\Models\Listing;
 use App\Infrastructure\Queue\Jobs\GenerateListingGraphicsJob;
+use App\Infrastructure\Queue\Jobs\NotifyAgentsOfListingMatchesJob;
 
 class ListingObserver
 {
@@ -19,7 +20,11 @@ class ListingObserver
         ) {
             GenerateListingGraphicsJob::dispatch($listing->id)
                 ->onQueue('default')
-                ->delay(now()->addSeconds(5)); // small delay so media is flushed first
+                ->delay(now()->addSeconds(5));
+
+            NotifyAgentsOfListingMatchesJob::dispatch($listing->id)
+                ->onQueue('default')
+                ->delay(now()->addSeconds(10));
         }
     }
 
@@ -29,6 +34,10 @@ class ListingObserver
             GenerateListingGraphicsJob::dispatch($listing->id)
                 ->onQueue('default')
                 ->delay(now()->addSeconds(5));
+
+            NotifyAgentsOfListingMatchesJob::dispatch($listing->id)
+                ->onQueue('default')
+                ->delay(now()->addSeconds(10));
         }
     }
 }

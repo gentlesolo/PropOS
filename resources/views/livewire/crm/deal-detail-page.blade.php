@@ -9,6 +9,20 @@
         <span class="text-sm font-medium text-text-secondary">{{ $deal->title }}</span>
     </div>
 
+    <!-- AI Next Best Action Banner -->
+    @if($nextActionSuggestion)
+    <div class="mb-5 flex items-start gap-3 p-4 rounded-2xl border border-brand-primary/30 bg-brand-primary/5">
+        <div class="shrink-0 h-8 w-8 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary text-sm">✦</div>
+        <div class="flex-1 min-w-0">
+            <p class="text-xs font-semibold text-brand-primary mb-0.5">AI Suggestion</p>
+            <p class="text-sm text-text-primary">{{ $nextActionSuggestion }}</p>
+        </div>
+        <button wire:click="dismissNextAction" class="shrink-0 text-text-tertiary hover:text-text-secondary">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+    </div>
+    @endif
+
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
 
         <!-- Left: Deal Info + Checklist + Follow-ups -->
@@ -106,6 +120,17 @@
                     <p class="text-sm text-text-primary">{{ $deal->notes }}</p>
                 </div>
                 @endif
+
+                <!-- AI Next Action Button -->
+                <div class="mt-4 pt-4 border-t border-border-default/60">
+                    <button wire:click="loadNextAction"
+                        wire:loading.attr="disabled"
+                        wire:target="loadNextAction"
+                        class="w-full flex items-center justify-center gap-2 py-2 rounded-lg border border-brand-primary/30 text-brand-primary text-xs font-medium hover:bg-brand-primary/5 transition-colors disabled:opacity-50">
+                        <span wire:loading.remove wire:target="loadNextAction">✦ Suggest Next Action</span>
+                        <span wire:loading wire:target="loadNextAction">Thinking...</span>
+                    </button>
+                </div>
                 @endif
             </div>
 
@@ -161,6 +186,7 @@
                         <input wire:model.defer="followUpName" type="text" placeholder="e.g. Post-viewing follow-up" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
                         @error('followUpName') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
                     </div>
+
                     @foreach($followUpSteps as $i => $step)
                     <div class="p-3 bg-surface-sunken/40 rounded-xl border border-border-default/40 space-y-2">
                         <div class="flex items-center justify-between">
@@ -170,7 +196,7 @@
                             @endif
                         </div>
                         <div class="grid grid-cols-2 gap-2">
-                            <select wire:model.defer="followUpSteps.{{ $i }}.type" class="rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                            <select wire:model="followUpSteps.{{ $i }}.type" class="rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
                                 <option value="email">Email</option>
                                 <option value="call">Call</option>
                                 <option value="sms">SMS</option>
@@ -178,14 +204,25 @@
                             </select>
                             <div class="flex items-center gap-1">
                                 <input wire:model.defer="followUpSteps.{{ $i }}.delay_days" type="number" min="0" placeholder="Days" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
-                                <span class="text-xs text-text-secondary whitespace-nowrap">day(s) delay</span>
+                                <span class="text-xs text-text-secondary whitespace-nowrap">day(s)</span>
                             </div>
                         </div>
                         <input wire:model.defer="followUpSteps.{{ $i }}.subject" type="text" placeholder="Subject (email only)" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
-                        <textarea wire:model.defer="followUpSteps.{{ $i }}.message_template" rows="2" placeholder="Message template..." class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary resize-none"></textarea>
+                        <textarea wire:model.defer="followUpSteps.{{ $i }}.message_template" rows="3" placeholder="Message template..." class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary resize-none"></textarea>
                         @error("followUpSteps.{$i}.message_template") <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
+
+                        <!-- AI Generate Button -->
+                        <button type="button"
+                            wire:click="generateStepMessage({{ $i }})"
+                            wire:loading.attr="disabled"
+                            wire:target="generateStepMessage({{ $i }})"
+                            class="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg border border-brand-primary/30 text-brand-primary text-xs font-medium hover:bg-brand-primary/5 transition-colors disabled:opacity-50">
+                            <span wire:loading.remove wire:target="generateStepMessage({{ $i }})">✦ Generate with AI</span>
+                            <span wire:loading wire:target="generateStepMessage({{ $i }})">Generating...</span>
+                        </button>
                     </div>
                     @endforeach
+
                     <div class="flex gap-2">
                         <button type="button" wire:click="addFollowUpStep" class="flex-1 py-1.5 border border-border-default text-text-secondary rounded-lg text-xs font-medium hover:bg-surface-sunken transition-colors">+ Add Step</button>
                         <button type="submit" class="flex-1 py-1.5 bg-brand-primary text-white rounded-lg text-xs font-medium hover:bg-brand-secondary transition-colors">
@@ -268,7 +305,19 @@
                     </div>
                     <div class="flex-1 min-w-0">
                         <div class="flex items-baseline justify-between gap-2">
-                            <p class="text-sm font-medium text-text-primary capitalize">{{ $activity->subject ?: ucfirst($activity->type) }}</p>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <p class="text-sm font-medium text-text-primary capitalize">{{ $activity->subject ?: ucfirst($activity->type) }}</p>
+                                @php $sentiment = $activity->metadata['sentiment'] ?? null; @endphp
+                                @if($sentiment)
+                                <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold
+                                    @if($sentiment === 'positive') bg-success-100 text-success-700
+                                    @elseif($sentiment === 'negative') bg-danger-100 text-danger-700
+                                    @elseif($sentiment === 'urgent') bg-warning-100 text-warning-700
+                                    @else bg-surface-sunken text-text-secondary @endif">
+                                    {{ ucfirst($sentiment) }}
+                                </span>
+                                @endif
+                            </div>
                             <span class="text-xs text-text-secondary shrink-0">{{ $activity->occurred_at->diffForHumans() }}</span>
                         </div>
                         @if($activity->body)

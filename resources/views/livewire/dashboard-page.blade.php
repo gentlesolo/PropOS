@@ -143,20 +143,28 @@
                 </div>
                 <div class="divide-y divide-border-default/40">
                     @forelse($recentListings as $listing)
-                        <div class="px-8 py-5 flex items-center justify-between hover:bg-surface-sunken/30 transition-colors group">
+                        <a href="{{ route('listing.detail', $listing) }}"
+                           class="px-8 py-5 flex items-center justify-between hover:bg-surface-sunken/30 transition-colors group">
                             <div class="flex items-center space-x-5">
-                                <div class="h-14 w-14 rounded-2xl bg-surface-raised border border-border-default/60 flex items-center justify-center text-text-tertiary flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
-                                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                                <div class="h-14 w-14 rounded-2xl bg-surface-raised border border-border-default/60 flex items-center justify-center text-text-tertiary flex-shrink-0 overflow-hidden group-hover:scale-105 transition-transform duration-300">
+                                    @if($listing->coverPhoto)
+                                        <img src="{{ asset('storage/' . $listing->coverPhoto->file_path) }}" alt="cover" class="h-full w-full object-cover">
+                                    @else
+                                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                                    @endif
                                 </div>
                                 <div>
                                     <h4 class="text-sm font-bold text-text-primary group-hover:text-brand-primary transition-colors">{{ $listing->property->address_line_1 }}</h4>
                                     <p class="text-sm text-text-secondary mt-0.5">{{ $listing->property->city }} • ₦{{ number_format($listing->listing_price) }}</p>
                                 </div>
                             </div>
-                            <span class="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-black tracking-wider bg-surface-raised border border-border-default/60 text-text-primary uppercase shadow-sm">
-                                {{ $listing->status }}
-                            </span>
-                        </div>
+                            <div class="flex items-center gap-3">
+                                <span class="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-black tracking-wider bg-surface-raised border border-border-default/60 text-text-primary uppercase shadow-sm">
+                                    {{ str_replace('_', ' ', $listing->status) }}
+                                </span>
+                                <svg class="h-4 w-4 text-text-tertiary group-hover:text-brand-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                            </div>
+                        </a>
                     @empty
                         <div class="p-8 text-center text-sm text-text-tertiary">
                             No active portfolio data.

@@ -65,7 +65,7 @@ class Sidebar extends Component
             [
                 'label' => 'Listings',
                 'items' => [
-                    ['title' => 'Listings', 'route' => 'listing.index', 'icon' => 'home-modern', 'permission' => 'listings.view_own'],
+                    ['title' => 'Properties & Listings', 'route' => 'listing.index', 'icon' => 'home-modern', 'permission' => 'listings.view_own', 'active_pattern' => 'listing.*'],
                     ['title' => 'CMA Reports', 'route' => 'analytics.cma', 'icon' => 'presentation-chart', 'permission' => 'listings.view_own'],
                 ],
             ],
@@ -139,7 +139,10 @@ class Sidebar extends Component
             ->map(function (array $group) use ($user, $icons) {
                 $items = collect($group['items'])
                     ->filter(fn($item) => ! $user || $user->hasPermissionTo($item['permission']))
-                    ->map(fn($item) => array_merge($item, ['svg' => $icons[$item['icon']] ?? '']))
+                    ->map(fn($item) => array_merge($item, [
+                        'svg'    => $icons[$item['icon']] ?? '',
+                        'active' => request()->routeIs($item['active_pattern'] ?? $item['route']),
+                    ]))
                     ->values()
                     ->all();
 

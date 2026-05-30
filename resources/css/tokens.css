@@ -132,10 +132,10 @@
        ========================================================================= */
 
     /* Surfaces */
-    --surface-page:    var(--color-neutral-50);
-    --surface-card:    #ffffff;
-    --surface-raised:  #ffffff;
-    --surface-sunken:  var(--color-neutral-100);
+    --surface-page:    #f8fafc;        /* Cool slate backplate */
+    --surface-card:    #ffffff;        /* Flat content cards */
+    --surface-raised:  #ffffff;        /* Modals and floating elements */
+    --surface-sunken:  #f1f5f9;        /* Input backgrounds & sub-headers */
     --surface-input:   #ffffff;
     --surface-overlay: rgba(15, 23, 42, 0.60);
 
@@ -149,10 +149,10 @@
     --text-link:       var(--color-primary-600);
     --text-link-hover: var(--color-primary-700);
 
-    /* Borders */
-    --border-subtle:  var(--color-neutral-100);
-    --border-default: var(--color-neutral-200);
-    --border-strong:  var(--color-neutral-300);
+    /* Borders using transparent values for soft overlay blending */
+    --border-subtle:  rgba(24, 24, 27, 0.04);
+    --border-default: rgba(24, 24, 27, 0.08);
+    --border-strong:  rgba(24, 24, 27, 0.16);
     --border-brand:   var(--brand-primary);
     --border-focus:   var(--brand-primary);
 
@@ -333,9 +333,9 @@
     --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
 
     /* Brand-tinted glow shadows */
-    --shadow-brand-sm: 0 2px 12px 0 rgba(16, 185, 129, 0.18);
-    --shadow-brand-md: 0 4px 20px 0 rgba(16, 185, 129, 0.22);
-    --shadow-brand-lg: 0 8px 32px 0 rgba(16, 185, 129, 0.28);
+    --shadow-brand-sm: 0 2px 8px 0 rgba(16, 185, 129, 0.12), 0 0 0 1px rgba(16, 185, 129, 0.08);
+    --shadow-brand-md: 0 8px 24px -4px rgba(16, 185, 129, 0.16), 0 0 0 1px rgba(16, 185, 129, 0.12);
+    --shadow-brand-lg: 0 16px 40px -8px rgba(16, 185, 129, 0.24), 0 0 0 1px rgba(16, 185, 129, 0.16);
 
     /* =========================================================================
        9. TRANSITIONS & ANIMATIONS
@@ -352,7 +352,7 @@
     --ease-out:     cubic-bezier(0, 0, 0.2, 1);
     --ease-in-out:  cubic-bezier(0.4, 0, 0.2, 1);
     --ease-bounce:  cubic-bezier(0.34, 1.56, 0.64, 1);
-    --ease-spring:  cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --ease-spring:  cubic-bezier(0.16, 1, 0.3, 1); /* Elegant iOS-style fluid transition */
 
     /* Legacy aliases — kept for backward compat */
     --transition-duration-fast:   var(--duration-fast);
@@ -371,6 +371,7 @@
     --transition-shadow:    box-shadow var(--duration-normal) var(--ease-in-out);
     --transition-transform: transform var(--duration-normal) var(--ease-out);
     --transition-opacity:   opacity var(--duration-fast) var(--ease-in-out);
+    --transition-spring:    all var(--duration-slow) var(--ease-spring);
 
     /* =========================================================================
        10. GRADIENTS
@@ -516,11 +517,11 @@
 /* Tailwind dark-class variant */
 .dark {
     /* Surfaces */
-    --surface-page:    var(--color-neutral-950);
-    --surface-card:    var(--color-neutral-900);
-    --surface-raised:  var(--color-neutral-800);
-    --surface-sunken:  var(--color-neutral-950);
-    --surface-input:   var(--color-neutral-800);
+    --surface-page:    #030712;        /* Darkest backplate */
+    --surface-card:    #090d16;        /* Sleek raised container */
+    --surface-raised:  #111827;        /* Modals / floating items */
+    --surface-sunken:  #050811;        /* Insets and sidebar base */
+    --surface-input:   #111827;
     --surface-overlay: rgba(2, 6, 23, 0.80);
 
     /* Text */
@@ -531,10 +532,10 @@
     --text-link:       var(--color-primary-400);
     --text-link-hover: var(--color-primary-300);
 
-    /* Borders */
-    --border-subtle:  var(--color-neutral-900);
-    --border-default: var(--color-neutral-800);
-    --border-strong:  var(--color-neutral-700);
+    /* Borders using sub-pixel translucent values that render beautifully on dark backdrops */
+    --border-subtle:  rgba(255, 255, 255, 0.03);
+    --border-default: rgba(255, 255, 255, 0.06);
+    --border-strong:  rgba(255, 255, 255, 0.12);
 
     /* Glass */
     --glass-bg:     var(--glass-bg-dark);
