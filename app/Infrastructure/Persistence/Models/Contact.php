@@ -65,6 +65,21 @@ class Contact extends Model
         return $this->hasOne(Tenant::class);
     }
 
+    public function calls()
+    {
+        return $this->hasMany(Call::class)->orderByDesc('started_at');
+    }
+
+    public function deals()
+    {
+        return $this->hasMany(Deal::class)->orderByDesc('created_at');
+    }
+
+    public function assignedAgent()
+    {
+        return $this->belongsTo(User::class, 'assigned_agent_id');
+    }
+
     public function getFullNameAttribute(): string
     {
         return trim("{$this->first_name} {$this->last_name}");

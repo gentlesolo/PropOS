@@ -53,4 +53,25 @@ return [
         'base_url' => env('PROPERTYPRO_BASE_URL', 'https://api.propertypro.ng/v2'),
     ],
 
+    'twilio' => [
+        'sid'            => env('TWILIO_SID'),
+        'token'          => env('TWILIO_TOKEN'),
+        'from'           => env('TWILIO_FROM'),
+        'twiml_app_sid'  => env('TWILIO_TWIML_APP_SID'),
+        'api_key_sid'    => env('TWILIO_API_KEY_SID'),
+        'api_key_secret' => env('TWILIO_API_KEY_SECRET'),
+    ],
+
+    'fcm' => [
+        'server_key' => env('FCM_SERVER_KEY'),
+    ],
+
+    'openai' => [
+        'api_key' => env('OPENAI_API_KEY'),
+    ],
+
+    'deepgram' => [
+        'api_key' => env('DEEPGRAM_API_KEY'),
+    ],
+
 ];

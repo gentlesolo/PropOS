@@ -1,0 +1,79 @@
+{
+  "common": {
+    "loading": "Chargement…",
+    "error": "Une erreur est survenue",
+    "retry": "Réessayer",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "back": "Retour",
+    "done": "Terminé",
+    "skip": "Passer",
+    "search": "Rechercher",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "noData": "Pas de données"
+  },
+  "auth": {
+    "signIn": "Se connecter",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "biometric": "Face ID / Empreinte digitale",
+    "invalidCredentials": "Vérifiez votre e-mail et mot de passe."
+  },
+  "home": {
+    "greeting_morning": "Bonjour",
+    "greeting_afternoon": "Bon après-midi",
+    "greeting_evening": "Bonsoir",
+    "dailyBrief": "Bref quotidien IA",
+    "overdue": "En retard",
+    "todayTasks": "Aujourd'hui",
+    "allCaughtUp": "Tout est à jour pour aujourd'hui !"
+  },
+  "calls": {
+    "connecting": "Connexion…",
+    "ringing": "Sonnerie…",
+    "ended": "Terminé",
+    "ending": "Fin…",
+    "endCall": "Terminer l'appel",
+    "mute": "Muet",
+    "unmute": "Son",
+    "speaker": "Haut-parleur",
+    "earpiece": "Écouteur",
+    "flag": "Signaler",
+    "callFlagged": "Cet appel a été signalé pour revue.",
+    "inbound": "Appel entrant",
+    "outbound": "Appel sortant",
+    "callHistory": "Appels",
+    "noCalls": "Aucun appel"
+  },
+  "contacts": {
+    "title": "Contacts",
+    "searchPlaceholder": "Rechercher par nom ou téléphone…",
+    "addNote": "Ajouter une note",
+    "overview": "Aperçu",
+    "timeline": "Historique",
+    "callHistory": "Appels",
+    "sentiment": "Sentiment"
+  },
+  "messaging": {
+    "title": "Messages",
+    "searchPlaceholder": "Rechercher des conversations…",
+    "typePlaceholder": "Écrire un message…"
+  },
+  "tasks": {
+    "title": "Tâches",
+    "allDone": "Rien à faire aujourd'hui !"
+  },
+  "viewings": {
+    "title": "Visites",
+    "checkIn": "📍 Arrivée",
+    "complete": "Terminer la visite",
+    "howDidItGo": "Comment s'est passée la visite ?",
+    "outcomes": {
+      "interested": "Intéressé",
+      "offer_expected": "Offre attendue",
+      "undecided": "Indécis",
+      "not_interested": "Pas intéressé"
+    }
+  }
+}

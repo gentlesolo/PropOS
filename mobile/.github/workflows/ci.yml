@@ -1,0 +1,103 @@
+name: CI / CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ── TypeScript + Tests ──────────────────────────────────────────────────────
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: mobile/package-lock.json
+
+      - name: Install dependencies
+        working-directory: mobile
+        run: npm ci
+
+      - name: TypeScript check
+        working-directory: mobile
+        run: npx tsc --noEmit
+
+      - name: Run tests
+        working-directory: mobile
+        run: npx jest --passWithNoTests --ci
+
+  # ── iOS Beta (TestFlight) — runs on main only ───────────────────────────────
+  ios-beta:
+    needs: test
+    runs-on: macos-14
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: mobile/package-lock.json
+
+      - name: Install JS dependencies
+        working-directory: mobile
+        run: npm ci
+
+      - name: Install Ruby gems (Fastlane)
+        working-directory: mobile
+        run: bundle install
+
+      - name: Install CocoaPods
+        working-directory: mobile/ios
+        run: pod install
+
+      - name: Build & upload to TestFlight
+        working-directory: mobile
+        env:
+          MATCH_PASSWORD:            ${{ secrets.MATCH_PASSWORD }}
+          MATCH_GIT_BASIC_AUTH:      ${{ secrets.MATCH_GIT_BASIC_AUTH }}
+          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+          RELEASE_NOTES:             ${{ github.event.head_commit.message }}
+        run: bundle exec fastlane ios beta
+
+  # ── Android Beta (Play Store internal) — runs on main only ─────────────────
+  android-beta:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: mobile/package-lock.json
+
+      - name: Install JS dependencies
+        working-directory: mobile
+        run: npm ci
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Install Ruby gems (Fastlane)
+        working-directory: mobile
+        run: bundle install
+
+      - name: Build & upload to Play Store
+        working-directory: mobile
+        env:
+          ANDROID_KEYSTORE_PATH:     ${{ secrets.ANDROID_KEYSTORE_PATH }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS:         ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD:      ${{ secrets.ANDROID_KEY_PASSWORD }}
+          GOOGLE_PLAY_JSON_KEY:      ${{ secrets.GOOGLE_PLAY_JSON_KEY }}
+        run: bundle exec fastlane android beta

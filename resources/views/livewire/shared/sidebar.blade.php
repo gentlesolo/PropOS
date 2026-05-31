@@ -12,16 +12,19 @@
          class="fixed inset-y-0 left-0 z-50 w-64 bg-surface-sunken/70 backdrop-blur-md border-r border-border-default/45 h-full flex flex-col flex-shrink-0 transition-transform duration-300 ease-in-out md:relative md:translate-x-0 md:flex">
 
         {{-- Brand / Logo --}}
-        <div class="flex items-center justify-between h-16 px-5 border-b border-border-default/40 shrink-0">
-            <div class="flex items-center gap-3">
+        <div class="flex items-center justify-between h-16 px-6 border-b border-border-default/30 shrink-0 bg-surface-sunken/10">
+            <div class="flex items-center gap-3 min-w-0">
                 @if($agency && $agency->logo_path)
-                    <img class="h-7 w-auto" src="{{ asset('storage/'.$agency->logo_path) }}" alt="{{ $agency->name }}">
+                    <img class="h-7 w-auto object-contain" src="{{ asset('storage/'.$agency->logo_path) }}" alt="{{ $agency->name }}">
                 @else
-                    <div class="h-8 w-8 rounded-lg bg-gradient-to-br from-brand-primary to-info-500 flex items-center justify-center font-black text-white text-sm shadow-brand-sm shrink-0">
+                    <div class="h-8 w-8 rounded-xl bg-gradient-to-br from-brand-primary to-info-500 flex items-center justify-center font-black text-white text-sm shadow-md shadow-brand-primary/20 shrink-0 border border-white/10">
                         {{ strtoupper(substr($agency->name ?? 'P', 0, 1)) }}
                     </div>
                 @endif
-                <span class="text-base font-black tracking-tight text-text-primary truncate">{{ $agency->name ?? 'PropOS' }}</span>
+                <div class="flex flex-col min-w-0">
+                    <span class="text-sm font-black tracking-tight text-text-primary truncate">{{ $agency->name ?? 'PropOS' }}</span>
+                    <span class="text-[9px] font-black uppercase tracking-[0.2em] text-brand-primary leading-none mt-0.5">Enterprise</span>
+                </div>
             </div>
 
             {{-- Mobile close --}}
@@ -34,41 +37,42 @@
         </div>
 
         {{-- Navigation --}}
-        <nav class="flex-1 overflow-y-auto py-3 px-3 space-y-5">
+        <nav class="flex-1 overflow-y-auto py-4 px-4 space-y-6 sidebar-scrollbar">
             @foreach($groups as $group)
-            <div>
+            <div class="space-y-2">
                 {{-- Group label --}}
                 @if($group['label'])
-                <p class="px-3 mb-1.5 text-[10px] font-bold uppercase tracking-widest text-text-tertiary select-none">
+                <p class="px-3 text-[10px] font-bold uppercase tracking-[0.15em] text-text-tertiary select-none opacity-80 flex items-center gap-2">
+                    <span class="h-1 w-1 rounded-full bg-brand-primary/40"></span>
                     {{ $group['label'] }}
                 </p>
                 @endif
 
                 {{-- Group items --}}
-                <ul class="space-y-0.5">
+                <ul class="space-y-1">
                     @foreach($group['items'] as $item)
                     @php $active = $item['active'] ?? request()->routeIs($item['route']); @endphp
                     <li>
                         <a href="{{ route($item['route']) }}"
-                           class="relative flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-200 group
+                           class="relative flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-bold transition-all duration-300 group
                                   {{ $active
-                                      ? 'bg-brand-primary/10 text-brand-primary shadow-brand-sm border border-brand-primary/15'
-                                      : 'text-text-secondary hover:text-brand-primary hover:bg-brand-primary/5' }}">
+                                      ? 'bg-gradient-to-r from-brand-primary/12 to-brand-primary/4 text-brand-primary border border-brand-primary/15 shadow-sm'
+                                      : 'text-text-secondary hover:text-brand-primary hover:bg-brand-primary/5 hover:translate-x-1 border border-transparent' }}">
 
                             {{-- Active pill --}}
                             @if($active)
-                            <span class="absolute left-0 inset-y-2 w-0.5 rounded-r-full bg-brand-primary"></span>
+                            <span class="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r-full bg-brand-primary shadow-[0_0_8px_var(--color-brand-primary,#3B82F6)]"></span>
                             @endif
 
                             {{-- Icon --}}
-                            <svg class="h-[18px] w-[18px] shrink-0 transition-colors duration-200
-                                        {{ $active ? 'text-brand-primary' : 'text-text-tertiary group-hover:text-text-primary' }}"
-                                 fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
+                            <svg class="h-[18px] w-[18px] shrink-0 transition-all duration-300 group-hover:scale-110
+                                        {{ $active ? 'text-brand-primary' : 'text-text-tertiary group-hover:text-brand-primary' }}"
+                                 fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="{{ $item['svg'] }}"/>
                             </svg>
 
                             {{-- Label --}}
-                            <span class="truncate">{{ $item['title'] }}</span>
+                            <span class="truncate transition-colors duration-200">{{ $item['title'] }}</span>
                         </a>
                     </li>
                     @endforeach
@@ -78,24 +82,43 @@
         </nav>
 
         {{-- User profile footer --}}
-        <div class="shrink-0 px-4 py-4 border-t border-border-default/40">
+        <div class="shrink-0 px-4 py-4 border-t border-border-default/30 bg-surface-sunken/30">
             <a href="{{ route('settings.profile') }}"
-               class="flex items-center gap-3 rounded-xl px-2 py-2 hover:bg-surface-raised transition-colors group">
-                <div class="h-8 w-8 rounded-full bg-brand-primary text-white flex items-center justify-center text-xs font-bold shrink-0 group-hover:scale-105 transition-transform">
-                    {{ strtoupper(substr(auth()->user()?->first_name ?? 'U', 0, 1)) }}{{ strtoupper(substr(auth()->user()?->last_name ?? '', 0, 1)) }}
+               class="flex items-center gap-3 rounded-2xl p-2.5 bg-surface-card/40 hover:bg-surface-raised border border-border-default/40 hover:border-brand-primary/20 transition-all duration-300 group shadow-sm">
+                <div class="relative shrink-0">
+                    <div class="h-9 w-9 rounded-xl bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white flex items-center justify-center text-xs font-black shadow-md shadow-brand-primary/10 group-hover:scale-105 transition-transform duration-300">
+                        {{ strtoupper(substr(auth()->user()?->first_name ?? 'U', 0, 1)) }}{{ strtoupper(substr(auth()->user()?->last_name ?? '', 0, 1)) }}
+                    </div>
+                    <span class="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-success-500 border-2 border-surface-card animate-pulse"></span>
                 </div>
                 <div class="flex-1 min-w-0">
-                    <p class="text-sm font-semibold text-text-primary truncate group-hover:text-brand-primary transition-colors">
+                    <p class="text-xs font-bold text-text-primary truncate group-hover:text-brand-primary transition-colors">
                         {{ auth()->user()?->name }}
                     </p>
-                    <p class="text-xs text-text-tertiary truncate">
+                    <p class="text-[10px] font-bold text-text-tertiary tracking-wider uppercase mt-0.5">
                         {{ ucfirst(str_replace('_', ' ', auth()->user()?->roles->first()?->name ?? 'Member')) }}
                     </p>
                 </div>
-                <svg class="h-4 w-4 text-text-tertiary shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
+                <svg class="h-4 w-4 text-text-tertiary group-hover:text-brand-primary group-hover:translate-x-0.5 transition-all duration-300 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/>
                 </svg>
             </a>
         </div>
     </div>
+
+    <style>
+        .sidebar-scrollbar::-webkit-scrollbar {
+            width: 3px;
+        }
+        .sidebar-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .sidebar-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(156, 163, 175, 0.15);
+            border-radius: 9999px;
+        }
+        .sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(59, 130, 246, 0.4);
+        }
+    </style>
 </div>

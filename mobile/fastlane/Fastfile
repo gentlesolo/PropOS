@@ -1,0 +1,117 @@
+default_platform(:ios)
+
+# ── Shared ────────────────────────────────────────────────────────────────────
+
+before_all do
+  ensure_git_status_clean
+end
+
+# ── iOS lanes ─────────────────────────────────────────────────────────────────
+
+platform :ios do
+  desc "Sync certificates and provisioning profiles (read-only)"
+  lane :certs do
+    match(type: "development", readonly: true)
+    match(type: "appstore",    readonly: true)
+  end
+
+  desc "Build and push to TestFlight"
+  lane :beta do
+    match(type: "appstore", readonly: true)
+
+    increment_build_number(
+      build_number: latest_testflight_build_number + 1,
+      xcodeproj: "ios/ProposMobile.xcodeproj",
+    )
+
+    build_app(
+      workspace:  "ios/ProposMobile.xcworkspace",
+      scheme:     "ProposMobile",
+      export_method: "app-store",
+      include_bitcode: false,
+      clean: true,
+    )
+
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true,
+      changelog: ENV["RELEASE_NOTES"] || "Bug fixes and performance improvements.",
+    )
+
+    clean_build_artifacts
+  end
+
+  desc "Promote TestFlight build to App Store"
+  lane :release do
+    deliver(
+      submit_for_review: true,
+      automatic_release: false,
+      force:             true,
+      skip_metadata:     false,
+      skip_screenshots:  false,
+    )
+  end
+end
+
+# ── Android lanes ─────────────────────────────────────────────────────────────
+
+platform :android do
+  desc "Build and push to Play Store internal track"
+  lane :beta do
+    gradle(
+      task:        "bundle",
+      build_type:  "Release",
+      project_dir: "android/",
+      properties: {
+        "android.injected.signing.store.file"     => ENV["ANDROID_KEYSTORE_PATH"],
+        "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASSWORD"],
+        "android.injected.signing.key.alias"      => ENV["ANDROID_KEY_ALIAS"],
+        "android.injected.signing.key.password"   => ENV["ANDROID_KEY_PASSWORD"],
+      },
+    )
+
+    upload_to_play_store(
+      track:            "internal",
+      aab:              lane_context[SharedValues::GRADLE_AAB_OUTPUT_PATH],
+      skip_upload_apk:  true,
+      release_status:   "draft",
+    )
+  end
+
+  desc "Promote internal build to production"
+  lane :release do
+    upload_to_play_store(
+      track:        "internal",
+      track_promote_to: "production",
+      rollout:      "0.1",
+    )
+  end
+end
+
+# ── Utility lanes ─────────────────────────────────────────────────────────────
+
+desc "Run tests"
+lane :test do
+  sh("cd .. && npx jest --passWithNoTests")
+end
+
+desc "Bump version number"
+lane :bump do |options|
+  type = options[:type] || "patch"   # patch | minor | major
+
+  # iOS
+  increment_version_number(
+    bump_type: type,
+    xcodeproj: "ios/ProposMobile.xcodeproj",
+  )
+
+  # Android — update versionName in build.gradle
+  android_set_version_name(
+    version_name: lane_context[SharedValues::VERSION_NUMBER],
+    gradle_file: "android/app/build.gradle",
+  )
+
+  git_commit(
+    path:    ["ios/ProposMobile.xcodeproj/project.pbxproj", "android/app/build.gradle"],
+    message: "chore: bump version to #{lane_context[SharedValues::VERSION_NUMBER]}",
+  )
+end

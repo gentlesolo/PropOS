@@ -1,0 +1,7 @@
+app_identifier("com.propos.mobile")
+apple_id("developer@yourcompany.com")
+team_id("YOUR_APPLE_TEAM_ID")
+
+# Android
+json_key_file("fastlane/google-play-key.json")
+package_name("com.propos.mobile")
