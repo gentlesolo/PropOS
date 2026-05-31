@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full overflow-x-hidden">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -42,7 +42,7 @@
         }
     </style>
 </head>
-<body class="h-full font-sans antialiased text-text-primary bg-surface-page transition-colors duration-300">
+<body class="h-full font-sans antialiased text-text-primary bg-surface-page transition-colors duration-300 overflow-x-hidden">
     <div x-data="{ 
             sidebarOpen: false,
             lastKey: '',
@@ -83,12 +83,12 @@
         <livewire:shared.sidebar />
 
         <!-- Main Content Area -->
-        <div class="flex flex-col flex-1 overflow-hidden">
+        <div class="flex flex-col flex-1 min-w-0 overflow-hidden">
             <!-- Topbar Header -->
             <livewire:shared.topbar />
 
             <!-- Page Content -->
-            <main class="flex-1 overflow-y-auto p-6 md:p-8 relative">
+            <main class="flex-1 overflow-y-auto overflow-x-hidden p-6 md:p-8 relative">
                 <!-- Glowing Ambient Lights -->
                 <div class="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-brand-primary/8 dark:bg-brand-primary/10 blur-[130px] pointer-events-none -z-10"></div>
                 <div class="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-brand-accent/5 dark:bg-brand-accent/5 blur-[120px] pointer-events-none -z-10"></div>
