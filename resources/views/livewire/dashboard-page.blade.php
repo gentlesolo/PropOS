@@ -1,79 +1,92 @@
 <div>
     <!-- Header -->
-    <div class="mb-8 flex items-center justify-between">
+    <!-- Header -->
+    <div class="mb-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-            <h1 class="text-3xl font-extrabold tracking-tight text-text-primary">Dashboard</h1>
-            <p class="mt-2 text-text-secondary">Welcome back, <span class="font-semibold text-brand-primary">{{ $user->first_name }}</span>. Here is your agency overview.</p>
+            <span class="text-[10px] font-black uppercase tracking-widest text-brand-primary bg-brand-primary/10 px-2.5 py-1 rounded-full">Command Center</span>
+            <h1 class="text-4xl font-black tracking-tight text-text-primary mt-2">
+                Good Morning, <span class="bg-clip-text text-transparent bg-gradient-to-r from-brand-primary via-emerald-400 to-brand-accent">{{ $user->first_name }}</span>.
+            </h1>
+            <p class="text-xs font-semibold text-text-secondary mt-1">Here is your agency overview and AI recommendations for today.</p>
         </div>
-        <div class="hidden sm:block">
-            <button class="glass-panel px-4 py-2 text-sm font-semibold text-text-primary hover:text-brand-primary transition-colors hover-spring flex items-center space-x-2">
-                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
+        <div class="flex items-center gap-3">
+            <button class="glass-panel px-5 py-2.5 text-xs font-bold text-text-primary hover:border-brand-primary/50 hover:text-brand-primary transition-all hover-spring flex items-center space-x-2 shadow-sm">
+                <svg class="h-4 w-4 text-text-tertiary" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
                 <span>Sync Data</span>
+            </button>
+            <button class="px-5 py-2.5 rounded-xl bg-brand-primary text-white text-xs font-bold hover:bg-brand-secondary transition-all shadow-brand-sm hover:shadow-brand-md hover-spring flex items-center space-x-2">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                <span>New Mandate</span>
             </button>
         </div>
     </div>
 
     <!-- KPI Metrics -->
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-        <!-- Metric 1: Pipeline -->
-        <div class="glass-panel p-6 rounded-3xl hover-spring cursor-pointer group relative overflow-hidden">
-            <div class="absolute -right-4 -top-4 w-24 h-24 bg-brand-primary/10 rounded-full blur-2xl group-hover:bg-brand-primary/20 transition-colors"></div>
-            <div class="relative z-10 flex items-center justify-between">
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-10">
+        <!-- Metric 1: Pipeline (Hero Card) -->
+        <div class="p-6 rounded-[2rem] bg-gradient-hero text-white shadow-2xl relative overflow-hidden group hover:scale-[1.02] hover:shadow-brand-lg transition-all duration-300">
+            <div class="absolute inset-0 bg-brand-primary opacity-30 mix-blend-overlay pointer-events-none"></div>
+            <!-- Glow effect inside -->
+            <div class="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-brand-accent/25 blur-2xl group-hover:scale-125 transition-transform duration-500"></div>
+            <div class="relative z-10 flex items-center justify-between h-full min-h-[96px]">
                 <div>
-                    <p class="text-xs font-bold tracking-wider uppercase text-text-secondary">Pipeline Value</p>
-                    <p class="mt-2 text-3xl font-black text-text-primary tracking-tight">₦{{ number_format($metrics['total_pipeline'] / 1000000, 1) }}M</p>
+                    <p class="text-xs font-bold tracking-widest uppercase opacity-80">Pipeline Value</p>
+                    <p class="mt-2 text-3xl font-black tracking-tighter">₦{{ number_format($metrics['total_pipeline'] / 1000000, 1) }}M</p>
+                    <div class="mt-4 flex items-center text-[10px] font-bold">
+                        <span class="text-brand-accent bg-black/25 px-2 py-0.5 rounded-lg flex items-center">
+                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                            12.4%
+                        </span>
+                        <span class="ml-2 opacity-70">vs last month</span>
+                    </div>
                 </div>
-                <div class="p-3 bg-surface-raised rounded-2xl group-hover:bg-brand-primary/10 border border-border-default/60 transition-colors shadow-sm">
-                    <svg class="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <div class="p-3 bg-white/10 rounded-2xl backdrop-blur-md border border-white/10 shrink-0 self-start">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 </div>
-            </div>
-            <div class="relative z-10 mt-5 flex items-center text-xs font-semibold">
-                <span class="text-success-500 bg-success-500/10 px-2 py-0.5 rounded-md flex items-center">
-                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
-                    12.4%
-                </span>
-                <span class="ml-2 text-text-tertiary">vs last month</span>
             </div>
         </div>
 
         <!-- Metric 2: Active Listings -->
-        <div class="glass-panel p-6 rounded-3xl hover-spring cursor-pointer group relative overflow-hidden">
-            <div class="absolute -right-4 -top-4 w-24 h-24 bg-info-500/10 rounded-full blur-2xl group-hover:bg-info-500/20 transition-colors"></div>
+        <div class="p-6 rounded-[2rem] glass-panel border border-border-default/80 shadow-sm hover:border-info-500/40 hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-24 h-24 rounded-full bg-info-500/10 blur-xl group-hover:scale-115 transition-transform duration-500"></div>
             <div class="relative z-10 flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-bold tracking-wider uppercase text-text-secondary">Active Listings</p>
-                    <p class="mt-2 text-3xl font-black text-text-primary tracking-tight">{{ $metrics['active_listings'] }}</p>
+                    <p class="text-xs font-bold tracking-widest uppercase text-text-secondary">Active Listings</p>
+                    <p class="mt-2 text-3xl font-black text-text-primary tracking-tighter">{{ $metrics['active_listings'] }}</p>
+                    <p class="mt-4 text-[10px] font-semibold text-text-tertiary">3 closing this week</p>
                 </div>
-                <div class="p-3 bg-surface-raised rounded-2xl group-hover:bg-info-500/10 border border-border-default/60 transition-colors shadow-sm">
+                <div class="p-3 bg-surface-raised rounded-2xl group-hover:bg-info-500/10 border border-border-default/60 transition-colors shadow-sm self-start">
                     <svg class="w-6 h-6 text-info-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                 </div>
             </div>
         </div>
 
         <!-- Metric 3: New Leads -->
-        <div class="glass-panel p-6 rounded-3xl hover-spring cursor-pointer group relative overflow-hidden">
-            <div class="absolute -right-4 -top-4 w-24 h-24 bg-brand-primary/10 rounded-full blur-2xl group-hover:bg-brand-primary/20 transition-colors"></div>
+        <div class="p-6 rounded-[2rem] glass-panel border border-border-default/80 shadow-sm hover:border-brand-primary/40 hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-24 h-24 rounded-full bg-brand-primary/10 blur-xl group-hover:scale-115 transition-transform duration-500"></div>
             <div class="relative z-10 flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-bold tracking-wider uppercase text-text-secondary">New Leads</p>
-                    <p class="mt-2 text-3xl font-black text-text-primary tracking-tight">{{ $metrics['new_leads'] }}</p>
+                    <p class="text-xs font-bold tracking-widest uppercase text-text-secondary">New Leads</p>
+                    <p class="mt-2 text-3xl font-black text-text-primary tracking-tighter">{{ $metrics['new_leads'] }}</p>
+                    <p class="mt-4 text-[10px] font-semibold text-text-tertiary">From all active channels</p>
                 </div>
-                <div class="p-3 bg-surface-raised rounded-2xl group-hover:bg-brand-primary/10 border border-border-default/60 transition-colors shadow-sm">
+                <div class="p-3 bg-surface-raised rounded-2xl group-hover:bg-brand-primary/10 border border-border-default/60 transition-colors shadow-sm self-start">
                     <svg class="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                 </div>
             </div>
         </div>
 
         <!-- Metric 4: Hot Buyers -->
-        <div class="glass-panel p-6 rounded-3xl hover-spring cursor-pointer group relative overflow-hidden">
-            <div class="absolute -right-4 -top-4 w-24 h-24 bg-warning-500/10 rounded-full blur-2xl group-hover:bg-warning-500/20 transition-colors"></div>
+        <div class="p-6 rounded-[2rem] glass-panel border border-border-default/80 shadow-sm hover:border-warning-500/40 hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-24 h-24 rounded-full bg-warning-500/10 blur-xl group-hover:scale-115 transition-transform duration-500"></div>
             <div class="relative z-10 flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-bold tracking-wider uppercase text-text-secondary">Hot Buyers</p>
-                    <p class="mt-2 text-3xl font-black text-text-primary tracking-tight">{{ $metrics['hot_buyers'] }}</p>
+                    <p class="text-xs font-bold tracking-widest uppercase text-text-secondary">Hot Buyers</p>
+                    <p class="mt-2 text-3xl font-black text-text-primary tracking-tighter">{{ $metrics['hot_buyers'] }}</p>
+                    <p class="mt-4 text-[10px] font-semibold text-text-tertiary">> 80% Intent Score</p>
                 </div>
-                <div class="p-3 bg-surface-raised rounded-2xl group-hover:bg-warning-500/10 border border-border-default/60 transition-colors shadow-sm">
-                    <svg class="w-6 h-6 text-warning-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path></svg>
+                <div class="p-3 bg-surface-raised rounded-2xl group-hover:bg-warning-500/10 border border-border-default/60 transition-colors shadow-sm self-start">
+                    <svg class="w-6 h-6 text-warning-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path></svg>
                 </div>
             </div>
         </div>
@@ -84,14 +97,14 @@
         <div class="lg:col-span-2 space-y-8">
             
             <!-- AI Copilot Intelligence Feed (Stunning Visual Variant) -->
-            <div class="rounded-3xl border border-border-default/60 overflow-hidden relative shadow-md group transition-all duration-300 hover:shadow-brand-lg">
+            <div class="rounded-[2.5rem] border border-border-default/80 overflow-hidden relative shadow-brand-md group transition-all duration-300 hover:shadow-brand-lg hover:border-brand-primary/30">
                 <!-- Background Gradient (Subtle shifting) -->
                 <div class="absolute inset-0 bg-gradient-subtle dark:bg-gradient-hero opacity-20 pointer-events-none transition-opacity group-hover:opacity-30"></div>
                 
                 <!-- Noise/Texture Overlay -->
                 <div class="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');"></div>
 
-                <div class="relative z-10 glass-panel border-none rounded-3xl backdrop-blur-3xl h-full">
+                <div class="relative z-10 glass-panel border-none rounded-[2.5rem] backdrop-blur-3xl h-full">
                     <div class="px-8 py-5 border-b border-border-default/40 flex items-center justify-between">
                         <div class="flex items-center space-x-3">
                             <div class="h-3 w-3 rounded-full bg-success-500 shadow-[0_0_10px_rgba(16,185,129,0.8)] animate-pulse"></div>
@@ -136,15 +149,19 @@
             </div>
 
             <!-- Recent Listings -->
-            <div class="glass-panel rounded-3xl border border-border-default/60 overflow-hidden shadow-sm">
-                <div class="px-8 py-6 border-b border-border-default/60 flex items-center justify-between">
-                    <h2 class="text-lg font-bold text-text-primary">Portfolio Activity</h2>
-                    <a href="{{ route('listing.index') }}" class="text-sm font-bold text-brand-primary hover:text-brand-secondary transition-colors">View All &rarr;</a>
+            <div class="glass-panel rounded-[2rem] border border-border-default/80 shadow-md overflow-hidden transition-all duration-300 hover:border-border-strong/50">
+                <div class="px-8 py-6 border-b border-border-default/40 flex items-center justify-between bg-surface-sunken/40">
+                    <h2 class="text-lg font-bold text-text-primary flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                        Portfolio Activity
+                    </h2>
+                    <a href="{{ route('listing.index') }}" class="text-sm font-bold text-text-tertiary hover:text-brand-primary transition-colors">View All &rarr;</a>
                 </div>
                 <div class="divide-y divide-border-default/40">
                     @forelse($recentListings as $listing)
                         <a href="{{ route('listing.detail', $listing) }}"
-                           class="px-8 py-5 flex items-center justify-between hover:bg-surface-sunken/30 transition-colors group">
+                           class="px-8 py-5 flex items-center justify-between hover:bg-brand-primary/5 border-l-2 border-transparent hover:border-brand-primary transition-all duration-300 group cursor-pointer relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-r from-brand-primary/0 to-brand-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                             <div class="flex items-center space-x-5">
                                 <div class="h-14 w-14 rounded-2xl bg-surface-raised border border-border-default/60 flex items-center justify-center text-text-tertiary flex-shrink-0 overflow-hidden group-hover:scale-105 transition-transform duration-300">
                                     @if($listing->coverPhoto)
@@ -155,18 +172,18 @@
                                 </div>
                                 <div>
                                     <h4 class="text-sm font-bold text-text-primary group-hover:text-brand-primary transition-colors">{{ $listing->property->address_line_1 }}</h4>
-                                    <p class="text-sm text-text-secondary mt-0.5">{{ $listing->property->city }} • ₦{{ number_format($listing->listing_price) }}</p>
+                                    <p class="text-xs font-semibold text-text-secondary mt-1">{{ $listing->property->city }} • ₦{{ number_format($listing->listing_price) }}</p>
                                 </div>
                             </div>
                             <div class="flex items-center gap-3">
                                 <span class="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-black tracking-wider bg-surface-raised border border-border-default/60 text-text-primary uppercase shadow-sm">
                                     {{ str_replace('_', ' ', $listing->status) }}
                                 </span>
-                                <svg class="h-4 w-4 text-text-tertiary group-hover:text-brand-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                                <svg class="h-4 w-4 text-text-tertiary group-hover:text-brand-primary transition-colors transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
                             </div>
                         </a>
                     @empty
-                        <div class="p-8 text-center text-sm text-text-tertiary">
+                        <div class="p-8 text-center text-sm font-semibold text-text-tertiary">
                             No active portfolio data.
                         </div>
                     @endforelse
@@ -179,22 +196,26 @@
         <div class="space-y-8">
             
             <!-- Recent Contacts -->
-            <div class="glass-panel rounded-3xl border border-border-default/60 overflow-hidden shadow-sm">
-                <div class="px-8 py-6 border-b border-border-default/60 flex items-center justify-between">
-                    <h2 class="text-lg font-bold text-text-primary">Recent Leads</h2>
-                    <a href="{{ route('crm.contacts') }}" class="text-sm font-bold text-text-tertiary hover:text-text-primary transition-colors">See all</a>
+            <div class="glass-panel rounded-[2rem] border border-border-default/80 shadow-md overflow-hidden transition-all duration-300 hover:border-border-strong/50">
+                <div class="px-8 py-6 border-b border-border-default/40 flex items-center justify-between bg-surface-sunken/40">
+                    <h2 class="text-lg font-bold text-text-primary flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-warning-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        Recent Leads
+                    </h2>
+                    <a href="{{ route('crm.contacts') }}" class="text-sm font-bold text-text-tertiary hover:text-brand-primary transition-colors">See all &rarr;</a>
                 </div>
                 <ul class="divide-y divide-border-default/40">
                     @forelse($recentContacts as $contact)
-                        <li class="px-8 py-5 hover:bg-surface-sunken/30 transition-colors group cursor-pointer">
+                        <li class="px-8 py-5 flex items-center justify-between hover:bg-brand-primary/5 border-l-2 border-transparent hover:border-brand-primary transition-all duration-300 group cursor-pointer relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-r from-brand-primary/0 to-brand-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                             <div class="flex items-center space-x-4">
                                 <div class="relative">
-                                    <div class="h-12 w-12 rounded-full bg-surface-raised border border-border-default/60 flex items-center justify-center text-text-primary font-black text-sm group-hover:bg-brand-primary/10 group-hover:border-brand-primary/30 group-hover:text-brand-primary transition-all duration-300">
+                                    <div class="h-10 w-10 rounded-full bg-brand-primary/10 text-brand-primary font-black text-xs flex items-center justify-center">
                                         {{ substr($contact->first_name, 0, 1) }}{{ substr($contact->last_name, 0, 1) }}
                                     </div>
                                     @if($contact->intent_score >= 80)
-                                        <div class="absolute -top-1 -right-1 h-4 w-4 bg-warning-500 rounded-full border-2 border-surface-card flex items-center justify-center">
-                                            <svg class="h-2.5 w-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path></svg>
+                                        <div class="absolute -top-1 -right-1 h-3.5 w-3.5 bg-warning-500 rounded-full border-2 border-surface-card flex items-center justify-center">
+                                            <svg class="h-2 w-2 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path></svg>
                                         </div>
                                     @endif
                                 </div>
@@ -205,7 +226,7 @@
                                     <div class="flex items-center mt-1 space-x-2">
                                         <span class="text-[10px] font-bold uppercase tracking-wider text-text-tertiary">{{ $contact->type }}</span>
                                         <span class="h-1 w-1 rounded-full bg-border-default"></span>
-                                        <span class="text-xs font-semibold {{ $contact->intent_score >= 80 ? 'text-warning-500' : 'text-text-secondary' }}">{{ $contact->intent_score }}% Intent</span>
+                                        <span class="text-[10px] font-black uppercase tracking-wider {{ $contact->intent_score >= 80 ? 'text-warning-500' : 'text-text-secondary' }}">{{ $contact->intent_score }}% Intent</span>
                                     </div>
                                 </div>
                                 <div>
@@ -214,7 +235,7 @@
                             </div>
                         </li>
                     @empty
-                        <li class="p-8 text-center text-sm text-text-tertiary">
+                        <li class="p-8 text-center text-sm font-semibold text-text-tertiary">
                             No recent contacts.
                         </li>
                     @endforelse
@@ -222,8 +243,8 @@
             </div>
 
             <!-- Task List Shell -->
-            <div class="glass-panel rounded-3xl border border-border-default/60 overflow-hidden shadow-sm">
-                <div class="px-8 py-6 border-b border-border-default/60">
+            <div class="glass-panel rounded-[2rem] border border-border-default/80 shadow-md overflow-hidden transition-all duration-300">
+                <div class="px-8 py-6 border-b border-border-default/40 bg-surface-sunken/40">
                     <h2 class="text-lg font-bold text-text-primary">Upcoming Tasks</h2>
                 </div>
                 <div class="p-8 text-center flex flex-col items-center justify-center">

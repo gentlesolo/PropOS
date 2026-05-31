@@ -30,6 +30,14 @@ class ContactsPage extends Component
     public array $duplicates = [];
     public bool $confirmDuplicate = false;
 
+    // Contact Detail Drawer properties
+    public bool $showDrawer = false;
+    public ?int $selectedContactId = null;
+    public ?Contact $selectedContact = null;
+    public string $activityType = 'note';
+    public string $activitySubject = '';
+    public string $activityBody = '';
+
     protected $queryString = [
         'search' => ['except' => ''],
         'filterType' => ['except' => ''],
@@ -157,6 +165,75 @@ class ContactsPage extends Component
         $source->forceDelete();
 
         $this->dispatch('notify', message: "Contacts merged successfully.", type: 'success');
+    }
+
+    public function updateStatus(int $id, string $status): void
+    {
+        $agencyId = auth()->user()->agency_id ?? 1;
+        $contact = Contact::where('id', $id)->where('agency_id', $agencyId)->firstOrFail();
+        $contact->update(['status' => $status]);
+        $this->dispatch('notify', message: "Status updated successfully.", type: 'success');
+    }
+
+    public function updateIntentScore(int $id, int $score): void
+    {
+        $agencyId = auth()->user()->agency_id ?? 1;
+        $contact = Contact::where('id', $id)->where('agency_id', $agencyId)->firstOrFail();
+        $contact->update(['intent_score' => min(100, max(0, $score))]);
+        $this->dispatch('notify', message: "Intent score updated successfully.", type: 'success');
+    }
+
+    public function selectContact(int $id): void
+    {
+        $agencyId = auth()->user()->agency_id ?? 1;
+        $this->selectedContactId = $id;
+        $this->selectedContact = Contact::where('id', $id)
+            ->where('agency_id', $agencyId)
+            ->with(['activities.user', 'agent'])
+            ->firstOrFail();
+
+        $this->reset(['activityBody', 'activitySubject']);
+        $this->activityType = 'note';
+        $this->showDrawer = true;
+    }
+
+    public function closeDrawer(): void
+    {
+        $this->showDrawer = false;
+        $this->selectedContact = null;
+        $this->selectedContactId = null;
+    }
+
+    public function saveDrawerActivity(LogContactActivityAction $logAction)
+    {
+        if (!$this->selectedContact) {
+            return;
+        }
+
+        $this->validate([
+            'activityBody' => 'required|string|max:2000',
+            'activityType' => 'required|in:note,call,email,meeting,sms'
+        ]);
+
+        $logAction->execute(
+            $this->selectedContact,
+            $this->activityType,
+            $this->activitySubject ?: null,
+            $this->activityBody
+        );
+
+        $this->selectedContact->update(['last_contacted_at' => now()]);
+        app(ScoreLeadAction::class)->execute($this->selectedContact->fresh());
+
+        $this->reset(['activityBody', 'activitySubject']);
+        $this->activityType = 'note';
+
+        // Refresh selected contact to display updated timeline
+        $this->selectedContact = Contact::where('id', $this->selectedContact->id)
+            ->with(['activities.user', 'agent'])
+            ->firstOrFail();
+
+        $this->dispatch('notify', message: "Activity logged successfully.", type: 'success');
     }
 
     public function render()

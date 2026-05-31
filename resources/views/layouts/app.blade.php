@@ -43,7 +43,42 @@
     </style>
 </head>
 <body class="h-full font-sans antialiased text-text-primary bg-surface-page transition-colors duration-300">
-    <div x-data="{ sidebarOpen: false }" class="flex h-screen overflow-hidden">
+    <div x-data="{ 
+            sidebarOpen: false,
+            lastKey: '',
+            keyTimeout: null
+         }"
+         @keydown.window="
+            if (['INPUT', 'TEXTAREA', 'SELECT'].includes($event.target.tagName) || $event.target.isContentEditable) return;
+            
+            const key = $event.key.toLowerCase();
+            
+            // Single key shortcut
+            if (key === 'c' && !$event.ctrlKey && !$event.metaKey) {
+                $dispatch('toggleChatPanel');
+                return;
+            }
+            
+            // Sequence shortcuts starting with 'g'
+            if (lastKey === 'g') {
+                if (key === 'c') {
+                    window.location.href = '{{ route('crm.contacts') }}';
+                } else if (key === 'l') {
+                    window.location.href = '{{ route('listing.index') }}';
+                } else if (key === 'p') {
+                    window.location.href = '{{ route('crm.pipeline') }}';
+                }
+                lastKey = '';
+                return;
+            }
+            
+            if (key === 'g') {
+                lastKey = 'g';
+                clearTimeout(keyTimeout);
+                keyTimeout = setTimeout(() => { lastKey = ''; }, 1000);
+            }
+         }"
+         class="flex h-screen overflow-hidden">
         <!-- Sidebar Navigation -->
         <livewire:shared.sidebar />
 
@@ -54,12 +89,16 @@
 
             <!-- Page Content -->
             <main class="flex-1 overflow-y-auto p-6 md:p-8 relative">
-                <!-- Optional subtle gradient background effect similar to auth -->
-                <div class="absolute inset-0 bg-gradient-subtle dark:bg-gradient-hero transition-all duration-500 -z-10 opacity-30 pointer-events-none">
-                    <svg class="absolute inset-0 h-full w-full stroke-text-secondary/10 dark:stroke-white/10 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]" aria-hidden="true">
+                <!-- Glowing Ambient Lights -->
+                <div class="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-brand-primary/8 dark:bg-brand-primary/10 blur-[130px] pointer-events-none -z-10"></div>
+                <div class="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-brand-accent/5 dark:bg-brand-accent/5 blur-[120px] pointer-events-none -z-10"></div>
+
+                <!-- Grid and Gradient Backplate -->
+                <div class="absolute inset-0 bg-gradient-subtle dark:bg-gradient-hero transition-all duration-500 -z-20 opacity-40 pointer-events-none">
+                    <svg class="absolute inset-0 h-full w-full stroke-text-secondary/5 dark:stroke-white/5 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]" aria-hidden="true">
                         <defs>
-                            <pattern id="grid-pattern-app" width="200" height="200" x="100%" y="-1" patternUnits="userSpaceOnUse">
-                                <path d="M.5 200V.5H200" fill="none" />
+                            <pattern id="grid-pattern-app" width="120" height="120" x="100%" y="-1" patternUnits="userSpaceOnUse">
+                                <path d="M.5 120V.5H120" fill="none" />
                             </pattern>
                         </defs>
                         <rect width="100%" height="100%" stroke-width="0" fill="url(#grid-pattern-app)" />

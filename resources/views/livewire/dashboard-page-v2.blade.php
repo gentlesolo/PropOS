@@ -20,8 +20,10 @@
     <!-- KPI Metrics - Bento Box Style -->
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-10">
         <!-- Metric 1: Pipeline (Hero Style) -->
-        <div class="p-6 rounded-[2rem] bg-gradient-hero text-white shadow-xl relative overflow-hidden group hover:scale-[1.02] hover:shadow-brand-lg transition-all duration-300">
-            <div class="absolute inset-0 bg-brand-primary opacity-20 mix-blend-overlay pointer-events-none"></div>
+        <div class="p-6 rounded-[2rem] bg-gradient-hero text-white shadow-2xl relative overflow-hidden group hover:scale-[1.02] hover:shadow-brand-lg transition-all duration-300">
+            <div class="absolute inset-0 bg-brand-primary opacity-30 mix-blend-overlay pointer-events-none"></div>
+            <!-- Glowing accent in card -->
+            <div class="absolute -top-12 -right-12 w-44 h-44 rounded-full bg-brand-accent/25 blur-2xl group-hover:scale-125 transition-transform duration-500"></div>
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-8">
                     <p class="text-xs font-bold tracking-widest uppercase opacity-80">Pipeline Value</p>
@@ -43,9 +45,8 @@
         </div>
 
         <!-- Metric 2: Active Listings -->
-        <div class="p-6 rounded-[2rem] bg-surface-card border border-border-default/60 shadow-sm hover:border-info-500/50 hover:shadow-md hover-spring group transition-all duration-300 relative overflow-hidden">
-            <!-- Subtle gradient flair on hover -->
-            <div class="absolute inset-0 bg-gradient-to-br from-info-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+        <div class="p-6 rounded-[2rem] glass-panel border border-border-default/80 shadow-sm hover:border-info-500/40 hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-info-500/10 blur-xl group-hover:scale-110 transition-transform duration-500"></div>
             <div class="flex items-center justify-between mb-8">
                 <p class="text-xs font-bold tracking-widest uppercase text-text-secondary">Listings</p>
                 <div class="p-2.5 bg-info-500/10 rounded-xl text-info-500 group-hover:scale-110 transition-transform">
@@ -59,8 +60,8 @@
         </div>
 
         <!-- Metric 3: New Leads -->
-        <div class="p-6 rounded-[2rem] bg-surface-card border border-border-default/60 shadow-sm hover:border-brand-primary/50 hover:shadow-md hover-spring group transition-all duration-300 relative overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-br from-brand-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+        <div class="p-6 rounded-[2rem] glass-panel border border-border-default/80 shadow-sm hover:border-brand-primary/40 hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-brand-primary/10 blur-xl group-hover:scale-110 transition-transform duration-500"></div>
             <div class="flex items-center justify-between mb-8">
                 <p class="text-xs font-bold tracking-widest uppercase text-text-secondary">New Leads</p>
                 <div class="p-2.5 bg-brand-primary/10 rounded-xl text-brand-primary group-hover:scale-110 transition-transform">
@@ -74,8 +75,8 @@
         </div>
 
         <!-- Metric 4: Hot Buyers -->
-        <div class="p-6 rounded-[2rem] bg-surface-card border border-border-default/60 shadow-sm hover:border-warning-500/50 hover:shadow-md hover-spring group transition-all duration-300 relative overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-br from-warning-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+        <div class="p-6 rounded-[2rem] glass-panel border border-border-default/80 shadow-sm hover:border-warning-500/40 hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-warning-500/10 blur-xl group-hover:scale-110 transition-transform duration-500"></div>
             <div class="flex items-center justify-between mb-8">
                 <p class="text-xs font-bold tracking-widest uppercase text-text-secondary">Hot Buyers</p>
                 <div class="p-2.5 bg-warning-500/10 rounded-xl text-warning-500 group-hover:scale-110 transition-transform">
@@ -94,8 +95,8 @@
         <div class="lg:col-span-2 space-y-8">
             
             <!-- Recent Listings -->
-            <div class="bg-surface-card rounded-[2rem] border border-border-default/60 shadow-sm overflow-hidden">
-                <div class="px-8 py-6 border-b border-border-default/40 flex items-center justify-between bg-surface-sunken/30">
+            <div class="glass-panel rounded-[2rem] border border-border-default/80 shadow-md overflow-hidden transition-all duration-300 hover:border-border-strong/50">
+                <div class="px-8 py-6 border-b border-border-default/40 flex items-center justify-between bg-surface-sunken/40">
                     <h2 class="text-lg font-bold text-text-primary flex items-center">
                         <svg class="w-5 h-5 mr-2 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                         Portfolio Activity
@@ -121,15 +122,15 @@
                         </div>
                     @empty
                         <div class="p-8 text-center text-sm font-semibold text-text-tertiary">
-                            No active portfolio data.
+                             No active portfolio data.
                         </div>
                     @endforelse
                 </div>
             </div>
 
             <!-- Recent Contacts -->
-            <div class="bg-surface-card rounded-[2rem] border border-border-default/60 shadow-sm overflow-hidden">
-                <div class="px-8 py-6 border-b border-border-default/40 flex items-center justify-between bg-surface-sunken/30">
+            <div class="glass-panel rounded-[2rem] border border-border-default/80 shadow-md overflow-hidden transition-all duration-300 hover:border-border-strong/50">
+                <div class="px-8 py-6 border-b border-border-default/40 flex items-center justify-between bg-surface-sunken/40">
                     <h2 class="text-lg font-bold text-text-primary flex items-center">
                         <svg class="w-5 h-5 mr-2 text-warning-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                         Recent Leads
@@ -169,9 +170,9 @@
         <div class="space-y-8">
             
             <!-- AI Copilot Intelligence Feed -->
-            <div class="rounded-[2rem] glass-panel border border-border-default/60 shadow-brand-md relative overflow-hidden flex flex-col h-[600px] transition-all duration-300 hover:shadow-brand-lg">
+            <div class="rounded-[2rem] glass-panel border border-border-default/80 shadow-brand-md relative overflow-hidden flex flex-col h-[600px] transition-all duration-300 hover:shadow-brand-lg hover:border-brand-primary/30">
                 <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-primary via-info-500 to-brand-primary"></div>
-                <div class="px-6 py-5 border-b border-border-default/40 flex items-center justify-between bg-surface-sunken/30">
+                <div class="px-6 py-5 border-b border-border-default/40 flex items-center justify-between bg-surface-sunken/40">
                     <div class="flex items-center space-x-2">
                         <div class="relative flex h-3 w-3">
                           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success-400 opacity-75"></span>
@@ -183,18 +184,18 @@
                 
                 <div class="flex-1 overflow-y-auto p-6 space-y-6">
                     <!-- Suggestion 1 -->
-                    <div class="p-5 rounded-2xl bg-surface-sunken/50 border border-border-default/60 hover:bg-surface-card hover:border-brand-primary/30 hover:shadow-md transition-all duration-300 hover-spring cursor-pointer group">
+                    <div class="p-5 rounded-2xl bg-surface-sunken/30 border border-border-default/50 hover:bg-surface-card/60 hover:border-brand-primary/30 hover:shadow-brand-sm transition-all duration-300 hover-spring cursor-pointer group">
                         <div class="flex items-center space-x-2 mb-3">
                             <svg class="w-4 h-4 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                             <span class="text-[10px] font-black uppercase tracking-widest text-brand-primary">Lead Match</span>
                         </div>
                         <h4 class="text-sm font-bold text-text-primary mb-2">High Intent Buyer</h4>
                         <p class="text-xs font-medium text-text-secondary leading-relaxed mb-4">A new buyer lead matches 95% of criteria for your new "Victoria Island" mandate.</p>
-                        <button class="w-full py-2.5 text-xs font-bold rounded-xl bg-brand-primary text-white hover:bg-brand-secondary transition-colors">Draft Introduction</button>
+                        <button class="w-full py-2.5 text-xs font-bold rounded-xl bg-brand-primary text-white hover:bg-brand-secondary transition-colors shadow-brand-sm">Draft Introduction</button>
                     </div>
                     
                     <!-- Suggestion 2 -->
-                    <div class="p-5 rounded-2xl bg-surface-sunken/50 border border-border-default/60 hover:bg-surface-card hover:border-warning-500/30 hover:shadow-md transition-all duration-300 hover-spring cursor-pointer group">
+                    <div class="p-5 rounded-2xl bg-surface-sunken/30 border border-border-default/50 hover:bg-surface-card/60 hover:border-warning-500/30 hover:shadow-brand-sm transition-all duration-300 hover-spring cursor-pointer group">
                         <div class="flex items-center space-x-2 mb-3">
                             <svg class="w-4 h-4 text-warning-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                             <span class="text-[10px] font-black uppercase tracking-widest text-warning-500">Optimization</span>

@@ -9,7 +9,7 @@
 
     {{-- Sidebar container --}}
     <div :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-         class="fixed inset-y-0 left-0 z-50 w-64 bg-surface-page border-r border-border-default/40 h-full flex flex-col flex-shrink-0 transition-transform duration-300 ease-in-out md:relative md:translate-x-0 md:flex">
+         class="fixed inset-y-0 left-0 z-50 w-64 bg-surface-sunken/70 backdrop-blur-md border-r border-border-default/45 h-full flex flex-col flex-shrink-0 transition-transform duration-300 ease-in-out md:relative md:translate-x-0 md:flex">
 
         {{-- Brand / Logo --}}
         <div class="flex items-center justify-between h-16 px-5 border-b border-border-default/40 shrink-0">
@@ -50,10 +50,10 @@
                     @php $active = $item['active'] ?? request()->routeIs($item['route']); @endphp
                     <li>
                         <a href="{{ route($item['route']) }}"
-                           class="relative flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 group
+                           class="relative flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-200 group
                                   {{ $active
-                                      ? 'bg-brand-primary/10 text-brand-primary'
-                                      : 'text-text-secondary hover:text-text-primary hover:bg-surface-raised' }}">
+                                      ? 'bg-brand-primary/10 text-brand-primary shadow-brand-sm border border-brand-primary/15'
+                                      : 'text-text-secondary hover:text-brand-primary hover:bg-brand-primary/5' }}">
 
                             {{-- Active pill --}}
                             @if($active)
