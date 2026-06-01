@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -47,5 +48,13 @@ class AppServiceProvider extends ServiceProvider
         \App\Infrastructure\Persistence\Models\Listing::observe(
             \App\Infrastructure\Persistence\Observers\ListingObserver::class
         );
+
+        View::composer('*', function ($view) {
+            $symbol = '₦';
+            if (auth()->check()) {
+                $symbol = auth()->user()->agency?->currency_symbol ?? '₦';
+            }
+            $view->with('currencySymbol', $symbol);
+        });
     }
 }

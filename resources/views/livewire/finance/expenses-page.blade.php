@@ -1,4 +1,4 @@
-<div class="flex gap-0 h-full">
+﻿<div class="flex gap-0 h-full">
 
     {{-- ══ Main column ══════════════════════════════════════════════════════════ --}}
     <div class="flex-1 min-w-0 overflow-auto p-6">
@@ -18,7 +18,7 @@
         {{-- Stats --}}
         <div class="grid grid-cols-3 gap-4 mb-6">
             <div class="glass-panel rounded-2xl border border-danger-200 p-4 text-center">
-                <div class="text-xl font-bold text-danger-600">₦{{ number_format($stats['totalThisMonth']) }}</div>
+                <div class="text-xl font-bold text-danger-600">{{ $currencySymbol }}{{ number_format($stats['totalThisMonth']) }}</div>
                 <div class="text-xs text-text-secondary mt-1">Approved This Month</div>
             </div>
             <div class="glass-panel rounded-2xl border border-warning-200 p-4 text-center">
@@ -26,7 +26,7 @@
                 <div class="text-xs text-text-secondary mt-1">Pending Approval</div>
             </div>
             <div class="glass-panel rounded-2xl border border-success-200 p-4 text-center">
-                <div class="text-xl font-bold text-success-600">₦{{ number_format($stats['deductibleTotal']) }}</div>
+                <div class="text-xl font-bold text-success-600">{{ $currencySymbol }}{{ number_format($stats['deductibleTotal']) }}</div>
                 <div class="text-xs text-text-secondary mt-1">Tax Deductible</div>
             </div>
         </div>
@@ -60,7 +60,7 @@
                     @error('description') <p class="text-xs text-danger-600 mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-text-secondary mb-1">Amount (₦) *</label>
+                    <label class="block text-xs font-medium text-text-secondary mb-1">Amount ({{ $currencySymbol }}) *</label>
                     <input wire:model="amount" type="number" step="0.01" min="0.01"
                         class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
                     @error('amount') <p class="text-xs text-danger-600 mt-1">{{ $message }}</p> @enderror
@@ -128,7 +128,7 @@
                     @error('edit_description') <p class="text-xs text-danger-600 mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-text-secondary mb-1">Amount (₦) *</label>
+                    <label class="block text-xs font-medium text-text-secondary mb-1">Amount ({{ $currencySymbol }}) *</label>
                     <input wire:model="edit_amount" type="number" step="0.01" min="0.01"
                         class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
                     @error('edit_amount') <p class="text-xs text-danger-600 mt-1">{{ $message }}</p> @enderror
@@ -226,7 +226,7 @@
                         <td class="px-4 py-3 text-text-secondary text-xs capitalize">{{ str_replace('_',' ',$expense->category) }}</td>
                         <td class="px-4 py-3 text-text-secondary text-xs">{{ $expense->property?->address_line_1 ?? 'Portfolio' }}</td>
                         <td class="px-4 py-3 text-text-secondary text-xs">{{ $expense->expense_date->format('d M Y') }}</td>
-                        <td class="px-4 py-3 text-right font-bold text-text-primary">₦{{ number_format($expense->amount) }}</td>
+                        <td class="px-4 py-3 text-right font-bold text-text-primary">{{ $currencySymbol }}{{ number_format($expense->amount) }}</td>
                         <td class="px-4 py-3">
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-{{ $c }}-50 text-{{ $c }}-700 border border-{{ $c }}-200">
                                 {{ ucfirst($expense->status) }}
@@ -282,7 +282,7 @@
 
             {{-- Amount --}}
             <div class="glass-panel rounded-2xl border border-{{ $dc }}-200 p-4 mb-4 text-center">
-                <div class="text-3xl font-bold text-text-primary mb-1">₦{{ number_format($detailExpense->amount) }}</div>
+                <div class="text-3xl font-bold text-text-primary mb-1">{{ $currencySymbol }}{{ number_format($detailExpense->amount) }}</div>
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-{{ $dc }}-50 text-{{ $dc }}-700 border border-{{ $dc }}-200">
                     {{ ucfirst($detailExpense->status) }}
                 </span>

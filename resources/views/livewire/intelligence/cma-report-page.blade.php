@@ -1,4 +1,4 @@
-<div>
+﻿<div>
     <div class="flex items-center justify-between mb-6">
         <div>
             <h1 class="text-2xl font-bold text-text-primary">CMA Reports</h1>
@@ -25,15 +25,15 @@
                 @error('subject_address') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
             </div>
             <div>
-                <label class="block text-xs font-medium text-text-secondary mb-1">Estimated Value Low (₦)</label>
+                <label class="block text-xs font-medium text-text-secondary mb-1">Estimated Value Low ({{ $currencySymbol }})</label>
                 <input wire:model="estimated_value_low" type="number" min="0" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
             </div>
             <div>
-                <label class="block text-xs font-medium text-text-secondary mb-1">Estimated Value High (₦)</label>
+                <label class="block text-xs font-medium text-text-secondary mb-1">Estimated Value High ({{ $currencySymbol }})</label>
                 <input wire:model="estimated_value_high" type="number" min="0" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
             </div>
             <div>
-                <label class="block text-xs font-medium text-text-secondary mb-1">Recommended List Price (₦)</label>
+                <label class="block text-xs font-medium text-text-secondary mb-1">Recommended List Price ({{ $currencySymbol }})</label>
                 <input wire:model="recommended_list_price" type="number" min="0" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
             </div>
             <div>
@@ -58,7 +58,7 @@
             <div class="flex items-center gap-3 p-3 bg-surface-hover/30 rounded-lg mb-2">
                 <div class="flex-1 text-sm">
                     <span class="font-medium text-text-primary">{{ $comp['address'] }}</span>
-                    <span class="text-text-secondary ml-2">₦{{ number_format($comp['sale_price']) }}</span>
+                    <span class="text-text-secondary ml-2">{{ $currencySymbol }}{{ number_format($comp['sale_price']) }}</span>
                     @if($comp['sale_date']) <span class="text-text-tertiary ml-2 text-xs">{{ $comp['sale_date'] }}</span> @endif
                 </div>
                 <button wire:click="removeComparable({{ $i }})" class="text-danger-500 hover:text-danger-700 text-sm">×</button>
@@ -95,7 +95,7 @@
                 </div>
                 <div class="flex justify-between">
                     <dt class="text-text-secondary">Recommended</dt>
-                    <dd class="font-bold text-text-primary">{{ $report->recommended_list_price ? '₦'.number_format($report->recommended_list_price) : '—' }}</dd>
+                    <dd class="font-bold text-text-primary">{{ $report->recommended_list_price ? '{{ $currencySymbol }}'.number_format($report->recommended_list_price) : '—' }}</dd>
                 </div>
                 <div class="flex justify-between">
                     <dt class="text-text-secondary">Comparables</dt>

@@ -1,4 +1,4 @@
-<div>
+﻿<div>
     <div class="flex items-center justify-between mb-8">
         <div>
             <h1 class="text-3xl font-extrabold tracking-tight text-text-primary">Agent Scorecard</h1>
@@ -21,7 +21,7 @@
             <div class="grid grid-cols-2 md:grid-cols-3 gap-5">
                 <div class="glass-panel rounded-2xl border border-border-default/60 p-5 hover-spring">
                     <p class="text-xs font-bold text-text-tertiary uppercase tracking-wider mb-2">Won Revenue</p>
-                    <h3 class="text-2xl font-black text-text-primary">₦{{ number_format($metrics['won_value'] / 1000000, 1) }}M</h3>
+                    <h3 class="text-2xl font-black text-text-primary">{{ $currencySymbol }}{{ number_format($metrics['won_value'] / 1000000, 1) }}M</h3>
                     <p class="text-xs text-text-secondary mt-1">{{ $metrics['won_deals'] }} deal{{ $metrics['won_deals'] !== 1 ? 's' : '' }} closed</p>
                 </div>
                 <div class="glass-panel rounded-2xl border border-border-default/60 p-5 hover-spring">
@@ -36,7 +36,7 @@
                 </div>
                 <div class="glass-panel rounded-2xl border border-border-default/60 p-5 hover-spring">
                     <p class="text-xs font-bold text-text-tertiary uppercase tracking-wider mb-2">Pipeline Value</p>
-                    <h3 class="text-2xl font-black text-text-primary">₦{{ number_format($metrics['pipeline_value'] / 1000000, 1) }}M</h3>
+                    <h3 class="text-2xl font-black text-text-primary">{{ $currencySymbol }}{{ number_format($metrics['pipeline_value'] / 1000000, 1) }}M</h3>
                     <p class="text-xs text-text-secondary mt-1">Active deals</p>
                 </div>
                 <div class="glass-panel rounded-2xl border border-border-default/60 p-5 hover-spring md:col-span-2">

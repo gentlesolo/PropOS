@@ -1,4 +1,4 @@
-<div>
+﻿<div>
     <div class="flex items-center justify-between mb-6">
         <div>
             <h1 class="text-2xl font-bold text-text-primary">Tenant Management</h1>
@@ -61,7 +61,7 @@
                 <input wire:model="employer" type="text" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
             </div>
             <div>
-                <label class="block text-xs font-medium text-text-secondary mb-1">Monthly Income (₦)</label>
+                <label class="block text-xs font-medium text-text-secondary mb-1">Monthly Income ({{ $currencySymbol }})</label>
                 <input wire:model="monthly_income" type="number" min="0" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
             </div>
             <div>
@@ -107,7 +107,7 @@
                 <input wire:model="edit_employer" type="text" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
             </div>
             <div>
-                <label class="block text-xs font-medium text-text-secondary mb-1">Monthly Income (₦)</label>
+                <label class="block text-xs font-medium text-text-secondary mb-1">Monthly Income ({{ $currencySymbol }})</label>
                 <input wire:model="edit_monthly_income" type="number" min="0" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
                 @error('edit_monthly_income') <p class="text-xs text-danger-600 mt-1">{{ $message }}</p> @enderror
             </div>
@@ -171,7 +171,7 @@
                             </td>
                             <td class="px-4 py-3 text-xs">
                                 @if($tenant->activeLease)
-                                <span class="text-text-primary font-medium">₦{{ number_format($tenant->activeLease->monthly_rent) }}/mo</span>
+                                <span class="text-text-primary font-medium">{{ $currencySymbol }}{{ number_format($tenant->activeLease->monthly_rent) }}/mo</span>
                                 @else
                                 <span class="text-text-tertiary">No lease</span>
                                 @endif
@@ -275,7 +275,7 @@
 
                     <dl class="space-y-2 text-sm mb-4">
                         <div class="flex justify-between"><dt class="text-text-secondary">Employer</dt><dd class="font-medium text-text-primary">{{ $selectedTenant->employer ?? '—' }}</dd></div>
-                        <div class="flex justify-between"><dt class="text-text-secondary">Monthly Income</dt><dd class="font-bold text-success-600">{{ $selectedTenant->monthly_income ? '₦'.number_format($selectedTenant->monthly_income) : '—' }}</dd></div>
+                        <div class="flex justify-between"><dt class="text-text-secondary">Monthly Income</dt><dd class="font-bold text-success-600">{{ $selectedTenant->monthly_income ? '{{ $currencySymbol }}'.number_format($selectedTenant->monthly_income) : '—' }}</dd></div>
                         @if($selectedTenant->notes)
                         <div><dt class="text-text-secondary text-xs mb-1">Notes</dt><dd class="text-text-primary text-xs bg-surface-hover/40 rounded-lg p-2">{{ $selectedTenant->notes }}</dd></div>
                         @endif
@@ -286,8 +286,8 @@
                         <p class="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-2">Active Lease</p>
                         <dl class="space-y-1.5 text-xs">
                             <div class="flex justify-between"><dt class="text-text-secondary">Ref</dt><dd class="font-mono text-text-primary">{{ $selectedTenant->activeLease->reference }}</dd></div>
-                            <div class="flex justify-between"><dt class="text-text-secondary">Rent</dt><dd class="font-bold text-text-primary">₦{{ number_format($selectedTenant->activeLease->monthly_rent) }}/mo</dd></div>
-                            <div class="flex justify-between"><dt class="text-text-secondary">Deposit</dt><dd class="text-text-primary">₦{{ number_format($selectedTenant->activeLease->deposit_amount ?? 0) }}</dd></div>
+                            <div class="flex justify-between"><dt class="text-text-secondary">Rent</dt><dd class="font-bold text-text-primary">{{ $currencySymbol }}{{ number_format($selectedTenant->activeLease->monthly_rent) }}/mo</dd></div>
+                            <div class="flex justify-between"><dt class="text-text-secondary">Deposit</dt><dd class="text-text-primary">{{ $currencySymbol }}{{ number_format($selectedTenant->activeLease->deposit_amount ?? 0) }}</dd></div>
                             <div class="flex justify-between"><dt class="text-text-secondary">Start</dt><dd class="text-text-primary">{{ $selectedTenant->activeLease->start_date->format('d M Y') }}</dd></div>
                             <div class="flex justify-between"><dt class="text-text-secondary">End</dt><dd class="text-text-primary {{ $selectedTenant->activeLease->daysUntilExpiry < 60 ? 'text-warning-600 font-semibold' : '' }}">{{ $selectedTenant->activeLease->end_date->format('d M Y') }}</dd></div>
                             <div class="flex justify-between"><dt class="text-text-secondary">Days left</dt>
@@ -297,7 +297,7 @@
                             </div>
                             <div class="flex justify-between"><dt class="text-text-secondary">Outstanding</dt>
                                 <dd class="font-bold {{ $selectedTenant->activeLease->outstandingBalance > 0 ? 'text-danger-600' : 'text-success-600' }}">
-                                    ₦{{ number_format($selectedTenant->activeLease->outstandingBalance) }}
+                                    {{ $currencySymbol }}{{ number_format($selectedTenant->activeLease->outstandingBalance) }}
                                 </dd>
                             </div>
                         </dl>
@@ -326,7 +326,7 @@
                             </div>
                             <div class="text-right">
                                 <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-{{ $pc }}-50 text-{{ $pc }}-700 border border-{{ $pc }}-200">{{ ucfirst($pmt->status) }}</span>
-                                <div class="text-text-primary font-bold mt-0.5">₦{{ number_format($pmt->amount_paid ?? 0) }}<span class="text-text-tertiary font-normal">/₦{{ number_format($pmt->amount_due) }}</span></div>
+                                <div class="text-text-primary font-bold mt-0.5">{{ $currencySymbol }}{{ number_format($pmt->amount_paid ?? 0) }}<span class="text-text-tertiary font-normal">/{{ $currencySymbol }}{{ number_format($pmt->amount_due) }}</span></div>
                             </div>
                         </div>
                         @endforeach

@@ -1,4 +1,4 @@
-<div>
+﻿<div>
     <!-- Header -->
     <div class="mb-10 flex items-end justify-between">
         <div>
@@ -32,7 +32,7 @@
                     </div>
                 </div>
                 <div>
-                    <p class="text-4xl font-black tracking-tighter">₦{{ number_format($metrics['total_pipeline'] / 1000000, 1) }}M</p>
+                    <p class="text-4xl font-black tracking-tighter">{{ $currencySymbol }}{{ number_format($metrics['total_pipeline'] / 1000000, 1) }}M</p>
                     <div class="mt-3 flex items-center text-xs font-bold">
                         <span class="text-brand-accent bg-black/20 px-2 py-1 rounded-lg flex items-center">
                             <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
@@ -113,7 +113,7 @@
                                 </div>
                                 <div>
                                     <h4 class="text-sm font-bold text-text-primary group-hover:text-brand-primary transition-colors">{{ $listing->property->address_line_1 }}</h4>
-                                    <p class="text-xs font-semibold text-text-secondary mt-1">{{ $listing->property->city }} • ₦{{ number_format($listing->listing_price) }}</p>
+                                    <p class="text-xs font-semibold text-text-secondary mt-1">{{ $listing->property->city }} • {{ $currencySymbol }}{{ number_format($listing->listing_price) }}</p>
                                 </div>
                             </div>
                             <span class="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-black tracking-wider bg-surface-raised border border-border-default/60 text-text-primary uppercase shadow-sm">

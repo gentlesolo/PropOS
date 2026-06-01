@@ -1,4 +1,4 @@
-<div class="h-[calc(100vh-8rem)] flex flex-col">
+﻿<div class="h-[calc(100vh-8rem)] flex flex-col">
     <div class="mb-6 flex items-center justify-between shrink-0">
         <div>
             <h1 class="text-3xl font-extrabold tracking-tight text-text-primary">Pipeline Board</h1>
@@ -45,7 +45,7 @@
                             @endif
                         </div>
                         <div class="text-xs font-black text-text-tertiary">
-                            ₦{{ number_format($stage->deals->sum('value') / 1000000, 1) }}M
+                            {{ $currencySymbol }}{{ number_format($stage->deals->sum('value') / 1000000, 1) }}M
                         </div>
                     </div>
 
@@ -95,7 +95,7 @@
                                 </div>
 
                                 <div class="flex items-center justify-between border-t border-border-default/40 pt-3">
-                                    <span class="text-sm font-black tracking-tight text-text-primary">₦{{ number_format($deal->value) }}</span>
+                                    <span class="text-sm font-black tracking-tight text-text-primary">{{ $currencySymbol }}{{ number_format($deal->value) }}</span>
                                     <div class="flex items-center space-x-1 px-2 py-0.5 rounded-lg border
                                         {{ $deal->momentum_score >= 70 ? 'bg-success-500/10 border-success-500/20 text-success-600' : ($deal->momentum_score >= 40 ? 'bg-warning-500/10 border-warning-500/20 text-warning-600' : 'bg-danger-500/10 border-danger-500/20 text-danger-600') }}">
                                         <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
@@ -147,7 +147,7 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-text-primary mb-1">Deal Value (₦) *</label>
+                    <label class="block text-sm font-medium text-text-primary mb-1">Deal Value ({{ $currencySymbol }}) *</label>
                     <input wire:model.defer="value" type="number" min="0" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary text-sm">
                     @error('value') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
                 </div>

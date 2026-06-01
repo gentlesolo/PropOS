@@ -1,4 +1,4 @@
-<div x-data class="flex gap-0 h-full">
+﻿<div x-data class="flex gap-0 h-full">
 
     {{-- ══ Main column ══════════════════════════════════════════════════════════ --}}
     <div class="flex-1 min-w-0 overflow-auto p-6">
@@ -37,15 +37,15 @@
         {{-- Stats --}}
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <div class="glass-panel rounded-2xl border border-brand-200 p-4 text-center">
-                <div class="text-xl font-bold text-brand-600">₦{{ number_format($stats['totalInvoiced']) }}</div>
+                <div class="text-xl font-bold text-brand-600">{{ $currencySymbol }}{{ number_format($stats['totalInvoiced']) }}</div>
                 <div class="text-xs text-text-secondary mt-1">Invoiced This Month</div>
             </div>
             <div class="glass-panel rounded-2xl border border-success-200 p-4 text-center">
-                <div class="text-xl font-bold text-success-600">₦{{ number_format($stats['totalCollected']) }}</div>
+                <div class="text-xl font-bold text-success-600">{{ $currencySymbol }}{{ number_format($stats['totalCollected']) }}</div>
                 <div class="text-xs text-text-secondary mt-1">Collected</div>
             </div>
             <div class="glass-panel rounded-2xl border border-warning-200 p-4 text-center">
-                <div class="text-xl font-bold text-warning-600">₦{{ number_format($stats['outstandingAr']) }}</div>
+                <div class="text-xl font-bold text-warning-600">{{ $currencySymbol }}{{ number_format($stats['outstandingAr']) }}</div>
                 <div class="text-xs text-text-secondary mt-1">Outstanding AR</div>
             </div>
             <div class="glass-panel rounded-2xl border border-danger-200 p-4 text-center">
@@ -282,9 +282,9 @@
                             <div class="text-xs text-text-secondary">{{ $invoice->due_date->format('d M Y') }}</div>
                             <div class="text-xs text-text-tertiary">{{ str_pad($invoice->period_month,2,'0',STR_PAD_LEFT) }}/{{ $invoice->period_year }}</div>
                         </td>
-                        <td class="px-4 py-3 text-right font-bold text-text-primary">₦{{ number_format($invoice->total) }}</td>
+                        <td class="px-4 py-3 text-right font-bold text-text-primary">{{ $currencySymbol }}{{ number_format($invoice->total) }}</td>
                         <td class="px-4 py-3 text-right text-xs {{ $invoice->amount_paid > 0 ? 'text-success-600 font-medium' : 'text-text-tertiary' }}">
-                            {{ $invoice->amount_paid > 0 ? '₦'.number_format($invoice->amount_paid) : '—' }}
+                            {{ $invoice->amount_paid > 0 ? '{{ $currencySymbol }}'.number_format($invoice->amount_paid) : '—' }}
                         </td>
                         <td class="px-4 py-3">
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-{{ $c }}-50 text-{{ $c }}-700 border border-{{ $c }}-200">
@@ -346,12 +346,12 @@
                 };
             @endphp
             <div class="glass-panel rounded-2xl border border-{{ $dc }}-200 p-4 mb-4 text-center">
-                <div class="text-3xl font-bold text-text-primary mb-1">₦{{ number_format($detailInvoice->total) }}</div>
+                <div class="text-3xl font-bold text-text-primary mb-1">{{ $currencySymbol }}{{ number_format($detailInvoice->total) }}</div>
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-{{ $dc }}-50 text-{{ $dc }}-700 border border-{{ $dc }}-200">
                     {{ ucfirst(str_replace('_',' ',$detailInvoice->status)) }}
                 </span>
                 @if($detailInvoice->balance > 0 && $detailInvoice->status !== 'paid')
-                <div class="text-xs text-{{ $dc }}-600 mt-2 font-medium">Balance: ₦{{ number_format($detailInvoice->balance) }}</div>
+                <div class="text-xs text-{{ $dc }}-600 mt-2 font-medium">Balance: {{ $currencySymbol }}{{ number_format($detailInvoice->balance) }}</div>
                 @endif
             </div>
 
@@ -361,7 +361,7 @@
                 <div class="font-medium text-text-primary text-sm">{{ $detailInvoice->lease?->tenant?->contact?->full_name ?? '—' }}</div>
                 <div class="text-xs text-text-secondary mt-1">{{ $detailInvoice->lease?->listing?->property?->address_line_1 ?? '—' }}, {{ $detailInvoice->lease?->listing?->property?->city ?? '' }}</div>
                 @if($detailInvoice->lease)
-                <div class="text-xs text-text-tertiary mt-1">Lease {{ $detailInvoice->lease->reference }} · ₦{{ number_format($detailInvoice->lease->monthly_rent) }}/mo</div>
+                <div class="text-xs text-text-tertiary mt-1">Lease {{ $detailInvoice->lease->reference }} · {{ $currencySymbol }}{{ number_format($detailInvoice->lease->monthly_rent) }}/mo</div>
                 @endif
             </div>
 
@@ -392,17 +392,17 @@
                                 @if($item->quantity != 1) · ×{{ rtrim(rtrim(number_format($item->quantity,2),'0'),'.') }}@endif
                             </div>
                         </div>
-                        <div class="text-xs font-bold text-text-primary whitespace-nowrap">₦{{ number_format($item->amount) }}</div>
+                        <div class="text-xs font-bold text-text-primary whitespace-nowrap">{{ $currencySymbol }}{{ number_format($item->amount) }}</div>
                     </div>
                     @endforeach
                 </div>
                 <div class="border-t border-border-default mt-3 pt-3 space-y-1">
                     @if($detailInvoice->tax_amount > 0)
-                    <div class="flex justify-between text-xs text-text-secondary"><span>Tax</span><span>₦{{ number_format($detailInvoice->tax_amount) }}</span></div>
+                    <div class="flex justify-between text-xs text-text-secondary"><span>Tax</span><span>{{ $currencySymbol }}{{ number_format($detailInvoice->tax_amount) }}</span></div>
                     @endif
-                    <div class="flex justify-between text-sm font-bold text-text-primary"><span>Total</span><span>₦{{ number_format($detailInvoice->total) }}</span></div>
+                    <div class="flex justify-between text-sm font-bold text-text-primary"><span>Total</span><span>{{ $currencySymbol }}{{ number_format($detailInvoice->total) }}</span></div>
                     @if($detailInvoice->amount_paid > 0)
-                    <div class="flex justify-between text-xs text-success-600 font-medium"><span>Paid</span><span>₦{{ number_format($detailInvoice->amount_paid) }}</span></div>
+                    <div class="flex justify-between text-xs text-success-600 font-medium"><span>Paid</span><span>{{ $currencySymbol }}{{ number_format($detailInvoice->amount_paid) }}</span></div>
                     @endif
                 </div>
             </div>
@@ -458,7 +458,7 @@
                 <div>
                     <label class="block text-xs font-medium text-text-secondary mb-1">Amount *</label>
                     <div class="relative">
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary text-sm">₦</span>
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary text-sm">{{ $currencySymbol }}</span>
                         <input wire:model="paymentAmount" type="number" step="0.01" min="0.01"
                             class="w-full rounded-lg border border-border-default bg-surface-input pl-7 pr-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
                     </div>

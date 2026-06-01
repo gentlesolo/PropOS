@@ -1,4 +1,4 @@
-<div>
+﻿<div>
     <div class="flex items-center justify-between mb-8">
         <div>
             <h1 class="text-3xl font-extrabold tracking-tight text-text-primary">Attorney Portal</h1>
@@ -49,7 +49,7 @@
                         @if($transaction->contact)
                         <span>Client: {{ $transaction->contact->first_name }} {{ $transaction->contact->last_name }}</span>
                         @endif
-                        <span>Sale: ₦{{ number_format($transaction->sale_price / 1000000, 1) }}M</span>
+                        <span>Sale: {{ $currencySymbol }}{{ number_format($transaction->sale_price / 1000000, 1) }}M</span>
                         <span>FICA: {{ $transaction->ficaProgress }}%</span>
                     </div>
                 </div>

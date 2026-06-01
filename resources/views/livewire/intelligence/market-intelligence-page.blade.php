@@ -1,4 +1,4 @@
-<div>
+﻿<div>
     <div class="flex items-center justify-between mb-8">
         <div>
             <h1 class="text-3xl font-extrabold tracking-tight text-text-primary">Market Intelligence</h1>
@@ -22,7 +22,7 @@
         </div>
         <div class="glass-panel p-5 rounded-2xl border border-border-default/60">
             <p class="text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-1">Avg Listing Price</p>
-            <h3 class="text-2xl font-black text-text-primary">₦{{ number_format($quickStats['avg_price'] / 1000000, 1) }}M</h3>
+            <h3 class="text-2xl font-black text-text-primary">{{ $currencySymbol }}{{ number_format($quickStats['avg_price'] / 1000000, 1) }}M</h3>
         </div>
     </div>
 

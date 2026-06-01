@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-slate-950 text-slate-100 py-10 px-4 sm:px-6 lg:px-8">
+﻿<div class="min-h-screen bg-slate-950 text-slate-100 py-10 px-4 sm:px-6 lg:px-8">
     <div class="max-w-6xl mx-auto">
         <!-- Badge -->
         <div class="mb-6 flex justify-between items-center">
@@ -19,7 +19,7 @@
                     <p class="text-slate-400 mb-4">{{ $listing->property->city }}, {{ $listing->property->state_province }}</p>
                     
                     <div class="flex items-baseline gap-2">
-                        <span class="text-3xl font-bold text-white">₦{{ number_format($listing->listing_price) }}</span>
+                        <span class="text-3xl font-bold text-white">{{ $currencySymbol }}{{ number_format($listing->listing_price) }}</span>
                     </div>
                 </div>
 

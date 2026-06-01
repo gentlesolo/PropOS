@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -60,7 +60,7 @@
             <div class="value-label">Estimated Value Low</div>
             <div class="value-amount">
                 @if($report->estimated_value_low)
-                    ₦{{ number_format($report->estimated_value_low) }}
+                    {{ $currencySymbol }}{{ number_format($report->estimated_value_low) }}
                 @else
                     —
                 @endif
@@ -70,7 +70,7 @@
             <div class="value-label">Recommended List Price</div>
             <div class="value-amount large">
                 @if($report->recommended_list_price)
-                    ₦{{ number_format($report->recommended_list_price) }}
+                    {{ $currencySymbol }}{{ number_format($report->recommended_list_price) }}
                 @else
                     —
                 @endif
@@ -80,7 +80,7 @@
             <div class="value-label">Estimated Value High</div>
             <div class="value-amount">
                 @if($report->estimated_value_high)
-                    ₦{{ number_format($report->estimated_value_high) }}
+                    {{ $currencySymbol }}{{ number_format($report->estimated_value_high) }}
                 @else
                     —
                 @endif
@@ -131,7 +131,7 @@
                 @foreach($compSales as $comp)
                 <tr>
                     <td>{{ $comp['address'] ?? '—' }}</td>
-                    <td>₦{{ number_format((float)($comp['sale_price'] ?? 0)) }}</td>
+                    <td>{{ $currencySymbol }}{{ number_format((float)($comp['sale_price'] ?? 0)) }}</td>
                     <td>{{ $comp['sale_date'] ? \Carbon\Carbon::parse($comp['sale_date'])->format('M Y') : '—' }}</td>
                     <td>{{ $comp['bedrooms'] ?? '—' }}</td>
                     <td>{{ $comp['sqm'] ?? '—' }}</td>
@@ -140,7 +140,7 @@
                 @if(count($compSales) > 1)
                 <tr class="avg-row">
                     <td>Average</td>
-                    <td>₦{{ number_format($avgPrice) }}</td>
+                    <td>{{ $currencySymbol }}{{ number_format($avgPrice) }}</td>
                     <td colspan="3"></td>
                 </tr>
                 @endif
@@ -177,9 +177,9 @@
     <div class="section">
         <div class="section-title">Pricing Guidance</div>
         <ul style="padding-left:16px;font-size:12px;line-height:2;color:#374151;">
-            <li>Recommended list price of <strong>₦{{ number_format($report->recommended_list_price) }}</strong> is based on {{ count($report->comparable_sales ?? []) }} comparable sales.</li>
+            <li>Recommended list price of <strong>{{ $currencySymbol }}{{ number_format($report->recommended_list_price) }}</strong> is based on {{ count($report->comparable_sales ?? []) }} comparable sales.</li>
             @if($report->estimated_value_low && $report->estimated_value_high)
-            <li>Market value range: <strong>₦{{ number_format($report->estimated_value_low) }}</strong> – <strong>₦{{ number_format($report->estimated_value_high) }}</strong></li>
+            <li>Market value range: <strong>{{ $currencySymbol }}{{ number_format($report->estimated_value_low) }}</strong> – <strong>{{ $currencySymbol }}{{ number_format($report->estimated_value_high) }}</strong></li>
             @endif
             <li>Pricing competitively within this range will attract qualified buyers and reduce days on market.</li>
         </ul>

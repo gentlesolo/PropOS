@@ -1,4 +1,4 @@
-<div>
+﻿<div>
     <div class="flex items-center justify-between mb-8">
         <div>
             <h1 class="text-3xl font-extrabold tracking-tight text-text-primary flex items-center gap-3">
@@ -162,7 +162,7 @@
                                 {{ $deal->stage?->name ?? '—' }}
                             </span>
                         </td>
-                        <td class="py-4 px-5 text-sm font-bold text-text-primary">₦{{ number_format($deal->value ?? 0) }}</td>
+                        <td class="py-4 px-5 text-sm font-bold text-text-primary">{{ $currencySymbol }}{{ number_format($deal->value ?? 0) }}</td>
                         <td class="py-4 px-5 text-sm text-text-secondary">{{ $deal->activities->count() }}</td>
                         <td class="py-4 px-5">
                             <div class="flex items-center gap-3 min-w-[140px]">

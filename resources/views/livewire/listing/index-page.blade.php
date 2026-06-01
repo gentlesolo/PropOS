@@ -1,4 +1,4 @@
-<div>
+﻿<div>
     <div class="flex items-center justify-between mb-8">
         <div>
             <h1 class="text-3xl font-extrabold tracking-tight text-text-primary dark:text-white">Properties & Listings</h1>
@@ -21,7 +21,7 @@
         </div>
         <div class="glass-panel p-5 rounded-2xl border border-border-default/60">
             <p class="text-xs font-medium text-text-tertiary uppercase tracking-wider">Active Portfolio Value</p>
-            <p class="mt-2 text-2xl font-bold text-text-primary">₦{{ number_format($totalValue) }}</p>
+            <p class="mt-2 text-2xl font-bold text-text-primary">{{ $currencySymbol }}{{ number_format($totalValue) }}</p>
         </div>
         <div class="glass-panel p-5 rounded-2xl border border-border-default/60">
             <p class="text-xs font-medium text-text-tertiary uppercase tracking-wider">Avg. Days on Market</p>
@@ -112,7 +112,7 @@
 
                         <!-- Price -->
                         <td class="px-5 py-4 whitespace-nowrap">
-                            <p class="text-sm font-bold text-text-primary">₦{{ number_format($listing->listing_price) }}</p>
+                            <p class="text-sm font-bold text-text-primary">{{ $currencySymbol }}{{ number_format($listing->listing_price) }}</p>
                             <p class="text-xs text-text-tertiary capitalize">{{ str_replace('_', ' ', $listing->mandate_type) }}</p>
                         </td>
 
@@ -286,7 +286,7 @@
                                     <p class="text-xs font-semibold text-text-tertiary uppercase tracking-wider border-b border-border-default/60 pb-2 pt-2">Mandate Details</p>
 
                                     <div>
-                                        <label class="block text-sm font-medium text-text-primary mb-1">Listing Price (₦) *</label>
+                                        <label class="block text-sm font-medium text-text-primary mb-1">Listing Price ({{ $currencySymbol }}) *</label>
                                         <input wire:model.defer="listing_price" type="number" placeholder="50000000"
                                             class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2.5 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
                                         @error('listing_price') <span class="text-xs text-danger-600 mt-1 block">{{ $message }}</span> @enderror

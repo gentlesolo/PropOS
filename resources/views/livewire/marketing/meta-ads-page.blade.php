@@ -1,4 +1,4 @@
-<div>
+﻿<div>
     <div class="flex items-center justify-between mb-8">
         <div>
             <h1 class="text-3xl font-extrabold tracking-tight text-text-primary flex items-center gap-3">
@@ -13,7 +13,7 @@
 
     <!-- Stats -->
     <div class="grid grid-cols-2 md:grid-cols-6 gap-4 mb-8">
-        @foreach(['total_spend' => ['Total Spend', '₦'], 'total_impressions' => ['Impressions', ''], 'total_clicks' => ['Clicks', ''], 'total_leads' => ['Leads', ''], 'active' => ['Active', ''], 'avg_cpl' => ['Avg CPL', '₦']] as $key => [$label, $prefix])
+        @foreach(['total_spend' => ['Total Spend', '{{ $currencySymbol }}'], 'total_impressions' => ['Impressions', ''], 'total_clicks' => ['Clicks', ''], 'total_leads' => ['Leads', ''], 'active' => ['Active', ''], 'avg_cpl' => ['Avg CPL', '{{ $currencySymbol }}']] as $key => [$label, $prefix])
         <div class="glass-panel p-4 rounded-2xl border border-border-default/60 text-center">
             <p class="text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-1">{{ $label }}</p>
             <p class="text-xl font-black text-text-primary">{{ $prefix }}{{ number_format($stats[$key]) }}</p>
@@ -41,7 +41,7 @@
                 </select>
             </div>
             <div>
-                <label class="block text-xs font-medium text-text-secondary mb-1">Daily Budget (₦) *</label>
+                <label class="block text-xs font-medium text-text-secondary mb-1">Daily Budget ({{ $currencySymbol }}) *</label>
                 <input wire:model.defer="budget_daily" type="number" min="500" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
                 @error('budget_daily') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
             </div>
@@ -96,12 +96,12 @@
                             <p class="text-sm font-bold text-text-primary">{{ $ad->name }}</p>
                             <p class="text-xs text-text-secondary capitalize">{{ str_replace('_', ' ', $ad->objective) }}</p>
                         </td>
-                        <td class="py-4 px-5 text-sm font-medium text-text-primary">₦{{ number_format($ad->budget_daily) }}</td>
-                        <td class="py-4 px-5 text-sm font-bold text-text-primary">₦{{ number_format($ad->spend) }}</td>
+                        <td class="py-4 px-5 text-sm font-medium text-text-primary">{{ $currencySymbol }}{{ number_format($ad->budget_daily) }}</td>
+                        <td class="py-4 px-5 text-sm font-bold text-text-primary">{{ $currencySymbol }}{{ number_format($ad->spend) }}</td>
                         <td class="py-4 px-5 text-sm text-text-primary">{{ number_format($ad->impressions) }}</td>
                         <td class="py-4 px-5 text-sm text-text-primary">{{ number_format($ad->clicks) }}</td>
                         <td class="py-4 px-5 text-sm font-bold text-success-600">{{ $ad->leads }}</td>
-                        <td class="py-4 px-5 text-sm text-text-primary">{{ $ad->cpl ? '₦' . number_format($ad->cpl) : '—' }}</td>
+                        <td class="py-4 px-5 text-sm text-text-primary">{{ $ad->cpl ? '{{ $currencySymbol }}' . number_format($ad->cpl) : '—' }}</td>
                         <td class="py-4 px-5">
                             <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase
                                 @if($ad->status === 'active') bg-success-100 text-success-700

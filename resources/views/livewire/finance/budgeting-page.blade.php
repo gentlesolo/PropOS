@@ -1,4 +1,4 @@
-<div class="flex gap-0 h-full">
+﻿<div class="flex gap-0 h-full">
 
     {{-- ══ Main column ══════════════════════════════════════════════════════════ --}}
     <div class="flex-1 min-w-0 overflow-auto p-6">
@@ -87,7 +87,7 @@
                 <div>
                     <div class="flex items-center justify-between mb-3">
                         <div>
-                            <span class="text-xs font-semibold text-text-secondary uppercase tracking-wider">Monthly Targets (₦)</span>
+                            <span class="text-xs font-semibold text-text-secondary uppercase tracking-wider">Monthly Targets ({{ $currencySymbol }})</span>
                             <span class="ml-3 text-xs text-text-tertiary">Income row first, Expenses row second</span>
                         </div>
                         <button type="button" wire:click="prefillFromActuals" wire:loading.attr="disabled"
@@ -114,17 +114,17 @@
                         <div class="flex items-center gap-2">
                             <span class="w-2 h-2 bg-success-400 rounded-full"></span>
                             <span class="text-xs text-text-secondary">Annual Income Target:</span>
-                            <span class="text-sm font-bold text-success-600">₦{{ number_format($formIncomeTotal) }}</span>
+                            <span class="text-sm font-bold text-success-600">{{ $currencySymbol }}{{ number_format($formIncomeTotal) }}</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="w-2 h-2 bg-danger-400 rounded-full"></span>
                             <span class="text-xs text-text-secondary">Annual Expense Target:</span>
-                            <span class="text-sm font-bold text-danger-600">₦{{ number_format($formExpenseTotal) }}</span>
+                            <span class="text-sm font-bold text-danger-600">{{ $currencySymbol }}{{ number_format($formExpenseTotal) }}</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="text-xs text-text-secondary">Net:</span>
                             @php $formNet = $formIncomeTotal - $formExpenseTotal; @endphp
-                            <span class="text-sm font-bold {{ $formNet >= 0 ? 'text-success-600' : 'text-danger-600' }}">₦{{ number_format($formNet) }}</span>
+                            <span class="text-sm font-bold {{ $formNet >= 0 ? 'text-success-600' : 'text-danger-600' }}">{{ $currencySymbol }}{{ number_format($formNet) }}</span>
                         </div>
                     </div>
                 </div>
@@ -181,10 +181,10 @@
                             @if($budget->approver) · Approved by {{ $budget->approver->first_name }} {{ $budget->approver->last_name }}@endif
                         </div>
                         <div class="flex gap-4 mt-2 text-xs">
-                            <span class="text-success-600 font-medium">Income: ₦{{ number_format($budget->annualIncomeTarget) }}</span>
-                            <span class="text-danger-600 font-medium">Expenses: ₦{{ number_format($budget->annualExpenseTarget) }}</span>
+                            <span class="text-success-600 font-medium">Income: {{ $currencySymbol }}{{ number_format($budget->annualIncomeTarget) }}</span>
+                            <span class="text-danger-600 font-medium">Expenses: {{ $currencySymbol }}{{ number_format($budget->annualExpenseTarget) }}</span>
                             @php $net = $budget->annualIncomeTarget - $budget->annualExpenseTarget; @endphp
-                            <span class="{{ $net >= 0 ? 'text-success-600' : 'text-danger-600' }} font-bold">Net: ₦{{ number_format($net) }}</span>
+                            <span class="{{ $net >= 0 ? 'text-success-600' : 'text-danger-600' }} font-bold">Net: {{ $currencySymbol }}{{ number_format($net) }}</span>
                         </div>
                     </div>
                     <div class="flex items-center gap-1 flex-shrink-0" wire:click.stop>
@@ -282,15 +282,15 @@
                     @foreach($varianceData as $row)
                     <tr class="hover:bg-surface-hover/30">
                         <td class="px-4 py-3 font-medium text-text-primary text-xs">{{ $row['label'] }}</td>
-                        <td class="px-4 py-3 text-right text-text-secondary text-xs">₦{{ number_format($row['income_target']) }}</td>
-                        <td class="px-4 py-3 text-right font-medium text-text-primary text-xs">₦{{ number_format($row['actual_income']) }}</td>
+                        <td class="px-4 py-3 text-right text-text-secondary text-xs">{{ $currencySymbol }}{{ number_format($row['income_target']) }}</td>
+                        <td class="px-4 py-3 text-right font-medium text-text-primary text-xs">{{ $currencySymbol }}{{ number_format($row['actual_income']) }}</td>
                         <td class="px-4 py-3 text-right text-xs font-semibold {{ $row['income_variance'] >= 0 ? 'text-success-600' : 'text-danger-600' }}">
-                            {{ $row['income_variance'] >= 0 ? '+' : '' }}₦{{ number_format($row['income_variance']) }}
+                            {{ $row['income_variance'] >= 0 ? '+' : '' }}{{ $currencySymbol }}{{ number_format($row['income_variance']) }}
                         </td>
-                        <td class="px-4 py-3 text-right text-text-secondary text-xs">₦{{ number_format($row['expense_target']) }}</td>
-                        <td class="px-4 py-3 text-right font-medium text-text-primary text-xs">₦{{ number_format($row['actual_expenses']) }}</td>
+                        <td class="px-4 py-3 text-right text-text-secondary text-xs">{{ $currencySymbol }}{{ number_format($row['expense_target']) }}</td>
+                        <td class="px-4 py-3 text-right font-medium text-text-primary text-xs">{{ $currencySymbol }}{{ number_format($row['actual_expenses']) }}</td>
                         <td class="px-4 py-3 text-right text-xs font-semibold {{ $row['expense_variance'] >= 0 ? 'text-success-600' : 'text-danger-600' }}">
-                            {{ $row['expense_variance'] >= 0 ? '+' : '' }}₦{{ number_format($row['expense_variance']) }}
+                            {{ $row['expense_variance'] >= 0 ? '+' : '' }}{{ $currencySymbol }}{{ number_format($row['expense_variance']) }}
                         </td>
                     </tr>
                     @endforeach
@@ -298,15 +298,15 @@
                 <tfoot class="border-t-2 border-border-default bg-surface-hover/40">
                     <tr>
                         <td class="px-4 py-3 text-xs font-bold text-text-primary">YTD Total</td>
-                        <td class="px-4 py-3 text-right text-xs font-bold text-text-secondary">₦{{ number_format($totTgtInc) }}</td>
-                        <td class="px-4 py-3 text-right text-xs font-bold text-text-primary">₦{{ number_format($totActInc) }}</td>
+                        <td class="px-4 py-3 text-right text-xs font-bold text-text-secondary">{{ $currencySymbol }}{{ number_format($totTgtInc) }}</td>
+                        <td class="px-4 py-3 text-right text-xs font-bold text-text-primary">{{ $currencySymbol }}{{ number_format($totActInc) }}</td>
                         <td class="px-4 py-3 text-right text-xs font-bold {{ ($totActInc-$totTgtInc) >= 0 ? 'text-success-600' : 'text-danger-600' }}">
-                            {{ ($totActInc-$totTgtInc) >= 0 ? '+' : '' }}₦{{ number_format($totActInc - $totTgtInc) }}
+                            {{ ($totActInc-$totTgtInc) >= 0 ? '+' : '' }}{{ $currencySymbol }}{{ number_format($totActInc - $totTgtInc) }}
                         </td>
-                        <td class="px-4 py-3 text-right text-xs font-bold text-text-secondary">₦{{ number_format($totTgtExp) }}</td>
-                        <td class="px-4 py-3 text-right text-xs font-bold text-text-primary">₦{{ number_format($totActExp) }}</td>
+                        <td class="px-4 py-3 text-right text-xs font-bold text-text-secondary">{{ $currencySymbol }}{{ number_format($totTgtExp) }}</td>
+                        <td class="px-4 py-3 text-right text-xs font-bold text-text-primary">{{ $currencySymbol }}{{ number_format($totActExp) }}</td>
                         <td class="px-4 py-3 text-right text-xs font-bold {{ ($totTgtExp-$totActExp) >= 0 ? 'text-success-600' : 'text-danger-600' }}">
-                            {{ ($totTgtExp-$totActExp) >= 0 ? '+' : '' }}₦{{ number_format($totTgtExp - $totActExp) }}
+                            {{ ($totTgtExp-$totActExp) >= 0 ? '+' : '' }}{{ $currencySymbol }}{{ number_format($totTgtExp - $totActExp) }}
                         </td>
                     </tr>
                 </tfoot>
@@ -369,10 +369,10 @@
                     @php $margin = $row['projected_income'] > 0 ? round(($row['projected_net'] / $row['projected_income']) * 100, 1) : 0; @endphp
                     <tr class="hover:bg-surface-hover/30">
                         <td class="px-4 py-3 font-medium text-text-primary text-xs">{{ $row['label'] }}</td>
-                        <td class="px-4 py-3 text-right text-success-600 font-medium text-xs">₦{{ number_format($row['projected_income']) }}</td>
-                        <td class="px-4 py-3 text-right text-danger-600 font-medium text-xs">₦{{ number_format($row['projected_expenses']) }}</td>
+                        <td class="px-4 py-3 text-right text-success-600 font-medium text-xs">{{ $currencySymbol }}{{ number_format($row['projected_income']) }}</td>
+                        <td class="px-4 py-3 text-right text-danger-600 font-medium text-xs">{{ $currencySymbol }}{{ number_format($row['projected_expenses']) }}</td>
                         <td class="px-4 py-3 text-right font-bold text-xs {{ $row['projected_net'] >= 0 ? 'text-success-600' : 'text-danger-600' }}">
-                            ₦{{ number_format($row['projected_net']) }}
+                            {{ $currencySymbol }}{{ number_format($row['projected_net']) }}
                         </td>
                         <td class="px-4 py-3 text-right">
                             <div class="flex items-center justify-end gap-1.5">
@@ -389,9 +389,9 @@
                 <tfoot class="border-t-2 border-border-default bg-surface-hover/40">
                     <tr>
                         <td class="px-4 py-3 text-xs font-bold text-text-primary">12-Month Total</td>
-                        <td class="px-4 py-3 text-right text-xs font-bold text-success-600">₦{{ number_format($totFcInc) }}</td>
-                        <td class="px-4 py-3 text-right text-xs font-bold text-danger-600">₦{{ number_format($totFcExp) }}</td>
-                        <td class="px-4 py-3 text-right text-xs font-bold {{ $totFcNet >= 0 ? 'text-success-600' : 'text-danger-600' }}">₦{{ number_format($totFcNet) }}</td>
+                        <td class="px-4 py-3 text-right text-xs font-bold text-success-600">{{ $currencySymbol }}{{ number_format($totFcInc) }}</td>
+                        <td class="px-4 py-3 text-right text-xs font-bold text-danger-600">{{ $currencySymbol }}{{ number_format($totFcExp) }}</td>
+                        <td class="px-4 py-3 text-right text-xs font-bold {{ $totFcNet >= 0 ? 'text-success-600' : 'text-danger-600' }}">{{ $currencySymbol }}{{ number_format($totFcNet) }}</td>
                         <td></td>
                     </tr>
                 </tfoot>
@@ -426,15 +426,15 @@
             {{-- Summary cards --}}
             <div class="grid grid-cols-2 gap-2 mb-4">
                 <div class="glass-panel rounded-xl border border-success-200 p-3 text-center">
-                    <div class="text-sm font-bold text-success-600">₦{{ number_format($detailBudget->annualIncomeTarget) }}</div>
+                    <div class="text-sm font-bold text-success-600">{{ $currencySymbol }}{{ number_format($detailBudget->annualIncomeTarget) }}</div>
                     <div class="text-xs text-text-tertiary mt-0.5">Income Target</div>
                 </div>
                 <div class="glass-panel rounded-xl border border-danger-200 p-3 text-center">
-                    <div class="text-sm font-bold text-danger-600">₦{{ number_format($detailBudget->annualExpenseTarget) }}</div>
+                    <div class="text-sm font-bold text-danger-600">{{ $currencySymbol }}{{ number_format($detailBudget->annualExpenseTarget) }}</div>
                     <div class="text-xs text-text-tertiary mt-0.5">Expense Target</div>
                 </div>
                 <div class="col-span-2 glass-panel rounded-xl border border-{{ $dNet >= 0 ? 'success' : 'danger' }}-200 p-3 text-center">
-                    <div class="text-base font-bold {{ $dNet >= 0 ? 'text-success-600' : 'text-danger-600' }}">₦{{ number_format($dNet) }}</div>
+                    <div class="text-base font-bold {{ $dNet >= 0 ? 'text-success-600' : 'text-danger-600' }}">{{ $currencySymbol }}{{ number_format($dNet) }}</div>
                     <div class="text-xs text-text-tertiary mt-0.5">Projected Net</div>
                 </div>
             </div>
@@ -486,7 +486,7 @@
                                 @endif
                             </div>
                         </div>
-                        <span class="{{ $net >= 0 ? 'text-success-600' : 'text-danger-600' }} font-medium w-20 text-right">₦{{ number_format($net / 1000) }}k</span>
+                        <span class="{{ $net >= 0 ? 'text-success-600' : 'text-danger-600' }} font-medium w-20 text-right">{{ $currencySymbol }}{{ number_format($net / 1000) }}k</span>
                     </div>
                     @endforeach
                 </div>

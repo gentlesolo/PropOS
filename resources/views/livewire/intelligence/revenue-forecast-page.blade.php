@@ -1,4 +1,4 @@
-<div>
+﻿<div>
     <div class="flex items-center justify-between mb-8">
         <div>
             <h1 class="text-3xl font-extrabold tracking-tight text-text-primary">Revenue Forecasting</h1>
@@ -25,30 +25,30 @@
             <div class="relative z-10">
                 <p class="text-xs font-bold text-text-tertiary uppercase tracking-wider mb-2">Weighted Pipeline Forecast</p>
                 <h2 class="text-5xl font-black tracking-tight text-brand-primary mb-2">
-                    ₦{{ number_format($data['weighted_forecast'] / 1000000, 1) }}M
+                    {{ $currencySymbol }}{{ number_format($data['weighted_forecast'] / 1000000, 1) }}M
                 </h2>
                 <p class="text-sm text-text-secondary font-medium">From {{ $data['deals_count'] }} active deals · {{ $this->timeframe }} horizon</p>
 
                 @if($showScenario && $data['scenario_upside'] > 0)
                 <div class="mt-4 p-3 bg-success-50 border border-success-200 rounded-xl">
                     <p class="text-xs font-bold text-success-700 mb-1">Scenario: +{{ $scenario_extra_deals }} deals closed</p>
-                    <p class="text-xl font-black text-success-700">₦{{ number_format($data['scenario_forecast'] / 1000000, 1) }}M <span class="text-sm font-medium">(+₦{{ number_format($data['scenario_upside'] / 1000000, 1) }}M upside)</span></p>
+                    <p class="text-xl font-black text-success-700">{{ $currencySymbol }}{{ number_format($data['scenario_forecast'] / 1000000, 1) }}M <span class="text-sm font-medium">(+{{ $currencySymbol }}{{ number_format($data['scenario_upside'] / 1000000, 1) }}M upside)</span></p>
                 </div>
                 @endif
 
                 <div class="mt-6 pt-5 border-t border-border-default/40 grid grid-cols-3 gap-4">
                     <div>
                         <p class="text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1">Total Pipeline</p>
-                        <p class="text-lg font-black text-text-primary">₦{{ number_format($data['total_pipeline'] / 1000000, 1) }}M</p>
+                        <p class="text-lg font-black text-text-primary">{{ $currencySymbol }}{{ number_format($data['total_pipeline'] / 1000000, 1) }}M</p>
                     </div>
                     <div>
                         <p class="text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1">Annual Target</p>
-                        <p class="text-lg font-black text-text-primary">₦{{ number_format($data['target'] / 1000000, 1) }}M</p>
+                        <p class="text-lg font-black text-text-primary">{{ $currencySymbol }}{{ number_format($data['target'] / 1000000, 1) }}M</p>
                     </div>
                     <div>
                         <p class="text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1">Target Gap</p>
                         <p class="text-lg font-black {{ $data['gap'] > 0 ? 'text-danger-600' : 'text-success-600' }}">
-                            {{ $data['gap'] > 0 ? '-' : '+' }}₦{{ number_format(abs($data['gap']) / 1000000, 1) }}M
+                            {{ $data['gap'] > 0 ? '-' : '+' }}{{ $currencySymbol }}{{ number_format(abs($data['gap']) / 1000000, 1) }}M
                         </p>
                     </div>
                 </div>
@@ -115,12 +115,12 @@
                     class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
             </div>
             <div>
-                <label class="block text-xs font-medium text-text-secondary mb-1">Avg deal value (₦)</label>
+                <label class="block text-xs font-medium text-text-secondary mb-1">Avg deal value ({{ $currencySymbol }})</label>
                 <input wire:model.lazy="scenario_avg_value" type="number" min="0"
                     class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
             </div>
         </div>
-        <p class="text-xs text-text-secondary mt-3">Upside: <strong class="text-success-600">+₦{{ number_format($data['scenario_upside'] / 1000000, 2) }}M</strong> → Scenario forecast: <strong class="text-text-primary">₦{{ number_format($data['scenario_forecast'] / 1000000, 1) }}M</strong></p>
+        <p class="text-xs text-text-secondary mt-3">Upside: <strong class="text-success-600">+{{ $currencySymbol }}{{ number_format($data['scenario_upside'] / 1000000, 2) }}M</strong> → Scenario forecast: <strong class="text-text-primary">{{ $currencySymbol }}{{ number_format($data['scenario_forecast'] / 1000000, 1) }}M</strong></p>
     </div>
     @endif
 
@@ -134,8 +134,8 @@
                 <h4 class="text-sm font-bold text-text-primary">{{ $stageName }}</h4>
                 <span class="text-[10px] font-bold bg-surface-raised text-text-tertiary px-2 py-0.5 rounded-full">{{ $stageData['count'] }}</span>
             </div>
-            <p class="text-xl font-black text-text-primary">₦{{ number_format($stageData['weighted'] / 1000000, 1) }}M</p>
-            <p class="text-[10px] text-text-secondary mt-0.5">weighted · ₦{{ number_format($stageData['value'] / 1000000, 1) }}M total</p>
+            <p class="text-xl font-black text-text-primary">{{ $currencySymbol }}{{ number_format($stageData['weighted'] / 1000000, 1) }}M</p>
+            <p class="text-[10px] text-text-secondary mt-0.5">weighted · {{ $currencySymbol }}{{ number_format($stageData['value'] / 1000000, 1) }}M total</p>
             <div class="w-full bg-surface-raised rounded-full h-1.5 mt-3">
                 <div class="bg-brand-primary h-1.5 rounded-full" style="width: {{ $data['weighted_forecast'] > 0 ? min(100, ($stageData['weighted'] / $data['weighted_forecast']) * 100) : 0 }}%"></div>
             </div>

@@ -1,4 +1,4 @@
-<div class="max-w-5xl mx-auto py-8">
+﻿<div class="max-w-5xl mx-auto py-8">
     
     <!-- Wizard Header & Progress -->
     <div class="mb-10 text-center">
@@ -46,7 +46,7 @@
                                 <h3 class="text-sm font-bold text-text-primary mb-1 truncate">{{ $listing->property->address_line_1 }}</h3>
                                 <p class="text-xs text-text-secondary mb-3">{{ $listing->property->city }}, {{ $listing->property->state_province }}</p>
                                 <div class="flex items-center justify-between text-brand-primary font-black tracking-tight">
-                                    ₦{{ number_format($listing->listing_price) }}
+                                    {{ $currencySymbol }}{{ number_format($listing->listing_price) }}
                                 </div>
                             </div>
                         </div>

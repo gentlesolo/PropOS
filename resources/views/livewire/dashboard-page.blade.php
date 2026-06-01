@@ -1,4 +1,4 @@
-<div>
+﻿<div>
     <!-- Header -->
     <div class="mb-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
@@ -35,7 +35,7 @@
                     </div>
                 </div>
                 <div class="mt-4">
-                    <p class="text-4xl font-black tracking-tighter">₦{{ number_format($metrics['total_pipeline'] / 1000000, 1) }}M</p>
+                    <p class="text-4xl font-black tracking-tighter">{{ $currencySymbol }}{{ number_format($metrics['total_pipeline'] / 1000000, 1) }}M</p>
                     <div class="mt-2.5 flex items-center text-[10px] font-bold">
                         <span class="text-brand-accent bg-black/25 px-2 py-0.5 rounded-lg flex items-center">
                             <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
@@ -179,7 +179,7 @@
                                 </div>
                                 <div class="min-w-0">
                                     <h4 class="text-sm font-bold text-text-primary group-hover:text-brand-primary transition-colors truncate">{{ $listing->property->address_line_1 }}</h4>
-                                    <p class="text-xs font-semibold text-text-secondary mt-1 truncate">{{ $listing->property->city }} • ₦{{ number_format($listing->listing_price) }}</p>
+                                    <p class="text-xs font-semibold text-text-secondary mt-1 truncate">{{ $listing->property->city }} • {{ $currencySymbol }}{{ number_format($listing->listing_price) }}</p>
                                 </div>
                             </div>
                             <div class="flex items-center gap-3 justify-between sm:justify-end w-full sm:w-auto">

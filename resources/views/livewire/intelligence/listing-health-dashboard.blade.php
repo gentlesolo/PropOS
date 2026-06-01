@@ -1,4 +1,4 @@
-<div>
+﻿<div>
     <div class="flex items-center justify-between mb-8">
         <div>
             <h1 class="text-3xl font-extrabold tracking-tight text-text-primary">Listing Health Index</h1>
@@ -65,7 +65,7 @@
                             <p class="text-xs text-text-secondary">{{ $listing->property->city }} · {{ ucfirst($listing->property->property_type) }}</p>
                         </td>
                         <td class="py-4 px-5">
-                            <p class="text-sm font-black text-text-primary">₦{{ number_format($listing->listing_price / 1000000, 1) }}M</p>
+                            <p class="text-sm font-black text-text-primary">{{ $currencySymbol }}{{ number_format($listing->listing_price / 1000000, 1) }}M</p>
                         </td>
                         <td class="py-4 px-5">
                             <span class="text-sm font-bold {{ $listing->days_on_market > 45 ? 'text-danger-600' : ($listing->days_on_market > 21 ? 'text-warning-600' : 'text-text-primary') }}">

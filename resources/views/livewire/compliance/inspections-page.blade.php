@@ -1,4 +1,4 @@
-<div>
+﻿<div>
     <div class="flex items-center justify-between mb-6">
         <div>
             <h1 class="text-2xl font-bold text-text-primary">Inspections</h1>
@@ -64,7 +64,7 @@
                 <input wire:model="inspector_company" type="text" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
             </div>
             <div>
-                <label class="block text-xs font-medium text-text-secondary mb-1">Estimated Cost (₦)</label>
+                <label class="block text-xs font-medium text-text-secondary mb-1">Estimated Cost ({{ $currencySymbol }})</label>
                 <input wire:model="cost" type="number" min="0" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
             </div>
             <div class="md:col-span-2 flex gap-3 pt-2">

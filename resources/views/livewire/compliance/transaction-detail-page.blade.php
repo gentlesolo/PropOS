@@ -1,4 +1,4 @@
-<div>
+﻿<div>
     <!-- Breadcrumb -->
     <div class="flex items-center gap-3 mb-6">
         <a href="{{ route('compliance.transactions') }}" class="text-text-tertiary hover:text-brand-primary text-sm flex items-center gap-1">
@@ -45,7 +45,7 @@
                     @endif
                     <div class="flex justify-between">
                         <dt class="text-text-secondary">Sale Price</dt>
-                        <dd class="font-bold text-text-primary">₦{{ number_format($transaction->sale_price) }}</dd>
+                        <dd class="font-bold text-text-primary">{{ $currencySymbol }}{{ number_format($transaction->sale_price) }}</dd>
                     </div>
                     <div class="flex justify-between">
                         <dt class="text-text-secondary">Agent</dt>
@@ -247,15 +247,15 @@
                 <h3 class="text-sm font-semibold text-text-primary mb-4">Commission Summary</h3>
                 <div class="grid grid-cols-3 gap-4 mb-4">
                     <div class="text-center p-3 bg-surface-sunken/40 rounded-xl">
-                        <p class="text-xl font-bold text-text-primary">₦{{ number_format($transaction->commission->gross_commission) }}</p>
+                        <p class="text-xl font-bold text-text-primary">{{ $currencySymbol }}{{ number_format($transaction->commission->gross_commission) }}</p>
                         <p class="text-xs text-text-secondary">Gross Commission</p>
                     </div>
                     <div class="text-center p-3 bg-brand-primary/5 rounded-xl">
-                        <p class="text-xl font-bold text-brand-primary">₦{{ number_format($transaction->commission->agency_commission) }}</p>
+                        <p class="text-xl font-bold text-brand-primary">{{ $currencySymbol }}{{ number_format($transaction->commission->agency_commission) }}</p>
                         <p class="text-xs text-text-secondary">Agency Net</p>
                     </div>
                     <div class="text-center p-3 bg-success-50 rounded-xl">
-                        <p class="text-xl font-bold text-success-600">₦{{ number_format($transaction->commission->agent_commission) }}</p>
+                        <p class="text-xl font-bold text-success-600">{{ $currencySymbol }}{{ number_format($transaction->commission->agent_commission) }}</p>
                         <p class="text-xs text-text-secondary">Agent Net</p>
                     </div>
                 </div>

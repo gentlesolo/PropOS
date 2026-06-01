@@ -1,4 +1,4 @@
-<div>
+﻿<div>
     <div class="flex items-center justify-between mb-8">
         <div>
             <h1 class="text-3xl font-extrabold tracking-tight text-text-primary">Commission Ledger</h1>
@@ -30,19 +30,19 @@
     <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
         <div class="glass-panel rounded-2xl border border-border-default/60 p-5 md:col-span-1">
             <p class="text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-1">Gross YTD</p>
-            <h3 class="text-2xl font-black text-text-primary">₦{{ number_format($commissions->sum('gross_commission')) }}</h3>
+            <h3 class="text-2xl font-black text-text-primary">{{ $currencySymbol }}{{ number_format($commissions->sum('gross_commission')) }}</h3>
         </div>
         <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
             <p class="text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-1">Agency Net</p>
-            <h3 class="text-2xl font-black text-brand-primary">₦{{ number_format($totalBrokerageRevenue) }}</h3>
+            <h3 class="text-2xl font-black text-brand-primary">{{ $currencySymbol }}{{ number_format($totalBrokerageRevenue) }}</h3>
         </div>
         <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
             <p class="text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-1">Agents Net</p>
-            <h3 class="text-2xl font-black text-success-600">₦{{ number_format($totalAgentPayouts) }}</h3>
+            <h3 class="text-2xl font-black text-success-600">{{ $currencySymbol }}{{ number_format($totalAgentPayouts) }}</h3>
         </div>
         <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
             <p class="text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-1">Paid Out</p>
-            <h3 class="text-2xl font-black text-text-primary">₦{{ number_format($commissions->where('payment_status', 'paid')->sum('gross_commission')) }}</h3>
+            <h3 class="text-2xl font-black text-text-primary">{{ $currencySymbol }}{{ number_format($commissions->where('payment_status', 'paid')->sum('gross_commission')) }}</h3>
         </div>
         <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
             <p class="text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-1">Pending Payouts</p>
@@ -85,22 +85,22 @@
                             @endif
                         </td>
                         <td class="py-4 px-5">
-                            <p class="text-sm font-black text-text-primary">₦{{ number_format($commission->sale_price) }}</p>
+                            <p class="text-sm font-black text-text-primary">{{ $currencySymbol }}{{ number_format($commission->sale_price) }}</p>
                         </td>
                         <td class="py-4 px-5">
-                            <p class="text-sm font-black text-text-primary">₦{{ number_format($commission->gross_commission) }}</p>
+                            <p class="text-sm font-black text-text-primary">{{ $currencySymbol }}{{ number_format($commission->gross_commission) }}</p>
                             <p class="text-[10px] text-text-tertiary">{{ $commission->commission_rate }}% rate</p>
                         </td>
                         <td class="py-4 px-5">
                             <div class="text-sm font-bold space-y-0.5">
                                 <div class="flex items-center gap-1.5">
                                     <span class="h-2 w-2 rounded-full bg-brand-primary inline-block"></span>
-                                    <span class="text-brand-primary">₦{{ number_format($commission->agency_commission) }}</span>
+                                    <span class="text-brand-primary">{{ $currencySymbol }}{{ number_format($commission->agency_commission) }}</span>
                                     <span class="text-text-tertiary text-[10px]">agency</span>
                                 </div>
                                 <div class="flex items-center gap-1.5">
                                     <span class="h-2 w-2 rounded-full bg-success-500 inline-block"></span>
-                                    <span class="text-success-600">₦{{ number_format($commission->agent_commission) }}</span>
+                                    <span class="text-success-600">{{ $currencySymbol }}{{ number_format($commission->agent_commission) }}</span>
                                     <span class="text-text-tertiary text-[10px]">agent ({{ $commission->agent_split_percentage }}%)</span>
                                 </div>
                             </div>
@@ -173,7 +173,7 @@
                 <div>
                     <span class="block text-xs font-medium text-text-tertiary uppercase mb-1">Property Details</span>
                     <p class="font-bold">{{ $activeCommission->deal?->listing?->property?->address_line_1 ?? $activeCommission->deal?->title }}</p>
-                    <p class="text-xs text-text-secondary mt-0.5">Sale Price: ₦{{ number_format($activeCommission->sale_price, 2) }}</p>
+                    <p class="text-xs text-text-secondary mt-0.5">Sale Price: {{ $currencySymbol }}{{ number_format($activeCommission->sale_price, 2) }}</p>
                 </div>
             </div>
 
@@ -191,17 +191,17 @@
                         <tr>
                             <td class="py-3 px-4 text-text-primary">Gross Commission</td>
                             <td class="py-3 px-4 text-text-secondary text-right">{{ $activeCommission->commission_rate }}% of Sale Price</td>
-                            <td class="py-3 px-4 font-semibold text-right">₦{{ number_format($activeCommission->gross_commission, 2) }}</td>
+                            <td class="py-3 px-4 font-semibold text-right">{{ $currencySymbol }}{{ number_format($activeCommission->gross_commission, 2) }}</td>
                         </tr>
                         <tr>
                             <td class="py-3 px-4 text-text-primary">Agent Payout Split</td>
                             <td class="py-3 px-4 text-text-secondary text-right">{{ $activeCommission->agent_split_percentage }}% of Gross</td>
-                            <td class="py-3 px-4 font-bold text-success-600 text-right print:text-black">₦{{ number_format($activeCommission->agent_commission, 2) }}</td>
+                            <td class="py-3 px-4 font-bold text-success-600 text-right print:text-black">{{ $currencySymbol }}{{ number_format($activeCommission->agent_commission, 2) }}</td>
                         </tr>
                         <tr>
                             <td class="py-3 px-4 text-text-primary">Agency Net Retention</td>
                             <td class="py-3 px-4 text-text-secondary text-right">{{ 100 - $activeCommission->agent_split_percentage }}% of Gross</td>
-                            <td class="py-3 px-4 font-semibold text-right">₦{{ number_format($activeCommission->agency_commission, 2) }}</td>
+                            <td class="py-3 px-4 font-semibold text-right">{{ $currencySymbol }}{{ number_format($activeCommission->agency_commission, 2) }}</td>
                         </tr>
                     </tbody>
                 </table>

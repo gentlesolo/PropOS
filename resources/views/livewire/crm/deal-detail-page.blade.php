@@ -1,4 +1,4 @@
-<div>
+﻿<div>
     <!-- Breadcrumb -->
     <div class="flex items-center gap-3 mb-6">
         <a href="{{ route('crm.pipeline') }}" class="text-text-tertiary hover:text-brand-primary text-sm flex items-center gap-1">
@@ -59,7 +59,7 @@
                         @error('title') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-text-secondary mb-1">Value (₦)</label>
+                        <label class="block text-xs font-medium text-text-secondary mb-1">Value ({{ $currencySymbol }})</label>
                         <input wire:model.defer="value" type="number" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
                     </div>
                     <div>
@@ -83,7 +83,7 @@
                 <dl class="space-y-2.5 text-sm">
                     <div class="flex justify-between">
                         <dt class="text-text-secondary">Value</dt>
-                        <dd class="font-bold text-text-primary">₦{{ number_format($deal->value) }}</dd>
+                        <dd class="font-bold text-text-primary">{{ $currencySymbol }}{{ number_format($deal->value) }}</dd>
                     </div>
                     <div class="flex justify-between">
                         <dt class="text-text-secondary">Type</dt>

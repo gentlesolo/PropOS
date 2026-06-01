@@ -1,4 +1,4 @@
-<div>
+﻿<div>
     <div class="flex items-center justify-between mb-8">
         <div>
             <h1 class="text-3xl font-extrabold tracking-tight text-text-primary">Transaction Center</h1>
@@ -55,7 +55,7 @@
             <div class="flex items-center justify-between p-3 bg-white rounded-xl border border-warning-100">
                 <div>
                     <p class="text-sm font-semibold text-text-primary">{{ $deal->title }}</p>
-                    <p class="text-xs text-text-secondary">{{ $deal->contact?->first_name }} {{ $deal->contact?->last_name }} · ₦{{ number_format($deal->value) }} · {{ $deal->stage?->name }}</p>
+                    <p class="text-xs text-text-secondary">{{ $deal->contact?->first_name }} {{ $deal->contact?->last_name }} · {{ $currencySymbol }}{{ number_format($deal->value) }} · {{ $deal->stage?->name }}</p>
                 </div>
                 <button wire:click="initiateTransaction({{ $deal->id }})"
                     class="px-3 py-1.5 bg-brand-primary text-white rounded-lg text-xs font-bold hover:bg-brand-secondary transition-colors">
@@ -94,7 +94,7 @@
                         @endif
                     </div>
                     <p class="text-xs text-text-secondary">{{ $transaction->contact?->first_name }} {{ $transaction->contact?->last_name }}</p>
-                    <p class="text-sm font-bold text-text-primary mt-1">₦{{ number_format($transaction->sale_price) }}</p>
+                    <p class="text-sm font-bold text-text-primary mt-1">{{ $currencySymbol }}{{ number_format($transaction->sale_price) }}</p>
                 </div>
 
                 <!-- Status + Deadline -->

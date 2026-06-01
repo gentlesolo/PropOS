@@ -1,4 +1,4 @@
-<div>
+﻿<div>
     <!-- Breadcrumb -->
     <div class="flex items-center gap-3 mb-6">
         <a href="{{ route('listing.index') }}" class="text-text-tertiary hover:text-brand-primary text-sm flex items-center gap-1">
@@ -53,9 +53,9 @@
                         </div>
                     </div>
                     <div class="text-right shrink-0">
-                        <p class="text-2xl font-bold text-text-primary">₦{{ number_format($listing->listing_price) }}</p>
+                        <p class="text-2xl font-bold text-text-primary">{{ $currencySymbol }}{{ number_format($listing->listing_price) }}</p>
                         @if($priceReduced)
-                        <p class="text-xs text-danger-600 line-through">₦{{ number_format($listing->original_price) }}</p>
+                        <p class="text-xs text-danger-600 line-through">{{ $currencySymbol }}{{ number_format($listing->original_price) }}</p>
                         <p class="text-xs text-success-600 font-medium">Price reduced {{ round((1 - $listing->listing_price / $listing->original_price) * 100) }}%</p>
                         @endif
                         <button wire:click="$toggle('showEditForm')" class="mt-2 text-xs text-brand-primary border border-brand-primary/30 rounded-lg px-3 py-1.5 hover:bg-brand-primary/5 transition-colors">
@@ -69,12 +69,12 @@
                     <!-- Price & Status -->
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-medium text-text-secondary mb-1">Listing Price (₦) *</label>
+                            <label class="block text-xs font-medium text-text-secondary mb-1">Listing Price ({{ $currencySymbol }}) *</label>
                             <input wire:model.defer="listing_price" type="number" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
                             @error('listing_price') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-text-secondary mb-1">Original Price (₦)</label>
+                            <label class="block text-xs font-medium text-text-secondary mb-1">Original Price ({{ $currencySymbol }})</label>
                             <input wire:model.defer="original_price" type="number" placeholder="Leave blank if no reduction" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
                         </div>
                     </div>
@@ -521,7 +521,7 @@
                     <div class="flex justify-between">
                         <dt class="text-text-secondary">Commission</dt>
                         <dd class="font-medium text-text-primary">{{ $listing->commission_rate }}%
-                            <span class="text-xs text-text-tertiary">(₦{{ number_format($listing->listing_price * $listing->commission_rate / 100) }})</span>
+                            <span class="text-xs text-text-tertiary">({{ $currencySymbol }}{{ number_format($listing->listing_price * $listing->commission_rate / 100) }})</span>
                         </dd>
                     </div>
                     @endif

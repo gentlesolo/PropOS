@@ -47,6 +47,24 @@ class Agency extends Model
         ];
     }
 
+    public function getCurrencySymbolAttribute(): string
+    {
+        return self::symbolFor($this->currency ?? 'NGN');
+    }
+
+    public static function symbolFor(string $code): string
+    {
+        return match ($code) {
+            'NGN' => '₦',
+            'ZAR' => 'R',
+            'GHS' => '₵',
+            'KES' => 'KSh',
+            'GBP' => '£',
+            'EUR' => '€',
+            default => '$',
+        };
+    }
+
     public function users(): HasMany
     {
         return $this->hasMany(User::class);

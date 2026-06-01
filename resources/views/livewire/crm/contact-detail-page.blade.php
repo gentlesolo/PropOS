@@ -1,4 +1,4 @@
-<div>
+﻿<div>
     <div class="flex items-center gap-3 mb-6">
         <a href="{{ route('crm.contacts') }}" class="text-text-tertiary hover:text-brand-primary text-sm flex items-center gap-1">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
@@ -180,11 +180,11 @@
                 <form wire:submit.prevent="savePreferences" class="space-y-3">
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="block text-xs font-medium text-text-secondary mb-1">Min Budget (₦)</label>
+                            <label class="block text-xs font-medium text-text-secondary mb-1">Min Budget ({{ $currencySymbol }})</label>
                             <input wire:model.defer="pref_min_budget" type="number" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-text-secondary mb-1">Max Budget (₦)</label>
+                            <label class="block text-xs font-medium text-text-secondary mb-1">Max Budget ({{ $currencySymbol }})</label>
                             <input wire:model.defer="pref_max_budget" type="number" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
                         </div>
                     </div>
@@ -218,7 +218,7 @@
                     <div class="flex justify-between">
                         <dt class="text-text-secondary">Budget</dt>
                         <dd class="font-medium text-text-primary">
-                            ₦{{ number_format($prefs['min_budget'] ?? 0) }} – ₦{{ number_format($prefs['max_budget'] ?? 0) }}
+                            {{ $currencySymbol }}{{ number_format($prefs['min_budget'] ?? 0) }} – {{ $currencySymbol }}{{ number_format($prefs['max_budget'] ?? 0) }}
                         </dd>
                     </div>
                     @endif
@@ -387,7 +387,7 @@
                     <div class="p-2 border border-border-default/30 rounded-lg bg-surface-sunken/10">
                         <p class="text-xs font-bold text-text-primary truncate">{{ $item['address'] }}</p>
                         <p class="text-[10px] text-text-secondary mt-0.5">
-                            @if(!empty($item['price'])) Value: ₦{{ number_format((float)$item['price']) }} @endif
+                            @if(!empty($item['price'])) Value: {{ $currencySymbol }}{{ number_format((float)$item['price']) }} @endif
                             @if(!empty($item['year_acquired'])) · Acquired: {{ $item['year_acquired'] }} @endif
                             @if(!empty($item['year_sold'])) · Sold: {{ $item['year_sold'] }} @endif
                         </p>
