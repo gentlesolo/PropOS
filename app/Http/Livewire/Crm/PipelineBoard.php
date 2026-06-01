@@ -22,17 +22,19 @@ class PipelineBoard extends Component
     public string $pipeline_stage_id = '';
     public string $notes = '';
 
-    public function updateDealStage(int $dealId, int $newStageId, CalculateDealMomentumAction $momentum)
+    public function updateDealStage(int $dealId, int $newStageId, CalculateDealMomentumAction $momentum, \App\Application\CRM\Actions\GenerateAutomatedChecklistItemsAction $checklistGenerator)
     {
         $deal = Deal::find($dealId);
-        if ($deal) {
+        $stage = PipelineStage::find($newStageId);
+        if ($deal && $stage) {
             $deal->update(['pipeline_stage_id' => $newStageId]);
             $momentum->execute($deal->fresh());
+            $checklistGenerator->execute($deal, $stage);
             $this->dispatch('notify', message: 'Deal moved successfully.', type: 'success');
         }
     }
 
-    public function saveDeal(CalculateDealMomentumAction $momentum)
+    public function saveDeal(CalculateDealMomentumAction $momentum, \App\Application\CRM\Actions\GenerateAutomatedChecklistItemsAction $checklistGenerator)
     {
         $this->validate([
             'title' => 'required|string|max:255',
@@ -56,6 +58,11 @@ class PipelineBoard extends Component
         ]);
 
         $momentum->execute($deal->fresh());
+        
+        $stage = PipelineStage::find($this->pipeline_stage_id);
+        if ($stage) {
+            $checklistGenerator->execute($deal, $stage);
+        }
 
         $this->reset(['title', 'contact_id', 'listing_id', 'value', 'notes', 'showNewDealModal']);
         $this->pipeline_stage_id = '';

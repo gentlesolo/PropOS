@@ -226,6 +226,12 @@ class ProfilePage extends Component
         session()->flash('commission_saved', 'Commission split configuration saved.');
     }
 
+    public function runMlsSyncJob()
+    {
+        \App\Infrastructure\Queue\Jobs\SyncMlsListingsJob::dispatch();
+        session()->flash('mls_sync_triggered', 'Background MLS sync job dispatched successfully!');
+    }
+
     public function render()
     {
         $teamMembers = auth()->user()->agency?->users()->with('roles')->get() ?? collect();

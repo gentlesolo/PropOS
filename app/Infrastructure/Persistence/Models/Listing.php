@@ -24,7 +24,19 @@ class Listing extends Model
         'health_score' => 'integer',
         'portal_ids' => 'array',
         'published_at' => 'datetime',
+        'is_pocket' => 'boolean',
+        'mls_last_synced_at' => 'datetime',
     ];
+
+    public function generatePocketToken(): string
+    {
+        $token = \Illuminate\Support\Str::random(32);
+        $this->update([
+            'is_pocket' => true,
+            'pocket_token' => $token,
+        ]);
+        return $token;
+    }
 
     protected static function booted()
     {

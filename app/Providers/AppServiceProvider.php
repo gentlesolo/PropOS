@@ -32,6 +32,11 @@ class AppServiceProvider extends ServiceProvider
             \App\Domain\AI\Contracts\PredictionInterface::class,
             \App\Infrastructure\AI\OpenAiPredictionService::class
         );
+
+        $this->app->bind(
+            \App\Infrastructure\Payment\Contracts\PaymentGatewayInterface::class,
+            \App\Infrastructure\Payment\PayFastGateway::class
+        );
     }
 
     /**

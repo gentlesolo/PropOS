@@ -108,6 +108,29 @@
                         <label class="block text-xs font-medium text-text-secondary mb-1">Mandate End Date</label>
                         <input wire:model.defer="mandate_end_date" type="date" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
                     </div>
+                    <!-- Virtual Tour Embed Fields -->
+                    <p class="text-xs font-semibold text-text-tertiary uppercase tracking-wider pt-1">Virtual Tour Integration</p>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div class="col-span-1">
+                            <label class="block text-xs font-medium text-text-secondary mb-1">Tour Type</label>
+                            <select wire:model.defer="virtual_tour_type" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                                <option value="">None</option>
+                                <option value="youtube">YouTube</option>
+                                <option value="matterport">Matterport</option>
+                                <option value="custom">Custom Web Link</option>
+                            </select>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-xs font-medium text-text-secondary mb-1">Tour Link / Embed URL</label>
+                            <input wire:model.defer="virtual_tour_url" type="url" placeholder="https://..." class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                        </div>
+                    </div>
+                    <!-- MLS Sync Identification -->
+                    <p class="text-xs font-semibold text-text-tertiary uppercase tracking-wider pt-1">MLS / IDX Syndication</p>
+                    <div>
+                        <label class="block text-xs font-medium text-text-secondary mb-1">MLS Identifier (ID)</label>
+                        <input wire:model.defer="mls_id" type="text" placeholder="e.g. MLS-12345 (use 'MLS-SOLD-1' or 'MLS-PRICE_DROP-1' to simulate status/price updates)" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    </div>
                     <!-- Property specs -->
                     <p class="text-xs font-semibold text-text-tertiary uppercase tracking-wider pt-1">Property Specifications</p>
                     <div class="grid grid-cols-3 gap-3">
@@ -199,6 +222,39 @@
                 @endif
                 @endif
             </div>
+            
+            <!-- Virtual Tour Integration -->
+            @if($listing->virtual_tour_url && $listing->virtual_tour_type)
+            <div class="glass-panel rounded-2xl border border-border-default/60 p-5 space-y-3">
+                <h3 class="text-sm font-semibold text-text-primary flex items-center gap-2">
+                    <svg class="w-4 h-4 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 00-2 2z"/></svg>
+                    Virtual Tour
+                </h3>
+                <div class="relative rounded-xl overflow-hidden aspect-video bg-surface-sunken border border-border-default/40">
+                    @if($listing->virtual_tour_type === 'youtube')
+                        @php
+                            preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|win/|[^/]+/[^/]+/|watch\?v(?:-nocookie)?=)|youtu\.be/)([^"&?/ ]{11})%i', $listing->virtual_tour_url, $match);
+                            $youtubeId = $match[1] ?? null;
+                        @endphp
+                        @if($youtubeId)
+                            <iframe class="absolute inset-0 w-full h-full" src="https://www.youtube.com/embed/{{ $youtubeId }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        @else
+                            <div class="absolute inset-0 flex items-center justify-center p-4 text-xs text-text-secondary">Invalid YouTube URL.</div>
+                        @endif
+                    @elseif($listing->virtual_tour_type === 'matterport')
+                        @php
+                            $matterportEmbed = $listing->virtual_tour_url;
+                            if (!str_contains($matterportEmbed, '/embed/')) {
+                                $matterportEmbed = str_replace('.com/show/?m=', '.com/embed?m=', $matterportEmbed);
+                            }
+                        @endphp
+                        <iframe class="absolute inset-0 w-full h-full" src="{{ $matterportEmbed }}" frameborder="0" allowfullscreen allow="xr-spatial-tracking"></iframe>
+                    @else
+                        <iframe class="absolute inset-0 w-full h-full" src="{{ $listing->virtual_tour_url }}" frameborder="0" allowfullscreen></iframe>
+                    @endif
+                </div>
+            </div>
+            @endif
 
             <!-- Photo Gallery -->
             <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
@@ -372,6 +428,72 @@
 
         <!-- ── Right: Sidebar ───────────────────────────────────────── -->
         <div class="xl:col-span-1 space-y-5">
+
+            <!-- Pocket Listing / Sharing Portal Card -->
+            <div class="glass-panel rounded-2xl border border-border-default/60 p-5 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-semibold text-text-primary flex items-center gap-2">
+                        <svg class="w-4 h-4 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        Private Pocket Listing
+                    </h3>
+                    <button wire:click="togglePocketListing" class="text-xs px-2.5 py-1 bg-surface-sunken hover:bg-brand-primary/10 rounded-lg text-text-secondary hover:text-brand-primary font-medium border border-border-default transition-all">
+                        {{ $is_pocket ? 'Make Public' : 'Make Private' }}
+                    </button>
+                </div>
+                
+                @if($is_pocket)
+                <div class="p-3 bg-brand-primary/10 border border-brand-primary/20 rounded-xl space-y-2">
+                    <p class="text-xs text-text-secondary leading-relaxed">
+                        This listing is off-market. Share the private portal URL below to grant secure, bypass-auth access.
+                    </p>
+                    <div class="flex items-center gap-2 mt-2">
+                        <input type="text" readonly value="{{ route('listings.pocket', $pocket_token) }}" id="pocket_link_input" class="w-full text-xs bg-slate-900 border border-border-default text-text-primary px-2.5 py-1.5 rounded-lg focus:outline-none">
+                        <button onclick="navigator.clipboard.writeText(document.getElementById('pocket_link_input').value); alert('Private link copied to clipboard!');" class="p-1.5 bg-brand-primary text-white rounded-lg hover:bg-brand-secondary transition">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                        </button>
+                    </div>
+                </div>
+                @else
+                <p class="text-xs text-text-tertiary">
+                    This is currently a public listing and indexed on all portal feeds.
+                </p>
+                @endif
+            </div>
+
+            <!-- MLS / IDX Sync Card -->
+            <div class="glass-panel rounded-2xl border border-border-default/60 p-5 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-semibold text-text-primary flex items-center gap-2">
+                        <svg class="w-4 h-4 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                        MLS / IDX Feed Sync
+                    </h3>
+                    @if($listing->mls_id)
+                    <button wire:click="syncWithMls" class="text-xs px-2.5 py-1 bg-brand-primary text-white rounded-lg hover:bg-brand-secondary font-medium transition-all">
+                        <span wire:loading.remove wire:target="syncWithMls">Sync Now</span>
+                        <span wire:loading wire:target="syncWithMls">Syncing...</span>
+                    </button>
+                    @endif
+                </div>
+
+                @if($listing->mls_id)
+                <div class="space-y-2 text-xs">
+                    <div class="flex justify-between">
+                        <span class="text-text-secondary">MLS External ID:</span>
+                        <span class="font-mono font-medium text-text-primary">{{ $listing->mls_id }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-text-secondary">Last Synced:</span>
+                        <span class="font-medium text-text-primary">
+                            {{ $listing->mls_last_synced_at ? \Carbon\Carbon::parse($listing->mls_last_synced_at)->diffForHumans() : 'Never synced' }}
+                        </span>
+                    </div>
+                </div>
+                @else
+                <p class="text-xs text-text-tertiary">
+                    Configure an MLS ID in the listing edit panel to enable automatic two-way status updates.
+                </p>
+                @endif
+            </div>
 
             <!-- Listing Info -->
             <div class="glass-panel rounded-2xl border border-border-default/60 p-5">

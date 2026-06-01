@@ -74,7 +74,7 @@ class TaskBoardPage extends Component
             ->when($this->priorityFilter, fn ($q) => $q->where('priority', $this->priorityFilter))
             ->when($this->assigneeFilter, fn ($q) => $q->where('assigned_to', $this->assigneeFilter))
             ->when($this->showMyTasksOnly, fn ($q) => $q->where('assigned_to', auth()->id()))
-            ->orderByRaw("FIELD(priority, 'urgent', 'high', 'medium', 'low')")
+            ->orderByRaw("CASE priority WHEN 'urgent' THEN 1 WHEN 'high' THEN 2 WHEN 'medium' THEN 3 WHEN 'low' THEN 4 ELSE 5 END")
             ->orderBy('due_at');
 
         $pending = (clone $base)->where('status', 'pending')->get();

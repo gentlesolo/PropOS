@@ -17,11 +17,13 @@ class Lease extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'monthly_rent' => 'decimal:2',
-        'deposit_amount' => 'decimal:2',
-        'start_date' => 'date',
-        'end_date' => 'date',
-        'renewed_until' => 'date',
+        'monthly_rent'        => 'decimal:2',
+        'deposit_amount'      => 'decimal:2',
+        'start_date'          => 'date',
+        'end_date'            => 'date',
+        'renewed_until'       => 'date',
+        'deposit_refunded_at' => 'datetime',
+        'deposit_deductions'  => 'array',
     ];
 
     protected static function booted(): void

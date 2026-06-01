@@ -8,7 +8,12 @@ import {MessagingStack} from './stacks/MessagingStack';
 import {TasksScreen} from '../screens/tasks/TasksScreen';
 import {ViewingsStack} from './stacks/ViewingsStack';
 import {IntelligenceStack} from './stacks/IntelligenceStack';
+import {ProfileScreen} from '../screens/profile/ProfileScreen';
+import {TenantsStack} from './stacks/TenantsStack';
+import {FinanceStack} from './stacks/FinanceStack';
 import {useAuthStore} from '../store/authStore';
+import {useNotificationStore} from '../store/notificationStore';
+import {useRealtime} from '../hooks/useRealtime';
 
 export type TabParamList = {
   Home:         undefined;
@@ -17,7 +22,10 @@ export type TabParamList = {
   Calls:        undefined;
   Tasks:        undefined;
   Viewings:     undefined;
+  Tenants:      undefined;
+  Finance:      undefined;
   Intelligence: undefined;
+  Profile:      undefined;
 };
 
 const Tab = createBottomTabNavigator<TabParamList>();
@@ -32,9 +40,11 @@ function TabIcon({emoji, focused}: {emoji: string; focused: boolean}) {
 
 export function TabNavigator() {
   const {user} = useAuthStore();
+  const {unreadCount} = useNotificationStore();
 
-  // Simple role check stored on user object returned by the API
-  // In a real app this comes from a roles[] array on the user
+  // Wire up real-time push → query invalidation for the entire authenticated session
+  useRealtime();
+
   const isManager = (user as any)?.roles?.some?.(
     (r: string) => r === 'admin' || r === 'manager',
   ) ?? false;
@@ -102,6 +112,22 @@ export function TabNavigator() {
         }}
       />
       <Tab.Screen
+        name="Tenants"
+        component={TenantsStack}
+        options={{
+          tabBarLabel: 'Tenants',
+          tabBarIcon: ({focused}) => <TabIcon emoji="🏘️" focused={focused} />,
+        }}
+      />
+      <Tab.Screen
+        name="Finance"
+        component={FinanceStack}
+        options={{
+          tabBarLabel: 'Finance',
+          tabBarIcon: ({focused}) => <TabIcon emoji="💰" focused={focused} />,
+        }}
+      />
+      <Tab.Screen
         name="Intelligence"
         component={IntelligenceStack}
         options={{
@@ -110,6 +136,14 @@ export function TabNavigator() {
           tabBarStyle: isManager
             ? {backgroundColor: '#1e293b', borderTopColor: '#334155', height: 60, paddingBottom: 8}
             : {display: 'none'},
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          tabBarLabel: 'Profile',
+          tabBarIcon: ({focused}) => <TabIcon emoji="👤" focused={focused} />,
         }}
       />
     </Tab.Navigator>

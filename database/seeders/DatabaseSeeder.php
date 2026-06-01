@@ -25,5 +25,14 @@ class DatabaseSeeder extends Seeder
 
         // 4. Seed training modules
         $this->call(TrainingModuleSeeder::class);
+
+        // 5. Seed tenants, leases, and rent payment history
+        $this->call(TenantLeaseSeeder::class);
+
+        // 6. Seed invoices, expenses, budgets, tax configs, and mandates
+        $this->call(FinancialAccountingSeeder::class);
+
+        // 7. Seed tasks across all types, priorities, and statuses
+        $this->call(TaskSeeder::class);
     }
 }

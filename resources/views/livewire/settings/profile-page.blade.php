@@ -16,7 +16,7 @@
     </div>
 
     <!-- Flash Messages -->
-    @foreach(['profile_saved' => 'Profile updated.', 'password_saved' => 'Password changed.', 'agency_saved' => 'Agency settings saved.', 'invite_sent' => null] as $key => $default)
+    @foreach(['profile_saved' => 'Profile updated.', 'password_saved' => 'Password changed.', 'agency_saved' => 'Agency settings saved.', 'invite_sent' => null, 'mls_sync_triggered' => 'Background MLS sync triggered.'] as $key => $default)
     @if(session($key))
     <div class="mb-4 p-3 bg-success-50 border border-success-200 rounded-xl text-sm text-success-800">
         {{ session($key) ?? $default }}
@@ -339,6 +339,27 @@
                         Connect
                     </a>
                 @endif
+            </div>
+        </div>
+
+        {{-- MLS Sync Integration --}}
+        <div class="flex items-center justify-between py-4 border-b border-border-default/60 last:border-0">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-surface-sunken flex items-center justify-center">
+                    <svg class="w-5 h-5 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-text-primary">MLS / IDX Two-Way Sync</p>
+                    <p class="text-xs text-text-secondary">Simulate updating database listings from remote MLS/IDX servers.</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <button wire:click="runMlsSyncJob" class="px-3 py-1.5 bg-brand-primary text-white rounded-lg text-xs font-medium hover:bg-brand-secondary transition-colors">
+                    <span wire:loading.remove wire:target="runMlsSyncJob">Run Sync Simulation</span>
+                    <span wire:loading wire:target="runMlsSyncJob">Triggering...</span>
+                </button>
             </div>
         </div>
     </div>

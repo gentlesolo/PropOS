@@ -29,7 +29,7 @@ class TenantResolver
         return null;
     }
 
-    public function setCurrentAgency(Agency $agency): void
+    public function setCurrentAgency(?Agency $agency): void
     {
         static::$currentAgency = $agency;
     }

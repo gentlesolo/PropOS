@@ -30,6 +30,15 @@
                 @error('title') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
             </div>
             <div>
+                <label class="block text-xs font-medium text-text-secondary mb-1">Generate From Template</label>
+                <select wire:model.live="selectedTemplate" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    <option value="">Manual Entry (No Template)</option>
+                    <option value="sale_agreement">Standard Sale Agreement</option>
+                    <option value="lease_agreement">Residential Lease Agreement</option>
+                    <option value="mandate">Exclusive Seller Mandate</option>
+                </select>
+            </div>
+            <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Type *</label>
                 <select wire:model="type" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
                     <option value="sale_agreement">Sale Agreement</option>
@@ -129,11 +138,25 @@
                     </td>
                     <td class="px-4 py-3 text-text-secondary text-xs">{{ $contract->valid_until?->format('d M Y') ?? '—' }}</td>
                     <td class="px-4 py-3">
-                        <select wire:change="updateStatus({{ $contract->id }}, $event.target.value)" class="text-xs rounded-lg border border-border-default bg-surface-input px-2 py-1 text-text-secondary">
-                            @foreach(['draft','sent','viewed','signed_buyer','signed_seller','fully_signed','cancelled'] as $s)
-                            <option value="{{ $s }}" @selected($contract->status === $s)>{{ ucwords(str_replace('_',' ',$s)) }}</option>
-                            @endforeach
-                        </select>
+                        <div class="flex items-center gap-2">
+                            <select wire:change="updateStatus({{ $contract->id }}, $event.target.value)" class="text-xs rounded-lg border border-border-default bg-surface-input px-2 py-1 text-text-secondary">
+                                @foreach(['draft','sent','viewed','signed_buyer','signed_seller','fully_signed','cancelled'] as $s)
+                                <option value="{{ $s }}" @selected($contract->status === $s)>{{ ucwords(str_replace('_',' ',$s)) }}</option>
+                                @endforeach
+                            </select>
+                            
+                            @if($contract->status === 'draft')
+                            <button wire:click="sendForSignature({{ $contract->id }})" class="px-2.5 py-1 text-xs bg-brand-primary text-white rounded-lg hover:bg-brand-secondary transition-colors" title="Send eSignature Request">
+                                Send eSign
+                            </button>
+                            @endif
+
+                            @if(in_array($contract->status, ['sent', 'viewed']))
+                            <a href="{{ route('contracts.sign', $contract->reference) }}" target="_blank" class="px-2.5 py-1 text-xs border border-brand-primary text-brand-primary hover:bg-brand-primary/10 rounded-lg transition-colors" title="Copy Sign Link">
+                                Sign Page
+                            </a>
+                            @endif
+                        </div>
                     </td>
                 </tr>
                 @empty

@@ -34,6 +34,12 @@ class ListingDetailPage extends Component
     public string $mandate_end_date = '';
     public string $seller_email = '';
     public string $seller_report_frequency = '';
+    public string $virtual_tour_url = '';
+    public string $virtual_tour_type = '';
+    public bool $is_pocket = false;
+    public string $pocket_token = '';
+    public string $mls_id = '';
+    public ?string $mls_last_synced_at = null;
 
     // Property fields
     public string $bedrooms = '';
@@ -74,6 +80,12 @@ class ListingDetailPage extends Component
         $this->mandate_end_date        = $listing->mandate_end_date?->format('Y-m-d') ?? '';
         $this->seller_email            = $listing->seller_email ?? '';
         $this->seller_report_frequency = $listing->seller_report_frequency ?? 'weekly';
+        $this->virtual_tour_url        = $listing->virtual_tour_url ?? '';
+        $this->virtual_tour_type       = $listing->virtual_tour_type ?? '';
+        $this->is_pocket               = (bool) $listing->is_pocket;
+        $this->pocket_token            = $listing->pocket_token ?? '';
+        $this->mls_id                  = $listing->mls_id ?? '';
+        $this->mls_last_synced_at      = $listing->mls_last_synced_at ? $listing->mls_last_synced_at->format('Y-m-d H:i:s') : null;
         $this->featuresHighlighted     = (array) ($listing->features_highlighted ?? []);
 
         $property = $listing->property;
@@ -110,6 +122,9 @@ class ListingDetailPage extends Component
             'land_area_sqm'        => 'nullable|numeric|min:0',
             'year_built'           => 'nullable|integer|min:1800|max:2100',
             'condition'            => 'nullable|in:new,excellent,good,fair,needs_work',
+            'virtual_tour_url'     => 'nullable|url|max:255',
+            'virtual_tour_type'    => 'nullable|in:youtube,matterport,custom',
+            'mls_id'               => 'nullable|string|max:100',
         ]);
 
         // Track price reduction
@@ -130,6 +145,9 @@ class ListingDetailPage extends Component
             'mandate_type'         => $this->mandate_type,
             'commission_rate'      => $this->commission_rate ?: null,
             'mandate_end_date'     => $this->mandate_end_date ?: null,
+            'virtual_tour_url'     => $this->virtual_tour_url ?: null,
+            'virtual_tour_type'    => $this->virtual_tour_type ?: null,
+            'mls_id'               => $this->mls_id ?: null,
         ]);
 
         $this->listing->property->update([
@@ -286,6 +304,48 @@ class ListingDetailPage extends Component
             \Storage::disk('public')->delete($graphic->file_path);
             $graphic->delete();
             $this->listing->refresh()->load('graphics');
+        }
+    }
+
+    public function togglePocketListing()
+    {
+        $this->is_pocket = !$this->is_pocket;
+        if ($this->is_pocket && empty($this->pocket_token)) {
+            $this->pocket_token = \Illuminate\Support\Str::random(32);
+        }
+
+        $this->listing->update([
+            'is_pocket' => $this->is_pocket,
+            'pocket_token' => $this->is_pocket ? $this->pocket_token : null,
+        ]);
+
+        $this->listing->refresh();
+        $this->dispatch('notify', message: $this->is_pocket ? 'Listing converted to Private Pocket Listing.' : 'Listing converted to Public.', type: 'success');
+    }
+
+    public function syncWithMls(\App\Application\Listing\Services\MlsSyncService $service)
+    {
+        if (empty($this->listing->mls_id)) {
+            $this->dispatch('notify', message: 'No MLS ID configured for this listing.', type: 'error');
+            return;
+        }
+
+        $result = $service->syncListing($this->listing);
+
+        if ($result['success']) {
+            $this->listing->refresh();
+            $this->mls_last_synced_at = $this->listing->mls_last_synced_at ? $this->listing->mls_last_synced_at->format('Y-m-d H:i:s') : null;
+            $this->status = $this->listing->status;
+            $this->listing_price = (string) $this->listing->listing_price;
+            $this->original_price = (string) ($this->listing->original_price ?? '');
+            
+            if ($result['updated']) {
+                $this->dispatch('notify', message: 'Sync complete. Listing updated from MLS!', type: 'success');
+            } else {
+                $this->dispatch('notify', message: 'Sync complete. Listing matches MLS.', type: 'info');
+            }
+        } else {
+            $this->dispatch('notify', message: $result['message'], type: 'error');
         }
     }
 

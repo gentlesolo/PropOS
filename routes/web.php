@@ -10,6 +10,10 @@ Route::get('/', function () {
 // ── Public routes (no auth required) ────────────────────────────────────────
 Route::get('/book/{listing}', \App\Http\Livewire\Viewing\PublicBookingPage::class)->name('viewing.book');
 Route::get('/feedback/{viewing}/{token}', \App\Http\Livewire\Viewing\PublicFeedbackPage::class)->name('viewing.feedback');
+Route::get('/tenant-portal/{token}', \App\Http\Livewire\TenantPortal\TenantPortalPage::class)->name('tenant.portal');
+Route::get('/listings/pocket/{token}', \App\Http\Livewire\Listing\PublicPocketListingPage::class)->name('listings.pocket');
+Route::get('/open-houses/{rsvp_slug}/rsvp', \App\Http\Livewire\Viewing\PublicOpenHouseRsvpPage::class)->name('openhouses.rsvp');
+Route::get('/contracts/{reference}/sign', \App\Http\Livewire\Contracts\PublicContractSignPage::class)->name('contracts.sign');
 
 // Google Calendar OAuth callback — must be public (Google redirects here; auth is still active via session)
 Route::get('/integrations/google-calendar/callback', [\App\Http\Controllers\GoogleCalendarController::class, 'callback'])
@@ -102,6 +106,19 @@ Route::middleware(['auth', 'tenant'])->group(function () {
         Route::get('/finance/commissions', \App\Http\Livewire\Intelligence\CommissionLedgerPage::class)->name('finance.commissions');
     });
 
+    // ── Finance: Invoices, Expenses, Budgeting, Reports ──────────────────────
+    Route::middleware('permission:transactions.view_own')->group(function () {
+        Route::get('/finance/invoices', \App\Http\Livewire\Finance\InvoicesPage::class)->name('finance.invoices');
+        Route::get('/finance/expenses', \App\Http\Livewire\Finance\ExpensesPage::class)->name('finance.expenses');
+        Route::get('/finance/budgeting', \App\Http\Livewire\Finance\BudgetingPage::class)->name('finance.budgeting');
+        Route::get('/finance/reports', \App\Http\Livewire\Finance\FinancialReportsPage::class)->name('finance.reports');
+    });
+
+    // ── Tax Configuration — requires agency.manage ────────────────────────────
+    Route::middleware('permission:agency.manage')->group(function () {
+        Route::get('/settings/tax', \App\Http\Livewire\Settings\TaxConfigPage::class)->name('settings.tax');
+    });
+
     // ── Training — requires training.view ────────────────────────────────────
     Route::middleware('permission:training.view')->group(function () {
         Route::get('/training', \App\Http\Livewire\Training\TrainingDashboardPage::class)->name('training.dashboard');
@@ -140,6 +157,8 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::middleware('permission:transactions.view_own')->group(function () {
         Route::get('/property-management/tenants', \App\Http\Livewire\PropertyManagement\TenantManagementPage::class)->name('pm.tenants');
         Route::get('/property-management/leases', \App\Http\Livewire\PropertyManagement\LeaseManagementPage::class)->name('pm.leases');
+        Route::get('/property-management/rent-collection', \App\Http\Livewire\PropertyManagement\RentCollectionDashboardPage::class)->name('pm.rent-collection');
+        Route::get('/property-management/deposits', \App\Http\Livewire\PropertyManagement\DepositManagementPage::class)->name('pm.deposits');
     });
 
     // ── Inspections ───────────────────────────────────────────────────────────
@@ -167,6 +186,7 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::middleware('permission:agency.manage')->group(function () {
         Route::get('/settings/commission-splits', \App\Http\Livewire\Settings\CommissionSplitPage::class)->name('settings.commission-splits');
         Route::get('/settings/lead-routing', \App\Http\Livewire\Settings\LeadRoutingPage::class)->name('settings.lead-routing');
+        Route::get('/settings/pipeline-stages', \App\Http\Livewire\Settings\PipelineStagesPage::class)->name('settings.pipeline-stages');
     });
 
     // ── PDF Reports ───────────────────────────────────────────────────────────

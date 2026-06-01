@@ -41,6 +41,28 @@ class MobileAuthController extends Controller
         ]);
     }
 
+    /**
+     * Rotate the token: delete the current one and issue a fresh one.
+     * The mobile app calls this when it detects the token is near expiry
+     * or receives a 401 on a non-login request.
+     */
+    public function refresh(Request $request): JsonResponse
+    {
+        $user        = $request->user();
+        $currentToken = $user->currentAccessToken();
+        $deviceName  = str_replace('mobile:', '', $currentToken->name ?? 'ProposMobile');
+
+        $currentToken->delete();
+
+        $newToken = $user->createToken("mobile:{$deviceName}")->plainTextToken;
+        $user->update(['last_active_at' => now()]);
+
+        return response()->json([
+            'token' => $newToken,
+            'user'  => $this->formatUser($user),
+        ]);
+    }
+
     public function logout(Request $request): JsonResponse
     {
         $request->user()->currentAccessToken()->delete();

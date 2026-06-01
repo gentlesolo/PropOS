@@ -26,6 +26,7 @@ class ContactsPage extends Component
     public string $search = '';
     public string $filterType = '';
     public string $filterStatus = '';
+    public string $filterTag = '';
 
     public array $duplicates = [];
     public bool $confirmDuplicate = false;
@@ -42,6 +43,7 @@ class ContactsPage extends Component
         'search' => ['except' => ''],
         'filterType' => ['except' => ''],
         'filterStatus' => ['except' => ''],
+        'filterTag' => ['except' => ''],
     ];
 
     protected $rules = [
@@ -64,6 +66,11 @@ class ContactsPage extends Component
     }
 
     public function updatedFilterStatus(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFilterTag(): void
     {
         $this->resetPage();
     }
@@ -247,6 +254,7 @@ class ContactsPage extends Component
             }))
             ->when($this->filterType, fn($q) => $q->where('type', $this->filterType))
             ->when($this->filterStatus, fn($q) => $q->where('status', $this->filterStatus))
+            ->when($this->filterTag, fn($q) => $q->whereJsonContains('tags', $this->filterTag))
             ->latest()
             ->paginate(15);
 
@@ -255,8 +263,16 @@ class ContactsPage extends Component
         $hotBuyers = Contact::where('type', 'buyer')->where('intent_score', '>=', 80)->count();
         $pendingSellers = Contact::where('type', 'seller')->where('status', 'new')->count();
 
+        $allTags = Contact::whereNotNull('tags')
+            ->get()
+            ->pluck('tags')
+            ->flatten()
+            ->unique()
+            ->filter()
+            ->values();
+
         return view('livewire.crm.contacts-page', compact(
-            'contacts', 'totalActive', 'newThisWeek', 'hotBuyers', 'pendingSellers'
+            'contacts', 'totalActive', 'newThisWeek', 'hotBuyers', 'pendingSellers', 'allTags'
         ))->layout('layouts.app');
     }
 }

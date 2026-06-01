@@ -74,4 +74,11 @@ return [
         'api_key' => env('DEEPGRAM_API_KEY'),
     ],
 
+    'payfast' => [
+        'merchant_id'  => env('PAYFAST_MERCHANT_ID'),
+        'merchant_key' => env('PAYFAST_MERCHANT_KEY'),
+        'passphrase'   => env('PAYFAST_PASSPHRASE'),
+        'mode'         => env('PAYFAST_MODE', 'sandbox'),
+    ],
+
 ];

@@ -144,6 +144,34 @@ class CallController extends Controller
     }
 
     /**
+     * Return a short-lived signed URL for streaming a call recording.
+     * The actual MP3 is on Twilio; we proxy the URL through the backend
+     * to enforce access control without leaking Twilio credentials to the client.
+     */
+    public function recording(Call $call): \Illuminate\Http\JsonResponse
+    {
+        $this->authorizeCall($call);
+
+        if (! $call->recording_url) {
+            return response()->json(['message' => 'No recording available.'], 404);
+        }
+
+        // Return a signed URL valid for 60 minutes.
+        // The mobile audio player fetches the MP3 directly from this URL.
+        $signedUrl = \Illuminate\Support\Facades\URL::temporarySignedRoute(
+            'api.mobile.calls.recording.proxy',
+            now()->addHour(),
+            ['call' => $call->id],
+        );
+
+        return response()->json([
+            'url'        => $signedUrl,
+            'expires_at' => now()->addHour()->toISOString(),
+            'duration'   => $call->duration_seconds,
+        ]);
+    }
+
+    /**
      * Search calls by transcript keyword.
      */
     public function search(Request $request): JsonResponse

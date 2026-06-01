@@ -56,7 +56,7 @@ class DealDetailPage extends Component
         $this->notes = $deal->notes ?? '';
     }
 
-    public function saveDeal(CalculateDealMomentumAction $momentum)
+    public function saveDeal(CalculateDealMomentumAction $momentum, \App\Application\CRM\Actions\GenerateAutomatedChecklistItemsAction $checklistGenerator)
     {
         $this->validate([
             'title' => 'required|string|max:255',
@@ -73,6 +73,12 @@ class DealDetailPage extends Component
         ]);
 
         $momentum->execute($this->deal->fresh());
+
+        $stage = PipelineStage::find($this->pipeline_stage_id);
+        if ($stage) {
+            $checklistGenerator->execute($this->deal, $stage);
+        }
+
         $this->showEditForm = false;
         $this->deal->refresh()->load('stage', 'activities.user', 'checklistItems');
         $this->nextActionSuggestion = null;

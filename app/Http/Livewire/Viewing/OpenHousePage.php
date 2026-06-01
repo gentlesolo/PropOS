@@ -96,14 +96,42 @@ class OpenHousePage extends Component
             'checkin_phone' => 'nullable|string|max:30',
         ]);
 
-        $openHouse = OpenHouse::find($this->checkingInId);
+        $openHouse = OpenHouse::with('listing.property')->find($this->checkingInId);
 
         if (! $openHouse) {
             return;
         }
 
+        // Find or create Contact
+        $contact = null;
+        if ($this->checkin_email) {
+            $contact = \App\Infrastructure\Persistence\Models\Contact::where('email', $this->checkin_email)
+                ->where('agency_id', $openHouse->agency_id)
+                ->first();
+        }
+        if (!$contact && $this->checkin_phone) {
+            $contact = \App\Infrastructure\Persistence\Models\Contact::where('phone', $this->checkin_phone)
+                ->where('agency_id', $openHouse->agency_id)
+                ->first();
+        }
+        if (!$contact) {
+            $nameParts = explode(' ', trim($this->checkin_name), 2);
+            $contact = \App\Infrastructure\Persistence\Models\Contact::create([
+                'agency_id'          => $openHouse->agency_id,
+                'assigned_agent_id'  => $openHouse->agent_id,
+                'first_name'         => $nameParts[0],
+                'last_name'          => $nameParts[1] ?? '',
+                'email'              => $this->checkin_email ?: null,
+                'phone'              => $this->checkin_phone ?: null,
+                'type'               => 'buyer',
+                'status'             => 'new',
+                'lead_source'        => 'open_house',
+            ]);
+        }
+
         OpenHouseRsvp::create([
             'open_house_id' => $openHouse->id,
+            'contact_id'    => $contact->id,
             'guest_name'    => $this->checkin_name,
             'guest_email'   => $this->checkin_email ?: null,
             'guest_phone'   => $this->checkin_phone ?: null,
@@ -114,8 +142,27 @@ class OpenHousePage extends Component
         $openHouse->increment('attendance_count');
         $openHouse->increment('rsvp_count');
 
+        // Enroll in automated nurturing sequence
+        $steps = [
+            [
+                'type' => 'email',
+                'subject' => 'Thank you for attending the Open House!',
+                'message_template' => 'Hi {{first_name}}, thank you for visiting the open house today. I wanted to see if you have any questions about the property, or if you\'d like to schedule a private viewing.',
+                'delay_days' => 1,
+            ],
+            [
+                'type' => 'sms',
+                'subject' => '',
+                'message_template' => 'Hi {{first_name}}, just checking in. Let me know if you would like me to send you the property prospectus or disclosure docs. - PropOS Agency',
+                'delay_days' => 2,
+            ]
+        ];
+
+        $action = new \App\Application\CRM\Actions\CreateFollowUpSequenceAction();
+        $action->execute($contact, "Open House Follow-up (" . ($openHouse->listing->property->address_line_1 ?? 'Property') . ")", $steps);
+
         $this->reset(['checkingInId', 'checkin_name', 'checkin_email', 'checkin_phone']);
-        $this->dispatch('notify', message: 'Guest checked in.', type: 'success');
+        $this->dispatch('notify', message: 'Guest checked in and follow-up sequence initialized.', type: 'success');
     }
 
     public function render()

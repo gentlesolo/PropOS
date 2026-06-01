@@ -133,6 +133,27 @@
                     </div>
                     @endif
 
+                    <!-- Custom Tags -->
+                    <div class="mt-4 pt-4 border-t border-border-default/60">
+                        <p class="text-xs font-semibold text-text-secondary mb-2">Custom Tags</p>
+                        <div class="flex flex-wrap gap-1.5 mb-2">
+                            @forelse($contact->tags ?? [] as $tag)
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-2xs font-bold bg-brand-primary/10 text-brand-primary">
+                                {{ $tag }}
+                                <button type="button" wire:click="removeTag('{{ $tag }}')" class="hover:text-danger-600 focus:outline-none font-bold">
+                                    &times;
+                                </button>
+                            </span>
+                            @empty
+                            <span class="text-2xs text-text-tertiary">No tags added yet.</span>
+                            @endforelse
+                        </div>
+                        <form wire:submit.prevent="addTag" class="flex gap-1 mt-2">
+                            <input wire:model.defer="newTag" type="text" placeholder="Add tag..." class="w-full text-2xs rounded-lg border border-border-default bg-surface-input px-2 py-1 focus:outline-none focus:ring-1 focus:ring-brand-primary focus:border-brand-primary">
+                            <button type="submit" class="px-2.5 py-1 bg-brand-primary text-white text-2xs font-bold rounded-lg hover:bg-brand-secondary">Add</button>
+                        </form>
+                    </div>
+
                     <div class="mt-4 pt-4 border-t border-border-default/60 text-xs text-text-secondary space-y-1">
                         @if($contact->source)
                         <div>Source: <span class="font-medium text-text-primary capitalize">{{ str_replace('_', ' ', $contact->source) }}</span></div>
@@ -183,6 +204,10 @@
                         <label class="block text-xs font-medium text-text-secondary mb-1">Must-Have Features <span class="font-normal text-text-tertiary">(comma-separated)</span></label>
                         <input wire:model.defer="pref_must_have_features" type="text" placeholder="Pool, Generator" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
                     </div>
+                    <div>
+                        <label class="block text-xs font-medium text-text-secondary mb-1">Target Timeline</label>
+                        <input wire:model.defer="pref_timeline" type="text" placeholder="e.g. Next 3 months, Immediate" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    </div>
                     <button type="submit" class="w-full py-2 bg-brand-primary text-white rounded-lg text-sm font-medium hover:bg-brand-secondary transition-colors">Save Preferences</button>
                 </form>
                 @else
@@ -215,6 +240,12 @@
                         <dd class="font-medium text-text-primary text-right">{{ implode(', ', (array) $prefs['property_types']) }}</dd>
                     </div>
                     @endif
+                    @if(!empty($prefs['timeline']))
+                    <div class="flex justify-between gap-2">
+                        <dt class="text-text-secondary shrink-0">Timeline</dt>
+                        <dd class="font-medium text-text-primary text-right">{{ $prefs['timeline'] }}</dd>
+                    </div>
+                    @endif
                 </dl>
                 @else
                 <p class="text-xs text-text-tertiary">No preferences set.</p>
@@ -240,6 +271,175 @@
             </div>
             @endif
             @endif
+
+            <!-- Family Details -->
+            <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-sm font-semibold text-text-primary">Family Details</h3>
+                    <button wire:click="$toggle('showFamilyForm')" class="text-xs text-brand-primary border border-brand-primary/30 rounded-lg px-2.5 py-1 hover:bg-brand-primary/5 transition-colors font-bold">
+                        {{ $showFamilyForm ? 'Cancel' : 'Edit' }}
+                    </button>
+                </div>
+                @if($showFamilyForm)
+                <form wire:submit.prevent="saveFamily" class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-medium text-text-secondary mb-1">Partner's Name</label>
+                        <input wire:model.defer="fam_partner_name" type="text" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-text-secondary mb-1">Anniversary</label>
+                        <input wire:model.defer="fam_anniversary" type="date" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-semibold text-text-secondary">Children</span>
+                            <button type="button" wire:click="addFamilyChild" class="text-xs text-brand-primary hover:underline font-bold">+ Add Child</button>
+                        </div>
+                        @foreach($fam_children as $index => $child)
+                        <div class="p-2 border border-border-default/40 rounded-lg bg-surface-sunken/20 space-y-1.5 relative">
+                            <button type="button" wire:click="removeFamilyChild({{ $index }})" class="absolute top-1.5 right-1.5 text-text-tertiary hover:text-danger-600 text-xs font-bold">&times;</button>
+                            <input wire:model.defer="fam_children.{{ $index }}.name" type="text" placeholder="Name" class="w-full rounded bg-surface-input border border-border-default px-2 py-1 text-2xs text-text-primary">
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <input wire:model.defer="fam_children.{{ $index }}.birthday" type="date" placeholder="Birthday" class="w-full rounded bg-surface-input border border-border-default px-2 py-1 text-2xs text-text-primary">
+                                <input wire:model.defer="fam_children.{{ $index }}.school" type="text" placeholder="School" class="w-full rounded bg-surface-input border border-border-default px-2 py-1 text-2xs text-text-primary">
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+
+                    <button type="submit" class="w-full py-1.5 bg-brand-primary text-white rounded-lg text-xs font-medium hover:bg-brand-secondary transition-colors">Save Family Details</button>
+                </form>
+                @else
+                @php $prefs = $contact->preferences ?? []; $family = $prefs['family'] ?? []; @endphp
+                @if(!empty($family['partner_name']) || !empty($family['anniversary']) || !empty($family['children']))
+                <dl class="space-y-1.5 text-xs">
+                    @if(!empty($family['partner_name']))
+                    <div class="flex justify-between">
+                        <dt class="text-text-secondary">Partner</dt>
+                        <dd class="font-medium text-text-primary">{{ $family['partner_name'] }}</dd>
+                    </div>
+                    @endif
+                    @if(!empty($family['anniversary']))
+                    <div class="flex justify-between">
+                        <dt class="text-text-secondary">Anniversary</dt>
+                        <dd class="font-medium text-text-primary">{{ $family['anniversary'] }}</dd>
+                    </div>
+                    @endif
+                    @if(!empty($family['children']))
+                    <div class="pt-1.5 border-t border-border-default/40">
+                        <dt class="text-text-secondary font-semibold mb-1">Children</dt>
+                        @foreach($family['children'] as $child)
+                        <dd class="pl-2 border-l border-brand-primary/30 py-0.5 text-text-primary mb-1 last:mb-0">
+                            <strong>{{ $child['name'] }}</strong>
+                            @if(!empty($child['birthday']) || !empty($child['school']))
+                            <span class="text-text-tertiary block text-[10px]">
+                                {{ $child['birthday'] ? 'BD: ' . $child['birthday'] : '' }}
+                                {{ $child['school'] ? ' · ' . $child['school'] : '' }}
+                            </span>
+                            @endif
+                        </dd>
+                        @endforeach
+                    </div>
+                    @endif
+                </dl>
+                @else
+                <p class="text-xs text-text-tertiary">No family details set.</p>
+                @endif
+                @endif
+            </div>
+
+            <!-- Property Ownership History -->
+            <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-sm font-semibold text-text-primary">Ownership History</h3>
+                    <button wire:click="$toggle('showHistoryForm')" class="text-xs text-brand-primary border border-brand-primary/30 rounded-lg px-2.5 py-1 hover:bg-brand-primary/5 transition-colors font-bold">
+                        {{ $showHistoryForm ? 'Cancel' : 'Edit' }}
+                    </button>
+                </div>
+                @if($showHistoryForm)
+                <form wire:submit.prevent="saveHistory" class="space-y-3">
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-semibold text-text-secondary">Past Properties</span>
+                            <button type="button" wire:click="addHistoryItem" class="text-xs text-brand-primary hover:underline font-bold">+ Add Property</button>
+                        </div>
+                        @foreach($history_items as $index => $item)
+                        <div class="p-2 border border-border-default/40 rounded-lg bg-surface-sunken/20 space-y-1.5 relative">
+                            <button type="button" wire:click="removeHistoryItem({{ $index }})" class="absolute top-1.5 right-1.5 text-text-tertiary hover:text-danger-600 text-xs font-bold">&times;</button>
+                            <input wire:model.defer="history_items.{{ $index }}.address" type="text" placeholder="Address / Property Name" class="w-full rounded bg-surface-input border border-border-default px-2 py-1 text-2xs text-text-primary">
+                            <div class="grid grid-cols-3 gap-1">
+                                <input wire:model.defer="history_items.{{ $index }}.price" type="text" placeholder="Price" class="w-full rounded bg-surface-input border border-border-default px-2 py-1 text-2xs text-text-primary">
+                                <input wire:model.defer="history_items.{{ $index }}.year_acquired" type="text" placeholder="Acquired" class="w-full rounded bg-surface-input border border-border-default px-2 py-1 text-2xs text-text-primary">
+                                <input wire:model.defer="history_items.{{ $index }}.year_sold" type="text" placeholder="Sold" class="w-full rounded bg-surface-input border border-border-default px-2 py-1 text-2xs text-text-primary">
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+
+                    <button type="submit" class="w-full py-1.5 bg-brand-primary text-white rounded-lg text-xs font-medium hover:bg-brand-secondary transition-colors">Save History</button>
+                </form>
+                @else
+                @php $prefs = $contact->preferences ?? []; $history = $prefs['ownership_history'] ?? []; @endphp
+                @if(!empty($history))
+                <div class="space-y-2">
+                    @foreach($history as $item)
+                    <div class="p-2 border border-border-default/30 rounded-lg bg-surface-sunken/10">
+                        <p class="text-xs font-bold text-text-primary truncate">{{ $item['address'] }}</p>
+                        <p class="text-[10px] text-text-secondary mt-0.5">
+                            @if(!empty($item['price'])) Value: ₦{{ number_format((float)$item['price']) }} @endif
+                            @if(!empty($item['year_acquired'])) · Acquired: {{ $item['year_acquired'] }} @endif
+                            @if(!empty($item['year_sold'])) · Sold: {{ $item['year_sold'] }} @endif
+                        </p>
+                    </div>
+                    @endforeach
+                </div>
+                @else
+                <p class="text-xs text-text-tertiary">No property ownership history recorded.</p>
+                @endif
+                @endif
+            </div>
+
+            <!-- Documents -->
+            <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+                <h3 class="text-sm font-semibold text-text-primary mb-3">Documents</h3>
+                
+                @php $prefs = $contact->preferences ?? []; $documents = $prefs['documents'] ?? []; @endphp
+                @if(!empty($documents))
+                <ul class="divide-y divide-border-default/40 mb-4">
+                    @foreach($documents as $index => $doc)
+                    <li class="py-2 flex items-center justify-between gap-2 text-xs">
+                        <div class="min-w-0">
+                            <p class="font-bold text-text-primary truncate">{{ $doc['title'] }}</p>
+                            <span class="text-[10px] text-text-tertiary">{{ $doc['file_name'] }} · {{ \Carbon\Carbon::parse($doc['uploaded_at'])->diffForHumans() }}</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <a href="{{ Storage::url($doc['file_path']) }}" target="_blank" class="p-1 text-brand-primary hover:bg-brand-primary/10 rounded">
+                                📥
+                            </a>
+                            <button type="button" wire:click="deleteDocument({{ $index }})" class="p-1 text-text-tertiary hover:text-danger-600 rounded">
+                                🗑️
+                            </button>
+                        </div>
+                    </li>
+                    @endforeach
+                </ul>
+                @else
+                <p class="text-xs text-text-tertiary mb-4">No documents uploaded.</p>
+                @endif
+
+                <form wire:submit.prevent="uploadDocument" class="space-y-2 pt-2 border-t border-border-default/40">
+                    <input wire:model.defer="docTitle" type="text" placeholder="Doc title (e.g. ID Card)" class="w-full rounded bg-surface-input border border-border-default px-2 py-1 text-xs text-text-primary focus:outline-none focus:ring-1 focus:ring-brand-primary">
+                    <div class="flex items-center gap-2">
+                        <input wire:model="docFile" type="file" class="text-2xs text-text-secondary w-full">
+                        <button type="submit" class="px-2.5 py-1 bg-brand-primary text-white text-xs font-semibold rounded-lg hover:bg-brand-secondary shrink-0">
+                            Upload
+                        </button>
+                    </div>
+                    @error('docFile') <span class="text-2xs text-danger-600 block">{{ $message }}</span> @enderror
+                    @error('docTitle') <span class="text-2xs text-danger-600 block">{{ $message }}</span> @enderror
+                </form>
+            </div>
         </div>
 
         <!-- Right: Activity Timeline -->

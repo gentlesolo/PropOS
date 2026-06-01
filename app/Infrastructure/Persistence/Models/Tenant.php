@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Infrastructure\Persistence\Models\MaintenanceRequest;
 
 class Tenant extends Model
 {
@@ -28,6 +29,7 @@ class Tenant extends Model
     public function agent(): BelongsTo { return $this->belongsTo(User::class, 'assigned_agent_id'); }
     public function leases(): HasMany { return $this->hasMany(Lease::class); }
     public function activeLease(): HasOne { return $this->hasOne(Lease::class)->where('status', 'active')->latest(); }
+    public function maintenanceRequests(): HasMany { return $this->hasMany(MaintenanceRequest::class); }
 
     public function getStatusColorAttribute(): string
     {

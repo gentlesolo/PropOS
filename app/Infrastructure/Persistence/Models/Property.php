@@ -38,4 +38,9 @@ class Property extends Model
     {
         return $this->hasMany(Listing::class);
     }
+
+    public function getAddressAttribute(): string
+    {
+        return trim("{$this->address_line_1}, {$this->city}");
+    }
 }

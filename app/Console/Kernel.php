@@ -2,11 +2,18 @@
 
 namespace App\Console;
 
+use App\Infrastructure\Queue\Jobs\ApplyLateFeesJob;
 use App\Infrastructure\Queue\Jobs\DetectAndNotifyStaleDealsJob;
 use App\Infrastructure\Queue\Jobs\DispatchScheduledCampaignsJob;
+use App\Infrastructure\Queue\Jobs\GenerateMonthlyInvoicesJob;
+use App\Infrastructure\Queue\Jobs\GenerateMonthlyRentPaymentsJob;
 use App\Infrastructure\Queue\Jobs\GenerateSellerReportJob;
 use App\Infrastructure\Queue\Jobs\ProcessFollowUpSequenceJob;
+use App\Infrastructure\Queue\Jobs\ProcessOverdueRentsJob;
+use App\Infrastructure\Queue\Jobs\SendLeaseExpiryReminderJob;
+use App\Infrastructure\Queue\Jobs\SendRentPaymentReminderJob;
 use App\Infrastructure\Queue\Jobs\SendViewingRemindersJob;
+use App\Infrastructure\Queue\Jobs\SyncPaymentMandatesJob;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -53,6 +60,48 @@ class Kernel extends ConsoleKernel
         })
         ->everyFiveMinutes()
         ->name('flush-whatsapp-queue');
+
+        // Send lease expiry reminders to agents and tenants (30, 14, 7 days) — daily at 08:00
+        $schedule->job(new SendLeaseExpiryReminderJob)
+                 ->dailyAt('08:00')
+                 ->withoutOverlapping()
+                 ->name('send-lease-expiry-reminders');
+
+        // Send rent payment reminders to tenants — daily at 07:00
+        $schedule->job(new SendRentPaymentReminderJob)
+                 ->dailyAt('07:00')
+                 ->withoutOverlapping()
+                 ->name('send-rent-payment-reminders');
+
+        // Mark past-due rent payments as overdue and notify agents — daily at midnight
+        $schedule->job(new ProcessOverdueRentsJob)
+                 ->dailyAt('00:05')
+                 ->withoutOverlapping()
+                 ->name('process-overdue-rents');
+
+        // Generate missing rent payment records for active leases on the 1st of each month
+        $schedule->job(new GenerateMonthlyRentPaymentsJob)
+                 ->monthlyOn(1, '06:00')
+                 ->withoutOverlapping()
+                 ->name('generate-monthly-rent-payments');
+
+        // Generate rent invoices for all active leases on the 1st of each month at 05:00
+        $schedule->job(new GenerateMonthlyInvoicesJob)
+                 ->monthlyOn(1, '05:00')
+                 ->withoutOverlapping()
+                 ->name('generate-monthly-invoices');
+
+        // Apply late fees to overdue invoices past the grace period — daily at 09:00
+        $schedule->job(new ApplyLateFeesJob)
+                 ->dailyAt('09:00')
+                 ->withoutOverlapping()
+                 ->name('apply-late-fees');
+
+        // Log payment mandate collection activity — daily at 06:00
+        $schedule->job(new SyncPaymentMandatesJob)
+                 ->dailyAt('06:00')
+                 ->withoutOverlapping()
+                 ->name('sync-payment-mandates');
 
         // Prune stale telescope/horizon entries and expired sessions — daily at midnight
         $schedule->command('queue:prune-failed --hours=168')->daily();

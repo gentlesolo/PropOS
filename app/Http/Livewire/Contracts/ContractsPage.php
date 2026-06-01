@@ -29,6 +29,100 @@ class ContractsPage extends Component
     public string $valid_from = '';
     public string $valid_until = '';
     public string $body = '';
+    public string $selectedTemplate = '';
+
+    public const TEMPLATES = [
+        'sale_agreement' => [
+            'title' => 'Standard Sale Agreement',
+            'body' => "SALE AGREEMENT\n\nThis Agreement is entered into by and between:\nSeller: {seller_name}\nBuyer: {buyer_name}\n\nProperty: {property_address}\nPurchase Price: {price}\n\nTERMS AND CONDITIONS:\n1. The Buyer agrees to buy and the Seller agrees to sell the Property for the Purchase Price.\n2. Earnest money deposit is to be paid within 7 days of this agreement.\n3. Transfer of ownership will take place upon registration at the deeds office.\n\nSigned at Lagos on {date}.\n\nSeller Signature: ___________________\nBuyer Signature: ___________________",
+        ],
+        'lease_agreement' => [
+            'title' => 'Residential Lease Agreement',
+            'body' => "RESIDENTIAL LEASE AGREEMENT\n\nLandlord: {agency_name} (on behalf of Owner)\nTenant: {buyer_name}\n\nProperty: {property_address}\nMonthly Rent: {price}/month\n\nTERMS AND CONDITIONS:\n1. The Lease shall commence on {date} for a duration of 12 months.\n2. The Tenant shall pay the monthly rent on or before the 1st of each month.\n3. The Tenant agrees to maintain the property in clean and tenantable condition.\n\nSigned at Lagos on {date}.\n\nLandlord Signature: ___________________\nTenant Signature: ___________________",
+        ],
+        'mandate' => [
+            'title' => 'Exclusive Seller Mandate',
+            'body' => "EXCLUSIVE SELLER MANDATE\n\nAgency: {agency_name}\nSeller: {seller_name}\n\nProperty: {property_address}\nTarget Selling Price: {price}\n\nTERMS AND CONDITIONS:\n1. The Seller hereby grants the Agency the exclusive mandate to market and sell the Property.\n2. The Agency commission rate is agreed at 5.00% of the final sale price.\n3. This mandate shall remain in force for a period of 90 days from date hereof.\n\nSigned at Lagos on {date}.\n\nSeller Signature: ___________________\nAgent Signature: ___________________",
+        ],
+    ];
+
+    public function updatedSelectedTemplate(string $val): void
+    {
+        if (empty($val) || !isset(self::TEMPLATES[$val])) {
+            return;
+        }
+
+        $template = self::TEMPLATES[$val];
+        $body = $template['body'];
+
+        // Resolve data
+        $agencyName = auth()->user()->agency->name ?? 'PropOS Agency';
+        $contactName = 'Client / Signatory';
+        $sellerName = 'Owner / Seller';
+        $propAddress = 'The Property';
+        $price = 'Market Price';
+
+        if ($this->contact_id) {
+            $contact = Contact::find($this->contact_id);
+            if ($contact) {
+                $contactName = $contact->first_name . ' ' . $contact->last_name;
+                if ($contact->type === 'seller') {
+                    $sellerName = $contactName;
+                }
+            }
+        }
+
+        if ($this->deal_id) {
+            $deal = Deal::with(['contact', 'listing.property'])->find($this->deal_id);
+            if ($deal) {
+                if ($deal->contact) {
+                    $contactName = $deal->contact->first_name . ' ' . $deal->contact->last_name;
+                    if ($deal->contact->type === 'seller') {
+                        $sellerName = $contactName;
+                    }
+                }
+                if ($deal->listing && $deal->listing->property) {
+                    $propAddress = $deal->listing->property->address_line_1;
+                }
+                $price = 'NGN ' . number_format($deal->value, 2);
+            }
+        }
+
+        if (!$this->deal_id && $this->listing_id) {
+            $listing = Listing::with('property')->find($this->listing_id);
+            if ($listing) {
+                if ($listing->property) {
+                    $propAddress = $listing->property->address_line_1;
+                }
+                $price = 'NGN ' . number_format($listing->listing_price, 2);
+            }
+        }
+
+        // Substitution
+        $body = str_replace('{agency_name}', $agencyName, $body);
+        $body = str_replace('{buyer_name}', $contactName, $body);
+        $body = str_replace('{seller_name}', $sellerName, $body);
+        $body = str_replace('{property_address}', $propAddress, $body);
+        $body = str_replace('{price}', $price, $body);
+        $body = str_replace('{date}', now()->format('d M Y'), $body);
+
+        $this->body = $body;
+        $this->title = $template['title'] . ' — ' . $propAddress;
+        $this->type = $val;
+    }
+
+    public function sendForSignature(int $contractId): void
+    {
+        $contract = Contract::findOrFail($contractId);
+        $contract->update([
+            'status' => 'sent',
+            'signatories' => array_merge($contract->signatories ?? [], [
+                'envelope_id' => 'env_' . Str::random(16),
+                'sent_at' => now()->toDateTimeString(),
+            ]),
+        ]);
+        $this->dispatch('notify', message: 'Contract sent for eSignature via simulated portal.', type: 'success');
+    }
 
     protected $queryString = ['search', 'statusFilter', 'typeFilter'];
 

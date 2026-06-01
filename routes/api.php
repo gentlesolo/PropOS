@@ -1,12 +1,18 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\LeadWebhookController;
+use App\Http\Controllers\Api\Mobile\MobileInvoiceController;
+use App\Http\Controllers\PaymentWebhookController;
 use App\Http\Controllers\Api\CallWebhookController;
 use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\DealController;
 use App\Http\Controllers\Api\EmailWebhookController;
 use App\Http\Controllers\Api\ListingController;
 use App\Http\Controllers\Api\Mobile\AgentBenchmarkController;
+use App\Http\Controllers\Api\Mobile\MobileLeaseController;
+use App\Http\Controllers\Api\Mobile\MobileNotificationController;
+use App\Http\Controllers\Api\Mobile\MobileTenantController;
 use App\Http\Controllers\Api\Mobile\CallAnalyticsController;
 use App\Http\Controllers\Api\Mobile\CallController;
 use App\Http\Controllers\Api\Mobile\InCallHintsController;
@@ -22,6 +28,9 @@ use App\Http\Controllers\Api\SmsWebhookController;
 use App\Http\Controllers\Api\WhatsAppWebhookController;
 use Illuminate\Support\Facades\Route;
 
+// PayFast ITN webhook (public — verified by signature inside controller)
+Route::post('/webhooks/payfast', [PaymentWebhookController::class, 'handlePayFastItn']);
+
 // WhatsApp webhook (public — verified by token, not Sanctum)
 Route::get('/webhooks/whatsapp', [WhatsAppWebhookController::class, 'verify']);
 Route::post('/webhooks/whatsapp', [WhatsAppWebhookController::class, 'receive']);
@@ -33,6 +42,9 @@ Route::post('/webhooks/sms/africastalking', [SmsWebhookController::class, 'afric
 // Email event webhooks (open/click tracking)
 Route::post('/webhooks/email/mailgun', [EmailWebhookController::class, 'mailgun']);
 Route::post('/webhooks/email/sendgrid', [EmailWebhookController::class, 'sendgrid']);
+
+// Smart lead capture webhooks (unauthenticated)
+Route::post('/webhooks/leads/{agency_slug}/{source}', [LeadWebhookController::class, 'receive']);
 
 // Public auth
 Route::post('/auth/login', [AuthController::class, 'login']);
@@ -78,9 +90,10 @@ Route::prefix('mobile')->name('api.mobile.')->group(function () {
     Route::post('/auth/login', [MobileAuthController::class, 'login'])->name('auth.login');
 
     Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/auth/logout', [MobileAuthController::class, 'logout'])->name('auth.logout');
-        Route::get('/auth/me', [MobileAuthController::class, 'me'])->name('auth.me');
-        Route::post('/auth/device', [MobileAuthController::class, 'registerDevice'])->name('auth.device');
+        Route::post('/auth/logout',  [MobileAuthController::class, 'logout'])->name('auth.logout');
+        Route::post('/auth/refresh', [MobileAuthController::class, 'refresh'])->name('auth.refresh');
+        Route::get('/auth/me',       [MobileAuthController::class, 'me'])->name('auth.me');
+        Route::post('/auth/device',  [MobileAuthController::class, 'registerDevice'])->name('auth.device');
 
         // Calls
         Route::post('/calls/token', [CallController::class, 'token'])->name('calls.token');
@@ -88,6 +101,7 @@ Route::prefix('mobile')->name('api.mobile.')->group(function () {
         Route::post('/calls', [CallController::class, 'store'])->name('calls.store');
         Route::get('/calls/search', [CallController::class, 'search'])->name('calls.search');
         Route::get('/calls/{call}', [CallController::class, 'show'])->name('calls.show');
+        Route::get('/calls/{call}/recording', [CallController::class, 'recording'])->name('calls.recording');
         Route::patch('/calls/{call}/status', [CallController::class, 'updateStatus'])->name('calls.status');
         Route::patch('/calls/{call}/summary', [CallController::class, 'confirmSummary'])->name('calls.summary');
 
@@ -119,6 +133,12 @@ Route::prefix('mobile')->name('api.mobile.')->group(function () {
         // Daily brief (Phase 2)
         Route::get('/brief', [MobileBriefController::class, 'show'])->name('brief.show');
 
+        // Notifications
+        Route::get('/notifications',                  [MobileNotificationController::class, 'index'])->name('notifications.index');
+        Route::get('/notifications/unread-count',     [MobileNotificationController::class, 'unreadCount'])->name('notifications.unread');
+        Route::patch('/notifications/read-all',       [MobileNotificationController::class, 'markAllRead'])->name('notifications.read-all');
+        Route::patch('/notifications/{id}/read',      [MobileNotificationController::class, 'markRead'])->name('notifications.read');
+
         // ── Phase 3: Intelligence ──────────────────────────────────────────
 
         // Live transcript & in-call hints
@@ -144,6 +164,19 @@ Route::prefix('mobile')->name('api.mobile.')->group(function () {
         Route::get('/benchmark', [AgentBenchmarkController::class, 'compare'])->name('benchmark.compare');
         Route::get('/benchmark/leaderboard', [AgentBenchmarkController::class, 'leaderboard'])->name('benchmark.leaderboard');
 
+        // ── Phase 5: Property Management ──────────────────────────────────
+        Route::get('/tenants', [MobileTenantController::class, 'index'])->name('tenants.index');
+        Route::get('/tenants/{tenant}', [MobileTenantController::class, 'show'])->name('tenants.show');
+
+        Route::get('/leases', [MobileLeaseController::class, 'index'])->name('leases.index');
+        Route::get('/leases/{lease}', [MobileLeaseController::class, 'show'])->name('leases.show');
+        Route::post('/leases/{lease}/payments', [MobileLeaseController::class, 'recordPayment'])->name('leases.payments.store');
+
+        // ── Phase 6: Finance ───────────────────────────────────────────────
+        Route::get('/invoices', [MobileInvoiceController::class, 'index'])->name('invoices.index');
+        Route::get('/invoices/{invoice}', [MobileInvoiceController::class, 'show'])->name('invoices.show');
+        Route::post('/invoices/{invoice}/pay', [MobileInvoiceController::class, 'payNow'])->name('invoices.pay');
+
         // Agent language preference update
         Route::patch('/numbers/language', function (\Illuminate\Http\Request $request) {
             $request->validate(['language' => 'required|string|size:2']);
@@ -153,6 +186,22 @@ Route::prefix('mobile')->name('api.mobile.')->group(function () {
         })->name('numbers.language');
     });
 });
+
+// Recording proxy — validates the signed URL then streams the MP3 from Twilio
+Route::get('/mobile/calls/{call}/recording/stream', function (\Illuminate\Http\Request $request, \App\Infrastructure\Persistence\Models\Call $call) {
+    abort_unless($request->hasValidSignature(), 403);
+    abort_unless($call->recording_url, 404);
+
+    $stream = \Illuminate\Support\Facades\Http::withBasicAuth(
+        config('services.twilio.sid'),
+        config('services.twilio.token'),
+    )->get($call->recording_url);
+
+    return response($stream->body(), 200, [
+        'Content-Type'  => 'audio/mpeg',
+        'Cache-Control' => 'private, max-age=3600',
+    ]);
+})->name('api.mobile.calls.recording.proxy');
 
 // Twilio MediaStream TwiML + Deepgram callback (public — Twilio/Deepgram signed)
 Route::post('/webhooks/calls/twiml', [TwilioMediaStreamController::class, 'twiml'])

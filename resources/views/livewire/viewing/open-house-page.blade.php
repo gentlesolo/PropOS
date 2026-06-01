@@ -129,6 +129,10 @@
                     <div class="flex items-center gap-4 mt-2 text-sm text-gray-600">
                         <span>{{ $oh->rsvp_count }} RSVPs</span>
                         <span>{{ $oh->attendance_count }} checked in</span>
+                        <button type="button" class="flex items-center gap-1.5 px-2 py-0.5 border border-gray-200 rounded-md bg-gray-50 text-xs font-semibold text-gray-700 hover:bg-gray-100 transition-colors" onclick="navigator.clipboard.writeText('{{ route('openhouses.rsvp', $oh->rsvp_slug) }}'); alert('Open House RSVP link copied!');">
+                            <svg class="w-3 h-3 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 10.742l4.816-2.408m0 0l-4.816-2.408m4.816 2.408v6.824"/></svg>
+                            Copy RSVP Link
+                        </button>
                     </div>
                 </div>
 

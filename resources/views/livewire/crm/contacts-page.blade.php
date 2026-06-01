@@ -71,6 +71,12 @@
                     <option value="nurturing">Nurturing</option>
                     <option value="closed">Closed</option>
                 </select>
+                <select wire:model="filterTag" class="px-3 py-2 border border-border-strong rounded-lg bg-white text-text-secondary text-sm">
+                    <option value="">All Tags</option>
+                    @foreach($allTags as $tag)
+                        <option value="{{ $tag }}">{{ ucfirst($tag) }}</option>
+                    @endforeach
+                </select>
             </div>
         </div>
 

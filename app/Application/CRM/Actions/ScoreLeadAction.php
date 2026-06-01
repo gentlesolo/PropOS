@@ -63,6 +63,25 @@ class ScoreLeadAction
             default => 10,
         };
 
+        // Budget preferences
+        $prefs = $contact->preferences ?? [];
+        if (!empty($prefs['max_budget']) || !empty($prefs['min_budget'])) {
+            $score += 10;
+        }
+
+        // Search Timeline
+        if (!empty($prefs['timeline'])) {
+            $score += 10;
+        }
+
+        // High-intent activities: offers, viewings, calls
+        if ($contact->offers()->count() > 0) {
+            $score += 20;
+        }
+        if ($contact->calls()->count() > 0) {
+            $score += 10;
+        }
+
         $activityCount = $contact->activities()->count();
         $score += min($activityCount * 5, 25);
 
