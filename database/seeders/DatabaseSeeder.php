@@ -34,5 +34,17 @@ class DatabaseSeeder extends Seeder
 
         // 7. Seed tasks across all types, priorities, and statuses
         $this->call(TaskSeeder::class);
+
+        // 8. Seed offers with counter/accepted/rejected scenarios
+        $this->call(OffersSeeder::class);
+
+        // 9. Seed contracts: OTP, mandates, lease agreements, addendum
+        $this->call(ContractsSeeder::class);
+
+        // 10. Seed email templates (all categories) and delivery logs
+        $this->call(EmailTemplatesSeeder::class);
+
+        // 11. Seed WhatsApp and SMS messaging inbox conversations
+        $this->call(MessagingInboxSeeder::class);
     }
 }
