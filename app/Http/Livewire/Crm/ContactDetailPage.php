@@ -305,6 +305,18 @@ class ContactDetailPage extends Component
         }
     }
 
+    public function deleteContact(): void
+    {
+        $agencyId = auth()->user()->agency_id;
+        $contact  = Contact::where('id', $this->contact->id)
+            ->where('agency_id', $agencyId)
+            ->firstOrFail();
+
+        $contact->delete();
+
+        $this->redirect(route('crm.contacts'), navigate: true);
+    }
+
     public function loadNextAction(SuggestNextActionAction $suggester)
     {
         $this->loadingNextAction = true;

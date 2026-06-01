@@ -24,7 +24,8 @@ class PipelineBoard extends Component
 
     public function updateDealStage(int $dealId, int $newStageId, CalculateDealMomentumAction $momentum, \App\Application\CRM\Actions\GenerateAutomatedChecklistItemsAction $checklistGenerator)
     {
-        $deal = Deal::find($dealId);
+        $agencyId = auth()->user()->agency_id;
+        $deal  = Deal::where('id', $dealId)->where('agency_id', $agencyId)->first();
         $stage = PipelineStage::find($newStageId);
         if ($deal && $stage) {
             $deal->update(['pipeline_stage_id' => $newStageId]);
@@ -32,6 +33,13 @@ class PipelineBoard extends Component
             $checklistGenerator->execute($deal, $stage);
             $this->dispatch('notify', message: 'Deal moved successfully.', type: 'success');
         }
+    }
+
+    public function deleteDeal(int $id): void
+    {
+        $agencyId = auth()->user()->agency_id;
+        Deal::where('id', $id)->where('agency_id', $agencyId)->firstOrFail()->delete();
+        $this->dispatch('notify', message: 'Deal deleted.', type: 'info');
     }
 
     public function saveDeal(CalculateDealMomentumAction $momentum, \App\Application\CRM\Actions\GenerateAutomatedChecklistItemsAction $checklistGenerator)
@@ -79,9 +87,10 @@ class PipelineBoard extends Component
 
     public function render(DetectStaleDealsAction $staleDetector)
     {
-        $staleDeals = $staleDetector->execute(auth()->user()->agency_id ?? 1);
-        $contacts = Contact::orderBy('first_name')->get(['id', 'first_name', 'last_name']);
-        $listings = Listing::with('property')->where('status', 'active')->get();
+        $agencyId   = auth()->user()->agency_id;
+        $staleDeals = $staleDetector->execute($agencyId);
+        $contacts   = Contact::where('agency_id', $agencyId)->orderBy('first_name')->get(['id', 'first_name', 'last_name']);
+        $listings   = Listing::with('property')->where('agency_id', $agencyId)->where('status', 'active')->get();
         $firstStage = PipelineStage::where('pipeline_type', $this->pipelineType)->orderBy('order')->first();
         if ($firstStage && !$this->pipeline_stage_id) {
             $this->pipeline_stage_id = (string) $firstStage->id;

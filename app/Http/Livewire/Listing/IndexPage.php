@@ -53,6 +53,21 @@ class IndexPage extends Component
         return redirect()->route('listing.detail', $id);
     }
 
+    public function deleteListing(int $id): void
+    {
+        $agencyId = auth()->user()->agency_id;
+        $listing  = Listing::where('id', $id)->where('agency_id', $agencyId)->firstOrFail();
+
+        if (! in_array($listing->status, ['draft', 'withdrawn', 'expired'])) {
+            $this->dispatch('notify', message: 'Only draft, withdrawn, or expired listings can be deleted.', type: 'error');
+            return;
+        }
+
+        $listing->property->delete();
+        $listing->delete();
+        $this->dispatch('notify', message: 'Listing deleted.', type: 'info');
+    }
+
     public function updatingSearch(): void
     {
         $this->resetPage();
@@ -107,7 +122,10 @@ class IndexPage extends Component
 
     public function render()
     {
+        $agencyId = auth()->user()->agency_id;
+
         $query = Listing::with(['property', 'agent', 'coverPhoto', 'media'])
+            ->where('agency_id', $agencyId)
             ->when($this->search, function ($q) {
                 $q->whereHas('property', fn($p) => $p
                     ->where('address_line_1', 'like', "%{$this->search}%")
@@ -125,11 +143,11 @@ class IndexPage extends Component
             })
             ->latest();
 
-        $listings     = $query->paginate(12);
-        $activeCount  = Listing::where('status', 'active')->count();
-        $underOfferCount = Listing::where('status', 'under_offer')->count();
-        $totalValue   = Listing::where('status', 'active')->sum('listing_price');
-        $avgDom       = (int) Listing::whereIn('status', ['active', 'under_offer'])
+        $listings        = $query->paginate(12);
+        $activeCount     = Listing::where('agency_id', $agencyId)->where('status', 'active')->count();
+        $underOfferCount = Listing::where('agency_id', $agencyId)->where('status', 'under_offer')->count();
+        $totalValue      = Listing::where('agency_id', $agencyId)->where('status', 'active')->sum('listing_price');
+        $avgDom          = (int) Listing::where('agency_id', $agencyId)->whereIn('status', ['active', 'under_offer'])
             ->whereNotNull('mandate_start_date')
             ->get()
             ->avg(fn($l) => $l->mandate_start_date->diffInDays(now()));

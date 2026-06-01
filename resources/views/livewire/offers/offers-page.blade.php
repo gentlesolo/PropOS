@@ -274,7 +274,7 @@
                 <div class="space-y-1.5 text-xs">
                     <div class="flex justify-between"><span class="text-text-secondary">Deal</span><span class="text-text-primary font-medium text-right max-w-36 truncate">{{ $detailOffer->deal?->title ?? '—' }}</span></div>
                     <div class="flex justify-between"><span class="text-text-secondary">Property</span><span class="text-text-primary text-right max-w-36 truncate">{{ $detailOffer->listing?->property?->address_line_1 ?? '—' }}</span></div>
-                    <div class="flex justify-between"><span class="text-text-secondary">Deposit</span><span class="text-text-primary font-medium">{{ $detailOffer->deposit_amount ? '{{ $currencySymbol }}'.number_format($detailOffer->deposit_amount) : '—' }}</span></div>
+                    <div class="flex justify-between"><span class="text-text-secondary">Deposit</span><span class="text-text-primary font-medium">{{ $detailOffer->deposit_amount ? $currencySymbol.number_format($detailOffer->deposit_amount) : '—' }}</span></div>
                     <div class="flex justify-between"><span class="text-text-secondary">Occupation</span><span class="text-text-primary">{{ $detailOffer->proposed_occupation_date?->format('d M Y') ?? '—' }}</span></div>
                     <div class="flex justify-between"><span class="text-text-secondary">Expires</span>
                         <span class="{{ $detailOffer->expiry_date?->isPast() ? 'text-danger-600 font-semibold' : 'text-text-primary' }}">

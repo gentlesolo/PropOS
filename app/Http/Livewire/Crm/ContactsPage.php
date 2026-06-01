@@ -132,6 +132,21 @@ class ContactsPage extends Component
         $this->type = 'buyer';
     }
 
+    public function deleteContact(int $id): void
+    {
+        $agencyId = auth()->user()->agency_id;
+        $contact  = Contact::where('id', $id)->where('agency_id', $agencyId)->firstOrFail();
+
+        if ($this->selectedContactId === $id) {
+            $this->showDrawer        = false;
+            $this->selectedContact   = null;
+            $this->selectedContactId = null;
+        }
+
+        $contact->delete();
+        $this->dispatch('notify', message: 'Contact deleted.', type: 'info');
+    }
+
     public function dismissDuplicates(): void
     {
         $this->confirmDuplicate = true;
@@ -245,7 +260,10 @@ class ContactsPage extends Component
 
     public function render()
     {
+        $agencyId = auth()->user()->agency_id;
+
         $contacts = Contact::with('agent')
+            ->where('agency_id', $agencyId)
             ->when($this->search, fn($q) => $q->where(function ($sub) {
                 $sub->where('first_name', 'like', "%{$this->search}%")
                     ->orWhere('last_name', 'like', "%{$this->search}%")
@@ -258,12 +276,13 @@ class ContactsPage extends Component
             ->latest()
             ->paginate(15);
 
-        $totalActive = Contact::where('status', '!=', 'archived')->count();
-        $newThisWeek = Contact::where('created_at', '>=', now()->startOfWeek())->count();
-        $hotBuyers = Contact::where('type', 'buyer')->where('intent_score', '>=', 80)->count();
-        $pendingSellers = Contact::where('type', 'seller')->where('status', 'new')->count();
+        $totalActive    = Contact::where('agency_id', $agencyId)->where('status', '!=', 'archived')->count();
+        $newThisWeek    = Contact::where('agency_id', $agencyId)->where('created_at', '>=', now()->startOfWeek())->count();
+        $hotBuyers      = Contact::where('agency_id', $agencyId)->where('type', 'buyer')->where('intent_score', '>=', 80)->count();
+        $pendingSellers = Contact::where('agency_id', $agencyId)->where('type', 'seller')->where('status', 'new')->count();
 
-        $allTags = Contact::whereNotNull('tags')
+        $allTags = Contact::where('agency_id', $agencyId)
+            ->whereNotNull('tags')
             ->get()
             ->pluck('tags')
             ->flatten()

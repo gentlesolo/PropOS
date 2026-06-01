@@ -95,7 +95,7 @@
                 </div>
                 <div class="flex justify-between">
                     <dt class="text-text-secondary">Recommended</dt>
-                    <dd class="font-bold text-text-primary">{{ $report->recommended_list_price ? '{{ $currencySymbol }}'.number_format($report->recommended_list_price) : '—' }}</dd>
+                    <dd class="font-bold text-text-primary">{{ $report->recommended_list_price ? $currencySymbol.number_format($report->recommended_list_price) : '—' }}</dd>
                 </div>
                 <div class="flex justify-between">
                     <dt class="text-text-secondary">Comparables</dt>

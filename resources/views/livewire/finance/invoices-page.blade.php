@@ -284,7 +284,7 @@
                         </td>
                         <td class="px-4 py-3 text-right font-bold text-text-primary">{{ $currencySymbol }}{{ number_format($invoice->total) }}</td>
                         <td class="px-4 py-3 text-right text-xs {{ $invoice->amount_paid > 0 ? 'text-success-600 font-medium' : 'text-text-tertiary' }}">
-                            {{ $invoice->amount_paid > 0 ? '{{ $currencySymbol }}'.number_format($invoice->amount_paid) : '—' }}
+                            {{ $invoice->amount_paid > 0 ? $currencySymbol.number_format($invoice->amount_paid) : '—' }}
                         </td>
                         <td class="px-4 py-3">
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-{{ $c }}-50 text-{{ $c }}-700 border border-{{ $c }}-200">

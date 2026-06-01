@@ -349,6 +349,24 @@ class ListingDetailPage extends Component
         }
     }
 
+    public function deleteListing(): void
+    {
+        $agencyId = auth()->user()->agency_id;
+        $listing  = Listing::where('id', $this->listing->id)
+            ->where('agency_id', $agencyId)
+            ->firstOrFail();
+
+        if (! in_array($listing->status, ['draft', 'withdrawn', 'expired'])) {
+            $this->dispatch('notify', message: 'Only draft, withdrawn, or expired listings can be deleted.', type: 'error');
+            return;
+        }
+
+        $listing->property->delete();
+        $listing->delete();
+
+        $this->redirect(route('listing.index'), navigate: true);
+    }
+
     public function render(MatchBuyersToListingAction $matchAction)
     {
         $portals       = Portal::where('is_active', true)->get();

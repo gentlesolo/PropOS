@@ -58,9 +58,18 @@
                         <p class="text-xs text-danger-600 line-through">{{ $currencySymbol }}{{ number_format($listing->original_price) }}</p>
                         <p class="text-xs text-success-600 font-medium">Price reduced {{ round((1 - $listing->listing_price / $listing->original_price) * 100) }}%</p>
                         @endif
-                        <button wire:click="$toggle('showEditForm')" class="mt-2 text-xs text-brand-primary border border-brand-primary/30 rounded-lg px-3 py-1.5 hover:bg-brand-primary/5 transition-colors">
-                            {{ $showEditForm ? 'Cancel' : 'Edit Listing' }}
-                        </button>
+                        <div class="flex items-center gap-2 mt-2 justify-end">
+                            <button wire:click="$toggle('showEditForm')" class="text-xs text-brand-primary border border-brand-primary/30 rounded-lg px-3 py-1.5 hover:bg-brand-primary/5 transition-colors">
+                                {{ $showEditForm ? 'Cancel' : 'Edit Listing' }}
+                            </button>
+                            @if(in_array($listing->status, ['draft', 'withdrawn', 'expired']))
+                            <button wire:click="deleteListing"
+                                onclick="return confirm('Delete this listing? The property record will also be removed. This cannot be undone.')"
+                                class="text-xs text-danger-600 border border-danger-200 rounded-lg px-2.5 py-1.5 hover:bg-danger-50 transition-colors">
+                                Delete
+                            </button>
+                            @endif
+                        </div>
                     </div>
                 </div>
 

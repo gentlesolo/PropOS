@@ -48,6 +48,11 @@
                         <button wire:click="$toggle('showEditForm')" class="text-xs text-brand-primary border border-brand-primary/30 rounded-lg px-2.5 py-1.5 hover:bg-brand-primary/5 transition-colors">
                             {{ $showEditForm ? 'Cancel' : 'Edit' }}
                         </button>
+                        <button wire:click="deleteDeal"
+                            onclick="return confirm('Delete this deal? This cannot be undone.')"
+                            class="text-xs text-danger-600 border border-danger-200 rounded-lg px-2.5 py-1.5 hover:bg-danger-50 transition-colors">
+                            Delete
+                        </button>
                     </div>
                 </div>
 

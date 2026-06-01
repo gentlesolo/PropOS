@@ -205,6 +205,17 @@ class DealDetailPage extends Component
         $this->loadingNextAction = false;
     }
 
+    public function deleteDeal(): void
+    {
+        $agencyId = auth()->user()->agency_id;
+        Deal::where('id', $this->deal->id)
+            ->where('agency_id', $agencyId)
+            ->firstOrFail()
+            ->delete();
+
+        $this->redirect(route('crm.pipeline'), navigate: true);
+    }
+
     public function dismissNextAction()
     {
         $this->nextActionSuggestion = null;

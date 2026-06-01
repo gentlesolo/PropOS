@@ -191,8 +191,15 @@
                                        class="w-20 text-xs bg-surface-input border border-brand-primary rounded-lg p-1.5 focus:ring-1 focus:ring-brand-primary focus:outline-none text-text-primary">
                             </div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <a href="{{ route('crm.contact.detail', $contact) }}" class="text-brand-primary hover:text-brand-secondary">View</a>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium" @click.stop>
+                            <div class="flex items-center justify-end gap-3">
+                                <a href="{{ route('crm.contact.detail', $contact) }}" class="text-brand-primary hover:text-brand-secondary">View</a>
+                                <button wire:click="deleteContact({{ $contact->id }})"
+                                    onclick="return confirm('Delete {{ addslashes($contact->first_name . ' ' . $contact->last_name) }}? This cannot be undone.')"
+                                    class="text-text-tertiary hover:text-danger-600 transition-colors">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                </button>
+                            </div>
                         </td>
                     </tr>
                     @empty

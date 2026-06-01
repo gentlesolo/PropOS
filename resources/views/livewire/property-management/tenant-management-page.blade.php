@@ -275,7 +275,7 @@
 
                     <dl class="space-y-2 text-sm mb-4">
                         <div class="flex justify-between"><dt class="text-text-secondary">Employer</dt><dd class="font-medium text-text-primary">{{ $selectedTenant->employer ?? '—' }}</dd></div>
-                        <div class="flex justify-between"><dt class="text-text-secondary">Monthly Income</dt><dd class="font-bold text-success-600">{{ $selectedTenant->monthly_income ? '{{ $currencySymbol }}'.number_format($selectedTenant->monthly_income) : '—' }}</dd></div>
+                        <div class="flex justify-between"><dt class="text-text-secondary">Monthly Income</dt><dd class="font-bold text-success-600">{{ $selectedTenant->monthly_income ? $currencySymbol.number_format($selectedTenant->monthly_income) : '—' }}</dd></div>
                         @if($selectedTenant->notes)
                         <div><dt class="text-text-secondary text-xs mb-1">Notes</dt><dd class="text-text-primary text-xs bg-surface-hover/40 rounded-lg p-2">{{ $selectedTenant->notes }}</dd></div>
                         @endif

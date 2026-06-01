@@ -13,7 +13,7 @@
 
     <!-- Stats -->
     <div class="grid grid-cols-2 md:grid-cols-6 gap-4 mb-8">
-        @foreach(['total_spend' => ['Total Spend', '{{ $currencySymbol }}'], 'total_impressions' => ['Impressions', ''], 'total_clicks' => ['Clicks', ''], 'total_leads' => ['Leads', ''], 'active' => ['Active', ''], 'avg_cpl' => ['Avg CPL', '{{ $currencySymbol }}']] as $key => [$label, $prefix])
+        @foreach(['total_spend' => ['Total Spend', $currencySymbol], 'total_impressions' => ['Impressions', ''], 'total_clicks' => ['Clicks', ''], 'total_leads' => ['Leads', ''], 'active' => ['Active', ''], 'avg_cpl' => ['Avg CPL', $currencySymbol]] as $key => [$label, $prefix])
         <div class="glass-panel p-4 rounded-2xl border border-border-default/60 text-center">
             <p class="text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-1">{{ $label }}</p>
             <p class="text-xl font-black text-text-primary">{{ $prefix }}{{ number_format($stats[$key]) }}</p>
@@ -101,7 +101,7 @@
                         <td class="py-4 px-5 text-sm text-text-primary">{{ number_format($ad->impressions) }}</td>
                         <td class="py-4 px-5 text-sm text-text-primary">{{ number_format($ad->clicks) }}</td>
                         <td class="py-4 px-5 text-sm font-bold text-success-600">{{ $ad->leads }}</td>
-                        <td class="py-4 px-5 text-sm text-text-primary">{{ $ad->cpl ? '{{ $currencySymbol }}' . number_format($ad->cpl) : '—' }}</td>
+                        <td class="py-4 px-5 text-sm text-text-primary">{{ $ad->cpl ? $currencySymbol . number_format($ad->cpl) : '—' }}</td>
                         <td class="py-4 px-5">
                             <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase
                                 @if($ad->status === 'active') bg-success-100 text-success-700
