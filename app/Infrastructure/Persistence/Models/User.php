@@ -34,6 +34,7 @@ class User extends Authenticatable
         'two_factor_enabled',
         'two_factor_secret',
         'notification_preferences',
+        'dashboard_widgets',
         'last_login_at',
         'last_active_at',
     ];
@@ -51,6 +52,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'two_factor_enabled' => 'boolean',
             'notification_preferences' => 'array',
+            'dashboard_widgets'        => 'array',
             'last_login_at' => 'datetime',
             'last_active_at' => 'datetime',
         ];

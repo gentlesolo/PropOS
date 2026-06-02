@@ -34,6 +34,9 @@ class Sidebar extends Component
         'currency-dollar'      => 'M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z',
         'clipboard-list'       => 'M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01',
         'document-text'        => 'M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z',
+        'folder-open'          => 'M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 0 0-1.883 2.542l.857 6a2.25 2.25 0 0 0 2.227 1.932H19.05a2.25 2.25 0 0 0 2.227-1.932l.857-6a2.25 2.25 0 0 0-1.883-2.542m-16.5 0V6A2.25 2.25 0 0 1 6 3.75h3.879a1.5 1.5 0 0 1 1.06.44l2.122 2.12a1.5 1.5 0 0 0 1.06.44H18A2.25 2.25 0 0 1 20.25 9v.776',
+        'bell-alert'           => 'M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0M3.124 7.5A8.969 8.969 0 0 1 5.292 3m13.416 0a8.969 8.969 0 0 1 2.168 4.5',
+        'squares-2x2'          => 'M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z',
         'receipt-percent'      => 'M9 14.25l6-6m4.5-3.493V21.75l-3.75-1.5-3.75 1.5-3.75-1.5-3.75 1.5V4.757c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0c1.1.128 1.907 1.077 1.907 2.185ZM9.75 9h.008v.008H9.75V9Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm4.125 4.5h.008v.008h-.008V13.5Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z',
         'magnifying-glass'     => 'M21 21l-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z',
         'key'                  => 'M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z',
@@ -100,10 +103,18 @@ class Sidebar extends Component
             [
                 'label' => 'Intelligence',
                 'items' => [
-                    ['title' => 'Scorecard',      'route' => 'analytics.scorecard',           'icon' => 'chart-pie',         'permission' => 'dashboard.view'],
-                    ['title' => 'Listing Health', 'route' => 'analytics.listing-health',       'icon' => 'heart',             'permission' => 'dashboard.view'],
-                    ['title' => 'Forecast',       'route' => 'analytics.forecast',             'icon' => 'arrow-trending-up', 'permission' => 'pipeline.view_team'],
-                    ['title' => 'Market Intel',   'route' => 'analytics.market-intelligence',  'icon' => 'globe-alt',         'permission' => 'dashboard.view'],
+                    ['title' => 'Scorecard',           'route' => 'analytics.scorecard',           'icon' => 'chart-pie',         'permission' => 'dashboard.view'],
+                    ['title' => 'Listing Health',      'route' => 'analytics.listing-health',       'icon' => 'heart',             'permission' => 'dashboard.view'],
+                    ['title' => 'Forecast',            'route' => 'analytics.forecast',             'icon' => 'arrow-trending-up', 'permission' => 'pipeline.view_team'],
+                    ['title' => 'Portfolio Dashboard', 'route' => 'analytics.portfolio',            'icon' => 'squares-2x2',       'permission' => 'pipeline.view_team'],
+                    ['title' => 'Market Intel',        'route' => 'analytics.market-intelligence',  'icon' => 'globe-alt',         'permission' => 'dashboard.view'],
+                ],
+            ],
+            [
+                'label' => 'Governance',
+                'items' => [
+                    ['title' => 'Document Repository', 'route' => 'governance.documents', 'icon' => 'folder-open', 'permission' => 'transactions.view_own'],
+                    ['title' => 'Compliance Calendar', 'route' => 'compliance.calendar',  'icon' => 'bell-alert',  'permission' => 'transactions.view_own'],
                 ],
             ],
             [
@@ -134,6 +145,9 @@ class Sidebar extends Component
                     ['title' => 'Lead Routing',       'route' => 'settings.lead-routing',     'icon' => 'arrows-right-left','permission' => 'agency.manage'],
                     ['title' => 'Pipeline Stages',    'route' => 'settings.pipeline-stages',  'icon' => 'clipboard-list',   'permission' => 'agency.manage'],
                     ['title' => 'Tax Configuration',  'route' => 'settings.tax',              'icon' => 'adjustments',      'permission' => 'agency.manage'],
+                    ['title' => 'Website Integration', 'route' => 'settings.website-integration','icon' => 'globe-alt',        'permission' => 'agency.manage'],
+                    ['title' => 'API Keys',           'route' => 'settings.api-keys',         'icon' => 'key',              'permission' => 'agency.manage'],
+                    ['title' => 'Webhooks',           'route' => 'settings.webhooks',         'icon' => 'arrows-right-left','permission' => 'agency.manage'],
                 ],
             ],
         ];

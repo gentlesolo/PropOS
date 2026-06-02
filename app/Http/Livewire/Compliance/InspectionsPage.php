@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Compliance;
 
+use App\Infrastructure\Persistence\Models\ComplianceReminder;
 use App\Infrastructure\Persistence\Models\Deal;
 use App\Infrastructure\Persistence\Models\Inspection;
 use App\Infrastructure\Persistence\Models\Listing;
@@ -54,6 +55,18 @@ class InspectionsPage extends Component
             'scheduled_at' => $this->scheduled_at,
             'cost' => $this->cost ?: null,
             'summary' => $this->notes ?: null,
+        ]);
+
+        // Auto-create a compliance reminder for the scheduled inspection
+        ComplianceReminder::create([
+            'agency_id'     => auth()->user()->agency_id,
+            'created_by'    => auth()->id(),
+            'title'         => ucfirst(str_replace('_', ' ', $this->type)) . ' Inspection'
+                               . ($this->inspector_name ? ' — ' . $this->inspector_name : ''),
+            'reminder_type' => 'inspection',
+            'due_date'      => \Carbon\Carbon::parse($this->scheduled_at)->toDateString(),
+            'status'        => 'pending',
+            'notes'         => $this->notes ?: null,
         ]);
 
         $this->reset(['showCreateForm', 'listing_id', 'deal_id', 'type', 'inspector_name',

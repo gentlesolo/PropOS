@@ -44,7 +44,7 @@
                     <label class="block text-xs font-medium text-text-secondary mb-1">Subject Line *</label>
                     <input wire:model="subject" type="text"
                         class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
-                        placeholder="Welcome to {{agency_name}}!">
+                        placeholder="Welcome to @{{agency_name}}!">
                     @error('subject') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
                     <p class="text-xs text-text-tertiary mt-1">Use &#123;&#123;variable_name&#125;&#125; for dynamic content</p>
                 </div>
@@ -52,7 +52,7 @@
                     <label class="block text-xs font-medium text-text-secondary mb-1">Email Body (HTML) *</label>
                     <textarea wire:model="body_html" rows="10"
                         class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary resize-none font-mono"
-                        placeholder="<p>Dear {{contact_name}},</p><p>...</p>"></textarea>
+                        placeholder="<p>Dear @{{contact_name}},</p><p>...</p>"></textarea>
                     @error('body_html') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
                 </div>
                 <div class="md:col-span-2">

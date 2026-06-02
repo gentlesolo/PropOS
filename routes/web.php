@@ -92,6 +92,7 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     // ── Analytics — manager/principal only ────────────────────────────────────
     Route::middleware('permission:pipeline.view_team')->group(function () {
         Route::get('/analytics/forecast', \App\Http\Livewire\Intelligence\RevenueForecastPage::class)->name('analytics.forecast');
+        Route::get('/analytics/portfolio', \App\Http\Livewire\Intelligence\PortfolioDashboardPage::class)->name('analytics.portfolio');
     });
 
     // ── Compliance — requires transactions.view_own ───────────────────────────
@@ -164,6 +165,12 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     // ── Inspections ───────────────────────────────────────────────────────────
     Route::middleware('permission:transactions.view_own')->group(function () {
         Route::get('/compliance/inspections', \App\Http\Livewire\Compliance\InspectionsPage::class)->name('compliance.inspections');
+        Route::get('/compliance/calendar', \App\Http\Livewire\Compliance\ComplianceCalendarPage::class)->name('compliance.calendar');
+    });
+
+    // ── Governance: Document Repository ──────────────────────────────────────
+    Route::middleware('permission:transactions.view_own')->group(function () {
+        Route::get('/governance/documents', \App\Http\Livewire\Governance\DocumentRepositoryPage::class)->name('governance.documents');
     });
 
     // ── Messaging Inbox ───────────────────────────────────────────────────────
@@ -187,12 +194,24 @@ Route::middleware(['auth', 'tenant'])->group(function () {
         Route::get('/settings/commission-splits', \App\Http\Livewire\Settings\CommissionSplitPage::class)->name('settings.commission-splits');
         Route::get('/settings/lead-routing', \App\Http\Livewire\Settings\LeadRoutingPage::class)->name('settings.lead-routing');
         Route::get('/settings/pipeline-stages', \App\Http\Livewire\Settings\PipelineStagesPage::class)->name('settings.pipeline-stages');
+        Route::get('/settings/api-keys',           \App\Http\Livewire\Settings\ApiKeysPage::class)->name('settings.api-keys');
+        Route::get('/settings/webhooks',           \App\Http\Livewire\Settings\WebhooksPage::class)->name('settings.webhooks');
+        Route::get('/settings/website-integration',\App\Http\Livewire\Settings\WebsiteIntegrationPage::class)->name('settings.website-integration');
     });
 
     // ── PDF Reports ───────────────────────────────────────────────────────────
     Route::get('/listings/{listing}/report/seller-pdf', [\App\Http\Controllers\Api\ReportController::class, 'sellerReport'])
         ->name('reports.seller-pdf')
         ->middleware('permission:listings.view_own');
+
+    Route::middleware('permission:transactions.view_own')->group(function () {
+        Route::get('/finance/reports/export/pdf', [\App\Http\Controllers\Finance\FinancialReportExportController::class, 'pdf'])
+            ->name('finance.reports.export.pdf');
+        Route::get('/finance/reports/export/csv', [\App\Http\Controllers\Finance\FinancialReportExportController::class, 'csv'])
+            ->name('finance.reports.export.csv');
+        Route::get('/governance/documents/export/csv', [\App\Http\Controllers\Governance\DocumentExportController::class, 'csv'])
+            ->name('governance.documents.export.csv');
+    });
 
     // ── Google Calendar OAuth ─────────────────────────────────────────────────
     Route::get('/integrations/google-calendar/connect', [\App\Http\Controllers\GoogleCalendarController::class, 'redirect'])

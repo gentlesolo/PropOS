@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Infrastructure\Queue\Jobs\ApplyLateFeesJob;
+use App\Infrastructure\Queue\Jobs\SendComplianceRemindersJob;
 use App\Infrastructure\Queue\Jobs\DetectAndNotifyStaleDealsJob;
 use App\Infrastructure\Queue\Jobs\DispatchScheduledCampaignsJob;
 use App\Infrastructure\Queue\Jobs\GenerateMonthlyInvoicesJob;
@@ -60,6 +61,12 @@ class Kernel extends ConsoleKernel
         })
         ->everyFiveMinutes()
         ->name('flush-whatsapp-queue');
+
+        // Send compliance deadline reminders to agency admins — daily at 08:30
+        $schedule->job(new SendComplianceRemindersJob)
+                 ->dailyAt('08:30')
+                 ->withoutOverlapping()
+                 ->name('send-compliance-reminders');
 
         // Send lease expiry reminders to agents and tenants (30, 14, 7 days) — daily at 08:00
         $schedule->job(new SendLeaseExpiryReminderJob)

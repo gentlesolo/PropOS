@@ -1,4 +1,4 @@
-﻿<div>
+<div>
     <!-- Header -->
     <div class="mb-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
@@ -13,6 +13,7 @@
                 <svg class="h-4 w-4 text-text-tertiary" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
                 <span>Sync Data</span>
             </button>
+            @livewire('shared.dashboard-customizer', ['enabledWidgets' => $enabledWidgets, 'allWidgets' => $allWidgets])
             <button class="px-5 py-2.5 rounded-xl bg-brand-primary text-white text-xs font-bold hover:bg-brand-secondary transition-all shadow-brand-sm hover:shadow-brand-md hover-spring flex items-center space-x-2">
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                 <span>New Mandate</span>
@@ -20,12 +21,13 @@
         </div>
     </div>
 
-    <!-- KPI Metrics -->
+    <!-- KPI Metrics Grid -->
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-10">
-        <!-- Metric 1: Pipeline (Hero Card) -->
+
+        {{-- Pipeline Value --}}
+        @if(in_array('pipeline', $enabledWidgets))
         <div class="p-6 rounded-[2rem] bg-gradient-hero text-white shadow-2xl relative overflow-hidden group hover:scale-[1.02] hover:shadow-brand-lg transition-all duration-300">
             <div class="absolute inset-0 bg-brand-primary opacity-30 mix-blend-overlay pointer-events-none"></div>
-            <!-- Glow effect inside -->
             <div class="absolute -top-12 -right-12 w-44 h-44 rounded-full bg-brand-accent/25 blur-2xl group-hover:scale-125 transition-transform duration-500"></div>
             <div class="relative z-10 flex flex-col justify-between h-full min-h-[140px]">
                 <div class="flex items-center justify-between">
@@ -46,8 +48,10 @@
                 </div>
             </div>
         </div>
+        @endif
 
-        <!-- Metric 2: Active Listings -->
+        {{-- Active Listings --}}
+        @if(in_array('active_listings', $enabledWidgets))
         <div class="p-6 rounded-[2rem] glass-panel border border-border-default/80 shadow-sm hover:border-info-500/40 hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
             <div class="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-info-500/10 blur-xl group-hover:scale-110 transition-transform duration-500"></div>
             <div class="relative z-10 flex flex-col justify-between h-full min-h-[140px]">
@@ -59,12 +63,14 @@
                 </div>
                 <div class="mt-4">
                     <p class="text-4xl font-black text-text-primary tracking-tighter">{{ $metrics['active_listings'] }}</p>
-                    <p class="mt-2.5 text-[10px] font-semibold text-text-tertiary">3 closing this week</p>
+                    <p class="mt-2.5 text-[10px] font-semibold text-text-tertiary">Properties on market</p>
                 </div>
             </div>
         </div>
+        @endif
 
-        <!-- Metric 3: New Leads -->
+        {{-- New Leads --}}
+        @if(in_array('new_leads', $enabledWidgets))
         <div class="p-6 rounded-[2rem] glass-panel border border-border-default/80 shadow-sm hover:border-brand-primary/40 hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
             <div class="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-brand-primary/10 blur-xl group-hover:scale-110 transition-transform duration-500"></div>
             <div class="relative z-10 flex flex-col justify-between h-full min-h-[140px]">
@@ -80,8 +86,10 @@
                 </div>
             </div>
         </div>
+        @endif
 
-        <!-- Metric 4: Hot Buyers -->
+        {{-- Hot Buyers --}}
+        @if(in_array('hot_buyers', $enabledWidgets))
         <div class="p-6 rounded-[2rem] glass-panel border border-border-default/80 shadow-sm hover:border-warning-500/40 hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
             <div class="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-warning-500/10 blur-xl group-hover:scale-110 transition-transform duration-500"></div>
             <div class="relative z-10 flex flex-col justify-between h-full min-h-[140px]">
@@ -97,20 +105,84 @@
                 </div>
             </div>
         </div>
+        @endif
+
+        {{-- Occupancy Rate --}}
+        @if(in_array('occupancy_rate', $enabledWidgets))
+        <div class="p-6 rounded-[2rem] glass-panel border border-border-default/80 shadow-sm hover:border-success-500/40 hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-success-500/10 blur-xl group-hover:scale-110 transition-transform duration-500"></div>
+            <div class="relative z-10 flex flex-col justify-between h-full min-h-[140px]">
+                <div class="flex items-center justify-between">
+                    <p class="text-xs font-bold tracking-widest uppercase text-text-secondary">Occupancy Rate</p>
+                    <div class="p-2.5 bg-success-500/10 rounded-xl text-success-500 border border-success-500/10 group-hover:scale-110 transition-transform">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <p class="text-4xl font-black text-text-primary tracking-tighter">{{ $metrics['occupancy_rate'] }}<span class="text-xl">%</span></p>
+                    <div class="mt-2 w-full bg-surface-hover rounded-full h-1.5">
+                        <div class="bg-success-500 h-1.5 rounded-full transition-all" style="width: {{ $metrics['occupancy_rate'] }}%"></div>
+                    </div>
+                    <p class="mt-1.5 text-[10px] font-semibold text-text-tertiary">{{ $metrics['active_leases'] }} / {{ $metrics['rental_properties'] }} properties leased</p>
+                </div>
+            </div>
+        </div>
+        @endif
+
+        {{-- Maintenance Efficiency --}}
+        @if(in_array('maintenance_efficiency', $enabledWidgets))
+        <div class="p-6 rounded-[2rem] glass-panel border border-border-default/80 shadow-sm hover:border-brand-primary/40 hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-brand-primary/10 blur-xl group-hover:scale-110 transition-transform duration-500"></div>
+            <div class="relative z-10 flex flex-col justify-between h-full min-h-[140px]">
+                <div class="flex items-center justify-between">
+                    <p class="text-xs font-bold tracking-widest uppercase text-text-secondary">Maintenance</p>
+                    <div class="p-2.5 bg-brand-primary/10 rounded-xl text-brand-primary border border-brand-primary/10 group-hover:scale-110 transition-transform">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <p class="text-4xl font-black text-text-primary tracking-tighter">{{ $metrics['maintenance_efficiency'] }}<span class="text-xl">%</span></p>
+                    <div class="mt-2 w-full bg-surface-hover rounded-full h-1.5">
+                        <div class="h-1.5 rounded-full transition-all {{ $metrics['maintenance_efficiency'] >= 80 ? 'bg-success-500' : 'bg-warning-500' }}" style="width: {{ $metrics['maintenance_efficiency'] }}%"></div>
+                    </div>
+                    <p class="mt-1.5 text-[10px] font-semibold text-text-tertiary">On-time completion rate</p>
+                </div>
+            </div>
+        </div>
+        @endif
+
+        {{-- Compliance Overdue --}}
+        @if(in_array('compliance_overdue', $enabledWidgets))
+        @php $hasOverdue = $metrics['compliance_overdue'] > 0; @endphp
+        <a href="{{ route('compliance.calendar') }}" class="p-6 rounded-[2rem] glass-panel border {{ $hasOverdue ? 'border-danger-300' : 'border-border-default/80' }} shadow-sm hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden block">
+            <div class="absolute -top-10 -right-10 w-28 h-28 rounded-full {{ $hasOverdue ? 'bg-danger-500/10' : 'bg-success-500/10' }} blur-xl group-hover:scale-110 transition-transform duration-500"></div>
+            <div class="relative z-10 flex flex-col justify-between h-full min-h-[140px]">
+                <div class="flex items-center justify-between">
+                    <p class="text-xs font-bold tracking-widest uppercase text-text-secondary">Compliance</p>
+                    <div class="p-2.5 {{ $hasOverdue ? 'bg-danger-500/10 text-danger-500 border-danger-500/10' : 'bg-success-500/10 text-success-500 border-success-500/10' }} rounded-xl border group-hover:scale-110 transition-transform">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"></path></svg>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <p class="text-4xl font-black tracking-tighter {{ $hasOverdue ? 'text-danger-600' : 'text-success-600' }}">{{ $metrics['compliance_overdue'] }}</p>
+                    <p class="mt-2.5 text-[10px] font-semibold {{ $hasOverdue ? 'text-danger-500' : 'text-text-tertiary' }}">
+                        {{ $hasOverdue ? 'Overdue items — click to review' : 'All compliance items on track' }}
+                    </p>
+                </div>
+            </div>
+        </a>
+        @endif
+
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Left Column: Main Views -->
         <div class="lg:col-span-2 space-y-8">
-            
-            <!-- AI Copilot Intelligence Feed (Stunning Visual Variant) -->
-            <div class="rounded-[2.5rem] border border-border-default/80 overflow-hidden relative shadow-brand-md group transition-all duration-300 hover:shadow-brand-lg hover:border-brand-primary/30">
-                <!-- Background Gradient (Subtle shifting) -->
-                <div class="absolute inset-0 bg-gradient-subtle dark:bg-gradient-hero opacity-20 pointer-events-none transition-opacity group-hover:opacity-30"></div>
-                
-                <!-- Noise/Texture Overlay -->
-                <div class="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');"></div>
 
+            <!-- AI Copilot Intelligence Feed -->
+            <div class="rounded-[2.5rem] border border-border-default/80 overflow-hidden relative shadow-brand-md group transition-all duration-300 hover:shadow-brand-lg hover:border-brand-primary/30">
+                <div class="absolute inset-0 bg-gradient-subtle dark:bg-gradient-hero opacity-20 pointer-events-none transition-opacity group-hover:opacity-30"></div>
+                <div class="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');"></div>
                 <div class="relative z-10 glass-panel border-none rounded-[2.5rem] backdrop-blur-3xl h-full">
                     <div class="px-8 py-5 border-b border-border-default/40 flex items-center justify-between">
                         <div class="flex items-center space-x-3">
@@ -119,10 +191,8 @@
                         </div>
                         <span class="text-[10px] font-mono text-text-tertiary font-bold px-2 py-1 bg-surface-raised rounded-md border border-border-subtle">LIVE STREAM</span>
                     </div>
-                    
                     <div class="p-8 space-y-5">
                         <div class="relative pl-8 before:absolute before:left-3.5 before:top-8 before:bottom-0 before:w-px before:bg-border-default/60">
-                            <!-- Suggestion 1 -->
                             <div class="relative mb-8">
                                 <div class="absolute -left-8 top-1 h-7 w-7 rounded-full bg-brand-primary/10 border border-brand-primary/30 flex items-center justify-center backdrop-blur-sm z-10">
                                     <svg class="h-3.5 w-3.5 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
@@ -136,8 +206,6 @@
                                     </div>
                                 </div>
                             </div>
-                            
-                            <!-- Suggestion 2 -->
                             <div class="relative">
                                 <div class="absolute -left-8 top-1 h-7 w-7 rounded-full bg-warning-500/10 border border-warning-500/30 flex items-center justify-center backdrop-blur-sm z-10">
                                     <svg class="h-3.5 w-3.5 text-warning-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
@@ -166,42 +234,40 @@
                 </div>
                 <div class="divide-y divide-border-default/40">
                     @forelse($recentListings as $listing)
-                        <a href="{{ route('listing.detail', $listing) }}"
-                           class="px-6 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between hover:bg-brand-primary/5 border-l-2 border-transparent hover:border-brand-primary transition-all duration-300 group cursor-pointer relative overflow-hidden gap-4">
-                            <div class="absolute inset-0 bg-gradient-to-r from-brand-primary/0 to-brand-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-                            <div class="flex items-center space-x-5 min-w-0">
-                                <div class="h-14 w-14 rounded-2xl bg-surface-raised border border-border-default/60 flex items-center justify-center text-text-tertiary flex-shrink-0 overflow-hidden group-hover:scale-105 transition-transform duration-300">
-                                    @if($listing->coverPhoto)
-                                        <img src="{{ asset('storage/' . $listing->coverPhoto->file_path) }}" alt="cover" class="h-full w-full object-cover">
-                                    @else
-                                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                                    @endif
-                                </div>
-                                <div class="min-w-0">
-                                    <h4 class="text-sm font-bold text-text-primary group-hover:text-brand-primary transition-colors truncate">{{ $listing->property->address_line_1 }}</h4>
-                                    <p class="text-xs font-semibold text-text-secondary mt-1 truncate">{{ $listing->property->city }} • {{ $currencySymbol }}{{ number_format($listing->listing_price) }}</p>
-                                </div>
+                    <a href="{{ route('listing.detail', $listing) }}"
+                       class="px-6 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between hover:bg-brand-primary/5 border-l-2 border-transparent hover:border-brand-primary transition-all duration-300 group cursor-pointer relative overflow-hidden gap-4">
+                        <div class="absolute inset-0 bg-gradient-to-r from-brand-primary/0 to-brand-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                        <div class="flex items-center space-x-5 min-w-0">
+                            <div class="h-14 w-14 rounded-2xl bg-surface-raised border border-border-default/60 flex items-center justify-center text-text-tertiary flex-shrink-0 overflow-hidden group-hover:scale-105 transition-transform duration-300">
+                                @if($listing->coverPhoto)
+                                    <img src="{{ asset('storage/' . $listing->coverPhoto->file_path) }}" alt="cover" class="h-full w-full object-cover">
+                                @else
+                                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                                @endif
                             </div>
-                            <div class="flex items-center gap-3 justify-between sm:justify-end w-full sm:w-auto">
-                                <span class="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-black tracking-wider bg-surface-raised border border-border-default/60 text-text-primary uppercase shadow-sm">
-                                    {{ str_replace('_', ' ', $listing->status) }}
-                                </span>
-                                <svg class="h-4 w-4 text-text-tertiary group-hover:text-brand-primary transition-colors transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                            <div class="min-w-0">
+                                <h4 class="text-sm font-bold text-text-primary group-hover:text-brand-primary transition-colors truncate">{{ $listing->property->address_line_1 }}</h4>
+                                <p class="text-xs font-semibold text-text-secondary mt-1 truncate">{{ $listing->property->city }} • {{ $currencySymbol }}{{ number_format($listing->listing_price) }}</p>
                             </div>
-                        </a>
-                    @empty
-                        <div class="p-8 text-center text-sm font-semibold text-text-tertiary">
-                            No active portfolio data.
                         </div>
+                        <div class="flex items-center gap-3 justify-between sm:justify-end w-full sm:w-auto">
+                            <span class="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-black tracking-wider bg-surface-raised border border-border-default/60 text-text-primary uppercase shadow-sm">
+                                {{ str_replace('_', ' ', $listing->status) }}
+                            </span>
+                            <svg class="h-4 w-4 text-text-tertiary group-hover:text-brand-primary transition-colors transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                        </div>
+                    </a>
+                    @empty
+                    <div class="p-8 text-center text-sm font-semibold text-text-tertiary">No active portfolio data.</div>
                     @endforelse
                 </div>
             </div>
 
         </div>
 
-        <!-- Right Column: Contacts & Activity -->
+        <!-- Right Column -->
         <div class="space-y-8">
-            
+
             <!-- Recent Contacts -->
             <div class="glass-panel rounded-[2rem] border border-border-default/80 shadow-md overflow-hidden transition-all duration-300 hover:border-border-strong/50">
                 <div class="px-8 py-6 border-b border-border-default/40 flex items-center justify-between bg-surface-sunken/40">
@@ -213,43 +279,39 @@
                 </div>
                 <ul class="divide-y divide-border-default/40">
                     @forelse($recentContacts as $contact)
-                        <li class="px-6 py-5 hover:bg-brand-primary/5 border-l-2 border-transparent hover:border-brand-primary transition-all duration-300 group cursor-pointer relative overflow-hidden">
-                            <div class="absolute inset-0 bg-gradient-to-r from-brand-primary/0 to-brand-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-                            <div class="flex items-center justify-between gap-4">
-                                <div class="flex items-center space-x-4 min-w-0">
-                                    <div class="relative shrink-0">
-                                        <div class="h-10 w-10 rounded-full bg-brand-primary/10 text-brand-primary font-black text-xs flex items-center justify-center">
-                                            {{ substr($contact->first_name, 0, 1) }}{{ substr($contact->last_name, 0, 1) }}
-                                        </div>
-                                        @if($contact->intent_score >= 80)
-                                            <div class="absolute -top-1 -right-1 h-3.5 w-3.5 bg-warning-500 rounded-full border-2 border-surface-card flex items-center justify-center">
-                                                <svg class="h-2 w-2 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path></svg>
-                                            </div>
-                                        @endif
+                    <li class="px-6 py-5 hover:bg-brand-primary/5 border-l-2 border-transparent hover:border-brand-primary transition-all duration-300 group cursor-pointer relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-r from-brand-primary/0 to-brand-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                        <div class="flex items-center justify-between gap-4">
+                            <div class="flex items-center space-x-4 min-w-0">
+                                <div class="relative shrink-0">
+                                    <div class="h-10 w-10 rounded-full bg-brand-primary/10 text-brand-primary font-black text-xs flex items-center justify-center">
+                                        {{ substr($contact->first_name, 0, 1) }}{{ substr($contact->last_name, 0, 1) }}
                                     </div>
-                                    <div class="min-w-0">
-                                        <p class="text-sm font-bold text-text-primary truncate group-hover:text-brand-primary transition-colors">
-                                            {{ $contact->first_name }} {{ $contact->last_name }}
-                                        </p>
-                                        <div class="flex items-center mt-1 space-x-2">
-                                            <span class="text-[10px] font-bold uppercase tracking-wider text-text-tertiary">{{ $contact->type }}</span>
-                                            <span class="h-1 w-1 rounded-full bg-border-default"></span>
-                                            <span class="text-[10px] font-black uppercase tracking-wider {{ $contact->intent_score >= 80 ? 'text-warning-500' : 'text-text-secondary' }}">{{ $contact->intent_score }}% Intent</span>
-                                        </div>
+                                    @if($contact->intent_score >= 80)
+                                    <div class="absolute -top-1 -right-1 h-3.5 w-3.5 bg-warning-500 rounded-full border-2 border-surface-card flex items-center justify-center">
+                                        <svg class="h-2 w-2 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path></svg>
+                                    </div>
+                                    @endif
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="text-sm font-bold text-text-primary truncate group-hover:text-brand-primary transition-colors">{{ $contact->first_name }} {{ $contact->last_name }}</p>
+                                    <div class="flex items-center mt-1 space-x-2">
+                                        <span class="text-[10px] font-bold uppercase tracking-wider text-text-tertiary">{{ $contact->type }}</span>
+                                        <span class="h-1 w-1 rounded-full bg-border-default"></span>
+                                        <span class="text-[10px] font-black uppercase tracking-wider {{ $contact->intent_score >= 80 ? 'text-warning-500' : 'text-text-secondary' }}">{{ $contact->intent_score }}% Intent</span>
                                     </div>
                                 </div>
-                                <svg class="h-5 w-5 text-text-tertiary group-hover:text-brand-primary transition-colors transform group-hover:translate-x-1 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                             </div>
-                        </li>
+                            <svg class="h-5 w-5 text-text-tertiary group-hover:text-brand-primary transition-colors transform group-hover:translate-x-1 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+                    </li>
                     @empty
-                        <li class="p-8 text-center text-sm font-semibold text-text-tertiary">
-                            No recent contacts.
-                        </li>
+                    <li class="p-8 text-center text-sm font-semibold text-text-tertiary">No recent contacts.</li>
                     @endforelse
                 </ul>
             </div>
 
-            <!-- Task List Shell -->
+            <!-- Upcoming Tasks -->
             <div class="glass-panel rounded-[2rem] border border-border-default/80 shadow-md overflow-hidden transition-all duration-300">
                 <div class="px-8 py-6 border-b border-border-default/40 bg-surface-sunken/40">
                     <h2 class="text-lg font-bold text-text-primary">Upcoming Tasks</h2>

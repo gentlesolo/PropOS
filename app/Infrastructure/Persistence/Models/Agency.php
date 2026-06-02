@@ -74,4 +74,14 @@ class Agency extends Model
     {
         return $this->hasMany(TeamInvitation::class);
     }
+
+    public function apiKeys(): HasMany
+    {
+        return $this->hasMany(ApiKey::class);
+    }
+
+    public function webhookSubscriptions(): HasMany
+    {
+        return $this->hasMany(WebhookSubscription::class);
+    }
 }

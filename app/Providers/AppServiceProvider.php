@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -45,8 +48,33 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Public API rate limits (keyed by API token, fallback to IP)
+        RateLimiter::for('public-api', function (Request $request) {
+            $key = $request->bearerToken() ?? $request->query('api_key') ?? $request->ip();
+            return Limit::perMinute(60)->by($key);
+        });
+
+        RateLimiter::for('public-leads', function (Request $request) {
+            // Tighter limit for lead submission to prevent form spam
+            $key = $request->bearerToken() ?? $request->ip();
+            return Limit::perMinute(10)->by($key)->response(function () {
+                return response()->json(['error' => 'Too many submissions. Please wait a moment.'], 429);
+            });
+        });
+
+        RateLimiter::for('public-bookings', function (Request $request) {
+            $key = $request->bearerToken() ?? $request->ip();
+            return Limit::perMinute(5)->by($key)->response(function () {
+                return response()->json(['error' => 'Too many booking requests. Please wait a moment.'], 429);
+            });
+        });
+
         \App\Infrastructure\Persistence\Models\Listing::observe(
             \App\Infrastructure\Persistence\Observers\ListingObserver::class
+        );
+
+        \App\Infrastructure\Persistence\Models\Viewing::observe(
+            \App\Infrastructure\Persistence\Observers\ViewingObserver::class
         );
 
         View::composer('*', function ($view) {

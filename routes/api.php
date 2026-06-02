@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\Public\PublicListingController;
+use App\Http\Controllers\Api\Public\PublicLeadController;
+use App\Http\Controllers\Api\Public\PublicAgentController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\LeadWebhookController;
 use App\Http\Controllers\Api\Mobile\MobileInvoiceController;
@@ -27,6 +30,27 @@ use App\Http\Controllers\Api\TwilioMediaStreamController;
 use App\Http\Controllers\Api\SmsWebhookController;
 use App\Http\Controllers\Api\WhatsAppWebhookController;
 use Illuminate\Support\Facades\Route;
+
+// ─── Public API v1 (API key authenticated) ────────────────────────────────
+Route::prefix('v1/public')->name('api.v1.public.')->middleware(['api.key', 'throttle:public-api'])->group(function () {
+
+    // Listings (read-only)
+    Route::get('/listings',                 [PublicListingController::class, 'index'])->name('listings.index');
+    Route::get('/listings/{id}',            [PublicListingController::class, 'show'])->name('listings.show');
+
+    // Lead capture — stricter throttle
+    Route::post('/leads',                   [PublicLeadController::class, 'store'])
+        ->middleware('throttle:public-leads')
+        ->name('leads.store');
+
+    // Booking / viewing request — strictest throttle
+    Route::post('/bookings',                [\App\Http\Controllers\Api\Public\PublicBookingController::class, 'store'])
+        ->middleware('throttle:public-bookings')
+        ->name('bookings.store');
+
+    // Agent availability calendar
+    Route::get('/agents/{id}/availability', [PublicAgentController::class, 'availability'])->name('agents.availability');
+});
 
 // PayFast ITN webhook (public — verified by signature inside controller)
 Route::post('/webhooks/payfast', [PaymentWebhookController::class, 'handlePayFastItn']);

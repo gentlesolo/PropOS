@@ -14,10 +14,11 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'tenant'      => \App\Infrastructure\Tenancy\TenantMiddleware::class,
-            'permission'  => \Spatie\Permission\Middleware\PermissionMiddleware::class,
-            'role'        => \Spatie\Permission\Middleware\RoleMiddleware::class,
+            'tenant'          => \App\Infrastructure\Tenancy\TenantMiddleware::class,
+            'permission'      => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            'role'            => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+            'api.key'         => \App\Http\Middleware\ValidatePublicApiKey::class,
         ]);
 
         // Resolve Spatie permission team context after auth on every web request
