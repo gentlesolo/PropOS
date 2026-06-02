@@ -20,31 +20,34 @@ class DatabaseSeeder extends Seeder
         // 2. Run Demo Agency Seeder
         $this->call(DemoAgencySeeder::class);
 
-        // 3. Seed portal platforms
+        // 3. Seed second demo agency (Apex Realty Group — ZAR / Violet brand)
+        $this->call(SecondAgencySeeder::class);
+
+        // 4. Seed portal platforms
         $this->call(PortalSeeder::class);
 
-        // 4. Seed training modules
+        // 5. Seed training modules
         $this->call(TrainingModuleSeeder::class);
 
-        // 5. Seed tenants, leases, and rent payment history
+        // 6. Seed tenants, leases, and rent payment history
         $this->call(TenantLeaseSeeder::class);
 
-        // 6. Seed invoices, expenses, budgets, tax configs, and mandates
+        // 7. Seed invoices, expenses, budgets, tax configs, and mandates
         $this->call(FinancialAccountingSeeder::class);
 
-        // 7. Seed tasks across all types, priorities, and statuses
+        // 8. Seed tasks across all types, priorities, and statuses
         $this->call(TaskSeeder::class);
 
-        // 8. Seed offers with counter/accepted/rejected scenarios
+        // 9. Seed offers with counter/accepted/rejected scenarios
         $this->call(OffersSeeder::class);
 
-        // 9. Seed contracts: OTP, mandates, lease agreements, addendum
+        // 10. Seed contracts: OTP, mandates, lease agreements, addendum
         $this->call(ContractsSeeder::class);
 
-        // 10. Seed email templates (all categories) and delivery logs
+        // 11. Seed email templates (all categories) and delivery logs
         $this->call(EmailTemplatesSeeder::class);
 
-        // 11. Seed WhatsApp and SMS messaging inbox conversations
+        // 12. Seed WhatsApp and SMS messaging inbox conversations
         $this->call(MessagingInboxSeeder::class);
     }
 }

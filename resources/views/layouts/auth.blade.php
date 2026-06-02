@@ -7,7 +7,7 @@
 
     @php
         $resolver = app(\App\Infrastructure\Tenancy\TenantResolver::class);
-        $agency   = $resolver->getCurrentAgency();
+        $agency   = $resolver->getCurrentAgency() ?? new \App\Infrastructure\Persistence\Models\Agency();
         $fontMap  = [
             'Inter'   => 'Inter:wght@300..700',
             'Poppins' => 'Poppins:wght@300;400;500;600;700',

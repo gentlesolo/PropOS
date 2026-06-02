@@ -15,16 +15,27 @@ class DemoAgencySeeder extends Seeder
         $agency = Agency::firstOrCreate(
             ['slug' => 'demo'],
             [
-                'id' => 1,
-                'name' => 'Demo Agency',
-                'email' => 'demo@propos.app',
-                'timezone' => 'Africa/Lagos',
-                'currency' => 'NGN',
-                'country_code' => 'NG',
-                'subscription_plan' => 'pro',
+                'id'                  => 1,
+                'name'                => 'Demo Agency',
+                'email'               => 'demo@propos.app',
+                'timezone'            => 'Africa/Lagos',
+                'currency'            => 'NGN',
+                'country_code'        => 'NG',
+                'subscription_plan'   => 'pro',
                 'subscription_status' => 'active',
             ]
         );
+
+        // Always sync branding so re-running the seeder reflects current defaults
+        $agency->update([
+            'primary_color'   => '#10B981',
+            'secondary_color' => '#18181B',
+            'accent_color'    => '#F59E0B',
+            'font_family'     => null,
+            'border_radius'   => 'default',
+            'sidebar_style'   => 'dark',
+            'tagline'         => 'Redefining real estate in West Africa.',
+        ]);
 
         // 2. Create Principal user
         $principalUser = User::firstOrCreate(
