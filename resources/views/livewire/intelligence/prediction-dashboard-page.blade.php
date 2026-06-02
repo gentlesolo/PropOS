@@ -1,14 +1,14 @@
-﻿<div>
+<div>
     <div class="flex items-center justify-between mb-8">
         <div>
             <h1 class="text-3xl font-extrabold tracking-tight text-text-primary flex items-center gap-3">
-                <span class="text-3xl">🔮</span> AI Prediction Engine
+                <span class="text-3xl">??</span> AI Prediction Engine
             </h1>
             <p class="mt-2 text-text-secondary">OpenAI-powered lead scoring and deal momentum prediction to prioritise your pipeline.</p>
         </div>
         <button wire:click="scoreAllContacts" wire:loading.attr="disabled"
-            class="px-4 py-2 bg-brand-primary text-white rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors disabled:opacity-60">
-            <span wire:loading.remove wire:target="scoreAllContacts">⚡ Score All Contacts</span>
+            class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors disabled:opacity-60">
+            <span wire:loading.remove wire:target="scoreAllContacts">? Score All Contacts</span>
             <span wire:loading wire:target="scoreAllContacts" class="flex items-center gap-2">
                 <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
                 Scoring...
@@ -18,27 +18,27 @@
 
     <!-- Contact Heatmap Stats -->
     <div class="grid grid-cols-4 gap-4 mb-8">
-        <div class="glass-panel p-5 rounded-2xl border border-danger-200 bg-danger-50/30 text-center">
+        <div class="bg-surface-card p-5 rounded-2xl border border-danger-200 bg-danger-50/30 text-center">
             <p class="text-3xl font-black text-danger-600">{{ $contactStats['hot'] }}</p>
-            <p class="text-xs text-text-secondary mt-1 font-medium">🔥 Hot Leads (70+)</p>
+            <p class="text-xs text-text-secondary mt-1 font-medium">?? Hot Leads (70+)</p>
         </div>
-        <div class="glass-panel p-5 rounded-2xl border border-warning-200 bg-warning-50/30 text-center">
+        <div class="bg-surface-card p-5 rounded-2xl border border-warning-200 bg-warning-50/30 text-center">
             <p class="text-3xl font-black text-warning-600">{{ $contactStats['warm'] }}</p>
-            <p class="text-xs text-text-secondary mt-1 font-medium">🌤 Warm Leads (40–69)</p>
+            <p class="text-xs text-text-secondary mt-1 font-medium">?? Warm Leads (40�69)</p>
         </div>
-        <div class="glass-panel p-5 rounded-2xl border border-info-200 bg-info-50/30 text-center">
+        <div class="bg-surface-card p-5 rounded-2xl border border-info-200 bg-info-50/30 text-center">
             <p class="text-3xl font-black text-info-600">{{ $contactStats['cold'] }}</p>
-            <p class="text-xs text-text-secondary mt-1 font-medium">❄️ Cold Leads (&lt;40)</p>
+            <p class="text-xs text-text-secondary mt-1 font-medium">?? Cold Leads (&lt;40)</p>
         </div>
-        <div class="glass-panel p-5 rounded-2xl border border-border-default/60 text-center">
+        <div class="bg-surface-card p-5 rounded-2xl border border-border-default text-center">
             <p class="text-3xl font-black text-text-tertiary">{{ $contactStats['unscored'] }}</p>
-            <p class="text-xs text-text-secondary mt-1 font-medium">⚪ Unscored</p>
+            <p class="text-xs text-text-secondary mt-1 font-medium">? Unscored</p>
         </div>
     </div>
 
     <!-- Tabs -->
-    <div class="flex gap-1 border-b border-border-default/60 mb-6">
-        @foreach(['contacts' => '👥 Contact Scores', 'deals' => '🤝 Deal Momentum'] as $tab => $label)
+    <div class="flex gap-1 border-b border-border-default mb-6">
+        @foreach(['contacts' => '?? Contact Scores', 'deals' => '?? Deal Momentum'] as $tab => $label)
         <button wire:click="$set('scoringTab', '{{ $tab }}')"
             class="px-5 py-2.5 border-b-2 font-bold text-sm transition-colors
             {{ $scoringTab === $tab ? 'border-brand-primary text-brand-primary' : 'border-transparent text-text-secondary hover:text-text-primary' }}">
@@ -49,7 +49,7 @@
 
     @if($scoringTab === 'contacts')
     <!-- Contact Score Table -->
-    <div class="glass-panel rounded-2xl border border-border-default/60 overflow-hidden shadow-sm">
+    <div class="bg-surface-card rounded-2xl border border-border-default overflow-hidden shadow-sm">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
@@ -77,7 +77,7 @@
                                 </div>
                                 <div>
                                     <p class="text-sm font-bold text-text-primary">{{ $contact->full_name }}</p>
-                                    <p class="text-xs text-text-secondary">{{ $contact->email ?? $contact->phone ?? '—' }}</p>
+                                    <p class="text-xs text-text-secondary">{{ $contact->email ?? $contact->phone ?? '�' }}</p>
                                 </div>
                             </div>
                         </td>
@@ -102,7 +102,7 @@
                                     <div class="{{ $barColor }} h-2 rounded-full transition-all duration-500" style="width: {{ $score }}%"></div>
                                 </div>
                                 <span class="text-sm font-black {{ $scoreColor }} px-2 py-0.5 rounded-lg min-w-[44px] text-center">
-                                    {{ $score > 0 ? $score : '—' }}
+                                    {{ $score > 0 ? $score : '�' }}
                                 </span>
                             </div>
                         </td>
@@ -116,7 +116,7 @@
                                         Scoring...
                                     </span>
                                 @else
-                                    ✨ Re-score
+                                    ? Re-score
                                 @endif
                             </button>
                         </td>
@@ -131,7 +131,7 @@
 
     @else
     <!-- Deal Momentum Table -->
-    <div class="glass-panel rounded-2xl border border-border-default/60 overflow-hidden shadow-sm">
+    <div class="bg-surface-card rounded-2xl border border-border-default overflow-hidden shadow-sm">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
@@ -159,7 +159,7 @@
                         </td>
                         <td class="py-4 px-5">
                             <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-surface-sunken text-text-secondary">
-                                {{ $deal->stage?->name ?? '—' }}
+                                {{ $deal->stage?->name ?? '�' }}
                             </span>
                         </td>
                         <td class="py-4 px-5 text-sm font-bold text-text-primary">{{ $currencySymbol }}{{ number_format($deal->value ?? 0) }}</td>
@@ -170,7 +170,7 @@
                                     <div class="{{ $barColor }} h-2 rounded-full transition-all duration-500" style="width: {{ $score }}%"></div>
                                 </div>
                                 <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $labelClass }}">
-                                    {{ $score > 0 ? $label . ' ' . $score : '—' }}
+                                    {{ $score > 0 ? $label . ' ' . $score : '�' }}
                                 </span>
                             </div>
                         </td>
@@ -184,7 +184,7 @@
                                         Scoring...
                                     </span>
                                 @else
-                                    ✨ Re-score
+                                    ? Re-score
                                 @endif
                             </button>
                         </td>
@@ -203,7 +203,9 @@
         <div class="h-6 w-6 bg-brand-primary rounded-lg flex items-center justify-center text-white text-xs shrink-0 mt-0.5">AI</div>
         <div>
             <p class="text-xs font-bold text-text-primary mb-1">How scoring works</p>
-            <p class="text-xs text-text-secondary">Each score is generated by OpenAI based on contact/deal attributes — type, status, activity frequency, days since last contact, budget presence, and existing signals. Scores are saved back to the record and update the pipeline heat indicators.</p>
+            <p class="text-xs text-text-secondary">Each score is generated by OpenAI based on contact/deal attributes � type, status, activity frequency, days since last contact, budget presence, and existing signals. Scores are saved back to the record and update the pipeline heat indicators.</p>
         </div>
     </div>
 </div>
+
+

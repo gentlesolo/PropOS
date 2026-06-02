@@ -4,45 +4,45 @@
             <h1 class="text-2xl font-bold text-text-primary">Pipeline Stages</h1>
             <p class="text-sm text-text-secondary mt-0.5">Customize your deals pipeline stages and workflows</p>
         </div>
-        <button wire:click="openCreate" class="inline-flex items-center gap-2 px-4 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">
+        <button wire:click="openCreate" class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
             Add Stage
         </button>
     </div>
 
     @if($showForm)
-    <div class="glass-panel rounded-2xl border border-border-default/60 p-5 mb-6 animate-fade-in">
+    <div class="bg-surface-card rounded-2xl border border-border-default p-5 mb-6 animate-fade-in">
         <h2 class="text-base font-semibold text-text-primary mb-4">{{ $editingId ? 'Edit Stage' : 'Create New Stage' }}</h2>
         <form wire:submit.prevent="save" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Stage Name *</label>
-                <input wire:model="name" type="text" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary" placeholder="e.g. Under Contract">
+                <input wire:model="name" type="text" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page" placeholder="e.g. Under Contract">
                 @error('name') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
             </div>
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Pipeline Type *</label>
-                <select wire:model="pipeline_type" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                <select wire:model="pipeline_type" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     <option value="sale">Sale Pipeline</option>
                     <option value="rental">Rental Pipeline</option>
                 </select>
             </div>
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Display Order *</label>
-                <input wire:model="order" type="number" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                <input wire:model="order" type="number" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                 @error('order') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
             </div>
             <div class="flex items-center gap-6 pt-5">
                 <label class="inline-flex items-center gap-2 text-sm text-text-primary cursor-pointer">
-                    <input wire:model="is_won" type="checkbox" class="rounded border-border-default text-brand-primary focus:ring-brand-primary">
+                    <input wire:model="is_won" type="checkbox" class="rounded border-border-default text-brand-primary focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     Mark as Won Stage
                 </label>
                 <label class="inline-flex items-center gap-2 text-sm text-text-primary cursor-pointer">
-                    <input wire:model="is_lost" type="checkbox" class="rounded border-border-default text-brand-primary focus:ring-brand-primary">
+                    <input wire:model="is_lost" type="checkbox" class="rounded border-border-default text-brand-primary focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     Mark as Lost Stage
                 </label>
             </div>
             <div class="md:col-span-2 flex gap-3 pt-2">
-                <button type="submit" class="px-5 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">
+                <button type="submit" class="px-5 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">
                     Save Stage
                 </button>
                 <button type="button" wire:click="$set('showForm', false)" class="px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors">Cancel</button>
@@ -53,7 +53,7 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Sales Pipeline Stages -->
-        <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+        <div class="bg-surface-card rounded-2xl border border-border-default p-5">
             <h3 class="text-base font-semibold text-text-primary mb-3 flex items-center gap-2">
                 <span class="w-2 h-2 rounded-full bg-blue-500"></span>
                 Sales Pipeline
@@ -95,7 +95,7 @@
         </div>
 
         <!-- Rental Pipeline Stages -->
-        <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+        <div class="bg-surface-card rounded-2xl border border-border-default p-5">
             <h3 class="text-base font-semibold text-text-primary mb-3 flex items-center gap-2">
                 <span class="w-2 h-2 rounded-full bg-purple-500"></span>
                 Rental Pipeline
@@ -137,3 +137,6 @@
         </div>
     </div>
 </div>
+
+
+

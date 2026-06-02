@@ -51,7 +51,7 @@
     <!-- P&L Report -->
     @if($activeReport === 'pl' && !empty($plData))
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="glass-panel rounded-2xl border border-success-200 p-5">
+        <div class="bg-surface-card rounded-2xl border border-success-200 p-5">
             <h3 class="font-semibold text-text-primary mb-4">Income</h3>
             <div class="space-y-2">
                 @foreach($plData['incomeRows'] as $label => $amount)
@@ -60,7 +60,7 @@
                 <div class="border-t border-success-200 pt-2 flex justify-between font-bold text-success-700"><span>Total Income</span><span>R{{ number_format($plData['totalIncome']) }}</span></div>
             </div>
         </div>
-        <div class="glass-panel rounded-2xl border border-danger-200 p-5">
+        <div class="bg-surface-card rounded-2xl border border-danger-200 p-5">
             <h3 class="font-semibold text-text-primary mb-4">Expenses</h3>
             <div class="space-y-2">
                 @foreach($plData['expenseRows'] as $cat => $amount)
@@ -69,7 +69,7 @@
                 <div class="border-t border-danger-200 pt-2 flex justify-between font-bold text-danger-700"><span>Total Expenses</span><span>R{{ number_format($plData['totalExpenses']) }}</span></div>
             </div>
         </div>
-        <div class="md:col-span-2 glass-panel rounded-2xl border border-brand-200 p-5">
+        <div class="md:col-span-2 bg-surface-card rounded-2xl border border-brand-200 p-5">
             @php $net = $plData['totalIncome'] - $plData['totalExpenses']; @endphp
             <div class="flex justify-between items-center">
                 <span class="text-lg font-bold text-text-primary">Net Operating Income</span>
@@ -78,7 +78,7 @@
         </div>
     </div>
     @elseif($activeReport === 'pl')
-    <div class="glass-panel rounded-2xl border border-border-default/60 p-12 text-center text-text-tertiary">No data for selected period.</div>
+    <div class="bg-surface-card rounded-2xl border border-border-default p-12 text-center text-text-tertiary">No data for selected period.</div>
     @endif
 
     <!-- AR Aging -->
@@ -87,25 +87,25 @@
         @php $agingColors = ['Current'=>'success','1-30 days'=>'warning','31-60 days'=>'warning','61-90 days'=>'danger','90+ days'=>'danger']; @endphp
         @foreach($agingData['buckets'] as $bucket => $amount)
         @php $c = $agingColors[$bucket] ?? 'brand'; @endphp
-        <div class="glass-panel rounded-2xl border border-{{ $c }}-200 p-4 text-center">
+        <div class="bg-surface-card rounded-2xl border border-{{ $c }}-200 p-4 text-center">
             <div class="text-lg font-bold text-{{ $c }}-600">R{{ number_format($amount) }}</div>
             <div class="text-xs text-text-secondary mt-1">{{ $bucket }}</div>
         </div>
         @endforeach
     </div>
-    <div class="glass-panel rounded-2xl border border-border-default/60 p-4">
+    <div class="bg-surface-card rounded-2xl border border-border-default p-4">
         <div class="flex justify-between text-sm font-bold text-text-primary">
             <span>Total Outstanding AR</span>
             <span>R{{ number_format($agingData['total']) }}</span>
         </div>
     </div>
     @elseif($activeReport === 'aging')
-    <div class="glass-panel rounded-2xl border border-border-default/60 p-12 text-center text-text-tertiary">No outstanding invoices.</div>
+    <div class="bg-surface-card rounded-2xl border border-border-default p-12 text-center text-text-tertiary">No outstanding invoices.</div>
     @endif
 
     <!-- Cash Flow -->
     @if($activeReport === 'cashflow')
-    <div class="glass-panel rounded-2xl border border-border-default/60 overflow-hidden">
+    <div class="bg-surface-card rounded-2xl border border-border-default overflow-hidden">
         <table class="w-full text-sm">
             <thead class="bg-surface-hover/50 border-b border-border-default">
                 <tr>
@@ -135,7 +135,7 @@
 
     <!-- Tax Deductibles -->
     @if($activeReport === 'tax')
-    <div class="glass-panel rounded-2xl border border-border-default/60 overflow-hidden">
+    <div class="bg-surface-card rounded-2xl border border-border-default overflow-hidden">
         <table class="w-full text-sm">
             <thead class="bg-surface-hover/50 border-b border-border-default">
                 <tr>
@@ -169,3 +169,4 @@
     </div>
     @endif
 </div>
+

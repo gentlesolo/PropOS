@@ -10,7 +10,7 @@
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 Export CSV
             </a>
-            <button wire:click="$toggle('showUploadForm')" class="inline-flex items-center gap-2 px-4 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">
+            <button wire:click="$toggle('showUploadForm')" class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"/></svg>
                 Upload Document
             </button>
@@ -25,7 +25,7 @@
             ['label'=>'Expiring Soon','val'=>$stats['expiring_soon'],'color'=>'warning'],
             ['label'=>'Expired','val'=>$stats['expired'],'color'=>'danger'],
         ] as $s)
-        <div class="glass-panel rounded-2xl border border-border-default/60 p-4 text-center">
+        <div class="bg-surface-card rounded-2xl border border-border-default p-4 text-center">
             <div class="text-2xl font-bold text-text-primary">{{ $s['val'] }}</div>
             <div class="text-xs text-text-secondary mt-1">{{ $s['label'] }}</div>
         </div>
@@ -34,18 +34,18 @@
 
     {{-- Upload Form --}}
     @if($showUploadForm)
-    <div class="glass-panel rounded-2xl border border-brand-primary/30 p-6 mb-6">
+    <div class="bg-surface-card rounded-2xl border border-brand-primary/30 p-6 mb-6">
         <h2 class="text-base font-semibold text-text-primary mb-4">Upload New Document</h2>
         <form wire:submit.prevent="uploadDocument" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Title *</label>
                 <input wire:model="doc_title" type="text" placeholder="e.g. Lease Agreement – Unit 4B"
-                    class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                 @error('doc_title') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
             </div>
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Category *</label>
-                <select wire:model="doc_category" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                <select wire:model="doc_category" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     @foreach(['lease_agreement'=>'Lease Agreement','compliance_record'=>'Compliance Record','inspection_report'=>'Inspection Report','contract'=>'Contract','identity'=>'Identity Document','financial'=>'Financial','other'=>'Other'] as $val=>$label)
                     <option value="{{ $val }}">{{ $label }}</option>
                     @endforeach
@@ -54,16 +54,16 @@
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Document Type</label>
                 <input wire:model="doc_type" type="text" placeholder="e.g. Rental Contract, Gas Certificate"
-                    class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
             </div>
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Expiry Date</label>
                 <input wire:model="doc_expiry_date" type="date"
-                    class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
             </div>
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Link To</label>
-                <select wire:model.live="linked_type" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                <select wire:model.live="linked_type" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     <option value="">No link (standalone)</option>
                     <option value="transaction">Transaction</option>
                     <option value="lease">Lease</option>
@@ -74,7 +74,7 @@
             @if($linked_type)
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Select {{ ucfirst($linked_type) }}</label>
-                <select wire:model="linked_id" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                <select wire:model="linked_id" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     <option value="">-- choose --</option>
                     @if($linked_type === 'transaction')
                         @foreach($transactions as $t)
@@ -99,11 +99,11 @@
             <div class="md:col-span-2">
                 <label class="block text-xs font-medium text-text-secondary mb-1">Notes</label>
                 <textarea wire:model="doc_notes" rows="2" placeholder="Optional notes..."
-                    class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"></textarea>
+                    class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page"></textarea>
             </div>
             <div class="md:col-span-2 flex items-center gap-4 flex-wrap">
                 <div class="flex items-center gap-2">
-                    <input wire:model="doc_is_fica" type="checkbox" id="doc_is_fica" class="rounded border-border-default text-brand-primary focus:ring-brand-primary">
+                    <input wire:model="doc_is_fica" type="checkbox" id="doc_is_fica" class="rounded border-border-default text-brand-primary focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     <label for="doc_is_fica" class="text-sm text-text-secondary">FICA required document</label>
                 </div>
             </div>
@@ -115,7 +115,7 @@
             </div>
             <div class="md:col-span-2 flex gap-3">
                 <button type="submit" wire:loading.attr="disabled"
-                    class="px-5 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors disabled:opacity-60">
+                    class="px-5 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors disabled:opacity-60">
                     <span wire:loading.remove wire:target="uploadDocument">Save Document</span>
                     <span wire:loading wire:target="uploadDocument">Saving...</span>
                 </button>
@@ -133,7 +133,7 @@
         <div class="relative flex-1 min-w-[200px]">
             <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg>
             <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search by title or type..."
-                class="w-full pl-9 pr-4 py-2 rounded-xl border border-border-default bg-surface-input text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                class="w-full pl-9 pr-4 py-2 rounded-xl border border-border-default bg-surface-input text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
         </div>
         <select wire:model.live="categoryFilter" class="rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary">
             <option value="">All Categories</option>
@@ -157,10 +157,10 @@
     </div>
 
     {{-- Document Table --}}
-    <div class="glass-panel rounded-2xl border border-border-default/60 overflow-hidden">
+    <div class="bg-surface-card rounded-2xl border border-border-default overflow-hidden">
         <table class="w-full text-sm">
             <thead>
-                <tr class="border-b border-border-default/60">
+                <tr class="border-b border-border-default">
                     <th class="text-left px-4 py-3 text-xs font-semibold text-text-secondary uppercase tracking-wider">Document</th>
                     <th class="text-left px-4 py-3 text-xs font-semibold text-text-secondary uppercase tracking-wider hidden md:table-cell">Category</th>
                     <th class="text-left px-4 py-3 text-xs font-semibold text-text-secondary uppercase tracking-wider hidden lg:table-cell">Linked To</th>
@@ -257,3 +257,6 @@
     <div class="mt-4">{{ $documents->links() }}</div>
     @endif
 </div>
+
+
+

@@ -16,13 +16,13 @@
 
         <!-- Controls Sidebar -->
         <div class="lg:col-span-1 space-y-5">
-            <div class="glass-panel rounded-2xl border border-border-default/60 p-5 shadow-sm">
+            <div class="bg-surface-card rounded-2xl border border-border-default p-5 shadow-sm">
                 <h3 class="text-sm font-bold text-text-primary mb-4">Simulation Setup</h3>
 
                 <div class="space-y-4">
                     <div>
                         <label class="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-1.5">Scenario</label>
-                        <select wire:model="scenario" class="w-full bg-surface-raised border border-border-default/60 text-text-primary rounded-xl px-3 py-2 text-sm font-medium focus:ring-brand-primary focus:border-brand-primary" {{ $isStarted ? 'disabled' : '' }}>
+                        <select wire:model="scenario" class="w-full bg-surface-raised border border-border-default text-text-primary rounded-xl px-3 py-2 text-sm font-medium focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page focus:border-brand-primary" {{ $isStarted ? 'disabled' : '' }}>
                             <option value="qualification">First Call Qualification</option>
                             <option value="listing_presentation">Listing Presentation</option>
                             <option value="objection_handling">Objection Handling</option>
@@ -31,7 +31,7 @@
 
                     <div>
                         <label class="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-1.5">Client Persona</label>
-                        <select wire:model="persona" class="w-full bg-surface-raised border border-border-default/60 text-text-primary rounded-xl px-3 py-2 text-sm font-medium focus:ring-brand-primary focus:border-brand-primary" {{ $isStarted ? 'disabled' : '' }}>
+                        <select wire:model="persona" class="w-full bg-surface-raised border border-border-default text-text-primary rounded-xl px-3 py-2 text-sm font-medium focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page focus:border-brand-primary" {{ $isStarted ? 'disabled' : '' }}>
                             <option value="first_time_buyer">Nervous First-Time Buyer</option>
                             <option value="seasoned_investor">Aggressive Investor</option>
                             <option value="reluctant_seller">Unrealistic Seller</option>
@@ -40,11 +40,11 @@
 
                     <div class="pt-3 border-t border-border-default/40">
                         @if(!$isStarted && !$feedback)
-                        <button wire:click="startSimulation" class="w-full bg-brand-primary text-white py-2.5 rounded-xl font-bold text-sm hover:bg-brand-secondary transition-colors hover-spring shadow-md">
+                        <button wire:click="startSimulation" class="w-full bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 py-2.5 rounded-xl font-bold text-sm hover:bg-brand-secondary transition-colors hover-spring active:scale-95 shadow-md">
                             Start Simulation
                         </button>
                         @elseif($isStarted)
-                        <button wire:click="endSimulation" class="w-full bg-danger-600 text-white py-2.5 rounded-xl font-bold text-sm hover:bg-danger-700 transition-colors hover-spring shadow-md">
+                        <button wire:click="endSimulation" class="w-full bg-danger-600 text-white py-2.5 rounded-xl font-bold text-sm hover:bg-danger-700 transition-colors hover-spring active:scale-95 shadow-md">
                             <span wire:loading.remove wire:target="endSimulation">End & Get AI Feedback</span>
                             <span wire:loading wire:target="endSimulation" class="flex items-center justify-center gap-2">
                                 <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
@@ -62,7 +62,7 @@
 
             <!-- AI Feedback Panel -->
             @if($feedback)
-            <div class="glass-panel rounded-2xl border border-success-300/50 bg-success-50/40 p-5 shadow-sm">
+            <div class="bg-surface-card rounded-2xl border border-success-300/50 bg-success-50/40 p-5 shadow-sm">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-sm font-black text-success-700">AI Coaching Feedback</h3>
                     <span class="px-3 py-1 bg-success-500 text-white font-black rounded-xl text-sm">{{ $feedback['score'] }}/100</span>
@@ -94,7 +94,7 @@
 
         <!-- Chat Area -->
         <div class="lg:col-span-3">
-            <div class="glass-panel rounded-2xl border border-border-default/60 shadow-sm flex flex-col h-[620px] overflow-hidden">
+            <div class="bg-surface-card rounded-2xl border border-border-default shadow-sm flex flex-col h-[620px] overflow-hidden">
 
                 @if(!$isStarted && empty($messages) && !$feedback)
                 <div class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center bg-surface-card/50 backdrop-blur-sm z-10">
@@ -111,8 +111,8 @@
                     <div class="flex {{ $msg['role'] === 'user' ? 'justify-end' : 'justify-start' }}">
                         <div class="max-w-[78%] rounded-2xl px-4 py-3 text-sm
                             {{ $msg['role'] === 'user'
-                                ? 'bg-brand-primary text-white rounded-tr-sm shadow-md'
-                                : 'bg-surface-raised border border-border-default/60 text-text-primary rounded-tl-sm shadow-sm' }}">
+                                ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-tr-sm shadow-md'
+                                : 'bg-surface-raised border border-border-default text-text-primary rounded-tl-sm shadow-sm' }}">
                             @if($msg['role'] === 'assistant')
                             <p class="text-[10px] font-black uppercase tracking-wider text-text-tertiary mb-1">{{ str_replace('_', ' ', $persona) }}</p>
                             @else
@@ -126,7 +126,7 @@
 
                     @if($isTyping)
                     <div class="flex justify-start">
-                        <div class="bg-surface-raised border border-border-default/60 rounded-2xl rounded-tl-sm px-5 py-4 flex items-center gap-1.5">
+                        <div class="bg-surface-raised border border-border-default rounded-2xl rounded-tl-sm px-5 py-4 flex items-center gap-1.5">
                             <div class="w-2 h-2 bg-text-tertiary rounded-full animate-bounce"></div>
                             <div class="w-2 h-2 bg-text-tertiary rounded-full animate-bounce" style="animation-delay:.2s"></div>
                             <div class="w-2 h-2 bg-text-tertiary rounded-full animate-bounce" style="animation-delay:.4s"></div>
@@ -136,14 +136,14 @@
                 </div>
 
                 <!-- Input -->
-                <div class="p-4 bg-surface-sunken/50 border-t border-border-default/60">
+                <div class="p-4 bg-surface-sunken/50 border-t border-border-default">
                     <form wire:submit.prevent="sendMessage" class="flex gap-3">
                         <input wire:model.defer="inputMessage" type="text"
                             placeholder="{{ $isStarted ? 'Type your response as the agent...' : 'Start the simulation first →' }}"
-                            class="flex-1 bg-surface-card border border-border-default/60 rounded-xl px-4 py-2.5 text-sm text-text-primary focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary disabled:opacity-50"
+                            class="flex-1 bg-surface-card border border-border-default rounded-xl px-4 py-2.5 text-sm text-text-primary focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page/20 focus:border-brand-primary disabled:opacity-50"
                             {{ !$isStarted ? 'disabled' : '' }}>
                         <button type="submit"
-                            class="h-10 w-10 bg-brand-primary text-white rounded-xl flex items-center justify-center hover:bg-brand-secondary transition-colors disabled:opacity-50"
+                            class="h-10 w-10 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl flex items-center justify-center hover:bg-brand-secondary transition-colors disabled:opacity-50"
                             {{ !$isStarted ? 'disabled' : '' }}>
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
                         </button>
@@ -153,3 +153,7 @@
         </div>
     </div>
 </div>
+
+
+
+

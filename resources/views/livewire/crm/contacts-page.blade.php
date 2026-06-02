@@ -8,7 +8,7 @@
             <p class="text-xs font-semibold text-text-secondary mt-1">Track agency customer relationships, buyer/seller leads, and communication history.</p>
         </div>
         <div class="flex items-center gap-3">
-            <button wire:click="$set('showCreateModal', true)" class="px-5 py-2.5 rounded-xl bg-brand-primary text-white text-xs font-bold hover:bg-brand-secondary transition-all shadow-brand-sm hover:shadow-brand-md hover-spring flex items-center space-x-2">
+            <button wire:click="$set('showCreateModal', true)" class="px-5 py-2.5 rounded-xl bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 text-xs font-bold hover:bg-brand-secondary transition-all shadow-brand-sm hover:shadow-brand-md hover-spring active:scale-95 flex items-center space-x-2">
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                 <span>New Contact</span>
             </button>
@@ -17,42 +17,42 @@
 
     <!-- Quick Stats -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-        <div class="p-6 rounded-[2rem] glass-panel border border-border-default/80 shadow-sm hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
-            <div class="absolute -top-10 -right-10 w-24 h-24 rounded-full bg-brand-primary/10 blur-xl group-hover:scale-115 transition-transform duration-500"></div>
+        <div class="p-6 rounded-2xl bg-surface-card border border-border-default shadow-sm hover:border-brand-primary/40 transition-all duration-300 relative overflow-hidden group">
+            <div class="absolute inset-0 bg-brand-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
             <div class="relative z-10">
                 <h3 class="text-xs font-bold tracking-widest uppercase text-text-secondary">Total Active</h3>
-                <p class="mt-2 text-3xl font-black text-text-primary tracking-tighter">{{ $totalActive }}</p>
+                <p class="mt-2 text-3xl font-black text-text-primary tracking-tighter tabular-nums">{{ $totalActive }}</p>
             </div>
         </div>
-        <div class="p-6 rounded-[2rem] glass-panel border border-border-default/80 shadow-sm hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
-            <div class="absolute -top-10 -right-10 w-24 h-24 rounded-full bg-success-500/10 blur-xl group-hover:scale-115 transition-transform duration-500"></div>
+        <div class="p-6 rounded-2xl bg-surface-card border border-border-default shadow-sm hover:border-success-500/40 transition-all duration-300 relative overflow-hidden group">
+            <div class="absolute inset-0 bg-success-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
             <div class="relative z-10">
                 <h3 class="text-xs font-bold tracking-widest uppercase text-text-secondary">New (This Week)</h3>
-                <p class="mt-2 text-3xl font-black text-success-500 tracking-tighter">{{ $newThisWeek }}</p>
+                <p class="mt-2 text-3xl font-black text-success-500 tracking-tighter tabular-nums">{{ $newThisWeek }}</p>
             </div>
         </div>
-        <div class="p-6 rounded-[2rem] glass-panel border border-border-default/80 shadow-sm hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
-            <div class="absolute -top-10 -right-10 w-24 h-24 rounded-full bg-warning-500/10 blur-xl group-hover:scale-115 transition-transform duration-500"></div>
+        <div class="p-6 rounded-2xl bg-surface-card border border-border-default shadow-sm hover:border-warning-500/40 transition-all duration-300 relative overflow-hidden group">
+            <div class="absolute inset-0 bg-warning-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
             <div class="relative z-10">
                 <h3 class="text-xs font-bold tracking-widest uppercase text-text-secondary">Hot Buyers</h3>
-                <p class="mt-2 text-3xl font-black text-warning-500 tracking-tighter">{{ $hotBuyers }}</p>
+                <p class="mt-2 text-3xl font-black text-warning-500 tracking-tighter tabular-nums">{{ $hotBuyers }}</p>
             </div>
         </div>
-        <div class="p-6 rounded-[2rem] glass-panel border border-border-default/80 shadow-sm hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
-            <div class="absolute -top-10 -right-10 w-24 h-24 rounded-full bg-info-500/10 blur-xl group-hover:scale-115 transition-transform duration-500"></div>
+        <div class="p-6 rounded-2xl bg-surface-card border border-border-default shadow-sm hover:border-info-500/40 transition-all duration-300 relative overflow-hidden group">
+            <div class="absolute inset-0 bg-info-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
             <div class="relative z-10">
                 <h3 class="text-xs font-bold tracking-widest uppercase text-text-secondary">Sellers (Pending)</h3>
-                <p class="mt-2 text-3xl font-black text-info-500 tracking-tighter">{{ $pendingSellers }}</p>
+                <p class="mt-2 text-3xl font-black text-info-500 tracking-tighter tabular-nums">{{ $pendingSellers }}</p>
             </div>
         </div>
     </div>
 
     <!-- Contacts Table -->
-    <div class="glass-panel rounded-2xl overflow-hidden border border-border-default/60 shadow-sm">
-        <div class="px-6 py-4 border-b border-border-default/60 flex items-center justify-between bg-surface-sunken/30 gap-4">
+    <div class="bg-surface-card rounded-2xl overflow-hidden border border-border-default shadow-sm">
+        <div class="px-6 py-4 border-b border-border-default flex items-center justify-between bg-surface-sunken/30 gap-4">
             <div class="w-1/3">
                 <input wire:model.debounce.300ms="search" type="text" placeholder="Search by name, email, or phone..."
-                    class="w-full px-3 py-2 border border-border-strong rounded-lg bg-white/50 focus:ring-2 focus:ring-brand-primary focus:border-brand-primary text-sm">
+                    class="w-full px-3 py-2 border border-border-strong rounded-lg bg-white/50 focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page focus:border-brand-primary text-sm">
             </div>
             <div class="flex space-x-2">
                 <select wire:model="filterType" class="px-3 py-2 border border-border-strong rounded-lg bg-white text-text-secondary text-sm">
@@ -92,7 +92,7 @@
                         <th class="px-6 py-3 text-right text-xs font-semibold text-text-tertiary uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-border-default/60 bg-white/10">
+                <tbody wire:loading.class="opacity-50 pointer-events-none" class="divide-y divide-border-default/60 bg-white/10 transition-opacity duration-200">
                     @forelse($contacts as $contact)
                     <tr class="hover:bg-surface-sunken/20 transition-colors cursor-pointer"
                         wire:key="contact-row-{{ $contact->id }}"
@@ -141,7 +141,7 @@
                                         x-ref="statusSelect"
                                         @change="save()"
                                         @keydown.escape="editing = false"
-                                        class="w-full text-xs bg-surface-input border border-brand-primary rounded-lg p-1.5 focus:ring-1 focus:ring-brand-primary focus:outline-none text-text-primary">
+                                        class="w-full text-xs bg-surface-input border border-brand-primary rounded-lg p-1.5 focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page focus:outline-none text-text-primary">
                                     <option value="new">New</option>
                                     <option value="active">Active</option>
                                     <option value="qualified">Qualified</option>
@@ -188,7 +188,7 @@
                                        x-ref="scoreInput"
                                        @keydown.enter="save()"
                                        @keydown.escape="editing = false"
-                                       class="w-20 text-xs bg-surface-input border border-brand-primary rounded-lg p-1.5 focus:ring-1 focus:ring-brand-primary focus:outline-none text-text-primary">
+                                       class="w-20 text-xs bg-surface-input border border-brand-primary rounded-lg p-1.5 focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page focus:outline-none text-text-primary">
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium" @click.stop>
@@ -204,23 +204,14 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-12 text-center">
-                            <div class="flex flex-col items-center justify-center">
-                                <div class="h-12 w-12 rounded-full bg-brand-primary/10 flex items-center justify-center mb-3 text-xl">👥</div>
-                                <h3 class="text-sm font-medium text-text-primary dark:text-white">No contacts found</h3>
-                                <p class="mt-1 text-sm text-text-tertiary">
-                                    @if($search || $filterType || $filterStatus)
-                                        Try adjusting your filters.
-                                    @else
-                                        Get started by creating a new contact.
-                                    @endif
-                                </p>
-                                @if(!$search && !$filterType && !$filterStatus)
-                                <button wire:click="$set('showCreateModal', true)" class="mt-4 px-4 py-2 bg-brand-primary text-white rounded-lg hover:bg-brand-secondary font-medium text-sm transition-colors">
-                                    + Add First Contact
-                                </button>
-                                @endif
-                            </div>
+                        <td colspan="6" class="p-8">
+                            <x-ui.empty-state 
+                                icon="users" 
+                                title="No contacts found" 
+                                description="{{ ($search || $filterType || $filterStatus) ? 'Try adjusting your filters.' : 'Get started by creating a new contact.' }}"
+                                actionText="{{ (!$search && !$filterType && !$filterStatus) ? 'Add First Contact' : null }}"
+                                actionClick="$set('showCreateModal', true)"
+                            />
                         </td>
                     </tr>
                     @endforelse
@@ -228,7 +219,7 @@
             </table>
         </div>
 
-        <div class="px-6 py-3 border-t border-border-default/60">
+        <div class="px-6 py-3 border-t border-border-default">
             {{ $contacts->links() }}
         </div>
     </div>
@@ -241,8 +232,8 @@
             <div class="absolute inset-0 overflow-hidden">
                 <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
                     <div class="pointer-events-auto w-screen max-w-md">
-                        <div class="flex h-full flex-col overflow-y-scroll bg-surface-page shadow-xl border-l border-border-default/60">
-                            <div class="bg-surface-card px-4 py-6 sm:px-6 border-b border-border-default/60 flex items-center justify-between">
+                        <div class="flex h-full flex-col overflow-y-scroll bg-surface-page shadow-xl border-l border-border-default">
+                            <div class="bg-surface-card px-4 py-6 sm:px-6 border-b border-border-default flex items-center justify-between">
                                 <h2 class="text-xl font-bold text-text-primary">Create New Contact</h2>
                                 <button wire:click="$set('showCreateModal', false)" type="button" class="rounded-md text-text-secondary hover:text-text-primary">
                                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -274,29 +265,25 @@
                                 <form wire:submit.prevent="saveContact" class="space-y-5">
                                     <div class="grid grid-cols-2 gap-4">
                                         <div>
-                                            <label class="block text-sm font-medium text-text-primary mb-1">First Name *</label>
-                                            <input wire:model.defer="first_name" type="text" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                                            <x-ui.floating-input id="first_name" label="First Name *" model="first_name" defer="true" />
                                             @error('first_name') <span class="text-xs text-danger-600 mt-1 block">{{ $message }}</span> @enderror
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-medium text-text-primary mb-1">Last Name *</label>
-                                            <input wire:model.defer="last_name" type="text" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                                            <x-ui.floating-input id="last_name" label="Last Name *" model="last_name" defer="true" />
                                             @error('last_name') <span class="text-xs text-danger-600 mt-1 block">{{ $message }}</span> @enderror
                                         </div>
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-text-primary mb-1">Email Address</label>
-                                        <input wire:model.lazy="email" type="email" wire:change="checkDuplicates" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                                        <x-ui.floating-input id="email" type="email" label="Email Address" model="email" lazy="true" wire:change="checkDuplicates" />
                                         @error('email') <span class="text-xs text-danger-600 mt-1 block">{{ $message }}</span> @enderror
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-text-primary mb-1">Phone Number</label>
-                                        <input wire:model.lazy="phone" type="text" wire:change="checkDuplicates" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                                        <x-ui.floating-input id="phone" label="Phone Number" model="phone" lazy="true" wire:change="checkDuplicates" />
                                         @error('phone') <span class="text-xs text-danger-600 mt-1 block">{{ $message }}</span> @enderror
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-text-primary mb-1">Contact Type *</label>
-                                        <select wire:model.defer="type" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                                        <select wire:model.defer="type" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                                             <option value="buyer">Buyer</option>
                                             <option value="seller">Seller</option>
                                             <option value="landlord">Landlord</option>
@@ -307,7 +294,7 @@
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-text-primary mb-1">Lead Source</label>
-                                        <select wire:model.defer="source" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                                        <select wire:model.defer="source" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                                             <option value="">Select source...</option>
                                             <option value="portal">Property Portal</option>
                                             <option value="referral">Referral</option>
@@ -318,8 +305,8 @@
                                             <option value="other">Other</option>
                                         </select>
                                     </div>
-                                    <div class="pt-6 border-t border-border-default/60">
-                                        <button type="submit" class="w-full px-4 py-2 bg-brand-primary text-white rounded-lg hover:bg-brand-secondary font-medium transition-colors flex justify-center items-center">
+                                    <div class="pt-6 border-t border-border-default">
+                                        <button type="submit" class="w-full px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg hover:bg-brand-secondary font-medium transition-colors flex justify-center items-center">
                                             <span wire:loading.remove wire:target="saveContact">Save Contact</span>
                                             <span wire:loading wire:target="saveContact">Saving...</span>
                                         </button>
@@ -364,9 +351,9 @@
                  x-transition:leave-start="translate-x-0"
                  x-transition:leave-end="translate-x-full">
                  
-                <div class="flex h-full flex-col bg-surface-card border-l border-border-default/60 shadow-2xl overflow-hidden">
+                <div class="flex h-full flex-col bg-surface-card border-l border-border-default shadow-2xl overflow-hidden">
                     <!-- Drawer Header -->
-                    <div class="px-6 py-5 border-b border-border-default/60 bg-surface-sunken/20 flex items-center justify-between">
+                    <div class="px-6 py-5 border-b border-border-default bg-surface-sunken/20 flex items-center justify-between">
                         <div class="flex items-center gap-3">
                             <div class="h-10 w-10 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary font-bold text-sm">
                                 {{ $selectedContact ? strtoupper(substr($selectedContact->first_name, 0, 1) . substr($selectedContact->last_name, 0, 1)) : '' }}
@@ -434,7 +421,7 @@
                                 <button type="button" 
                                         wire:click="$set('activityType', '{{ $val }}')"
                                         class="px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200
-                                        {{ $activityType === $val ? 'bg-brand-primary text-white shadow-brand-sm' : 'bg-surface-raised text-text-secondary border border-border-default hover:bg-surface-sunken' }}">
+                                        {{ $activityType === $val ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 shadow-brand-sm' : 'bg-surface-raised text-text-secondary border border-border-default hover:bg-surface-sunken' }}">
                                     {{ $label }}
                                 </button>
                                 @endforeach
@@ -442,17 +429,17 @@
 
                             <form wire:submit.prevent="saveDrawerActivity" class="space-y-3">
                                 <input wire:model.defer="activitySubject" type="text" placeholder="Subject (optional)"
-                                    class="w-full text-xs rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                                    class="w-full text-xs rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                                 <textarea wire:model.defer="activityBody" rows="3"
                                     placeholder="Summary of this interaction..."
-                                    class="w-full text-xs rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary resize-none"></textarea>
+                                    class="w-full text-xs rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page resize-none"></textarea>
                                 @error('activityBody') <span class="text-xs text-danger-600 block">{{ $message }}</span> @enderror
                                 <div class="flex justify-between items-center pt-2">
                                     <a href="{{ route('crm.contact.detail', $selectedContact) }}" 
                                        class="text-xs font-bold text-brand-primary hover:text-brand-secondary flex items-center gap-1">
                                        Full Profile page &rarr;
                                     </a>
-                                    <button type="submit" class="px-4 py-2 bg-brand-primary text-white rounded-lg text-xs font-bold hover:bg-brand-secondary transition-colors shadow-brand-sm hover:shadow-brand-md">
+                                    <button type="submit" class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg text-xs font-bold hover:bg-brand-secondary transition-colors shadow-brand-sm hover:shadow-brand-md">
                                         Log {{ ucfirst($activityType) }}
                                     </button>
                                 </div>
@@ -515,4 +502,8 @@
         </div>
     </div>
 </div>
+
+
+
+
 

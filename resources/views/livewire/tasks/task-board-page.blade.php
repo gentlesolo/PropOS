@@ -5,7 +5,7 @@
             <h1 class="text-2xl font-bold text-text-primary">Task Board</h1>
             <p class="text-sm text-text-secondary mt-0.5">Manage your daily tasks and follow-ups</p>
         </div>
-        <button wire:click="openCreate" class="inline-flex items-center gap-2 px-4 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">
+        <button wire:click="openCreate" class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
             New Task
         </button>
@@ -13,27 +13,27 @@
 
     {{-- Stats --}}
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div class="glass-panel rounded-2xl border border-border-default/60 p-4">
+        <div class="bg-surface-card rounded-2xl border border-border-default p-4">
             <div class="text-2xl font-bold text-text-primary">{{ $stats['pending'] }}</div>
             <div class="text-xs text-text-secondary mt-1">My Open Tasks</div>
         </div>
-        <div class="glass-panel rounded-2xl border border-danger-200 p-4">
+        <div class="bg-surface-card rounded-2xl border border-danger-200 p-4">
             <div class="text-2xl font-bold text-danger-600">{{ $stats['overdue'] }}</div>
             <div class="text-xs text-text-secondary mt-1">Overdue</div>
         </div>
-        <div class="glass-panel rounded-2xl border border-warning-200 p-4">
+        <div class="bg-surface-card rounded-2xl border border-warning-200 p-4">
             <div class="text-2xl font-bold text-warning-600">{{ $stats['due_today'] }}</div>
             <div class="text-xs text-text-secondary mt-1">Due Today</div>
         </div>
-        <div class="glass-panel rounded-2xl border border-success-200 p-4">
+        <div class="bg-surface-card rounded-2xl border border-success-200 p-4">
             <div class="text-2xl font-bold text-success-600">{{ $stats['completed_week'] }}</div>
             <div class="text-xs text-text-secondary mt-1">Completed This Week</div>
         </div>
     </div>
 
     {{-- Filters --}}
-    <div class="glass-panel rounded-2xl border border-border-default/60 p-4 mb-6 flex flex-wrap gap-3 items-center">
-        <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search tasks…" class="flex-1 min-w-[180px] rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+    <div class="bg-surface-card rounded-2xl border border-border-default p-4 mb-6 flex flex-wrap gap-3 items-center">
+        <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search tasks…" class="flex-1 min-w-[180px] rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
         <select wire:model.live="priorityFilter" class="rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary">
             <option value="">All Priorities</option>
             <option value="urgent">Urgent</option>
@@ -54,7 +54,7 @@
             @endforeach
         </select>
         <label class="flex items-center gap-2 text-sm text-text-secondary cursor-pointer">
-            <input wire:model.live="showMyTasksOnly" type="checkbox" class="rounded border-border-default text-brand-primary focus:ring-brand-primary">
+            <input wire:model.live="showMyTasksOnly" type="checkbox" class="rounded border-border-default text-brand-primary focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
             My tasks only
         </label>
     </div>
@@ -81,17 +81,17 @@
 
     {{-- Create / Edit Form --}}
     @if($showForm)
-    <div class="glass-panel rounded-2xl border border-border-default/60 p-5 mb-6">
+    <div class="bg-surface-card rounded-2xl border border-border-default p-5 mb-6">
         <h2 class="text-base font-semibold text-text-primary mb-4">{{ $editingId ? 'Edit Task' : 'Create Task' }}</h2>
         <form wire:submit.prevent="saveTask" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="md:col-span-2">
                 <label class="block text-xs font-medium text-text-secondary mb-1">Title *</label>
-                <input wire:model="title" type="text" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary" placeholder="What needs to be done?">
+                <input wire:model="title" type="text" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page" placeholder="What needs to be done?">
                 @error('title') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
             </div>
             <div class="md:col-span-2">
                 <label class="block text-xs font-medium text-text-secondary mb-1">Description</label>
-                <textarea wire:model="description" rows="2" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary" placeholder="Optional notes…"></textarea>
+                <textarea wire:model="description" rows="2" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page" placeholder="Optional notes…"></textarea>
             </div>
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Type</label>
@@ -153,7 +153,7 @@
                 </select>
             </div>
             <div class="md:col-span-2 flex gap-3 pt-2">
-                <button type="submit" class="px-5 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">
+                <button type="submit" class="px-5 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">
                     {{ $editingId ? 'Update Task' : 'Create Task' }}
                 </button>
                 <button type="button" wire:click="$set('showForm', false)" class="px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors">Cancel</button>
@@ -206,7 +206,7 @@
                 @endif
             </div>
             <div class="flex flex-wrap gap-2 pt-2 border-t border-border-default mt-auto">
-                <button wire:click="openEdit({{ $detailTask->id }})" class="px-4 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">Edit</button>
+                <button wire:click="openEdit({{ $detailTask->id }})" class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">Edit</button>
                 @if($detailTask->status === 'pending')
                 <button wire:click="startTask({{ $detailTask->id }})" class="px-4 py-2 bg-warning-100 text-warning-700 border border-warning-300 rounded-xl text-sm font-medium hover:bg-warning-200 transition-colors">Start</button>
                 <button wire:click="completeTask({{ $detailTask->id }})" class="px-4 py-2 bg-success-100 text-success-700 border border-success-300 rounded-xl text-sm font-medium hover:bg-success-200 transition-colors">Complete</button>
@@ -232,7 +232,7 @@
             <div class="space-y-3">
                 @forelse($pending as $task)
                 @php $pc = ['urgent'=>'danger','high'=>'warning','medium'=>'brand','low'=>'secondary'][$task->priority] ?? 'secondary'; @endphp
-                <div class="glass-panel rounded-xl border border-border-default/60 p-4 cursor-pointer hover:border-brand-primary/40 transition-colors" wire:click="openDetail({{ $task->id }})">
+                <div class="bg-surface-card rounded-xl border border-border-default p-4 cursor-pointer hover:border-brand-primary/40 transition-colors" wire:click="openDetail({{ $task->id }})">
                     <div class="flex items-start justify-between gap-2 mb-2">
                         <p class="text-sm font-medium text-text-primary leading-snug">{{ $task->title }}</p>
                         <span class="shrink-0 inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-{{ $pc }}-50 text-{{ $pc }}-700 border border-{{ $pc }}-200">{{ ucfirst($task->priority) }}</span>
@@ -248,7 +248,7 @@
                     </div>
                 </div>
                 @empty
-                <p class="text-sm text-text-tertiary text-center py-8">No pending tasks.</p>
+                <x-ui.empty-state icon="search" title="No pending tasks" description="You're all caught up." />
                 @endforelse
             </div>
         </div>
@@ -261,7 +261,7 @@
             <div class="space-y-3">
                 @forelse($inProgress as $task)
                 @php $pc = ['urgent'=>'danger','high'=>'warning','medium'=>'brand','low'=>'secondary'][$task->priority] ?? 'secondary'; @endphp
-                <div class="glass-panel rounded-xl border border-brand-primary/30 p-4 cursor-pointer hover:border-brand-primary/60 transition-colors" wire:click="openDetail({{ $task->id }})">
+                <div class="bg-surface-card rounded-xl border border-brand-primary/30 p-4 cursor-pointer hover:border-brand-primary/60 transition-colors" wire:click="openDetail({{ $task->id }})">
                     <div class="flex items-start justify-between gap-2 mb-2">
                         <p class="text-sm font-medium text-text-primary leading-snug">{{ $task->title }}</p>
                         <span class="shrink-0 inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-{{ $pc }}-50 text-{{ $pc }}-700 border border-{{ $pc }}-200">{{ ucfirst($task->priority) }}</span>
@@ -273,7 +273,7 @@
                     </div>
                 </div>
                 @empty
-                <p class="text-sm text-text-tertiary text-center py-8">None in progress.</p>
+                <x-ui.empty-state icon="search" title="None in progress" description="Start a task to see it here." />
                 @endforelse
             </div>
         </div>
@@ -285,7 +285,7 @@
             </h3>
             <div class="space-y-3">
                 @forelse($completed as $task)
-                <div class="glass-panel rounded-xl border border-border-default/60 p-4 opacity-70 cursor-pointer hover:opacity-90 transition-opacity" wire:click="openDetail({{ $task->id }})">
+                <div class="bg-surface-card rounded-xl border border-border-default p-4 opacity-70 cursor-pointer hover:opacity-90 transition-opacity" wire:click="openDetail({{ $task->id }})">
                     <p class="text-sm font-medium text-text-primary line-through leading-snug">{{ $task->title }}</p>
                     <div class="flex items-center justify-between mt-2" wire:click.stop>
                         <span class="text-xs text-text-tertiary">{{ $task->completed_at?->diffForHumans() }}</span>
@@ -293,7 +293,7 @@
                     </div>
                 </div>
                 @empty
-                <p class="text-sm text-text-tertiary text-center py-8">No completed tasks yet.</p>
+                <x-ui.empty-state icon="search" title="No completed tasks" description="Tasks you finish will appear here." />
                 @endforelse
             </div>
         </div>
@@ -305,7 +305,7 @@
             </h3>
             <div class="space-y-3">
                 @forelse($cancelled as $task)
-                <div class="glass-panel rounded-xl border border-border-default/60 p-4 opacity-50 cursor-pointer hover:opacity-70 transition-opacity" wire:click="openDetail({{ $task->id }})">
+                <div class="bg-surface-card rounded-xl border border-border-default p-4 opacity-50 cursor-pointer hover:opacity-70 transition-opacity" wire:click="openDetail({{ $task->id }})">
                     <p class="text-sm font-medium text-text-primary line-through leading-snug">{{ $task->title }}</p>
                     <div class="flex items-center justify-between mt-2" wire:click.stop>
                         <span class="text-xs text-text-tertiary">{{ $task->updated_at->diffForHumans() }}</span>
@@ -313,10 +313,13 @@
                     </div>
                 </div>
                 @empty
-                <p class="text-sm text-text-tertiary text-center py-8">No cancelled tasks.</p>
+                <x-ui.empty-state icon="search" title="No cancelled tasks" description="Cancelled tasks will appear here." />
                 @endforelse
             </div>
         </div>
 
     </div>
 </div>
+
+
+

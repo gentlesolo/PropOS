@@ -24,7 +24,7 @@
          x-transition:leave="ease-in duration-200" 
          x-transition:leave-start="opacity-100 scale-100" 
          x-transition:leave-end="opacity-0 scale-95" 
-         class="mx-auto max-w-2xl transform divide-y divide-border-default/60 rounded-2xl bg-surface-card border border-border-default/80 shadow-2xl transition-all relative z-10 overflow-hidden">
+         class="mx-auto max-w-2xl transform divide-y divide-border-default/60 rounded-2xl bg-surface-card border border-border-default shadow-2xl transition-all relative z-10 overflow-hidden">
         
         <div class="relative">
             <!-- Search icon -->
@@ -112,8 +112,9 @@
 
         <!-- Help instructions -->
         <div class="bg-surface-sunken/20 px-4 py-2.5 flex items-center justify-between text-[10px] text-text-tertiary font-medium">
-            <span>Use <kbd class="px-1.5 py-0.5 bg-surface-card border border-border-default/80 rounded font-semibold text-text-secondary shadow-sm">Ctrl+K</kbd> or <kbd class="px-1.5 py-0.5 bg-surface-card border border-border-default/80 rounded font-semibold text-text-secondary shadow-sm">Cmd+K</kbd> to toggle.</span>
+            <span>Use <kbd class="px-1.5 py-0.5 bg-surface-card border border-border-default rounded font-semibold text-text-secondary shadow-sm">Ctrl+K</kbd> or <kbd class="px-1.5 py-0.5 bg-surface-card border border-border-default rounded font-semibold text-text-secondary shadow-sm">Cmd+K</kbd> to toggle.</span>
             <span>Esc to close.</span>
         </div>
     </div>
 </div>
+

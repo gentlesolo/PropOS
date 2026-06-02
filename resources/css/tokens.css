@@ -205,9 +205,9 @@
        ========================================================================= */
 
     /* Font families */
-    --font-sans:    'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji';
+    --font-sans:    'Geist', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji';
     --font-display: var(--font-sans);
-    --font-mono:    ui-monospace, 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    --font-mono:    'Geist Mono', ui-monospace, 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
 
     /* Font sizes */
     --font-size-2xs: 0.625rem;    /*  10px */
@@ -240,13 +240,13 @@
     --line-height-relaxed: 1.625;
     --line-height-loose:   2;
 
-    /* Letter spacing */
+    /* Letter spacing (tighter for Geist/Linear style) */
     --tracking-tighter: -0.05em;
-    --tracking-tight:   -0.025em;
-    --tracking-normal:   0em;
-    --tracking-wide:     0.025em;
-    --tracking-wider:    0.05em;
-    --tracking-widest:   0.1em;
+    --tracking-tight:   -0.02em;
+    --tracking-normal:   -0.01em;
+    --tracking-wide:     0.01em;
+    --tracking-wider:    0.02em;
+    --tracking-widest:   0.05em;
 
     /* =========================================================================
        5. SPACING

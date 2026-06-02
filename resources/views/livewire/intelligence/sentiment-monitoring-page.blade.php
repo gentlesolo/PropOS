@@ -7,12 +7,12 @@
             <p class="mt-2 text-text-secondary">AI analysis of client feedback and interaction sentiment to guide strategy.</p>
         </div>
         <div class="flex items-center gap-3">
-            <select wire:model="period" class="border border-border-default rounded-xl px-3 py-2 text-sm bg-surface-card text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+            <select wire:model="period" class="border border-border-default rounded-xl px-3 py-2 text-sm bg-surface-card text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                 <option value="30">Last 30 Days</option>
                 <option value="60">Last 60 Days</option>
                 <option value="90">Last 90 Days</option>
             </select>
-            <button wire:click="analyseSentiment" class="px-4 py-2 bg-brand-primary text-white rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors">
+            <button wire:click="analyseSentiment" class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors">
                 <span wire:loading.remove wire:target="analyseSentiment">✨ Analyse Sentiment</span>
                 <span wire:loading wire:target="analyseSentiment" class="flex items-center gap-2">
                     <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
@@ -24,21 +24,21 @@
 
     <!-- Stats -->
     <div class="grid grid-cols-4 gap-4 mb-8">
-        <div class="glass-panel p-5 rounded-2xl border border-border-default/60 text-center">
+        <div class="bg-surface-card p-5 rounded-2xl border border-border-default text-center">
             <p class="text-2xl font-black text-text-primary">{{ $stats['total_feedback'] }}</p>
             <p class="text-xs text-text-secondary mt-1">Feedback Records</p>
         </div>
-        <div class="glass-panel p-5 rounded-2xl border border-border-default/60 text-center">
+        <div class="bg-surface-card p-5 rounded-2xl border border-border-default text-center">
             <p class="text-2xl font-black {{ $stats['avg_rating'] >= 4 ? 'text-success-600' : ($stats['avg_rating'] >= 3 ? 'text-warning-600' : 'text-danger-600') }}">
                 {{ $stats['avg_rating'] }}/5
             </p>
             <p class="text-xs text-text-secondary mt-1">Avg Viewing Rating</p>
         </div>
-        <div class="glass-panel p-5 rounded-2xl border border-border-default/60 text-center">
+        <div class="bg-surface-card p-5 rounded-2xl border border-border-default text-center">
             <p class="text-2xl font-black text-success-600">{{ $stats['would_offer'] }}</p>
             <p class="text-xs text-text-secondary mt-1">Would Consider Offer</p>
         </div>
-        <div class="glass-panel p-5 rounded-2xl border border-border-default/60 text-center">
+        <div class="bg-surface-card p-5 rounded-2xl border border-border-default text-center">
             <p class="text-2xl font-black text-brand-primary">{{ $stats['very_interested'] }}</p>
             <p class="text-xs text-text-secondary mt-1">Very Interested</p>
         </div>
@@ -49,7 +49,7 @@
         <!-- AI Summary (if generated) -->
         @if($aiSummary)
         <div class="xl:col-span-1 space-y-5">
-            <div class="glass-panel rounded-2xl border border-brand-primary/20 bg-brand-primary/5 p-5">
+            <div class="bg-surface-card rounded-2xl border border-brand-primary/20 bg-brand-primary/5 p-5">
                 <h3 class="text-sm font-bold text-text-primary mb-4 flex items-center gap-2">
                     <span class="h-6 w-6 bg-brand-primary rounded-lg flex items-center justify-center text-white text-xs">AI</span>
                     Sentiment Analysis
@@ -102,7 +102,7 @@
         @endif
 
             <!-- Rating Distribution -->
-            <div class="glass-panel rounded-2xl border border-border-default/60 p-5 mb-5">
+            <div class="bg-surface-card rounded-2xl border border-border-default p-5 mb-5">
                 <h3 class="text-sm font-bold text-text-primary mb-4">Rating Distribution</h3>
                 @php $maxCount = max(1, max($ratingDist)); @endphp
                 <div class="space-y-2">
@@ -119,8 +119,8 @@
             </div>
 
             <!-- Feedback Table -->
-            <div class="glass-panel rounded-2xl border border-border-default/60 overflow-hidden shadow-sm">
-                <div class="px-5 py-3 border-b border-border-default/60 bg-surface-sunken/30">
+            <div class="bg-surface-card rounded-2xl border border-border-default overflow-hidden shadow-sm">
+                <div class="px-5 py-3 border-b border-border-default bg-surface-sunken/30">
                     <h3 class="text-sm font-bold text-text-primary">Recent Viewing Feedback</h3>
                 </div>
                 <div class="divide-y divide-border-default/40">
@@ -151,3 +151,6 @@
         </div>
     </div>
 </div>
+
+
+

@@ -15,11 +15,14 @@ class WebhooksPage extends Component
     public ?string $revealedSecret = null;
 
     public const AVAILABLE_EVENTS = [
-        'listing.published'   => 'Listing Published',
-        'listing.updated'     => 'Listing Updated',
+        'listing.published'     => 'Listing Published',
+        'listing.updated'       => 'Listing Updated',
         'listing.price_reduced' => 'Price Reduced',
-        'listing.deleted'     => 'Listing Removed / Archived',
-        'viewing.scheduled'   => 'Viewing Scheduled',
+        'listing.deleted'       => 'Listing Removed / Archived',
+        'viewing.scheduled'     => 'Viewing Scheduled',
+        'contact.created'       => 'Contact Created',
+        'contact.updated'       => 'Contact Updated',
+        'contact.tagged'        => 'Contact Tagged / Untagged',
     ];
 
     public function addSubscription(): void

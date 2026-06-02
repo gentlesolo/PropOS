@@ -8,7 +8,7 @@
             <a href="{{ route('marketing.campaigns') }}" class="px-4 py-2 border border-border-default text-text-primary rounded-xl text-sm font-medium hover:bg-surface-sunken transition-colors">
                 All Campaigns
             </a>
-            <a href="{{ route('marketing.campaign.new') }}" class="px-4 py-2 bg-brand-primary text-white rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors">
+            <a href="{{ route('marketing.campaign.new') }}" class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors">
                 + New Campaign
             </a>
         </div>
@@ -18,17 +18,17 @@
 
         <!-- Calendar -->
         <div class="xl:col-span-2">
-            <div class="glass-panel rounded-2xl border border-border-default/60 overflow-hidden shadow-sm">
+            <div class="bg-surface-card rounded-2xl border border-border-default overflow-hidden shadow-sm">
 
                 <!-- Month Navigator -->
-                <div class="px-6 py-4 border-b border-border-default/60 flex items-center justify-between bg-surface-sunken/30">
-                    <button wire:click="previousMonth" class="h-8 w-8 rounded-full bg-surface-card border border-border-default/60 flex items-center justify-center hover:bg-surface-sunken transition-colors">
+                <div class="px-6 py-4 border-b border-border-default flex items-center justify-between bg-surface-sunken/30">
+                    <button wire:click="previousMonth" class="h-8 w-8 rounded-full bg-surface-card border border-border-default flex items-center justify-center hover:bg-surface-sunken transition-colors">
                         <svg class="h-4 w-4 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                     </button>
                     <h2 class="text-base font-bold text-text-primary">
                         {{ \Carbon\Carbon::create($year, $month)->format('F Y') }}
                     </h2>
-                    <button wire:click="nextMonth" class="h-8 w-8 rounded-full bg-surface-card border border-border-default/60 flex items-center justify-center hover:bg-surface-sunken transition-colors">
+                    <button wire:click="nextMonth" class="h-8 w-8 rounded-full bg-surface-card border border-border-default flex items-center justify-center hover:bg-surface-sunken transition-colors">
                         <svg class="h-4 w-4 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </button>
                 </div>
@@ -49,7 +49,7 @@
                     @php $isToday = $dayData['date']->isToday(); @endphp
                     <div class="bg-surface-card min-h-[80px] p-1.5 relative hover:bg-surface-sunken/30 transition-colors">
                         <div class="flex justify-between items-center mb-1">
-                            <span class="text-xs font-bold {{ $isToday ? 'h-5 w-5 bg-brand-primary text-white rounded-full flex items-center justify-center' : 'text-text-secondary' }}">
+                            <span class="text-xs font-bold {{ $isToday ? 'h-5 w-5 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-full flex items-center justify-center' : 'text-text-secondary' }}">
                                 {{ $dayData['day'] }}
                             </span>
                         </div>
@@ -91,7 +91,7 @@
 
         <!-- Content Detail Panel -->
         <div class="xl:col-span-1">
-            <div class="glass-panel rounded-2xl border border-border-default/60 p-5 sticky top-6">
+            <div class="bg-surface-card rounded-2xl border border-border-default p-5 sticky top-6">
                 @if($selectedContent)
                 <div>
                     <div class="flex items-center justify-between mb-4">
@@ -147,3 +147,5 @@
         </div>
     </div>
 </div>
+
+

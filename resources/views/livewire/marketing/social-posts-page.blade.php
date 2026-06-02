@@ -13,7 +13,7 @@
                 class="w-full text-left rounded-xl border p-3 transition
                        {{ $selectedListingId == $listing->id
                            ? 'border-brand-primary bg-brand-primary/5'
-                           : 'border-border-default/60 bg-surface-card hover:border-brand-primary/40' }}">
+                           : 'border-border-default bg-surface-card hover:border-brand-primary/40' }}">
             <div class="flex items-start gap-3">
                 {{-- Thumbnail --}}
                 @if($listing->graphics->where('format','square')->first())
@@ -87,7 +87,7 @@
                     </p>
                 </div>
                 <button wire:click="regenerateNow" wire:loading.attr="disabled"
-                        class="px-4 py-2 bg-brand-primary text-white text-sm font-semibold rounded-xl hover:bg-brand-secondary transition disabled:opacity-60 flex items-center gap-2">
+                        class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 text-sm font-semibold rounded-xl hover:bg-brand-secondary transition disabled:opacity-60 flex items-center gap-2">
                     <svg wire:loading.remove wire:target="regenerateNow" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                     <svg wire:loading wire:target="regenerateNow" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                     <span wire:loading.remove wire:target="regenerateNow">{{ $graphics->isEmpty() ? 'Generate Graphics' : 'Regenerate All' }}</span>
@@ -96,7 +96,7 @@
             </div>
 
             @if($graphics->isEmpty())
-            <div class="bg-surface-card border border-dashed border-border-default/60 rounded-2xl p-12 text-center">
+            <div class="bg-surface-card border border-dashed border-border-default rounded-2xl p-12 text-center">
                 <p class="text-text-secondary text-sm">No graphics yet for this listing.</p>
                 <p class="text-text-tertiary text-xs mt-1">Click "Generate Graphics" above to create Instagram, Facebook, and Story formats.</p>
             </div>
@@ -106,7 +106,7 @@
             {{-- ── Graphics Grid ──────────────────────────────────────────────── --}}
             <div class="grid grid-cols-3 gap-4">
                 @foreach($graphics as $graphic)
-                <div class="bg-surface-card border border-border-default/60 rounded-2xl overflow-hidden group">
+                <div class="bg-surface-card border border-border-default rounded-2xl overflow-hidden group">
 
                     {{-- Preview image --}}
                     <div class="relative aspect-square bg-surface-raised overflow-hidden">
@@ -161,7 +161,7 @@
                                     copied = true;
                                     setTimeout(() => copied = false, 2000);
                                 "
-                                class="mt-2 w-full py-1.5 rounded-lg border border-border-default/60 text-xs font-medium text-text-secondary hover:border-brand-primary hover:text-brand-primary transition">
+                                class="mt-2 w-full py-1.5 rounded-lg border border-border-default text-xs font-medium text-text-secondary hover:border-brand-primary hover:text-brand-primary transition">
                                 <span x-show="!copied">Copy caption</span>
                                 <span x-show="copied" x-cloak class="text-success-600">✓ Copied!</span>
                             </button>
@@ -188,7 +188,7 @@
 
             {{-- ── All Channel Captions ───────────────────────────────────────── --}}
             @if(! empty($allChannelCopy))
-            <div class="bg-surface-card border border-border-default/60 rounded-2xl p-6">
+            <div class="bg-surface-card border border-border-default rounded-2xl p-6">
                 <h3 class="text-sm font-semibold text-text-primary mb-4">All Channel Captions</h3>
 
                 <div class="space-y-4">
@@ -227,7 +227,7 @@
                                     copied = true;
                                     setTimeout(() => copied = false, 2000);
                                 "
-                                class="px-3 py-1.5 rounded-lg border border-border-default/60 text-xs font-medium text-text-secondary hover:border-brand-primary hover:text-brand-primary transition">
+                                class="px-3 py-1.5 rounded-lg border border-border-default text-xs font-medium text-text-secondary hover:border-brand-primary hover:text-brand-primary transition">
                                 <span x-show="!copied">Copy caption</span>
                                 <span x-show="copied" x-cloak class="text-success-600">✓ Copied!</span>
                             </button>
@@ -243,3 +243,5 @@
         @endif {{-- selectedListing --}}
     </div>
 </div>
+
+

@@ -3,6 +3,8 @@
 use App\Http\Controllers\Api\Public\PublicListingController;
 use App\Http\Controllers\Api\Public\PublicLeadController;
 use App\Http\Controllers\Api\Public\PublicAgentController;
+use App\Http\Controllers\Api\Public\PublicBookingController;
+use App\Http\Controllers\Api\Public\PublicContactController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\LeadWebhookController;
 use App\Http\Controllers\Api\Mobile\MobileInvoiceController;
@@ -50,6 +52,16 @@ Route::prefix('v1/public')->name('api.v1.public.')->middleware(['api.key', 'thro
 
     // Agent availability calendar
     Route::get('/agents/{id}/availability', [PublicAgentController::class, 'availability'])->name('agents.availability');
+
+    // ── Contact API (full_access keys only) ───────────────────────────────
+    Route::middleware(['api.key:full_access', 'throttle:contact-api'])->group(function () {
+        Route::get('/contacts',                     [PublicContactController::class, 'index'])->name('contacts.index');
+        Route::post('/contacts',                    [PublicContactController::class, 'store'])->name('contacts.store');
+        Route::get('/contacts/{id}',                [PublicContactController::class, 'show'])->name('contacts.show');
+        Route::patch('/contacts/{id}',              [PublicContactController::class, 'update'])->name('contacts.update');
+        Route::post('/contacts/{id}/tags',          [PublicContactController::class, 'addTags'])->name('contacts.tags.add');
+        Route::delete('/contacts/{id}/tags',        [PublicContactController::class, 'removeTags'])->name('contacts.tags.remove');
+    });
 });
 
 // PayFast ITN webhook (public — verified by signature inside controller)

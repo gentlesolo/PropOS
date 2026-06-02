@@ -14,7 +14,7 @@
     <!-- Stats -->
     <div class="grid grid-cols-4 gap-4 mb-8">
         @foreach(['total_sent' => 'Sent', 'delivered' => 'Delivered', 'read' => 'Read', 'failed' => 'Failed'] as $key => $label)
-        <div class="glass-panel p-5 rounded-2xl border border-border-default/60 text-center">
+        <div class="bg-surface-card p-5 rounded-2xl border border-border-default text-center">
             <p class="text-2xl font-black text-text-primary">{{ $stats[$key] }}</p>
             <p class="text-xs text-text-secondary mt-1 font-medium">{{ $label }}</p>
         </div>
@@ -22,7 +22,7 @@
     </div>
 
     <!-- Tabs -->
-    <div class="flex gap-1 border-b border-border-default/60 mb-6">
+    <div class="flex gap-1 border-b border-border-default mb-6">
         @foreach(['messages' => 'Messages', 'templates' => 'Templates'] as $tab => $label)
         <button wire:click="$set('activeTab', '{{ $tab }}')"
             class="px-5 py-2.5 border-b-2 font-bold text-sm transition-colors
@@ -34,7 +34,7 @@
 
     <!-- Compose Form -->
     @if($showCompose && $activeTab === 'messages')
-    <div class="glass-panel rounded-2xl border border-success-200 bg-success-50/30 p-5 mb-6">
+    <div class="bg-surface-card rounded-2xl border border-success-200 bg-success-50/30 p-5 mb-6">
         <h3 class="text-sm font-bold text-text-primary mb-4">Compose Message</h3>
         <form wire:submit.prevent="sendMessage" class="space-y-3">
             <div class="grid grid-cols-2 gap-3">
@@ -79,7 +79,7 @@
 
     @if($activeTab === 'messages')
     <!-- Message History -->
-    <div class="glass-panel rounded-2xl border border-border-default/60 overflow-hidden shadow-sm">
+    <div class="bg-surface-card rounded-2xl border border-border-default overflow-hidden shadow-sm">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead><tr class="bg-surface-sunken/50 border-b border-border-default/40">
@@ -119,23 +119,23 @@
                 </tbody>
             </table>
         </div>
-        <div class="px-5 py-3 border-t border-border-default/60">{{ $messages->links() }}</div>
+        <div class="px-5 py-3 border-t border-border-default">{{ $messages->links() }}</div>
     </div>
 
     @else
     <!-- Templates -->
     @if($showTemplateForm)
-    <div class="glass-panel rounded-2xl border border-border-default/60 p-5 mb-5">
+    <div class="bg-surface-card rounded-2xl border border-border-default p-5 mb-5">
         <h3 class="text-sm font-bold text-text-primary mb-4">New Template</h3>
         <form wire:submit.prevent="saveTemplate" class="space-y-3">
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="block text-xs font-medium text-text-secondary mb-1">Template Name *</label>
-                    <input wire:model.defer="template_name" type="text" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    <input wire:model.defer="template_name" type="text" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-text-secondary mb-1">Category</label>
-                    <select wire:model.defer="template_category" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    <select wire:model.defer="template_category" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                         <option value="marketing">Marketing</option>
                         <option value="utility">Utility</option>
                         <option value="authentication">Authentication</option>
@@ -144,23 +144,23 @@
             </div>
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Message Body * <span class="text-text-tertiary">(use {{1}}, {{2}} for variables)</span></label>
-                <textarea wire:model.defer="template_body" rows="4" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary resize-none"></textarea>
+                <textarea wire:model.defer="template_body" rows="4" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page resize-none"></textarea>
             </div>
             <div class="flex gap-2 justify-end">
                 <button type="button" wire:click="$set('showTemplateForm', false)" class="px-4 py-2 border border-border-default text-text-secondary rounded-xl text-sm font-medium">Cancel</button>
-                <button type="submit" class="px-4 py-2 bg-brand-primary text-white rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors">Save Template</button>
+                <button type="submit" class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors">Save Template</button>
             </div>
         </form>
     </div>
     @else
     <div class="flex justify-end mb-4">
-        <button wire:click="$set('showTemplateForm', true)" class="px-4 py-2 bg-brand-primary text-white rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors">+ New Template</button>
+        <button wire:click="$set('showTemplateForm', true)" class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors">+ New Template</button>
     </div>
     @endif
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         @forelse($templates as $template)
-        <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+        <div class="bg-surface-card rounded-2xl border border-border-default p-5">
             <div class="flex items-start justify-between mb-2">
                 <h3 class="text-sm font-bold text-text-primary">{{ $template->name }}</h3>
                 <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase
@@ -184,3 +184,6 @@
     </div>
     @endif
 </div>
+
+
+

@@ -7,29 +7,29 @@
         <div class="flex gap-3">
             <a href="{{ route('training.objections') }}" class="px-4 py-2 border border-border-default text-text-secondary rounded-xl text-sm font-medium hover:bg-surface-sunken transition-colors">🛡️ Objection Handler</a>
             <a href="{{ route('training.roleplay') }}" class="px-4 py-2 border border-border-default text-text-secondary rounded-xl text-sm font-medium hover:bg-surface-sunken transition-colors">🎭 Role-Play</a>
-            <a href="{{ route('training.skills') }}" class="px-4 py-2 bg-brand-primary text-white rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors">📚 Skills Library</a>
+            <a href="{{ route('training.skills') }}" class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors">📚 Skills Library</a>
         </div>
     </div>
 
     <!-- My Progress Overview -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div class="glass-panel p-5 rounded-2xl border border-border-default/60 text-center">
+        <div class="bg-surface-card p-5 rounded-2xl border border-border-default text-center">
             <p class="text-3xl font-black text-brand-primary">{{ $completed }}/{{ $total }}</p>
             <p class="text-xs text-text-secondary mt-1 font-medium">Modules Completed</p>
         </div>
-        <div class="glass-panel p-5 rounded-2xl border border-border-default/60 text-center">
+        <div class="bg-surface-card p-5 rounded-2xl border border-border-default text-center">
             <p class="text-3xl font-black {{ $total > 0 ? ($completed / $total >= 0.8 ? 'text-success-600' : 'text-warning-600') : 'text-text-primary' }}">
                 {{ $total > 0 ? round(($completed / $total) * 100) : 0 }}%
             </p>
             <p class="text-xs text-text-secondary mt-1 font-medium">Overall Progress</p>
         </div>
-        <div class="glass-panel p-5 rounded-2xl border border-{{ $mandatoryCompleted >= $mandatory->count() ? 'success' : 'danger' }}-200 text-center">
+        <div class="bg-surface-card p-5 rounded-2xl border border-{{ $mandatoryCompleted >= $mandatory->count() ? 'success' : 'danger' }}-200 text-center">
             <p class="text-3xl font-black {{ $mandatoryCompleted >= $mandatory->count() ? 'text-success-600' : 'text-danger-600' }}">
                 {{ $mandatoryCompleted }}/{{ $mandatory->count() }}
             </p>
             <p class="text-xs text-text-secondary mt-1 font-medium">Mandatory Modules</p>
         </div>
-        <div class="glass-panel p-5 rounded-2xl border border-border-default/60 text-center">
+        <div class="bg-surface-card p-5 rounded-2xl border border-border-default text-center">
             @if($nextModule)
             <p class="text-sm font-bold text-text-primary leading-tight">{{ Str::limit($nextModule->title, 30) }}</p>
             <p class="text-xs text-text-secondary mt-1 font-medium">Next Recommended</p>
@@ -44,8 +44,8 @@
 
         <!-- Team Leaderboard -->
         <div class="xl:col-span-2">
-            <div class="glass-panel rounded-2xl border border-border-default/60 overflow-hidden shadow-sm">
-                <div class="px-5 py-4 border-b border-border-default/60 bg-surface-sunken/30">
+            <div class="bg-surface-card rounded-2xl border border-border-default overflow-hidden shadow-sm">
+                <div class="px-5 py-4 border-b border-border-default bg-surface-sunken/30">
                     <h3 class="text-sm font-bold text-text-primary">Team Leaderboard</h3>
                 </div>
                 <div class="divide-y divide-border-default/40">
@@ -94,18 +94,18 @@
         <!-- Right: Recent Completions + Next Module -->
         <div class="xl:col-span-1 space-y-5">
             @if($nextModule)
-            <div class="glass-panel rounded-2xl border border-brand-primary/20 bg-brand-primary/5 p-5">
+            <div class="bg-surface-card rounded-2xl border border-brand-primary/20 bg-brand-primary/5 p-5">
                 <p class="text-xs font-bold text-brand-primary uppercase tracking-wider mb-2">Continue Learning</p>
                 <h3 class="text-base font-bold text-text-primary mb-1">{{ $nextModule->title }}</h3>
                 <p class="text-xs text-text-secondary mb-3">{{ $nextModule->description }}</p>
-                <a href="{{ route('training.skills') }}" class="block text-center py-2 bg-brand-primary text-white rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors">
+                <a href="{{ route('training.skills') }}" class="block text-center py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors">
                     Start Module →
                 </a>
             </div>
             @endif
 
             @if($recentCompletions->isNotEmpty())
-            <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+            <div class="bg-surface-card rounded-2xl border border-border-default p-5">
                 <h3 class="text-sm font-bold text-text-primary mb-3">Recently Completed</h3>
                 <div class="space-y-3">
                     @foreach($recentCompletions as $prog)
@@ -125,7 +125,7 @@
             @endif
 
             <!-- Compliance Status -->
-            <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+            <div class="bg-surface-card rounded-2xl border border-border-default p-5">
                 <h3 class="text-sm font-bold text-text-primary mb-3">Compliance Status</h3>
                 @forelse($mandatory as $mod)
                 @php
@@ -145,3 +145,5 @@
         </div>
     </div>
 </div>
+
+

@@ -1,6 +1,6 @@
-﻿<div class="flex gap-0 h-full">
+<div class="flex gap-0 h-full">
 
-    {{-- ══ Main column ══════════════════════════════════════════════════════════ --}}
+    {{-- -- Main column ---------------------------------------------------------- --}}
     <div class="flex-1 min-w-0 overflow-auto p-6">
 
         {{-- Header --}}
@@ -11,7 +11,7 @@
             </div>
             @if($activeTab === 'setup')
             <button wire:click="openCreateForm"
-                class="px-4 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">
+                class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">
                 + New Budget
             </button>
             @endif
@@ -27,12 +27,12 @@
             @endforeach
         </div>
 
-        {{-- ── Setup Tab ─────────────────────────────────────────────────────── --}}
+        {{-- -- Setup Tab ------------------------------------------------------- --}}
         @if($activeTab === 'setup')
 
         {{-- Create / Edit form --}}
         @if($showForm)
-        <div class="glass-panel rounded-2xl border border-brand-200 p-5 mb-6">
+        <div class="bg-surface-card rounded-2xl border border-brand-200 p-5 mb-6">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-base font-semibold text-text-primary">{{ $editBudgetId ? 'Edit Budget' : 'New Budget' }}</h2>
                 <button wire:click="cancelForm" class="text-text-tertiary hover:text-text-secondary text-xl leading-none">&times;</button>
@@ -44,7 +44,7 @@
                     <div class="lg:col-span-2">
                         <label class="block text-xs font-medium text-text-secondary mb-1">Budget Name *</label>
                         <input wire:model="budgetName" type="text" placeholder="e.g. FY2026 Portfolio Budget"
-                            class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                            class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                         @error('budgetName') <p class="text-xs text-danger-600 mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div>
@@ -72,13 +72,13 @@
                     <div>
                         <label class="block text-xs font-medium text-text-secondary mb-1">Vacancy Rate Assumption (%)</label>
                         <input wire:model="vacancyRate" type="number" step="0.1" min="0" max="100"
-                            class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                            class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                         @error('vacancyRate') <p class="text-xs text-danger-600 mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-text-secondary mb-1">Rent Escalation Assumption (%)</label>
                         <input wire:model="escalation" type="number" step="0.1" min="0" max="100"
-                            class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                            class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                         @error('escalation') <p class="text-xs text-danger-600 mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
@@ -93,7 +93,7 @@
                         <button type="button" wire:click="prefillFromActuals" wire:loading.attr="disabled"
                             class="text-xs px-3 py-1.5 border border-border-default rounded-lg text-text-secondary hover:bg-surface-hover transition-colors">
                             <span wire:loading.remove wire:target="prefillFromActuals">Prefill from actuals</span>
-                            <span wire:loading wire:target="prefillFromActuals">Loading…</span>
+                            <span wire:loading wire:target="prefillFromActuals">Loading�</span>
                         </button>
                     </div>
                     <div class="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-12 gap-2">
@@ -131,15 +131,15 @@
 
                 <div>
                     <label class="block text-xs font-medium text-text-secondary mb-1">Notes</label>
-                    <textarea wire:model="budgetNotes" rows="2" placeholder="Assumptions, context, key decisions…"
-                        class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"></textarea>
+                    <textarea wire:model="budgetNotes" rows="2" placeholder="Assumptions, context, key decisions�"
+                        class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page"></textarea>
                 </div>
 
                 <div class="flex gap-3">
                     <button type="submit" wire:loading.attr="disabled"
-                        class="px-5 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">
+                        class="px-5 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">
                         <span wire:loading.remove wire:target="saveBudget">{{ $editBudgetId ? 'Update Budget' : 'Save as Draft' }}</span>
-                        <span wire:loading wire:target="saveBudget">Saving…</span>
+                        <span wire:loading wire:target="saveBudget">Saving�</span>
                     </button>
                     <button type="button" wire:click="cancelForm"
                         class="px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors">
@@ -152,9 +152,9 @@
 
         {{-- Budget list --}}
         @if($budgets->isEmpty() && !$showForm)
-        <div class="glass-panel rounded-2xl border border-border-default/60 p-14 text-center">
+        <div class="bg-surface-card rounded-2xl border border-border-default p-14 text-center">
             <div class="text-text-tertiary text-sm mb-3">No budgets created yet.</div>
-            <button wire:click="openCreateForm" class="px-4 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">Create First Budget</button>
+            <button wire:click="openCreateForm" class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">Create First Budget</button>
         </div>
         @else
         <div class="space-y-3">
@@ -164,7 +164,7 @@
                 $isActive = $detailBudgetId === $budget->id && $showDetail;
             @endphp
             <div wire:click="openDetail({{ $budget->id }})"
-                class="glass-panel rounded-2xl border {{ $isActive ? 'border-brand-400' : 'border-border-default/60' }} p-4 cursor-pointer hover:border-brand-300 transition-colors">
+                class="bg-surface-card rounded-2xl border {{ $isActive ? 'border-brand-400' : 'border-border-default' }} p-4 cursor-pointer hover:border-brand-300 transition-colors">
                 <div class="flex items-start justify-between gap-4">
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center gap-2 mb-1">
@@ -177,8 +177,8 @@
                             @endif
                         </div>
                         <div class="text-xs text-text-secondary">
-                            {{ $budget->year }} · {{ $budget->property?->address_line_1 ?? 'All Properties' }}
-                            @if($budget->approver) · Approved by {{ $budget->approver->first_name }} {{ $budget->approver->last_name }}@endif
+                            {{ $budget->year }} � {{ $budget->property?->address_line_1 ?? 'All Properties' }}
+                            @if($budget->approver) � Approved by {{ $budget->approver->first_name }} {{ $budget->approver->last_name }}@endif
                         </div>
                         <div class="flex gap-4 mt-2 text-xs">
                             <span class="text-success-600 font-medium">Income: {{ $currencySymbol }}{{ number_format($budget->annualIncomeTarget) }}</span>
@@ -226,7 +226,7 @@
 
         @endif {{-- end setup tab --}}
 
-        {{-- ── Variance Tab ───────────────────────────────────────────────────── --}}
+        {{-- -- Variance Tab ----------------------------------------------------- --}}
         @if($activeTab === 'variance')
         <div class="flex flex-wrap gap-3 mb-5">
             <div>
@@ -252,7 +252,7 @@
         </div>
 
         @if(!$varianceBudget)
-        <div class="glass-panel rounded-2xl border border-warning-200 p-8 text-center text-warning-700 text-sm">
+        <div class="bg-surface-card rounded-2xl border border-warning-200 p-8 text-center text-warning-700 text-sm">
             No approved budget found for the current year. Create and approve a budget first.
         </div>
         @else
@@ -262,7 +262,7 @@
             $totActExp  = collect($varianceData)->sum('actual_expenses');
             $totTgtExp  = collect($varianceData)->sum('expense_target');
         @endphp
-        <div class="glass-panel rounded-2xl border border-border-default/60 overflow-hidden">
+        <div class="bg-surface-card rounded-2xl border border-border-default overflow-hidden">
             <div class="px-4 py-3 border-b border-border-default bg-surface-hover/30 flex items-center justify-between">
                 <span class="text-xs font-semibold text-text-secondary">Comparing against: <span class="text-text-primary">{{ $varianceBudget->name }}</span></span>
             </div>
@@ -315,9 +315,9 @@
         @endif
         @endif
 
-        {{-- ── Forecast Tab ───────────────────────────────────────────────────── --}}
+        {{-- -- Forecast Tab ----------------------------------------------------- --}}
         @if($activeTab === 'forecast')
-        <div class="glass-panel rounded-2xl border border-border-default/60 p-4 mb-5">
+        <div class="bg-surface-card rounded-2xl border border-border-default p-4 mb-5">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                     <label class="block text-xs font-medium text-text-secondary mb-2">Vacancy Rate Override: <span class="text-brand-600 font-bold">{{ $forecastVacancy }}%</span></label>
@@ -329,7 +329,7 @@
                     <label class="block text-xs font-medium text-text-secondary mb-1">Escalation Override (%)</label>
                     <input wire:model.live="forecastEscalation" type="number" step="0.5" min="0" max="30"
                         placeholder="Use lease defaults"
-                        class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                        class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     <p class="text-xs text-text-tertiary mt-1">0 = use each lease's own escalation %</p>
                 </div>
                 <div>
@@ -351,7 +351,7 @@
             $totFcExp = collect($forecastData)->sum('projected_expenses');
             $totFcNet = collect($forecastData)->sum('projected_net');
         @endphp
-        <div class="glass-panel rounded-2xl border border-border-default/60 overflow-hidden">
+        <div class="bg-surface-card rounded-2xl border border-border-default overflow-hidden">
             <table class="w-full text-sm">
                 <thead class="bg-surface-hover/50 border-b border-border-default">
                     <tr>
@@ -398,7 +398,7 @@
             </table>
         </div>
         @else
-        <div class="glass-panel rounded-2xl border border-border-default/60 p-12 text-center text-text-tertiary text-sm">
+        <div class="bg-surface-card rounded-2xl border border-border-default p-12 text-center text-text-tertiary text-sm">
             No active leases found to generate a forecast. Add active leases first.
         </div>
         @endif
@@ -406,14 +406,14 @@
 
     </div>{{-- end main column --}}
 
-    {{-- ══ Detail panel ═════════════════════════════════════════════════════════ --}}
+    {{-- -- Detail panel --------------------------------------------------------- --}}
     @if($showDetail && $detailBudget)
     <div class="w-80 border-l border-border-default bg-surface-card overflow-y-auto flex-shrink-0">
         <div class="p-5">
             <div class="flex items-start justify-between mb-5">
                 <div>
                     <div class="font-semibold text-text-primary text-sm leading-tight">{{ $detailBudget->name }}</div>
-                    <div class="text-xs text-text-tertiary mt-0.5">{{ $detailBudget->year }} · {{ $detailBudget->property?->address_line_1 ?? 'All Properties' }}</div>
+                    <div class="text-xs text-text-tertiary mt-0.5">{{ $detailBudget->year }} � {{ $detailBudget->property?->address_line_1 ?? 'All Properties' }}</div>
                 </div>
                 <button wire:click="closeDetail" class="text-text-tertiary hover:text-text-secondary text-xl leading-none">&times;</button>
             </div>
@@ -425,22 +425,22 @@
 
             {{-- Summary cards --}}
             <div class="grid grid-cols-2 gap-2 mb-4">
-                <div class="glass-panel rounded-xl border border-success-200 p-3 text-center">
+                <div class="bg-surface-card rounded-xl border border-success-200 p-3 text-center">
                     <div class="text-sm font-bold text-success-600">{{ $currencySymbol }}{{ number_format($detailBudget->annualIncomeTarget) }}</div>
                     <div class="text-xs text-text-tertiary mt-0.5">Income Target</div>
                 </div>
-                <div class="glass-panel rounded-xl border border-danger-200 p-3 text-center">
+                <div class="bg-surface-card rounded-xl border border-danger-200 p-3 text-center">
                     <div class="text-sm font-bold text-danger-600">{{ $currencySymbol }}{{ number_format($detailBudget->annualExpenseTarget) }}</div>
                     <div class="text-xs text-text-tertiary mt-0.5">Expense Target</div>
                 </div>
-                <div class="col-span-2 glass-panel rounded-xl border border-{{ $dNet >= 0 ? 'success' : 'danger' }}-200 p-3 text-center">
+                <div class="col-span-2 bg-surface-card rounded-xl border border-{{ $dNet >= 0 ? 'success' : 'danger' }}-200 p-3 text-center">
                     <div class="text-base font-bold {{ $dNet >= 0 ? 'text-success-600' : 'text-danger-600' }}">{{ $currencySymbol }}{{ number_format($dNet) }}</div>
                     <div class="text-xs text-text-tertiary mt-0.5">Projected Net</div>
                 </div>
             </div>
 
             {{-- Status + approval --}}
-            <div class="glass-panel rounded-xl border border-border-default/60 p-3 mb-4">
+            <div class="bg-surface-card rounded-xl border border-border-default p-3 mb-4">
                 <div class="flex justify-between items-center mb-2">
                     <span class="text-xs text-text-secondary">Status</span>
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-{{ $dc }}-50 text-{{ $dc }}-700 border border-{{ $dc }}-200">
@@ -449,7 +449,7 @@
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-xs text-text-secondary">Assumptions</span>
-                    <span class="text-xs text-text-primary">{{ $detailBudget->vacancy_rate_assumption }}% vacancy · {{ $detailBudget->escalation_assumption }}% escalation</span>
+                    <span class="text-xs text-text-primary">{{ $detailBudget->vacancy_rate_assumption }}% vacancy � {{ $detailBudget->escalation_assumption }}% escalation</span>
                 </div>
                 @if($detailBudget->approver)
                 <div class="flex justify-between items-center mt-1.5">
@@ -466,7 +466,7 @@
             </div>
 
             {{-- Monthly breakdown --}}
-            <div class="glass-panel rounded-xl border border-border-default/60 p-3 mb-4">
+            <div class="bg-surface-card rounded-xl border border-border-default p-3 mb-4">
                 <div class="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-3">Monthly Breakdown</div>
                 <div class="space-y-1.5">
                     @foreach(range(0,11) as $i)
@@ -493,7 +493,7 @@
             </div>
 
             @if($detailBudget->notes)
-            <div class="glass-panel rounded-xl border border-border-default/60 p-3 mb-4">
+            <div class="bg-surface-card rounded-xl border border-border-default p-3 mb-4">
                 <div class="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-2">Notes</div>
                 <p class="text-xs text-text-secondary leading-relaxed">{{ $detailBudget->notes }}</p>
             </div>
@@ -520,7 +520,7 @@
                 </button>
                 @elseif($detailBudget->status === 'approved')
                 <button wire:click="activateBudget({{ $detailBudget->id }})"
-                    class="w-full py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">
+                    class="w-full py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">
                     Set Active
                 </button>
                 @elseif($detailBudget->status === 'active')
@@ -535,3 +535,6 @@
     @endif
 
 </div>
+
+
+

@@ -42,26 +42,26 @@
             <form wire:submit.prevent="submitRsvp" class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Full Name</label>
-                    <input wire:model.defer="name" type="text" required placeholder="John Doe" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:outline-none">
+                    <input wire:model.defer="name" type="text" required placeholder="John Doe" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page focus:outline-none">
                     @error('name') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Email Address</label>
-                        <input wire:model.defer="email" type="email" required placeholder="john@example.com" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:outline-none">
+                        <input wire:model.defer="email" type="email" required placeholder="john@example.com" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page focus:outline-none">
                         @error('email') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Phone Number</label>
-                        <input wire:model.defer="phone" type="tel" placeholder="+234..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:outline-none">
+                        <input wire:model.defer="phone" type="tel" placeholder="+234..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page focus:outline-none">
                         @error('phone') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Additional Notes / Request (Optional)</label>
-                    <textarea wire:model.defer="notes" rows="3" placeholder="Let us know if you're representing a client or have specific questions..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:outline-none resize-none"></textarea>
+                    <textarea wire:model.defer="notes" rows="3" placeholder="Let us know if you're representing a client or have specific questions..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page focus:outline-none resize-none"></textarea>
                     @error('notes') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
                 </div>
 
@@ -82,3 +82,4 @@
         @endif
     </div>
 </div>
+

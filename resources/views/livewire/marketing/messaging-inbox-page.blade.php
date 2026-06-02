@@ -10,7 +10,7 @@
                 <p class="text-sm text-text-secondary mt-0.5">Unified email, SMS, and WhatsApp conversation history</p>
             </div>
             <button wire:click="openCompose()"
-                class="inline-flex items-center gap-2 px-4 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">
+                class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 Compose
             </button>
@@ -18,19 +18,19 @@
 
         {{-- Stats --}}
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <div class="glass-panel rounded-2xl border border-border-default/60 p-4 text-center">
+            <div class="bg-surface-card rounded-2xl border border-border-default p-4 text-center">
                 <div class="text-2xl font-bold text-text-primary">{{ $stats['emails_sent'] }}</div>
                 <div class="text-xs text-text-secondary mt-1">Emails Sent</div>
             </div>
-            <div class="glass-panel rounded-2xl border border-border-default/60 p-4 text-center">
+            <div class="bg-surface-card rounded-2xl border border-border-default p-4 text-center">
                 <div class="text-2xl font-bold text-text-primary">{{ $stats['emails_opened'] }}</div>
                 <div class="text-xs text-text-secondary mt-1">Emails Opened</div>
             </div>
-            <div class="glass-panel rounded-2xl border border-border-default/60 p-4 text-center">
+            <div class="bg-surface-card rounded-2xl border border-border-default p-4 text-center">
                 <div class="text-2xl font-bold text-text-primary">{{ $stats['sms_sent'] }}</div>
                 <div class="text-xs text-text-secondary mt-1">SMS Sent</div>
             </div>
-            <div class="glass-panel rounded-2xl border border-border-default/60 p-4 text-center">
+            <div class="bg-surface-card rounded-2xl border border-border-default p-4 text-center">
                 <div class="text-2xl font-bold text-text-primary">{{ $stats['wa_total'] }}</div>
                 <div class="text-xs text-text-secondary mt-1">WhatsApp Total</div>
             </div>
@@ -38,7 +38,7 @@
 
         {{-- Compose form --}}
         @if($showCompose)
-        <div class="glass-panel rounded-2xl border border-brand-200 p-5 mb-6">
+        <div class="bg-surface-card rounded-2xl border border-brand-200 p-5 mb-6">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-base font-semibold text-text-primary">Compose Message</h2>
                 <button wire:click="$set('showCompose', false)" class="text-text-tertiary hover:text-text-secondary text-xl leading-none">&times;</button>
@@ -48,7 +48,7 @@
                     <div>
                         <label class="block text-xs font-medium text-text-secondary mb-1">Channel</label>
                         <select wire:model.live="composeChannel"
-                            class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                            class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                             <option value="email">Email</option>
                             <option value="sms">SMS</option>
                             <option value="whatsapp">WhatsApp</option>
@@ -60,7 +60,7 @@
                         </label>
                         <input wire:model="compose_to"
                             type="{{ $composeChannel === 'email' ? 'email' : 'tel' }}"
-                            class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
+                            class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page"
                             placeholder="{{ $composeChannel === 'email' ? 'name@example.com' : '+2347012345678' }}">
                         @error('compose_to') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
                     </div>
@@ -68,7 +68,7 @@
                     <div>
                         <label class="block text-xs font-medium text-text-secondary mb-1">Subject *</label>
                         <input wire:model="compose_subject" type="text"
-                            class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                            class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                         @error('compose_subject') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
                     </div>
                     @endif
@@ -76,13 +76,13 @@
                 <div>
                     <label class="block text-xs font-medium text-text-secondary mb-1">Message *</label>
                     <textarea wire:model="compose_body" rows="4"
-                        class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary resize-none"
+                        class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page resize-none"
                         placeholder="Type your message…"></textarea>
                     @error('compose_body') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
                 </div>
                 <div class="flex gap-3">
                     <button type="submit" wire:loading.attr="disabled"
-                        class="px-5 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">
+                        class="px-5 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">
                         <span wire:loading.remove wire:target="sendMessage">Send</span>
                         <span wire:loading wire:target="sendMessage">Sending…</span>
                     </button>
@@ -115,7 +115,7 @@
 
                 {{-- Email section --}}
                 @if(in_array($channel, ['all', 'email']))
-                <div class="glass-panel rounded-2xl border border-border-default/60 overflow-hidden">
+                <div class="bg-surface-card rounded-2xl border border-border-default overflow-hidden">
                     <div class="px-4 py-3 border-b border-border-default bg-surface-hover/30 flex items-center gap-2">
                         <svg class="w-4 h-4 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                         <span class="text-sm font-semibold text-text-primary">Email ({{ $emailLogs->count() }})</span>
@@ -147,7 +147,7 @@
 
                 {{-- SMS section --}}
                 @if(in_array($channel, ['all', 'sms']))
-                <div class="glass-panel rounded-2xl border border-border-default/60 overflow-hidden">
+                <div class="bg-surface-card rounded-2xl border border-border-default overflow-hidden">
                     <div class="px-4 py-3 border-b border-border-default bg-surface-hover/30 flex items-center gap-2">
                         <svg class="w-4 h-4 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
                         <span class="text-sm font-semibold text-text-primary">SMS ({{ $smsMessages->count() }})</span>
@@ -179,7 +179,7 @@
 
                 {{-- WhatsApp section --}}
                 @if(in_array($channel, ['all', 'whatsapp']))
-                <div class="glass-panel rounded-2xl border border-border-default/60 overflow-hidden">
+                <div class="bg-surface-card rounded-2xl border border-border-default overflow-hidden">
                     <div class="px-4 py-3 border-b border-border-default bg-surface-hover/30 flex items-center justify-between">
                         <div class="flex items-center gap-2">
                             <svg class="w-4 h-4 text-success-600" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2C6.48 2 2 6.48 2 12c0 1.85.504 3.584 1.379 5.074L2 22l5.09-1.355A9.942 9.942 0 0012.004 22C17.52 22 22 17.52 22 12S17.52 2 12.004 2zm0 18.18a8.162 8.162 0 01-4.17-1.144l-.297-.178-3.085.82.824-3.012-.196-.31A8.14 8.14 0 013.82 12c0-4.51 3.67-8.18 8.184-8.18 4.515 0 8.185 3.67 8.185 8.18s-3.67 8.18-8.185 8.18z"/></svg>
@@ -225,14 +225,14 @@
             <div>
                 @if($selectedContact)
                 {{-- Thread view --}}
-                <div class="glass-panel rounded-2xl border border-brand-200 overflow-hidden flex flex-col" style="max-height:70vh">
+                <div class="bg-surface-card rounded-2xl border border-brand-200 overflow-hidden flex flex-col" style="max-height:70vh">
                     <div class="px-4 py-3 border-b border-border-default bg-brand-50/30 flex items-center justify-between shrink-0">
                         <div>
                             <p class="text-sm font-semibold text-text-primary">{{ $selectedContact->full_name }}</p>
                             <p class="text-xs text-text-tertiary">{{ $selectedContact->email ?? $selectedContact->phone ?? '' }}</p>
                         </div>
                         <div class="flex items-center gap-2">
-                            <button wire:click="openCompose({{ $selectedContact->id }})" class="text-xs px-2.5 py-1 bg-brand-primary text-white rounded-lg hover:bg-brand-hover transition-colors">Reply</button>
+                            <button wire:click="openCompose({{ $selectedContact->id }})" class="text-xs px-2.5 py-1 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg hover:bg-brand-hover transition-colors">Reply</button>
                             <button wire:click="closeThread" class="text-text-tertiary hover:text-text-secondary text-xl leading-none">&times;</button>
                         </div>
                     </div>
@@ -240,7 +240,7 @@
                         @forelse($thread as $msg)
                         <div class="flex {{ $msg['direction'] === 'outbound' ? 'justify-end' : 'justify-start' }}">
                             <div class="max-w-[85%] rounded-xl px-3 py-2 text-xs
-                                {{ $msg['direction'] === 'outbound' ? 'bg-brand-primary text-white' : 'bg-surface-hover text-text-primary' }}">
+                                {{ $msg['direction'] === 'outbound' ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10' : 'bg-surface-hover text-text-primary' }}">
                                 <div class="flex items-center gap-1.5 mb-1 opacity-75">
                                     @if($msg['type'] === 'email')
                                     <span>Email</span>
@@ -264,7 +264,7 @@
                 </div>
                 @else
                 {{-- Contact list --}}
-                <div class="glass-panel rounded-2xl border border-border-default/60 p-4">
+                <div class="bg-surface-card rounded-2xl border border-border-default p-4">
                     <p class="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-3">Contacts</p>
                     <input wire:model.live.debounce.300ms="contactSearch" type="text" placeholder="Search contacts…"
                         class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-1.5 text-xs text-text-primary mb-3">
@@ -287,3 +287,6 @@
     </div>
 
 </div>
+
+
+

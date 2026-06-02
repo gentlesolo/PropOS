@@ -24,7 +24,7 @@
     <!-- Lease Tab -->
     @if($activeTab === 'lease')
     @if($tenant->activeLease)
-    <div class="glass-panel rounded-2xl border border-border-default/60 p-6">
+    <div class="bg-surface-card rounded-2xl border border-border-default p-6">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-base font-semibold text-text-primary">Lease Summary</h2>
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success-50 text-success-700 border border-success-200">Active</span>
@@ -68,14 +68,14 @@
         @endif
     </div>
     @else
-    <div class="glass-panel rounded-2xl border border-border-default/60 p-8 text-center">
+    <div class="bg-surface-card rounded-2xl border border-border-default p-8 text-center">
         <p class="text-text-secondary">No active lease found. Please contact your property manager.</p>
     </div>
     @endif
 
     <!-- Payments Tab -->
     @elseif($activeTab === 'payments')
-    <div class="glass-panel rounded-2xl border border-border-default/60 overflow-hidden">
+    <div class="bg-surface-card rounded-2xl border border-border-default overflow-hidden">
         <div class="px-5 py-4 border-b border-border-default">
             <h2 class="text-base font-semibold text-text-primary">Payment History</h2>
         </div>
@@ -115,29 +115,29 @@
     <div class="space-y-4">
         <div class="flex items-center justify-between">
             <h2 class="text-base font-semibold text-text-primary">Maintenance Requests</h2>
-            <button wire:click="$toggle('showMaintenanceForm')" class="inline-flex items-center gap-1.5 px-4 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">
+            <button wire:click="$toggle('showMaintenanceForm')" class="inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 New Request
             </button>
         </div>
 
         @if($showMaintenanceForm)
-        <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+        <div class="bg-surface-card rounded-2xl border border-border-default p-5">
             <h3 class="text-sm font-semibold text-text-primary mb-4">Submit a Maintenance Request</h3>
             <form wire:submit.prevent="submitMaintenance" class="space-y-4">
                 <div>
                     <label class="block text-xs font-medium text-text-secondary mb-1">Title *</label>
-                    <input wire:model="maintenance_title" type="text" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary" placeholder="e.g. Leaking tap in bathroom">
+                    <input wire:model="maintenance_title" type="text" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page" placeholder="e.g. Leaking tap in bathroom">
                     @error('maintenance_title') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-text-secondary mb-1">Description *</label>
-                    <textarea wire:model="maintenance_description" rows="3" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary" placeholder="Describe the issue in detail…"></textarea>
+                    <textarea wire:model="maintenance_description" rows="3" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page" placeholder="Describe the issue in detail…"></textarea>
                     @error('maintenance_description') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-text-secondary mb-1">Priority</label>
-                    <select wire:model="maintenance_priority" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    <select wire:model="maintenance_priority" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                         <option value="low">Low — can wait</option>
                         <option value="medium">Medium — within a week</option>
                         <option value="high">High — within 48 hours</option>
@@ -145,7 +145,7 @@
                     </select>
                 </div>
                 <div class="flex gap-3">
-                    <button type="submit" wire:loading.attr="disabled" class="px-5 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">Submit Request</button>
+                    <button type="submit" wire:loading.attr="disabled" class="px-5 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">Submit Request</button>
                     <button type="button" wire:click="$set('showMaintenanceForm', false)" class="px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors">Cancel</button>
                 </div>
             </form>
@@ -153,14 +153,14 @@
         @endif
 
         @if($maintenanceRequests->isEmpty())
-        <div class="glass-panel rounded-2xl border border-border-default/60 p-8 text-center">
+        <div class="bg-surface-card rounded-2xl border border-border-default p-8 text-center">
             <p class="text-text-secondary text-sm">No maintenance requests submitted yet.</p>
         </div>
         @else
         <div class="space-y-3">
             @foreach($maintenanceRequests as $req)
             @php $pc = match($req->priority){ 'urgent'=>'danger','high'=>'warning','medium'=>'brand',default=>'secondary' }; $sc = match($req->status){ 'resolved'=>'success','in_progress'=>'brand','closed'=>'secondary',default=>'warning' }; @endphp
-            <div class="glass-panel rounded-2xl border border-border-default/60 p-4">
+            <div class="bg-surface-card rounded-2xl border border-border-default p-4">
                 <div class="flex items-start justify-between gap-3 mb-2">
                     <h3 class="font-medium text-text-primary">{{ $req->title }}</h3>
                     <div class="flex gap-1.5 flex-shrink-0">
@@ -184,7 +184,7 @@
 
     <!-- Documents Tab -->
     @elseif($activeTab === 'documents')
-    <div class="glass-panel rounded-2xl border border-border-default/60 p-6">
+    <div class="bg-surface-card rounded-2xl border border-border-default p-6">
         <h2 class="text-base font-semibold text-text-primary mb-4">Your Documents</h2>
         @if($tenant->activeLease?->contract)
         <div class="flex items-center justify-between p-4 bg-surface-hover/30 rounded-xl">
@@ -212,3 +212,6 @@
     </div>
     @endif
 </div>
+
+
+

@@ -1,4 +1,4 @@
-﻿<div>
+<div>
     <!-- Header -->
     <div class="mb-10 flex items-end justify-between">
         <div>
@@ -6,11 +6,11 @@
             <h1 class="text-4xl font-black tracking-tight text-text-primary">Good Morning, {{ $user->first_name }}.</h1>
         </div>
         <div class="hidden sm:flex space-x-3">
-            <button class="px-5 py-2.5 rounded-xl bg-surface-raised border border-border-default text-sm font-bold text-text-primary hover:border-brand-primary/50 hover:text-brand-primary transition-colors shadow-sm flex items-center space-x-2 hover-spring">
+            <button class="px-5 py-2.5 rounded-xl bg-surface-raised border border-border-default text-sm font-bold text-text-primary hover:border-brand-primary/50 hover:text-brand-primary transition-colors shadow-sm flex items-center space-x-2 hover-spring active:scale-95">
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                 <span>New Mandate</span>
             </button>
-            <button class="px-5 py-2.5 rounded-xl bg-brand-primary text-white text-sm font-bold hover:bg-brand-secondary transition-colors shadow-brand-md flex items-center space-x-2 hover-spring hover:shadow-brand-lg">
+            <button class="px-5 py-2.5 rounded-xl bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 text-sm font-bold hover:bg-brand-secondary transition-colors shadow-brand-md flex items-center space-x-2 hover-spring active:scale-95 hover:shadow-brand-lg">
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
                 <span>Sync</span>
             </button>
@@ -20,7 +20,7 @@
     <!-- KPI Metrics - Bento Box Style -->
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-10">
         <!-- Metric 1: Pipeline (Hero Style) -->
-        <div class="p-6 rounded-[2rem] bg-gradient-hero text-white shadow-2xl relative overflow-hidden group hover:scale-[1.02] hover:shadow-brand-lg transition-all duration-300">
+        <div class="p-6 rounded-2xl bg-gradient-hero text-white shadow-2xl relative overflow-hidden group hover:scale-[1.02] hover:shadow-brand-lg transition-all duration-300">
             <div class="absolute inset-0 bg-brand-primary opacity-30 mix-blend-overlay pointer-events-none"></div>
             <!-- Glowing accent in card -->
             <div class="absolute -top-12 -right-12 w-44 h-44 rounded-full bg-brand-accent/25 blur-2xl group-hover:scale-125 transition-transform duration-500"></div>
@@ -45,7 +45,7 @@
         </div>
 
         <!-- Metric 2: Active Listings -->
-        <div class="p-6 rounded-[2rem] glass-panel border border-border-default/80 shadow-sm hover:border-info-500/40 hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
+        <div class="p-6 rounded-2xl bg-surface-card border border-border-default shadow-sm hover:border-info-500/40 hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
             <div class="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-info-500/10 blur-xl group-hover:scale-110 transition-transform duration-500"></div>
             <div class="flex items-center justify-between mb-8">
                 <p class="text-xs font-bold tracking-widest uppercase text-text-secondary">Listings</p>
@@ -60,7 +60,7 @@
         </div>
 
         <!-- Metric 3: New Leads -->
-        <div class="p-6 rounded-[2rem] glass-panel border border-border-default/80 shadow-sm hover:border-brand-primary/40 hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
+        <div class="p-6 rounded-2xl bg-surface-card border border-border-default shadow-sm hover:border-brand-primary/40 hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
             <div class="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-brand-primary/10 blur-xl group-hover:scale-110 transition-transform duration-500"></div>
             <div class="flex items-center justify-between mb-8">
                 <p class="text-xs font-bold tracking-widest uppercase text-text-secondary">New Leads</p>
@@ -75,7 +75,7 @@
         </div>
 
         <!-- Metric 4: Hot Buyers -->
-        <div class="p-6 rounded-[2rem] glass-panel border border-border-default/80 shadow-sm hover:border-warning-500/40 hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
+        <div class="p-6 rounded-2xl bg-surface-card border border-border-default shadow-sm hover:border-warning-500/40 hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
             <div class="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-warning-500/10 blur-xl group-hover:scale-110 transition-transform duration-500"></div>
             <div class="flex items-center justify-between mb-8">
                 <p class="text-xs font-bold tracking-widest uppercase text-text-secondary">Hot Buyers</p>
@@ -95,7 +95,7 @@
         <div class="lg:col-span-2 space-y-8">
             
             <!-- Recent Listings -->
-            <div class="glass-panel rounded-[2rem] border border-border-default/80 shadow-md overflow-hidden transition-all duration-300 hover:border-border-strong/50">
+            <div class="bg-surface-card rounded-2xl border border-border-default shadow-md overflow-hidden transition-all duration-300 hover:border-border-strong/50">
                 <div class="px-8 py-6 border-b border-border-default/40 flex items-center justify-between bg-surface-sunken/40">
                     <h2 class="text-lg font-bold text-text-primary flex items-center">
                         <svg class="w-5 h-5 mr-2 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
@@ -108,15 +108,15 @@
                         <div class="px-8 py-5 flex items-center justify-between hover:bg-brand-primary/5 border-l-2 border-transparent hover:border-brand-primary transition-all duration-300 group cursor-pointer relative overflow-hidden">
                             <div class="absolute inset-0 bg-gradient-to-r from-brand-primary/0 to-brand-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                             <div class="flex items-center space-x-5">
-                                <div class="h-12 w-12 rounded-xl bg-surface-raised border border-border-default/60 flex items-center justify-center text-text-tertiary flex-shrink-0 group-hover:text-brand-primary transition-colors">
+                                <div class="h-12 w-12 rounded-xl bg-surface-raised border border-border-default flex items-center justify-center text-text-tertiary flex-shrink-0 group-hover:text-brand-primary transition-colors">
                                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                                 </div>
                                 <div>
                                     <h4 class="text-sm font-bold text-text-primary group-hover:text-brand-primary transition-colors">{{ $listing->property->address_line_1 }}</h4>
-                                    <p class="text-xs font-semibold text-text-secondary mt-1">{{ $listing->property->city }} • {{ $currencySymbol }}{{ number_format($listing->listing_price) }}</p>
+                                    <p class="text-xs font-semibold text-text-secondary mt-1">{{ $listing->property->city }} � {{ $currencySymbol }}{{ number_format($listing->listing_price) }}</p>
                                 </div>
                             </div>
-                            <span class="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-black tracking-wider bg-surface-raised border border-border-default/60 text-text-primary uppercase shadow-sm">
+                            <span class="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-black tracking-wider bg-surface-raised border border-border-default text-text-primary uppercase shadow-sm">
                                 {{ $listing->status }}
                             </span>
                         </div>
@@ -129,7 +129,7 @@
             </div>
 
             <!-- Recent Contacts -->
-            <div class="glass-panel rounded-[2rem] border border-border-default/80 shadow-md overflow-hidden transition-all duration-300 hover:border-border-strong/50">
+            <div class="bg-surface-card rounded-2xl border border-border-default shadow-md overflow-hidden transition-all duration-300 hover:border-border-strong/50">
                 <div class="px-8 py-6 border-b border-border-default/40 flex items-center justify-between bg-surface-sunken/40">
                     <h2 class="text-lg font-bold text-text-primary flex items-center">
                         <svg class="w-5 h-5 mr-2 text-warning-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
@@ -170,7 +170,7 @@
         <div class="space-y-8">
             
             <!-- AI Copilot Intelligence Feed -->
-            <div class="rounded-[2rem] glass-panel border border-border-default/80 shadow-brand-md relative overflow-hidden flex flex-col h-[600px] transition-all duration-300 hover:shadow-brand-lg hover:border-brand-primary/30">
+            <div class="rounded-2xl bg-surface-card border border-border-default shadow-brand-md relative overflow-hidden flex flex-col h-[600px] transition-all duration-300 hover:shadow-brand-lg hover:border-brand-primary/30">
                 <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-primary via-info-500 to-brand-primary"></div>
                 <div class="px-6 py-5 border-b border-border-default/40 flex items-center justify-between bg-surface-sunken/40">
                     <div class="flex items-center space-x-2">
@@ -184,18 +184,18 @@
                 
                 <div class="flex-1 overflow-y-auto p-6 space-y-6">
                     <!-- Suggestion 1 -->
-                    <div class="p-5 rounded-2xl bg-surface-sunken/30 border border-border-default/50 hover:bg-surface-card/60 hover:border-brand-primary/30 hover:shadow-brand-sm transition-all duration-300 hover-spring cursor-pointer group">
+                    <div class="p-5 rounded-2xl bg-surface-sunken/30 border border-border-default/50 hover:bg-surface-card/60 hover:border-brand-primary/30 hover:shadow-brand-sm transition-all duration-300 hover-spring active:scale-95 cursor-pointer group">
                         <div class="flex items-center space-x-2 mb-3">
                             <svg class="w-4 h-4 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                             <span class="text-[10px] font-black uppercase tracking-widest text-brand-primary">Lead Match</span>
                         </div>
                         <h4 class="text-sm font-bold text-text-primary mb-2">High Intent Buyer</h4>
                         <p class="text-xs font-medium text-text-secondary leading-relaxed mb-4">A new buyer lead matches 95% of criteria for your new "Victoria Island" mandate.</p>
-                        <button class="w-full py-2.5 text-xs font-bold rounded-xl bg-brand-primary text-white hover:bg-brand-secondary transition-colors shadow-brand-sm">Draft Introduction</button>
+                        <button class="w-full py-2.5 text-xs font-bold rounded-xl bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 hover:bg-brand-secondary transition-colors shadow-brand-sm">Draft Introduction</button>
                     </div>
                     
                     <!-- Suggestion 2 -->
-                    <div class="p-5 rounded-2xl bg-surface-sunken/30 border border-border-default/50 hover:bg-surface-card/60 hover:border-warning-500/30 hover:shadow-brand-sm transition-all duration-300 hover-spring cursor-pointer group">
+                    <div class="p-5 rounded-2xl bg-surface-sunken/30 border border-border-default/50 hover:bg-surface-card/60 hover:border-warning-500/30 hover:shadow-brand-sm transition-all duration-300 hover-spring active:scale-95 cursor-pointer group">
                         <div class="flex items-center space-x-2 mb-3">
                             <svg class="w-4 h-4 text-warning-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                             <span class="text-[10px] font-black uppercase tracking-widest text-warning-500">Optimization</span>
@@ -210,3 +210,6 @@
         </div>
     </div>
 </div>
+
+
+

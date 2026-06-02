@@ -10,7 +10,7 @@
                 <p class="text-sm text-text-secondary mt-0.5">Manage sale agreements, leases, mandates and MOUs</p>
             </div>
             <button wire:click="openCreateForm"
-                class="inline-flex items-center gap-2 px-4 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">
+                class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 New Contract
             </button>
@@ -19,7 +19,7 @@
         {{-- Stats --}}
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             @foreach([['label'=>'Drafts','val'=>$stats['draft'],'c'=>'secondary'],['label'=>'Awaiting Sign','val'=>$stats['sent'],'c'=>'warning'],['label'=>'Fully Signed','val'=>$stats['signed'],'c'=>'success'],['label'=>'Total','val'=>$stats['total'],'c'=>'brand']] as $s)
-            <div class="glass-panel rounded-2xl border border-{{ $s['c'] }}-200 p-4 text-center">
+            <div class="bg-surface-card rounded-2xl border border-{{ $s['c'] }}-200 p-4 text-center">
                 <div class="text-2xl font-bold text-{{ $s['c'] }}-600">{{ $s['val'] }}</div>
                 <div class="text-xs text-text-secondary mt-1">{{ $s['label'] }}</div>
             </div>
@@ -28,7 +28,7 @@
 
         {{-- Create form --}}
         @if($showCreateForm)
-        <div class="glass-panel rounded-2xl border border-brand-200 p-5 mb-6">
+        <div class="bg-surface-card rounded-2xl border border-brand-200 p-5 mb-6">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-base font-semibold text-text-primary">Create New Contract</h2>
                 <button wire:click="$set('showCreateForm', false)" class="text-text-tertiary hover:text-text-secondary text-xl leading-none">&times;</button>
@@ -36,12 +36,12 @@
             <form wire:submit.prevent="createContract" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="md:col-span-2">
                     <label class="block text-xs font-medium text-text-secondary mb-1">Title *</label>
-                    <input wire:model="title" type="text" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary" placeholder="e.g. Sale Agreement — 12 Elm Street">
+                    <input wire:model="title" type="text" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page" placeholder="e.g. Sale Agreement — 12 Elm Street">
                     @error('title') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-text-secondary mb-1">Generate From Template</label>
-                    <select wire:model.live="selectedTemplate" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    <select wire:model.live="selectedTemplate" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                         <option value="">Manual Entry (No Template)</option>
                         <option value="sale_agreement">Standard Sale Agreement</option>
                         <option value="lease_agreement">Residential Lease Agreement</option>
@@ -50,7 +50,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-text-secondary mb-1">Type *</label>
-                    <select wire:model="type" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    <select wire:model="type" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                         <option value="sale_agreement">Sale Agreement</option>
                         <option value="lease_agreement">Lease Agreement</option>
                         <option value="mou">MOU</option>
@@ -62,7 +62,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-text-secondary mb-1">Linked Deal</label>
-                    <select wire:model="deal_id" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    <select wire:model="deal_id" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                         <option value="">None</option>
                         @foreach($deals as $deal)
                         <option value="{{ $deal->id }}">{{ $deal->title }}</option>
@@ -71,7 +71,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-text-secondary mb-1">Contact</label>
-                    <select wire:model="contact_id" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    <select wire:model="contact_id" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                         <option value="">None</option>
                         @foreach($contacts as $c)
                         <option value="{{ $c->id }}">{{ $c->first_name }} {{ $c->last_name }}</option>
@@ -80,18 +80,18 @@
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-text-secondary mb-1">Valid From</label>
-                    <input wire:model="valid_from" type="date" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    <input wire:model="valid_from" type="date" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-text-secondary mb-1">Valid Until</label>
-                    <input wire:model="valid_until" type="date" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    <input wire:model="valid_until" type="date" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                 </div>
                 <div class="md:col-span-2">
                     <label class="block text-xs font-medium text-text-secondary mb-1">Contract Body</label>
-                    <textarea wire:model="body" rows="8" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary resize-none font-mono" placeholder="Paste or type contract text here…"></textarea>
+                    <textarea wire:model="body" rows="8" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page resize-none font-mono" placeholder="Paste or type contract text here…"></textarea>
                 </div>
                 <div class="md:col-span-2 flex gap-3 pt-2">
-                    <button type="submit" wire:loading.attr="disabled" class="px-5 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">
+                    <button type="submit" wire:loading.attr="disabled" class="px-5 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">
                         <span wire:loading.remove wire:target="createContract">Create Draft</span>
                         <span wire:loading wire:target="createContract">Creating…</span>
                     </button>
@@ -103,7 +103,7 @@
 
         {{-- Edit form (draft only) --}}
         @if($showEditForm)
-        <div class="glass-panel rounded-2xl border border-warning-200 p-5 mb-6">
+        <div class="bg-surface-card rounded-2xl border border-warning-200 p-5 mb-6">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-base font-semibold text-text-primary">Edit Contract (Draft)</h2>
                 <button wire:click="cancelEdit" class="text-text-tertiary hover:text-text-secondary text-xl leading-none">&times;</button>
@@ -111,20 +111,20 @@
             <form wire:submit.prevent="saveEdit" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="md:col-span-2">
                     <label class="block text-xs font-medium text-text-secondary mb-1">Title *</label>
-                    <input wire:model="edit_title" type="text" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    <input wire:model="edit_title" type="text" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     @error('edit_title') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-text-secondary mb-1">Valid From</label>
-                    <input wire:model="edit_valid_from" type="date" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    <input wire:model="edit_valid_from" type="date" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-text-secondary mb-1">Valid Until</label>
-                    <input wire:model="edit_valid_until" type="date" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    <input wire:model="edit_valid_until" type="date" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                 </div>
                 <div class="md:col-span-2">
                     <label class="block text-xs font-medium text-text-secondary mb-1">Contract Body</label>
-                    <textarea wire:model="edit_body" rows="8" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary resize-none font-mono"></textarea>
+                    <textarea wire:model="edit_body" rows="8" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page resize-none font-mono"></textarea>
                 </div>
                 <div class="md:col-span-2 flex gap-3">
                     <button type="submit" wire:loading.attr="disabled" class="px-5 py-2 bg-warning-600 text-white rounded-xl text-sm font-medium hover:bg-warning-700 transition-colors">Save Changes</button>
@@ -153,7 +153,7 @@
         </div>
 
         {{-- Table --}}
-        <div class="glass-panel rounded-2xl border border-border-default/60 overflow-hidden">
+        <div class="bg-surface-card rounded-2xl border border-border-default overflow-hidden">
             <table class="w-full text-sm">
                 <thead class="bg-surface-hover/50 border-b border-border-default">
                     <tr>
@@ -187,7 +187,7 @@
                         <td class="px-4 py-3" wire:click.stop>
                             <div class="flex items-center gap-1 justify-end">
                                 @if($contract->status === 'draft')
-                                <button wire:click="sendForSignature({{ $contract->id }})" class="px-2.5 py-1 text-xs bg-brand-primary text-white rounded-lg hover:bg-brand-hover transition-colors">Send eSign</button>
+                                <button wire:click="sendForSignature({{ $contract->id }})" class="px-2.5 py-1 text-xs bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg hover:bg-brand-hover transition-colors">Send eSign</button>
                                 @endif
                                 @if(in_array($contract->status, ['draft','cancelled']))
                                 <button wire:click="deleteContract({{ $contract->id }})" onclick="return confirm('Delete this contract?')" class="px-2.5 py-1 text-xs text-danger-600 border border-danger-200 rounded-lg hover:bg-danger-50 transition-colors">Del</button>
@@ -226,7 +226,7 @@
             </div>
 
             {{-- Details --}}
-            <div class="glass-panel rounded-xl border border-border-default/60 p-3 mb-3">
+            <div class="bg-surface-card rounded-xl border border-border-default p-3 mb-3">
                 <div class="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-2">Details</div>
                 <div class="space-y-1.5 text-xs">
                     @if($detailContract->contact)
@@ -253,7 +253,7 @@
 
             {{-- Signatories --}}
             @if(!empty($detailContract->signatories))
-            <div class="glass-panel rounded-xl border border-border-default/60 p-3 mb-3">
+            <div class="bg-surface-card rounded-xl border border-border-default p-3 mb-3">
                 <div class="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-2">Signatories</div>
                 <div class="space-y-2">
                     @foreach($detailContract->signatories as $sig)
@@ -273,7 +273,7 @@
 
             {{-- Body preview --}}
             @if($detailContract->body)
-            <div class="glass-panel rounded-xl border border-border-default/60 p-3 mb-3">
+            <div class="bg-surface-card rounded-xl border border-border-default p-3 mb-3">
                 <div class="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-2">Contract Body</div>
                 <pre class="text-xs text-text-secondary leading-relaxed whitespace-pre-wrap font-mono overflow-auto max-h-72">{{ $detailContract->body }}</pre>
             </div>
@@ -282,7 +282,7 @@
             {{-- Actions --}}
             <div class="space-y-2 mt-4">
                 @if($detailContract->status === 'draft')
-                    <button wire:click="sendForSignature({{ $detailContract->id }})" class="w-full py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">Send for eSignature</button>
+                    <button wire:click="sendForSignature({{ $detailContract->id }})" class="w-full py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">Send for eSignature</button>
                     <button wire:click="openEditForm({{ $detailContract->id }})" class="w-full py-2 border border-border-default text-text-secondary rounded-xl text-sm font-medium hover:bg-surface-hover transition-colors">Edit Contract</button>
                     <button wire:click="deleteContract({{ $detailContract->id }})" onclick="return confirm('Delete this contract?')" class="w-full py-2 border border-danger-200 text-danger-600 rounded-xl text-sm font-medium hover:bg-danger-50 transition-colors">Delete</button>
                 @elseif(in_array($detailContract->status, ['sent','viewed']))
@@ -309,3 +309,6 @@
     @endif
 
 </div>
+
+
+

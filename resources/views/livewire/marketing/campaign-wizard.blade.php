@@ -1,4 +1,4 @@
-﻿<div class="max-w-5xl mx-auto py-8">
+<div class="max-w-5xl mx-auto py-8">
     
     <!-- Wizard Header & Progress -->
     <div class="mb-10 text-center">
@@ -8,7 +8,7 @@
         <div class="mt-8 flex items-center justify-center space-x-4">
             @foreach(['Listing', 'Goal', 'Channels', 'Generate', 'Review'] as $idx => $label)
                 <div class="flex items-center">
-                    <div class="h-10 w-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 {{ $step > ($idx + 1) ? 'bg-success-500 text-white shadow-md' : ($step === ($idx + 1) ? 'bg-brand-primary text-white shadow-lg ring-4 ring-brand-primary/20 scale-110' : 'bg-surface-card border border-border-default/60 text-text-tertiary') }}">
+                    <div class="h-10 w-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 {{ $step > ($idx + 1) ? 'bg-success-500 text-white shadow-md' : ($step === ($idx + 1) ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 shadow-lg ring-4 ring-brand-primary/20 scale-110' : 'bg-surface-card border border-border-default text-text-tertiary') }}">
                         @if($step > ($idx + 1))
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                         @else
@@ -24,7 +24,7 @@
     </div>
 
     <!-- Main Wizard Card -->
-    <div class="glass-panel rounded-3xl border border-border-default/60 shadow-xl overflow-hidden relative">
+    <div class="bg-surface-card rounded-3xl border border-border-default shadow-xl overflow-hidden relative">
         
         @if($step === 1)
             <!-- Step 1: Select Listing -->
@@ -32,13 +32,13 @@
                 <h2 class="text-2xl font-bold text-text-primary mb-6">Select a Listing</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @foreach($listings as $listing)
-                        <div wire:click="selectListing({{ $listing->id }})" class="bg-surface-sunken border-2 border-transparent hover:border-brand-primary/50 rounded-2xl overflow-hidden cursor-pointer hover-spring group transition-all">
+                        <div wire:click="selectListing({{ $listing->id }})" class="bg-surface-sunken border-2 border-transparent hover:border-brand-primary/50 rounded-2xl overflow-hidden cursor-pointer hover-spring active:scale-95 group transition-all">
                             <div class="h-40 bg-surface-raised relative">
                                 <!-- Mock Image Placeholder -->
                                 <div class="absolute inset-0 flex items-center justify-center text-text-tertiary">
                                     <svg class="h-12 w-12 opacity-50 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                                 </div>
-                                <div class="absolute top-3 left-3 px-3 py-1 bg-surface-card/90 backdrop-blur border border-border-default/60 rounded-lg text-xs font-bold text-text-primary uppercase tracking-wider">
+                                <div class="absolute top-3 left-3 px-3 py-1 bg-surface-card/90 backdrop-blur border border-border-default rounded-lg text-xs font-bold text-text-primary uppercase tracking-wider">
                                     {{ str_replace('_', ' ', $listing->status) }}
                                 </div>
                             </div>
@@ -71,7 +71,7 @@
                     @foreach($goals as $key => $g)
                         <label class="cursor-pointer">
                             <input type="radio" wire:model="goal" value="{{ $key }}" class="peer sr-only">
-                            <div class="p-6 rounded-2xl border-2 border-border-default/60 hover:border-brand-primary/50 peer-checked:border-brand-primary peer-checked:bg-brand-primary/5 transition-all">
+                            <div class="p-6 rounded-2xl border-2 border-border-default hover:border-brand-primary/50 peer-checked:border-brand-primary peer-checked:bg-brand-primary/5 transition-all">
                                 <div class="flex items-start space-x-4">
                                     <div class="h-12 w-12 rounded-xl bg-surface-raised flex items-center justify-center text-brand-primary shrink-0">
                                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $g['icon'] }}"></path></svg>
@@ -93,9 +93,9 @@
                 <h2 class="text-2xl font-bold text-text-primary mb-6">Select Distribution Channels</h2>
                 <div class="space-y-4">
                     @foreach(['instagram', 'facebook', 'linkedin', 'email', 'whatsapp'] as $channel)
-                        <label class="flex items-center justify-between p-5 rounded-2xl border-2 border-border-default/60 hover:border-brand-primary/50 transition-all cursor-pointer @if($channels[$channel]) border-brand-primary bg-brand-primary/5 @endif">
+                        <label class="flex items-center justify-between p-5 rounded-2xl border-2 border-border-default hover:border-brand-primary/50 transition-all cursor-pointer @if($channels[$channel]) border-brand-primary bg-brand-primary/5 @endif">
                             <div class="flex items-center space-x-4">
-                                <input type="checkbox" wire:model="channels.{{ $channel }}" class="h-5 w-5 text-brand-primary rounded border-border-default focus:ring-brand-primary">
+                                <input type="checkbox" wire:model="channels.{{ $channel }}" class="h-5 w-5 text-brand-primary rounded border-border-default focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                                 <span class="text-lg font-bold text-text-primary capitalize">{{ $channel }}</span>
                             </div>
                             @if($channels[$channel])
@@ -130,12 +130,12 @@
             <div class="p-10">
                 <div class="flex items-center justify-between mb-6">
                     <h2 class="text-2xl font-bold text-text-primary">Review & Schedule</h2>
-                    <button wire:click="saveCampaign" class="bg-brand-primary text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg hover:shadow-xl hover:bg-brand-secondary transition-all hover-spring">Schedule Campaign</button>
+                    <button wire:click="saveCampaign" class="bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 px-6 py-3 rounded-xl text-sm font-bold shadow-lg hover:shadow-xl hover:bg-brand-secondary transition-all hover-spring active:scale-95">Schedule Campaign</button>
                 </div>
                 
                 <div class="space-y-8">
                     @foreach($generatedContents as $channel => $content)
-                        <div class="glass-panel border border-border-default/60 rounded-3xl overflow-hidden">
+                        <div class="bg-surface-card border border-border-default rounded-3xl overflow-hidden">
                             <div class="px-6 py-4 border-b border-border-default/40 bg-surface-sunken/50 flex items-center justify-between">
                                 <h3 class="text-lg font-black text-text-primary capitalize flex items-center space-x-2">
                                     <span class="h-2 w-2 rounded-full bg-brand-primary"></span>
@@ -154,11 +154,15 @@
 
         <!-- Footer Actions -->
         @if($step > 1 && $step < 4)
-            <div class="px-10 py-6 border-t border-border-default/60 bg-surface-sunken/30 flex items-center justify-between">
-                <button wire:click="prevStep" class="px-6 py-2.5 rounded-xl border border-border-default/60 text-text-secondary font-bold hover:bg-surface-raised hover:text-text-primary transition-colors">Back</button>
+            <div class="px-10 py-6 border-t border-border-default bg-surface-sunken/30 flex items-center justify-between">
+                <button wire:click="prevStep" class="px-6 py-2.5 rounded-xl border border-border-default text-text-secondary font-bold hover:bg-surface-raised hover:text-text-primary transition-colors">Back</button>
                 <button wire:click="nextStep" class="px-6 py-2.5 rounded-xl bg-text-primary text-surface-page font-bold hover:bg-brand-primary hover:text-white transition-colors shadow-md">Continue &rarr;</button>
             </div>
         @endif
         
     </div>
 </div>
+
+
+
+

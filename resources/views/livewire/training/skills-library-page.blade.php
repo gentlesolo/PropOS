@@ -8,10 +8,10 @@
             <p class="mt-2 text-text-secondary">Level up your real estate expertise with courses, playbooks, and quizzes.</p>
         </div>
         <div class="flex items-center gap-3">
-            <div class="glass-panel border border-border-default/60 px-4 py-2 rounded-xl text-sm font-bold text-text-primary">
+            <div class="bg-surface-card border border-border-default px-4 py-2 rounded-xl text-sm font-bold text-text-primary">
                 My Progress: <span class="{{ $overallPct >= 80 ? 'text-success-600' : ($overallPct >= 40 ? 'text-warning-600' : 'text-brand-primary') }}">{{ $overallPct }}%</span>
             </div>
-            <a href="{{ route('training.roleplay') }}" class="px-4 py-2 bg-brand-primary text-white rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors">
+            <a href="{{ route('training.roleplay') }}" class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors">
                 🎭 Role-Play Simulator
             </a>
         </div>
@@ -22,7 +22,7 @@
         @foreach(['all' => 'All Modules', 'onboarding' => 'Onboarding', 'skills' => 'Sales Skills', 'compliance' => 'Compliance', 'market' => 'Market Knowledge', 'tools' => 'PropOS Tools'] as $key => $label)
         <button wire:click="$set('activeCategory', '{{ $key }}')"
             class="px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all
-            {{ $activeCategory === $key ? 'bg-brand-primary text-white shadow-md' : 'bg-surface-card border border-border-default/60 text-text-secondary hover:bg-surface-raised' }}">
+            {{ $activeCategory === $key ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 shadow-md' : 'bg-surface-card border border-border-default text-text-secondary hover:bg-surface-raised' }}">
             {{ $label }}
         </button>
         @endforeach
@@ -31,7 +31,7 @@
     <!-- Modules Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @forelse($modules as $module)
-        <div class="glass-panel border border-border-default/60 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all group flex flex-col">
+        <div class="bg-surface-card border border-border-default rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all group flex flex-col">
 
             <!-- Thumbnail Header -->
             <div class="h-28 {{ $module->thumbnail_color ?? 'bg-brand-primary/10' }} relative flex items-center justify-center">
@@ -89,7 +89,7 @@
                     <div class="flex items-center gap-2">
                         @if($module->content_body)
                         <button wire:click="openModule({{ $module->id }})" class="px-3 py-1.5 text-xs font-bold rounded-lg transition-colors
-                            {{ $openModuleId === $module->id ? 'bg-brand-primary text-white' : 'border border-brand-primary/40 text-brand-primary hover:bg-brand-primary/5' }}">
+                            {{ $openModuleId === $module->id ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10' : 'border border-brand-primary/40 text-brand-primary hover:bg-brand-primary/5' }}">
                             {{ $openModuleId === $module->id ? 'Close' : 'Read' }}
                         </button>
                         @endif
@@ -123,3 +123,5 @@
         @endforelse
     </div>
 </div>
+
+

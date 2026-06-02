@@ -9,7 +9,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ValidatePublicApiKey
 {
-    public function handle(Request $request, Closure $next): Response
+    /**
+     * @param string|null $requiredType  Pass 'full_access' to reject public_read keys.
+     */
+    public function handle(Request $request, Closure $next, ?string $requiredType = null): Response
     {
         $token = $request->bearerToken() ?? $request->query('api_key');
 
@@ -21,6 +24,12 @@ class ValidatePublicApiKey
 
         if (! $key || $key->isExpired()) {
             return response()->json(['error' => 'Invalid or expired API key.'], 401);
+        }
+
+        if ($requiredType && $key->type !== $requiredType) {
+            return response()->json([
+                'error' => "This endpoint requires a '{$requiredType}' API key.",
+            ], 403);
         }
 
         $key->updateQuietly(['last_used_at' => now()]);

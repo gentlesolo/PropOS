@@ -13,13 +13,13 @@
 
         <!-- Left: Objection Selector -->
         <div class="xl:col-span-1 space-y-5">
-            <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+            <div class="bg-surface-card rounded-2xl border border-border-default p-5">
                 <h3 class="text-sm font-bold text-text-primary mb-4">Select Objection Category</h3>
                 <div class="grid grid-cols-2 gap-2 mb-4">
                     @foreach(['price' => ['💰','Price'], 'timing' => ['⏰','Timing'], 'competition' => ['🏆','Competition'], 'uncertainty' => ['❓','Uncertainty']] as $cat => [$icon, $label])
                     <button wire:click="$set('objectionCategory', '{{ $cat }}')"
                         class="p-3 rounded-xl border text-center transition-colors
-                        {{ $objectionCategory === $cat ? 'bg-brand-primary text-white border-brand-primary' : 'bg-surface-card border-border-default/60 text-text-secondary hover:border-brand-primary/40' }}">
+                        {{ $objectionCategory === $cat ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 border-brand-primary' : 'bg-surface-card border-border-default text-text-secondary hover:border-brand-primary/40' }}">
                         <div class="text-lg mb-1">{{ $icon }}</div>
                         <div class="text-xs font-bold">{{ $label }}</div>
                     </button>
@@ -40,14 +40,14 @@
             </div>
 
             <!-- Custom Objection -->
-            <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+            <div class="bg-surface-card rounded-2xl border border-border-default p-5">
                 <h3 class="text-sm font-bold text-text-primary mb-3">Custom Objection</h3>
                 <form wire:submit.prevent="handleCustomObjection" class="space-y-3">
                     <textarea wire:model.defer="customObjection" rows="3"
                         placeholder="Type any objection the client said..."
-                        class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary resize-none"></textarea>
+                        class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page resize-none"></textarea>
                     @error('customObjection') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
-                    <button type="submit" class="w-full py-2 bg-brand-primary text-white rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors">
+                    <button type="submit" class="w-full py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors">
                         <span wire:loading.remove wire:target="handleCustomObjection">✨ Get AI Response</span>
                         <span wire:loading wire:target="handleCustomObjection">Generating...</span>
                     </button>
@@ -60,14 +60,14 @@
 
             <!-- Current Response -->
             @if($generating)
-            <div class="glass-panel rounded-2xl border border-brand-primary/20 bg-brand-primary/5 p-8 text-center">
+            <div class="bg-surface-card rounded-2xl border border-brand-primary/20 bg-brand-primary/5 p-8 text-center">
                 <div class="flex items-center justify-center gap-3 mb-3">
                     <svg class="animate-spin h-6 w-6 text-brand-primary" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
                     <p class="text-sm font-bold text-brand-primary">Crafting the perfect response...</p>
                 </div>
             </div>
             @elseif($response)
-            <div class="glass-panel rounded-2xl border border-brand-primary/30 bg-brand-primary/5 p-6">
+            <div class="bg-surface-card rounded-2xl border border-brand-primary/30 bg-brand-primary/5 p-6">
                 <h3 class="text-sm font-bold text-text-primary mb-4 flex items-center gap-2">
                     <span class="h-6 w-6 bg-brand-primary rounded-lg flex items-center justify-center text-white text-xs">AI</span>
                     Objection Response Script
@@ -90,7 +90,7 @@
                 @endif
             </div>
             @else
-            <div class="glass-panel rounded-2xl border border-border-default/60 p-14 text-center">
+            <div class="bg-surface-card rounded-2xl border border-border-default p-14 text-center">
                 <div class="text-5xl mb-4">🎯</div>
                 <h3 class="text-base font-bold text-text-primary mb-2">Select an objection to get started</h3>
                 <p class="text-sm text-text-secondary">Click any objection on the left — or type a custom one — to receive a structured, AI-powered response script.</p>
@@ -99,7 +99,7 @@
 
             <!-- History -->
             @if(count($history) > 1)
-            <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+            <div class="bg-surface-card rounded-2xl border border-border-default p-5">
                 <h3 class="text-sm font-bold text-text-primary mb-4">Session History ({{ count($history) }} objections)</h3>
                 <div class="space-y-3">
                     @foreach(array_reverse($history) as $i => $item)
@@ -117,3 +117,6 @@
         </div>
     </div>
 </div>
+
+
+

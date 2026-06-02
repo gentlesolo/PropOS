@@ -1,6 +1,6 @@
 <div class="h-[calc(100vh-8rem)] flex flex-col md:flex-row gap-8">
     <!-- Map Section (Left) -->
-    <div class="hidden md:block w-full md:w-7/12 lg:w-2/3 h-full rounded-3xl overflow-hidden glass-panel border border-border-default/60 shadow-md relative group">
+    <div class="hidden md:block w-full md:w-7/12 lg:w-2/3 h-full rounded-3xl overflow-hidden bg-surface-card border border-border-default shadow-md relative group">
         <div class="absolute inset-0 bg-surface-sunken dark:bg-surface-raised" style="background-image: url('data:image/svg+xml,%3Csvg width=%2240%22 height=%2240%22 viewBox=%220 0 40 40%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cpath d=%22M0 0h40v40H0V0zm20 20h20v20H20V20zM0 20h20v20H0V20z%22 fill=%22%239C92AC%22 fill-opacity=%220.05%22 fill-rule=%22evenodd%22/%3E%3C/svg%3E');"></div>
         <div class="absolute inset-0 p-12">
             <svg class="w-full h-full text-brand-primary/40 stroke-current" fill="none" stroke-width="4" stroke-dasharray="8 8" stroke-linecap="round">
@@ -8,11 +8,11 @@
             </svg>
             @foreach($viewings as $index => $viewing)
                 @php $positions = [['top'=>'20%','left'=>'30%'],['top'=>'45%','left'=>'40%'],['top'=>'60%','left'=>'65%'],['top'=>'80%','left'=>'50%']]; $pos = $positions[$index % 4]; @endphp
-                <div class="absolute group/pin hover-spring cursor-pointer" style="top: {{ $pos['top'] }}; left: {{ $pos['left'] }};">
+                <div class="absolute group/pin hover-spring active:scale-95 cursor-pointer" style="top: {{ $pos['top'] }}; left: {{ $pos['left'] }};">
                     <div class="relative -left-1/2 -top-full">
                         <div class="w-10 h-10 rounded-full border-4 border-white shadow-lg flex items-center justify-center font-black text-sm text-white {{ $viewing->status === 'completed' ? 'bg-success-500' : 'bg-brand-primary' }} hover:scale-110 transition-transform">{{ $index + 1 }}</div>
                         <div class="w-0.5 h-6 bg-brand-primary mx-auto -mt-1 shadow-sm"></div>
-                        <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-3 w-48 p-3 bg-surface-card border border-border-default/60 shadow-xl rounded-2xl opacity-0 group-hover/pin:opacity-100 transition-opacity pointer-events-none z-10">
+                        <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-3 w-48 p-3 bg-surface-card border border-border-default shadow-xl rounded-2xl opacity-0 group-hover/pin:opacity-100 transition-opacity pointer-events-none z-10">
                             <p class="text-xs font-bold text-text-primary mb-1">{{ $viewing->scheduled_at->format('H:i') }}</p>
                             <p class="text-[10px] text-text-secondary leading-tight">{{ $viewing->listing?->property?->address_line_1 }}</p>
                         </div>
@@ -21,7 +21,7 @@
             @endforeach
         </div>
         <div class="absolute top-6 left-6 right-6 flex justify-between items-start pointer-events-none">
-            <div class="bg-surface-card/90 backdrop-blur pointer-events-auto px-5 py-3 rounded-2xl border border-border-default/60 shadow-lg">
+            <div class="bg-surface-card/90 backdrop-blur pointer-events-auto px-5 py-3 rounded-2xl border border-border-default shadow-lg">
                 <h2 class="text-sm font-black text-text-primary flex items-center">
                     <svg class="w-4 h-4 mr-2 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
                     AI Route Optimizer Active
@@ -40,11 +40,11 @@
                 <p class="text-sm font-semibold text-text-secondary mt-1">{{ \Carbon\Carbon::parse($date)->format('l, F j, Y') }}</p>
             </div>
             <div class="flex items-center gap-1">
-                <button wire:click="previousDay" class="h-8 w-8 rounded-full bg-surface-raised border border-border-default/60 flex items-center justify-center hover:bg-surface-sunken transition-colors">
+                <button wire:click="previousDay" class="h-8 w-8 rounded-full bg-surface-raised border border-border-default flex items-center justify-center hover:bg-surface-sunken transition-colors">
                     <svg class="h-4 w-4 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                 </button>
                 <button wire:click="$set('date', '{{ \Carbon\Carbon::today()->format('Y-m-d') }}')" class="px-2 py-1 text-xs font-bold text-brand-primary hover:bg-brand-primary/10 rounded-lg transition-colors">Today</button>
-                <button wire:click="nextDay" class="h-8 w-8 rounded-full bg-surface-raised border border-border-default/60 flex items-center justify-center hover:bg-surface-sunken transition-colors">
+                <button wire:click="nextDay" class="h-8 w-8 rounded-full bg-surface-raised border border-border-default flex items-center justify-center hover:bg-surface-sunken transition-colors">
                     <svg class="h-4 w-4 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                 </button>
             </div>
@@ -54,7 +54,7 @@
         @if($feedbackViewingId)
         <div class="fixed inset-0 z-50 flex items-center justify-center">
             <div class="absolute inset-0 bg-surface-overlay backdrop-blur-sm"></div>
-            <div class="relative bg-surface-card rounded-2xl border border-border-default/60 shadow-2xl w-full max-w-md mx-4 p-6 overflow-y-auto max-h-[90vh]">
+            <div class="relative bg-surface-card rounded-2xl border border-border-default shadow-2xl w-full max-w-md mx-4 p-6 overflow-y-auto max-h-[90vh]">
                 <h2 class="text-lg font-bold text-text-primary mb-4">Post-Viewing Feedback</h2>
                 <form wire:submit.prevent="saveFeedback" class="space-y-4">
                     <div>
@@ -75,7 +75,7 @@
                             @foreach([1 => 'Too High', 2 => 'Slightly High', 3 => 'Fair', 4 => 'Good Value', 5 => 'Excellent'] as $val => $label)
                             <button type="button" wire:click="$set('price_perception', {{ $val }})"
                                 class="px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-colors
-                                {{ $price_perception == $val ? 'bg-brand-primary text-white border-brand-primary' : 'bg-surface-sunken border-border-default text-text-secondary hover:border-brand-primary' }}">
+                                {{ $price_perception == $val ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 border-brand-primary' : 'bg-surface-sunken border-border-default text-text-secondary hover:border-brand-primary' }}">
                                 {{ $label }}
                             </button>
                             @endforeach
@@ -83,7 +83,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-text-primary mb-1">Interest Level</label>
-                        <select wire:model.defer="interest_level" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                        <select wire:model.defer="interest_level" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                             <option value="very_interested">Very Interested</option>
                             <option value="interested">Interested</option>
                             <option value="maybe">Maybe</option>
@@ -92,22 +92,22 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-text-primary mb-1">Positives Noted</label>
-                        <textarea wire:model.defer="positive_notes" rows="2" placeholder="What did the client like?" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary resize-none"></textarea>
+                        <textarea wire:model.defer="positive_notes" rows="2" placeholder="What did the client like?" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page resize-none"></textarea>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-text-primary mb-1">Concerns / Objections</label>
-                        <textarea wire:model.defer="concerns" rows="2" placeholder="What concerned the client?" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary resize-none"></textarea>
+                        <textarea wire:model.defer="concerns" rows="2" placeholder="What concerned the client?" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page resize-none"></textarea>
                     </div>
                     <div class="flex items-center gap-3">
-                        <input wire:model.defer="would_make_offer" type="checkbox" id="make-offer" class="h-4 w-4 rounded border-border-default text-brand-primary focus:ring-brand-primary">
+                        <input wire:model.defer="would_make_offer" type="checkbox" id="make-offer" class="h-4 w-4 rounded border-border-default text-brand-primary focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                         <label for="make-offer" class="text-sm font-medium text-text-primary">Client would consider making an offer</label>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-text-primary mb-1">Agent Notes (private)</label>
-                        <textarea wire:model.defer="agent_notes" rows="2" placeholder="Internal notes..." class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary resize-none"></textarea>
+                        <textarea wire:model.defer="agent_notes" rows="2" placeholder="Internal notes..." class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page resize-none"></textarea>
                     </div>
                     <div class="flex gap-3 pt-2">
-                        <button type="submit" class="flex-1 py-2.5 bg-brand-primary text-white rounded-xl font-semibold hover:bg-brand-secondary transition-colors">
+                        <button type="submit" class="flex-1 py-2.5 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl font-semibold hover:bg-brand-secondary transition-colors">
                             <span wire:loading.remove wire:target="saveFeedback">Save Feedback</span>
                             <span wire:loading wire:target="saveFeedback">Saving...</span>
                         </button>
@@ -122,21 +122,21 @@
         @if($reschedulingId)
         <div class="fixed inset-0 z-50 flex items-center justify-center">
             <div class="absolute inset-0 bg-surface-overlay backdrop-blur-sm" wire:click="$set('reschedulingId', null)"></div>
-            <div class="relative bg-surface-card rounded-2xl border border-border-default/60 shadow-2xl w-full max-w-sm mx-4 p-6">
+            <div class="relative bg-surface-card rounded-2xl border border-border-default shadow-2xl w-full max-w-sm mx-4 p-6">
                 <h2 class="text-lg font-bold text-text-primary mb-4">Reschedule Viewing</h2>
                 <form wire:submit.prevent="saveReschedule" class="space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-text-primary mb-1">New Date</label>
-                        <input wire:model.defer="newDate" type="date" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                        <input wire:model.defer="newDate" type="date" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                         @error('newDate') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-text-primary mb-1">New Time</label>
-                        <input wire:model.defer="newTime" type="time" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                        <input wire:model.defer="newTime" type="time" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                         @error('newTime') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
                     </div>
                     <div class="flex gap-3">
-                        <button type="submit" class="flex-1 py-2 bg-brand-primary text-white rounded-xl text-sm font-semibold hover:bg-brand-secondary transition-colors">
+                        <button type="submit" class="flex-1 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-semibold hover:bg-brand-secondary transition-colors">
                             <span wire:loading.remove wire:target="saveReschedule">Confirm</span>
                             <span wire:loading wire:target="saveReschedule">Saving...</span>
                         </button>
@@ -151,7 +151,7 @@
         <div class="flex-1 overflow-y-auto pr-2 pb-6">
             @if($viewings->isEmpty())
             <div class="text-center py-16">
-                <div class="h-14 w-14 bg-surface-raised border border-border-default/60 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <div class="h-14 w-14 bg-surface-raised border border-border-default rounded-2xl flex items-center justify-center mx-auto mb-4">
                     <svg class="h-7 w-7 text-text-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </div>
                 <p class="text-sm font-bold text-text-primary">No viewings on this day.</p>
@@ -162,7 +162,7 @@
                 @foreach($viewings as $index => $viewing)
                 <div class="relative flex items-start group">
                     <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-surface-page shadow shrink-0 z-10 mr-4
-                        {{ $viewing->status === 'completed' ? 'bg-success-500 text-white' : ($index === 0 ? 'bg-brand-primary text-white ring-4 ring-brand-primary/20' : 'bg-surface-raised text-text-secondary') }}">
+                        {{ $viewing->status === 'completed' ? 'bg-success-500 text-white' : ($index === 0 ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 ring-4 ring-brand-primary/20' : 'bg-surface-raised text-text-secondary') }}">
                         @if($viewing->status === 'completed')
                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                         @else
@@ -170,7 +170,7 @@
                         @endif
                     </div>
 
-                    <div class="flex-1 bg-surface-card border border-border-default/60 rounded-3xl p-5 shadow-sm hover:shadow hover-spring transition-all {{ $index === 0 && $viewing->status !== 'completed' ? 'border-brand-primary/40 shadow-md ring-1 ring-brand-primary/20' : '' }}">
+                    <div class="flex-1 bg-surface-card border border-border-default rounded-3xl p-5 shadow-sm hover:shadow hover-spring active:scale-95 transition-all {{ $index === 0 && $viewing->status !== 'completed' ? 'border-brand-primary/40 shadow-md ring-1 ring-brand-primary/20' : '' }}">
                         <div class="flex justify-between items-start mb-4">
                             <div>
                                 <h3 class="text-lg font-black text-text-primary leading-tight">{{ $viewing->scheduled_at->format('H:i') }} <span class="text-text-tertiary text-sm font-semibold ml-1">({{ $viewing->duration_minutes }}m)</span></h3>
@@ -209,8 +209,8 @@
 
                         @if($viewing->status !== 'completed')
                         <div class="mt-5 pt-4 border-t border-border-default/40 grid grid-cols-2 gap-3">
-                            <button wire:click="startReschedule({{ $viewing->id }})" class="bg-surface-raised text-text-primary text-xs font-bold py-2 rounded-xl border border-border-default/60 hover:bg-surface-sunken transition-colors">Reschedule</button>
-                            <button wire:click="completeViewing({{ $viewing->id }})" class="bg-brand-primary text-white text-xs font-bold py-2 rounded-xl shadow-md hover:bg-brand-secondary hover-spring transition-colors">
+                            <button wire:click="startReschedule({{ $viewing->id }})" class="bg-surface-raised text-text-primary text-xs font-bold py-2 rounded-xl border border-border-default hover:bg-surface-sunken transition-colors">Reschedule</button>
+                            <button wire:click="completeViewing({{ $viewing->id }})" class="bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 text-xs font-bold py-2 rounded-xl shadow-md hover:bg-brand-secondary hover-spring active:scale-95 transition-colors">
                                 <span wire:loading.remove wire:target="completeViewing({{ $viewing->id }})">Complete Viewing</span>
                                 <span wire:loading wire:target="completeViewing({{ $viewing->id }})">...</span>
                             </button>
@@ -246,3 +246,7 @@
         </div>
     </div>
 </div>
+
+
+
+

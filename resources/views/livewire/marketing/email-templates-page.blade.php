@@ -10,7 +10,7 @@
                 <p class="text-sm text-text-secondary mt-0.5">Manage reusable email templates across categories</p>
             </div>
             <button wire:click="openCreate"
-                class="inline-flex items-center gap-2 px-4 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">
+                class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 New Template
             </button>
@@ -18,7 +18,7 @@
 
         {{-- Create / Edit form --}}
         @if($showForm)
-        <div class="glass-panel rounded-2xl border border-brand-200 p-5 mb-6">
+        <div class="bg-surface-card rounded-2xl border border-brand-200 p-5 mb-6">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-base font-semibold text-text-primary">{{ $editingId ? 'Edit' : 'Create' }} Template</h2>
                 <button wire:click="cancelForm" class="text-text-tertiary hover:text-text-secondary text-xl leading-none">&times;</button>
@@ -27,14 +27,14 @@
                 <div>
                     <label class="block text-xs font-medium text-text-secondary mb-1">Template Name *</label>
                     <input wire:model="name" type="text"
-                        class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
+                        class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page"
                         placeholder="Welcome Email">
                     @error('name') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-text-secondary mb-1">Category *</label>
                     <select wire:model="category"
-                        class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                        class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                         @foreach(['lead','listing','offer','transaction','lease','marketing','system'] as $cat)
                         <option value="{{ $cat }}">{{ ucfirst($cat) }}</option>
                         @endforeach
@@ -43,7 +43,7 @@
                 <div class="md:col-span-2">
                     <label class="block text-xs font-medium text-text-secondary mb-1">Subject Line *</label>
                     <input wire:model="subject" type="text"
-                        class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
+                        class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page"
                         placeholder="Welcome to @{{agency_name}}!">
                     @error('subject') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
                     <p class="text-xs text-text-tertiary mt-1">Use &#123;&#123;variable_name&#125;&#125; for dynamic content</p>
@@ -51,26 +51,26 @@
                 <div class="md:col-span-2">
                     <label class="block text-xs font-medium text-text-secondary mb-1">Email Body (HTML) *</label>
                     <textarea wire:model="body_html" rows="10"
-                        class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary resize-none font-mono"
+                        class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page resize-none font-mono"
                         placeholder="<p>Dear @{{contact_name}},</p><p>...</p>"></textarea>
                     @error('body_html') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
                 </div>
                 <div class="md:col-span-2">
                     <label class="block text-xs font-medium text-text-secondary mb-1">Plain Text Body <span class="font-normal text-text-tertiary">(optional fallback)</span></label>
                     <textarea wire:model="body_text" rows="4"
-                        class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary resize-none"
+                        class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page resize-none"
                         placeholder="Plain-text version for email clients that don't render HTML…"></textarea>
                 </div>
                 <div class="md:col-span-2">
                     <label class="block text-xs font-medium text-text-secondary mb-1">Available Variables <span class="font-normal text-text-tertiary">(comma-separated)</span></label>
                     <input wire:model="variables_raw" type="text"
-                        class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
+                        class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page"
                         placeholder="contact_name, agency_name, property_address, price">
                     <p class="text-xs text-text-tertiary mt-1">Documents which variables this template supports.</p>
                 </div>
                 <div class="md:col-span-2 flex gap-3 pt-2">
                     <button type="submit" wire:loading.attr="disabled"
-                        class="px-5 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">
+                        class="px-5 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">
                         {{ $editingId ? 'Update' : 'Create' }} Template
                     </button>
                     <button type="button" wire:click="cancelForm"
@@ -101,7 +101,7 @@
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 @foreach($catTemplates as $template)
-                <div class="glass-panel rounded-2xl {{ ($showPreview && $previewId === $template->id) ? 'border-2 border-brand-400' : 'border border-border-default/60' }} p-4 flex flex-col">
+                <div class="bg-surface-card rounded-2xl {{ ($showPreview && $previewId === $template->id) ? 'border-2 border-brand-400' : 'border border-border-default' }} p-4 flex flex-col">
                     <div class="flex items-start justify-between gap-2 mb-2">
                         <div class="min-w-0">
                             <p class="font-medium text-text-primary text-sm truncate">{{ $template->name }}</p>
@@ -144,7 +144,7 @@
             </div>
         </div>
         @empty
-        <div class="glass-panel rounded-2xl border border-border-default/60 p-12 text-center">
+        <div class="bg-surface-card rounded-2xl border border-border-default p-12 text-center">
             <p class="text-text-tertiary text-sm">No email templates yet.
                 @if($search || $categoryFilter)
                 <button wire:click="$set('search',''); $set('categoryFilter','')" class="ml-1 text-brand-600 underline">Clear filters</button>
@@ -168,13 +168,13 @@
                 <button wire:click="closePreview" class="text-text-tertiary hover:text-text-secondary text-xl leading-none ml-2">&times;</button>
             </div>
 
-            <div class="glass-panel rounded-xl border border-border-default/60 p-3 mb-3">
+            <div class="bg-surface-card rounded-xl border border-border-default p-3 mb-3">
                 <div class="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">Subject</div>
                 <p class="text-sm text-text-primary">{{ $previewTemplate->subject }}</p>
             </div>
 
             @if(!empty($previewTemplate->available_variables))
-            <div class="glass-panel rounded-xl border border-border-default/60 p-3 mb-3">
+            <div class="bg-surface-card rounded-xl border border-border-default p-3 mb-3">
                 <div class="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-2">Variables</div>
                 <div class="flex flex-wrap gap-1">
                     @foreach($previewTemplate->available_variables as $var)
@@ -184,7 +184,7 @@
             </div>
             @endif
 
-            <div class="glass-panel rounded-xl border border-border-default/60 p-3 mb-3">
+            <div class="bg-surface-card rounded-xl border border-border-default p-3 mb-3">
                 <div class="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-2">HTML Preview</div>
                 <div class="bg-white rounded-lg p-3 text-xs border border-border-default/40 overflow-auto max-h-96">
                     {!! $previewTemplate->body_html !!}
@@ -192,7 +192,7 @@
             </div>
 
             @if($previewTemplate->body_text)
-            <div class="glass-panel rounded-xl border border-border-default/60 p-3 mb-3">
+            <div class="bg-surface-card rounded-xl border border-border-default p-3 mb-3">
                 <div class="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-2">Plain Text</div>
                 <pre class="text-xs text-text-secondary whitespace-pre-wrap leading-relaxed">{{ $previewTemplate->body_text }}</pre>
             </div>
@@ -213,3 +213,6 @@
     @endif
 
 </div>
+
+
+

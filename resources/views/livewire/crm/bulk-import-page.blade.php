@@ -9,12 +9,12 @@
     <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
         <!-- Import -->
-        <div class="glass-panel rounded-2xl border border-border-default/60 p-6">
+        <div class="bg-surface-card rounded-2xl border border-border-default p-6">
             <h2 class="text-base font-semibold text-text-primary mb-4">Import from CSV</h2>
 
             <div class="mb-4">
                 <label class="block text-xs font-medium text-text-secondary mb-1">Import Type</label>
-                <select wire:model.live="importType" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                <select wire:model.live="importType" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     <option value="contacts">Contacts</option>
                     <option value="listings">Listings</option>
                 </select>
@@ -79,19 +79,19 @@
             </div>
             @endif
 
-            <button wire:click="import" @if(!$csvFile) disabled @endif class="w-full py-2.5 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            <button wire:click="import" @if(!$csvFile) disabled @endif class="w-full py-2.5 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                 <span wire:loading.remove wire:target="import">Import {{ ucfirst($importType) }}</span>
                 <span wire:loading wire:target="import">Importing…</span>
             </button>
         </div>
 
         <!-- Export -->
-        <div class="glass-panel rounded-2xl border border-border-default/60 p-6">
+        <div class="bg-surface-card rounded-2xl border border-border-default p-6">
             <h2 class="text-base font-semibold text-text-primary mb-4">Export to CSV</h2>
 
             <div class="mb-6">
                 <label class="block text-xs font-medium text-text-secondary mb-1">Export Type</label>
-                <select wire:model="exportType" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                <select wire:model="exportType" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     <option value="contacts">All Contacts</option>
                     <option value="listings">All Listings</option>
                 </select>
@@ -129,3 +129,6 @@
         </div>
     </div>
 </div>
+
+
+

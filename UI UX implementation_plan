@@ -1,0 +1,95 @@
+# Phase 5: Comprehensive Premium Component Rollout
+
+## Goal Description
+We have successfully built and tested our premium reusable UI components (`<x-ui.skeleton-table>`, `<x-ui.skeleton-card>`, `<x-ui.empty-state>`, and `<x-ui.floating-input>`) on the core pages. To ensure the platform has a cohesive, 100% premium feel, we need to roll these out to the remaining 50+ views. 
+
+Because of the sheer volume of pages, this rollout is broken down into **4 logical batches** so we can implement and verify them sequentially without overwhelming the system.
+
+## User Review Required
+> [!IMPORTANT]
+> Please review the batched groupings below. If there is a specific module (e.g., Marketing or Settings) that you need modernized immediately, we can easily re-order the batches.
+
+## Proposed Changes
+
+---
+
+### Batch 1: Financial & Property Management
+These pages are highly data-heavy and will benefit immediately from skeleton tables and empty states.
+#### [MODIFY] `finance/`
+- `invoices-page.blade.php`: Add skeletons for invoice table, empty state for unpaid/paid filtering.
+- `expenses-page.blade.php`: Add skeletons and floating inputs for the "Log Expense" modal.
+- `budgeting-page.blade.php`: Add skeleton cards for budget overview metrics.
+
+#### [MODIFY] `property-management/`
+- `lease-management-page.blade.php`: Skeleton table and empty state.
+- `tenant-management-page.blade.php`: Skeleton table and empty state.
+- `rent-collection-dashboard-page.blade.php`: Skeleton cards for collection metrics.
+- `deposit-management-page.blade.php`: Skeletons and floating inputs for refund logging.
+
+#### [MODIFY] `contracts/`
+- `contracts-page.blade.php`: Empty state for no contracts, floating inputs for "New Contract" form.
+
+---
+
+### Batch 2: Intelligence, Compliance & CRM Extensions
+These modules feature complex data grids and status tracking.
+#### [MODIFY] `intelligence/`
+- `agent-scorecard-page.blade.php`
+- `cma-report-page.blade.php`
+- `commission-ledger-page.blade.php`
+- `listing-health-dashboard.blade.php`
+- `market-intelligence-page.blade.php`
+- `prediction-dashboard-page.blade.php`
+- `revenue-forecast-page.blade.php`
+- `sentiment-monitoring-page.blade.php`
+
+#### [MODIFY] `crm/` (Remaining)
+- `pipeline-board.blade.php`: Empty states for Kanban columns (similar to Tasks).
+- `deal-detail-page.blade.php`: Floating inputs for deal edits.
+- `bulk-import-page.blade.php`: Empty states/success states for import wizard.
+
+#### [MODIFY] `compliance/`
+- `transaction-center-page.blade.php`: Skeleton tables and empty states.
+- `transaction-detail-page.blade.php`: Floating inputs for document uploads.
+- `attorney-portal-page.blade.php`: Empty state for external counsel view.
+
+---
+
+### Batch 3: Marketing & AI Tools
+These pages require high visual fidelity for campaign building and AI interaction.
+#### [MODIFY] `marketing/`
+- `campaign-list-page.blade.php` & `campaign-wizard.blade.php`
+- `content-calendar-page.blade.php`
+- `email-templates-page.blade.php`
+- `follow-up-sequences-page.blade.php`
+- `messaging-inbox-page.blade.php`
+- `meta-ads-page.blade.php` & `social-posts-page.blade.php`
+- `whatsapp-page.blade.php`
+
+#### [MODIFY] `ai/`
+- `planner-page.blade.php`: Skeletons for AI generation loading states.
+- `chat-panel.blade.php`: Empty state for new chats.
+
+#### [MODIFY] `governance/`
+- `document-repository-page.blade.php`: Skeleton grid for folders/files, empty state for empty folders.
+
+---
+
+### Batch 4: Settings, Training & External Portals
+The final sweep of configuration menus and public-facing forms.
+#### [MODIFY] `settings/`
+- All 10 settings pages (`profile`, `team`, `api-keys`, `webhooks`, `tax-config`, etc.): Refactor standard forms to use `<x-ui.floating-input>`.
+
+#### [MODIFY] `training/`
+- `training-dashboard-page.blade.php`, `role-play-page.blade.php`, `skills-library-page.blade.php`, `objection-handler-page.blade.php`.
+
+#### [MODIFY] `viewing/` & `tenant-portal/`
+- `day-view-page.blade.php`
+- `public-booking-page.blade.php` & `public-feedback-page.blade.php`
+- `tenant-portal-page.blade.php`
+
+## Verification Plan
+For each batch:
+1. We will execute the component replacements.
+2. We will run a `grep` to ensure no orphaned `wire:loading` text placeholders (`...` or `Loading...`) remain.
+3. We will manually verify the most complex page in the batch (e.g., Invoices for Batch 1) to ensure Livewire state transitions remain smooth.

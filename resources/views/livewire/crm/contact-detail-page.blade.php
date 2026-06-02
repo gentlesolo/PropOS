@@ -1,4 +1,4 @@
-﻿<div>
+<div>
     <div class="flex items-center gap-3 mb-6">
         <a href="{{ route('crm.contacts') }}" class="text-text-tertiary hover:text-brand-primary text-sm flex items-center gap-1">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
@@ -11,7 +11,7 @@
     <!-- AI Next Best Action Banner -->
     @if($nextActionSuggestion)
     <div class="mb-5 flex items-start gap-3 p-4 rounded-2xl border border-brand-primary/30 bg-brand-primary/5">
-        <div class="shrink-0 h-8 w-8 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary text-sm">✦</div>
+        <div class="shrink-0 h-8 w-8 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary text-sm">?</div>
         <div class="flex-1 min-w-0">
             <p class="text-xs font-semibold text-brand-primary mb-0.5">AI Suggestion</p>
             <p class="text-sm text-text-primary">{{ $nextActionSuggestion }}</p>
@@ -26,7 +26,7 @@
 
         <!-- Left: Profile Card -->
         <div class="lg:col-span-1 space-y-4">
-            <div class="glass-panel rounded-2xl border border-border-default/60 p-6">
+            <div class="bg-surface-card rounded-2xl border border-border-default p-6">
                 <div class="flex items-start justify-between mb-4">
                     <div class="h-16 w-16 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary text-2xl font-bold">
                         {{ $contact->initials }}
@@ -36,7 +36,7 @@
                             wire:loading.attr="disabled"
                             wire:target="loadNextAction"
                             class="text-xs text-brand-primary border border-brand-primary/30 rounded-lg px-2.5 py-1.5 hover:bg-brand-primary/5 transition-colors disabled:opacity-50">
-                            <span wire:loading.remove wire:target="loadNextAction">✦ AI</span>
+                            <span wire:loading.remove wire:target="loadNextAction">? AI</span>
                             <span wire:loading wire:target="loadNextAction">...</span>
                         </button>
                         <button wire:click="$toggle('showEditForm')" class="text-xs text-brand-primary border border-brand-primary/30 rounded-lg px-3 py-1.5 hover:bg-brand-primary/5 transition-colors">
@@ -55,25 +55,25 @@
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block text-xs font-medium text-text-secondary mb-1">First Name</label>
-                            <input wire:model.defer="first_name" type="text" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                            <input wire:model.defer="first_name" type="text" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                             @error('first_name') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-text-secondary mb-1">Last Name</label>
-                            <input wire:model.defer="last_name" type="text" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                            <input wire:model.defer="last_name" type="text" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                         </div>
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-text-secondary mb-1">Email</label>
-                        <input wire:model.defer="email" type="email" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                        <input wire:model.defer="email" type="email" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-text-secondary mb-1">Phone</label>
-                        <input wire:model.defer="phone" type="text" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                        <input wire:model.defer="phone" type="text" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-text-secondary mb-1">Status</label>
-                        <select wire:model.defer="status" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                        <select wire:model.defer="status" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                             <option value="new">New</option>
                             <option value="active">Active</option>
                             <option value="qualified">Qualified</option>
@@ -84,9 +84,9 @@
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-text-secondary mb-1">Notes</label>
-                        <textarea wire:model.defer="notes" rows="3" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"></textarea>
+                        <textarea wire:model.defer="notes" rows="3" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page"></textarea>
                     </div>
-                    <button type="submit" class="w-full py-2 bg-brand-primary text-white rounded-lg text-sm font-medium hover:bg-brand-secondary transition-colors">
+                    <button type="submit" class="w-full py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg text-sm font-medium hover:bg-brand-secondary transition-colors">
                         <span wire:loading.remove wire:target="saveContact">Save Changes</span>
                         <span wire:loading wire:target="saveContact">Saving...</span>
                     </button>
@@ -115,7 +115,7 @@
                     </div>
 
                     <!-- Intent Score -->
-                    <div class="mt-4 pt-4 border-t border-border-default/60">
+                    <div class="mt-4 pt-4 border-t border-border-default">
                         <div class="flex justify-between items-center mb-1.5">
                             <span class="text-xs font-medium text-text-secondary">Intent Score</span>
                             <span class="text-xs font-bold text-text-primary">{{ $contact->intent_score }}%</span>
@@ -132,14 +132,14 @@
                     </div>
 
                     @if($contact->notes)
-                    <div class="mt-4 pt-4 border-t border-border-default/60">
+                    <div class="mt-4 pt-4 border-t border-border-default">
                         <p class="text-xs font-medium text-text-secondary mb-1">Notes</p>
                         <p class="text-sm text-text-primary">{{ $contact->notes }}</p>
                     </div>
                     @endif
 
                     <!-- Custom Tags -->
-                    <div class="mt-4 pt-4 border-t border-border-default/60">
+                    <div class="mt-4 pt-4 border-t border-border-default">
                         <p class="text-xs font-semibold text-text-secondary mb-2">Custom Tags</p>
                         <div class="flex flex-wrap gap-1.5 mb-2">
                             @forelse($contact->tags ?? [] as $tag)
@@ -154,12 +154,12 @@
                             @endforelse
                         </div>
                         <form wire:submit.prevent="addTag" class="flex gap-1 mt-2">
-                            <input wire:model.defer="newTag" type="text" placeholder="Add tag..." class="w-full text-2xs rounded-lg border border-border-default bg-surface-input px-2 py-1 focus:outline-none focus:ring-1 focus:ring-brand-primary focus:border-brand-primary">
-                            <button type="submit" class="px-2.5 py-1 bg-brand-primary text-white text-2xs font-bold rounded-lg hover:bg-brand-secondary">Add</button>
+                            <input wire:model.defer="newTag" type="text" placeholder="Add tag..." class="w-full text-2xs rounded-lg border border-border-default bg-surface-input px-2 py-1 focus:outline-none focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page focus:border-brand-primary">
+                            <button type="submit" class="px-2.5 py-1 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 text-2xs font-bold rounded-lg hover:bg-brand-secondary">Add</button>
                         </form>
                     </div>
 
-                    <div class="mt-4 pt-4 border-t border-border-default/60 text-xs text-text-secondary space-y-1">
+                    <div class="mt-4 pt-4 border-t border-border-default text-xs text-text-secondary space-y-1">
                         @if($contact->source)
                         <div>Source: <span class="font-medium text-text-primary capitalize">{{ str_replace('_', ' ', $contact->source) }}</span></div>
                         @endif
@@ -174,7 +174,7 @@
 
             <!-- Buyer Preferences (if applicable) -->
             @if(in_array($contact->type, ['buyer', 'investor', 'tenant']))
-            <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+            <div class="bg-surface-card rounded-2xl border border-border-default p-5">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-sm font-semibold text-text-primary">Buyer Preferences</h3>
                     <button wire:click="$toggle('showPreferencesForm')" class="text-xs text-brand-primary border border-brand-primary/30 rounded-lg px-2.5 py-1.5 hover:bg-brand-primary/5 transition-colors">
@@ -186,34 +186,34 @@
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block text-xs font-medium text-text-secondary mb-1">Min Budget ({{ $currencySymbol }})</label>
-                            <input wire:model.defer="pref_min_budget" type="number" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                            <input wire:model.defer="pref_min_budget" type="number" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-text-secondary mb-1">Max Budget ({{ $currencySymbol }})</label>
-                            <input wire:model.defer="pref_max_budget" type="number" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                            <input wire:model.defer="pref_max_budget" type="number" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                         </div>
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-text-secondary mb-1">Min Bedrooms</label>
-                        <input wire:model.defer="pref_min_bedrooms" type="number" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                        <input wire:model.defer="pref_min_bedrooms" type="number" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-text-secondary mb-1">Preferred Areas <span class="font-normal text-text-tertiary">(comma-separated)</span></label>
-                        <input wire:model.defer="pref_areas" type="text" placeholder="Lekki, Victoria Island" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                        <input wire:model.defer="pref_areas" type="text" placeholder="Lekki, Victoria Island" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-text-secondary mb-1">Property Types <span class="font-normal text-text-tertiary">(comma-separated)</span></label>
-                        <input wire:model.defer="pref_property_types" type="text" placeholder="Apartment, Detached" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                        <input wire:model.defer="pref_property_types" type="text" placeholder="Apartment, Detached" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-text-secondary mb-1">Must-Have Features <span class="font-normal text-text-tertiary">(comma-separated)</span></label>
-                        <input wire:model.defer="pref_must_have_features" type="text" placeholder="Pool, Generator" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                        <input wire:model.defer="pref_must_have_features" type="text" placeholder="Pool, Generator" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-text-secondary mb-1">Target Timeline</label>
-                        <input wire:model.defer="pref_timeline" type="text" placeholder="e.g. Next 3 months, Immediate" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                        <input wire:model.defer="pref_timeline" type="text" placeholder="e.g. Next 3 months, Immediate" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     </div>
-                    <button type="submit" class="w-full py-2 bg-brand-primary text-white rounded-lg text-sm font-medium hover:bg-brand-secondary transition-colors">Save Preferences</button>
+                    <button type="submit" class="w-full py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg text-sm font-medium hover:bg-brand-secondary transition-colors">Save Preferences</button>
                 </form>
                 @else
                 @php $prefs = $contact->preferences ?? []; @endphp
@@ -223,7 +223,7 @@
                     <div class="flex justify-between">
                         <dt class="text-text-secondary">Budget</dt>
                         <dd class="font-medium text-text-primary">
-                            {{ $currencySymbol }}{{ number_format($prefs['min_budget'] ?? 0) }} – {{ $currencySymbol }}{{ number_format($prefs['max_budget'] ?? 0) }}
+                            {{ $currencySymbol }}{{ number_format($prefs['min_budget'] ?? 0) }} � {{ $currencySymbol }}{{ number_format($prefs['max_budget'] ?? 0) }}
                         </dd>
                     </div>
                     @endif
@@ -260,7 +260,7 @@
 
             <!-- Matched Listings -->
             @if($matchedListings->isNotEmpty())
-            <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+            <div class="bg-surface-card rounded-2xl border border-border-default p-5">
                 <h3 class="text-sm font-semibold text-text-primary mb-3">Matched Listings <span class="text-text-tertiary font-normal">({{ $matchedListings->count() }})</span></h3>
                 <div class="space-y-2">
                     @foreach($matchedListings->take(5) as $match)
@@ -269,7 +269,7 @@
                             <p class="text-xs font-medium text-text-primary truncate">{{ $match['listing']->property->address_line_1 ?? 'Property' }}</p>
                             <span class="shrink-0 ml-2 text-[10px] font-bold text-brand-primary bg-brand-primary/10 rounded px-1.5 py-0.5">{{ $match['score'] }}%</span>
                         </div>
-                        <p class="text-[10px] text-text-secondary">{{ implode(' · ', $match['reasons']) }}</p>
+                        <p class="text-[10px] text-text-secondary">{{ implode(' � ', $match['reasons']) }}</p>
                     </div>
                     @endforeach
                 </div>
@@ -278,7 +278,7 @@
             @endif
 
             <!-- Family Details -->
-            <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+            <div class="bg-surface-card rounded-2xl border border-border-default p-5">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-sm font-semibold text-text-primary">Family Details</h3>
                     <button wire:click="$toggle('showFamilyForm')" class="text-xs text-brand-primary border border-brand-primary/30 rounded-lg px-2.5 py-1 hover:bg-brand-primary/5 transition-colors font-bold">
@@ -289,11 +289,11 @@
                 <form wire:submit.prevent="saveFamily" class="space-y-3">
                     <div>
                         <label class="block text-xs font-medium text-text-secondary mb-1">Partner's Name</label>
-                        <input wire:model.defer="fam_partner_name" type="text" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                        <input wire:model.defer="fam_partner_name" type="text" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-text-secondary mb-1">Anniversary</label>
-                        <input wire:model.defer="fam_anniversary" type="date" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                        <input wire:model.defer="fam_anniversary" type="date" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     </div>
                     
                     <div class="space-y-2">
@@ -313,7 +313,7 @@
                         @endforeach
                     </div>
 
-                    <button type="submit" class="w-full py-1.5 bg-brand-primary text-white rounded-lg text-xs font-medium hover:bg-brand-secondary transition-colors">Save Family Details</button>
+                    <button type="submit" class="w-full py-1.5 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg text-xs font-medium hover:bg-brand-secondary transition-colors">Save Family Details</button>
                 </form>
                 @else
                 @php $prefs = $contact->preferences ?? []; $family = $prefs['family'] ?? []; @endphp
@@ -340,7 +340,7 @@
                             @if(!empty($child['birthday']) || !empty($child['school']))
                             <span class="text-text-tertiary block text-[10px]">
                                 {{ $child['birthday'] ? 'BD: ' . $child['birthday'] : '' }}
-                                {{ $child['school'] ? ' · ' . $child['school'] : '' }}
+                                {{ $child['school'] ? ' � ' . $child['school'] : '' }}
                             </span>
                             @endif
                         </dd>
@@ -355,7 +355,7 @@
             </div>
 
             <!-- Property Ownership History -->
-            <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+            <div class="bg-surface-card rounded-2xl border border-border-default p-5">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-sm font-semibold text-text-primary">Ownership History</h3>
                     <button wire:click="$toggle('showHistoryForm')" class="text-xs text-brand-primary border border-brand-primary/30 rounded-lg px-2.5 py-1 hover:bg-brand-primary/5 transition-colors font-bold">
@@ -382,7 +382,7 @@
                         @endforeach
                     </div>
 
-                    <button type="submit" class="w-full py-1.5 bg-brand-primary text-white rounded-lg text-xs font-medium hover:bg-brand-secondary transition-colors">Save History</button>
+                    <button type="submit" class="w-full py-1.5 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg text-xs font-medium hover:bg-brand-secondary transition-colors">Save History</button>
                 </form>
                 @else
                 @php $prefs = $contact->preferences ?? []; $history = $prefs['ownership_history'] ?? []; @endphp
@@ -393,8 +393,8 @@
                         <p class="text-xs font-bold text-text-primary truncate">{{ $item['address'] }}</p>
                         <p class="text-[10px] text-text-secondary mt-0.5">
                             @if(!empty($item['price'])) Value: {{ $currencySymbol }}{{ number_format((float)$item['price']) }} @endif
-                            @if(!empty($item['year_acquired'])) · Acquired: {{ $item['year_acquired'] }} @endif
-                            @if(!empty($item['year_sold'])) · Sold: {{ $item['year_sold'] }} @endif
+                            @if(!empty($item['year_acquired'])) � Acquired: {{ $item['year_acquired'] }} @endif
+                            @if(!empty($item['year_sold'])) � Sold: {{ $item['year_sold'] }} @endif
                         </p>
                     </div>
                     @endforeach
@@ -406,7 +406,7 @@
             </div>
 
             <!-- Documents -->
-            <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+            <div class="bg-surface-card rounded-2xl border border-border-default p-5">
                 <h3 class="text-sm font-semibold text-text-primary mb-3">Documents</h3>
                 
                 @php $prefs = $contact->preferences ?? []; $documents = $prefs['documents'] ?? []; @endphp
@@ -416,14 +416,14 @@
                     <li class="py-2 flex items-center justify-between gap-2 text-xs">
                         <div class="min-w-0">
                             <p class="font-bold text-text-primary truncate">{{ $doc['title'] }}</p>
-                            <span class="text-[10px] text-text-tertiary">{{ $doc['file_name'] }} · {{ \Carbon\Carbon::parse($doc['uploaded_at'])->diffForHumans() }}</span>
+                            <span class="text-[10px] text-text-tertiary">{{ $doc['file_name'] }} � {{ \Carbon\Carbon::parse($doc['uploaded_at'])->diffForHumans() }}</span>
                         </div>
                         <div class="flex items-center gap-1.5 shrink-0">
                             <a href="{{ Storage::url($doc['file_path']) }}" target="_blank" class="p-1 text-brand-primary hover:bg-brand-primary/10 rounded">
-                                📥
+                                ??
                             </a>
                             <button type="button" wire:click="deleteDocument({{ $index }})" class="p-1 text-text-tertiary hover:text-danger-600 rounded">
-                                🗑️
+                                ???
                             </button>
                         </div>
                     </li>
@@ -434,10 +434,10 @@
                 @endif
 
                 <form wire:submit.prevent="uploadDocument" class="space-y-2 pt-2 border-t border-border-default/40">
-                    <input wire:model.defer="docTitle" type="text" placeholder="Doc title (e.g. ID Card)" class="w-full rounded bg-surface-input border border-border-default px-2 py-1 text-xs text-text-primary focus:outline-none focus:ring-1 focus:ring-brand-primary">
+                    <input wire:model.defer="docTitle" type="text" placeholder="Doc title (e.g. ID Card)" class="w-full rounded bg-surface-input border border-border-default px-2 py-1 text-xs text-text-primary focus:outline-none focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     <div class="flex items-center gap-2">
                         <input wire:model="docFile" type="file" class="text-2xs text-text-secondary w-full">
-                        <button type="submit" class="px-2.5 py-1 bg-brand-primary text-white text-xs font-semibold rounded-lg hover:bg-brand-secondary shrink-0">
+                        <button type="submit" class="px-2.5 py-1 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 text-xs font-semibold rounded-lg hover:bg-brand-secondary shrink-0">
                             Upload
                         </button>
                     </div>
@@ -450,7 +450,7 @@
         <!-- Right: Activity Timeline -->
         <div class="lg:col-span-2 space-y-4">
             <!-- Log Activity -->
-            <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+            <div class="bg-surface-card rounded-2xl border border-border-default p-5">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-sm font-semibold text-text-primary">Log Activity</h3>
                 </div>
@@ -459,7 +459,7 @@
                     @foreach(['note' => 'Note', 'call' => 'Call', 'email' => 'Email', 'meeting' => 'Meeting', 'sms' => 'SMS'] as $val => $label)
                     <button wire:click="$set('activityType', '{{ $val }}')"
                         class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
-                        {{ $activityType === $val ? 'bg-brand-primary text-white' : 'bg-surface-sunken text-text-secondary hover:bg-brand-primary/10' }}">
+                        {{ $activityType === $val ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10' : 'bg-surface-sunken text-text-secondary hover:bg-brand-primary/10' }}">
                         {{ $label }}
                     </button>
                     @endforeach
@@ -467,13 +467,13 @@
 
                 <form wire:submit.prevent="saveActivity" class="space-y-2">
                     <input wire:model.defer="activitySubject" type="text" placeholder="Subject (optional)"
-                        class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                        class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     <textarea wire:model.defer="activityBody" rows="3"
                         placeholder="{{ $activityType === 'call' ? 'Call summary...' : ($activityType === 'email' ? 'Email summary...' : 'Add a note...') }}"
-                        class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary resize-none"></textarea>
+                        class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page resize-none"></textarea>
                     @error('activityBody') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
                     <div class="flex justify-end">
-                        <button type="submit" class="px-4 py-2 bg-brand-primary text-white rounded-lg text-sm font-medium hover:bg-brand-secondary transition-colors">
+                        <button type="submit" class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg text-sm font-medium hover:bg-brand-secondary transition-colors">
                             <span wire:loading.remove wire:target="saveActivity">Log {{ ucfirst($activityType) }}</span>
                             <span wire:loading wire:target="saveActivity">Saving...</span>
                         </button>
@@ -482,7 +482,7 @@
             </div>
 
             <!-- Timeline -->
-            <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+            <div class="bg-surface-card rounded-2xl border border-border-default p-5">
                 <h3 class="text-sm font-semibold text-text-primary mb-4">Activity Timeline</h3>
 
                 @forelse($activities as $activity)
@@ -498,12 +498,12 @@
                                 @default bg-surface-sunken text-text-secondary
                             @endswitch">
                             @switch($activity->type)
-                                @case('call') 📞 @break
-                                @case('email') ✉️ @break
-                                @case('meeting') 📅 @break
-                                @case('sms') 💬 @break
-                                @case('status_change') 🔄 @break
-                                @default 📝
+                                @case('call') ?? @break
+                                @case('email') ?? @break
+                                @case('meeting') ?? @break
+                                @case('sms') ?? @break
+                                @case('status_change') ?? @break
+                                @default ??
                             @endswitch
                         </div>
                     </div>
@@ -543,3 +543,6 @@
         </div>
     </div>
 </div>
+
+
+

@@ -1,9 +1,9 @@
-﻿<div class="min-h-screen bg-slate-950 text-slate-100 py-10 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-slate-950 text-slate-100 py-10 px-4 sm:px-6 lg:px-8">
     <div class="max-w-6xl mx-auto">
         <!-- Badge -->
         <div class="mb-6 flex justify-between items-center">
             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-brand-primary/20 text-brand-primary border border-brand-primary/30">
-                🔒 Private Pocket Listing
+                ?? Private Pocket Listing
             </span>
             <span class="text-xs text-slate-400">Exclusive off-market opportunity</span>
         </div>
@@ -86,7 +86,7 @@
                         @endif
                         @if($listing->property->floor_area_sqm)
                         <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 text-center">
-                            <p class="text-2xl font-extrabold text-white">{{ number_format($listing->property->floor_area_sqm) }} m²</p>
+                            <p class="text-2xl font-extrabold text-white">{{ number_format($listing->property->floor_area_sqm) }} m�</p>
                             <p class="text-xs text-slate-400 uppercase tracking-wider mt-1">Floor Area</p>
                         </div>
                         @endif
@@ -132,7 +132,7 @@
                 <div class="p-6 bg-gradient-to-br from-brand-primary/20 to-slate-900 rounded-3xl border border-brand-primary/30 text-center space-y-4">
                     <h3 class="text-lg font-bold text-white">Private Tour Scheduler</h3>
                     <p class="text-xs text-slate-300">Book an exclusive in-person walkthrough directly using our calendar.</p>
-                    <a href="{{ route('viewing.book', $listing) }}" class="block w-full py-3 bg-brand-primary text-white text-sm font-semibold rounded-xl hover:bg-brand-secondary transition">
+                    <a href="{{ route('viewing.book', $listing) }}" class="block w-full py-3 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 text-sm font-semibold rounded-xl hover:bg-brand-secondary transition">
                         Select Viewing Slot
                     </a>
                 </div>
@@ -140,3 +140,4 @@
         </div>
     </div>
 </div>
+

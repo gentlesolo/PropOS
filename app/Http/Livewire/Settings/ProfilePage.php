@@ -33,8 +33,15 @@ class ProfilePage extends Component
     public string $agency_address = '';
     public string $timezone       = '';
     public string $currency       = '';
-    public string $primary_color  = '';
+    public string $primary_color   = '';
+    public string $secondary_color = '';
+    public string $accent_color    = '';
+    public string $font_family     = '';
+    public string $border_radius   = 'default';
+    public string $sidebar_style   = 'dark';
+    public string $custom_css      = '';
     public $agency_logo;
+    public $favicon;
 
     // Commission split configuration
     public string $default_commission_rate  = '5';
@@ -70,7 +77,13 @@ class ProfilePage extends Component
                 'agency_address' => $agency->address ?? '',
                 'timezone'       => $agency->timezone ?? 'UTC',
                 'currency'       => $agency->currency ?? 'NGN',
-                'primary_color'  => $agency->primary_color ?? '#1E40AF',
+                'primary_color'   => $agency->primary_color ?? '#1E40AF',
+                'secondary_color' => $agency->secondary_color ?? '#18181B',
+                'accent_color'    => $agency->accent_color ?? '#F59E0B',
+                'font_family'     => $agency->font_family ?? '',
+                'border_radius'   => $agency->border_radius ?? 'default',
+                'sidebar_style'   => $agency->sidebar_style ?? 'dark',
+                'custom_css'      => $agency->custom_css ?? '',
                 'default_commission_rate' => (string) ($agency->default_commission_rate ?? '5'),
                 'split_agent_pct'      => (string) ($splits['agent'] ?? '50'),
                 'split_principal_pct'  => (string) ($splits['principal'] ?? '40'),
@@ -129,31 +142,49 @@ class ProfilePage extends Component
     public function saveAgency()
     {
         $this->validate([
-            'agency_name' => 'required|string|max:255',
-            'agency_email' => 'required|email|max:255',
-            'agency_phone' => 'nullable|string|max:50',
+            'agency_name'    => 'required|string|max:255',
+            'agency_email'   => 'required|email|max:255',
+            'agency_phone'   => 'nullable|string|max:50',
             'agency_website' => 'nullable|url|max:255',
             'agency_address' => 'nullable|string|max:500',
-            'timezone' => 'required|string',
-            'currency' => 'required|string|max:3',
-            'primary_color' => 'required|string|max:7',
-            'agency_logo' => 'nullable|image|max:2048',
+            'timezone'       => 'required|string',
+            'currency'       => 'required|string|max:3',
+            'primary_color'   => ['required', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+            'secondary_color' => ['nullable', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+            'accent_color'    => ['nullable', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+            'font_family'     => 'nullable|string|in:,Inter,Poppins,Lato,Roboto',
+            'border_radius'   => 'required|string|in:sharp,default,rounded,pill',
+            'sidebar_style'   => 'required|string|in:dark,light,brand',
+            'custom_css'      => 'nullable|string|max:10000',
+            'agency_logo'     => 'nullable|image|max:2048',
+            'favicon'         => 'nullable|image|max:512',
         ]);
 
         $data = [
-            'name' => $this->agency_name,
-            'email' => $this->agency_email,
-            'phone' => $this->agency_phone ?: null,
-            'website' => $this->agency_website ?: null,
-            'address' => $this->agency_address ?: null,
-            'timezone' => $this->timezone,
-            'currency' => $this->currency,
-            'primary_color' => $this->primary_color,
+            'name'           => $this->agency_name,
+            'email'          => $this->agency_email,
+            'phone'          => $this->agency_phone ?: null,
+            'website'        => $this->agency_website ?: null,
+            'address'        => $this->agency_address ?: null,
+            'timezone'       => $this->timezone,
+            'currency'       => $this->currency,
+            'primary_color'   => $this->primary_color,
+            'secondary_color' => $this->secondary_color ?: null,
+            'accent_color'    => $this->accent_color ?: null,
+            'font_family'     => $this->font_family ?: null,
+            'border_radius'   => $this->border_radius,
+            'sidebar_style'   => $this->sidebar_style,
+            'custom_css'      => $this->custom_css ?: null,
         ];
 
         if ($this->agency_logo) {
             $data['logo_path'] = $this->agency_logo->store('agency-logos', 'public');
             $this->agency_logo = null;
+        }
+
+        if ($this->favicon) {
+            $data['favicon_path'] = $this->favicon->store('agency-favicons', 'public');
+            $this->favicon = null;
         }
 
         auth()->user()->agency->update($data);

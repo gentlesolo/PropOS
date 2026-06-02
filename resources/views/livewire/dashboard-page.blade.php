@@ -9,12 +9,12 @@
             <p class="text-xs font-semibold text-text-secondary mt-1">Here is your agency overview and AI recommendations for today.</p>
         </div>
         <div class="flex flex-wrap items-center gap-3">
-            <button class="glass-panel px-5 py-2.5 text-xs font-bold text-text-primary hover:border-brand-primary/50 hover:text-brand-primary transition-all hover-spring flex items-center space-x-2 shadow-sm">
+            <button class="bg-surface-card px-5 py-2.5 text-xs font-bold text-text-primary hover:border-brand-primary/50 hover:text-brand-primary transition-all hover-spring active:scale-95 flex items-center space-x-2 shadow-sm">
                 <svg class="h-4 w-4 text-text-tertiary" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
                 <span>Sync Data</span>
             </button>
             @livewire('shared.dashboard-customizer', ['enabledWidgets' => $enabledWidgets, 'allWidgets' => $allWidgets])
-            <button class="px-5 py-2.5 rounded-xl bg-brand-primary text-white text-xs font-bold hover:bg-brand-secondary transition-all shadow-brand-sm hover:shadow-brand-md hover-spring flex items-center space-x-2">
+            <button class="px-5 py-2.5 rounded-xl bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 text-xs font-bold hover:bg-brand-secondary transition-all shadow-brand-sm hover:shadow-brand-md hover-spring active:scale-95 flex items-center space-x-2">
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                 <span>New Mandate</span>
             </button>
@@ -26,8 +26,8 @@
 
         {{-- Pipeline Value --}}
         @if(in_array('pipeline', $enabledWidgets))
-        <div class="p-6 rounded-[2rem] bg-gradient-hero text-white shadow-2xl relative overflow-hidden group hover:scale-[1.02] hover:shadow-brand-lg transition-all duration-300">
-            <div class="absolute inset-0 bg-brand-primary opacity-30 mix-blend-overlay pointer-events-none"></div>
+        <div class="p-6 rounded-2xl bg-surface-card border border-border-default shadow-sm hover:border-brand-primary/40 transition-all duration-300 relative overflow-hidden group">
+            <div class="absolute inset-0 bg-brand-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
             <div class="absolute -top-12 -right-12 w-44 h-44 rounded-full bg-brand-accent/25 blur-2xl group-hover:scale-125 transition-transform duration-500"></div>
             <div class="relative z-10 flex flex-col justify-between h-full min-h-[140px]">
                 <div class="flex items-center justify-between">
@@ -37,7 +37,7 @@
                     </div>
                 </div>
                 <div class="mt-4">
-                    <p class="text-4xl font-black tracking-tighter">{{ $currencySymbol }}{{ number_format($metrics['total_pipeline'] / 1000000, 1) }}M</p>
+                    <p class="text-4xl font-black tracking-tighter tabular-nums text-text-primary">{{ $currencySymbol }}{{ number_format($metrics['total_pipeline'] / 1000000, 1) }}M</p>
                     <div class="mt-2.5 flex items-center text-[10px] font-bold">
                         <span class="text-brand-accent bg-black/25 px-2 py-0.5 rounded-lg flex items-center">
                             <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
@@ -52,8 +52,8 @@
 
         {{-- Active Listings --}}
         @if(in_array('active_listings', $enabledWidgets))
-        <div class="p-6 rounded-[2rem] glass-panel border border-border-default/80 shadow-sm hover:border-info-500/40 hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
-            <div class="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-info-500/10 blur-xl group-hover:scale-110 transition-transform duration-500"></div>
+        <div class="p-6 rounded-2xl bg-surface-card border border-border-default shadow-sm hover:border-info-500/40 transition-all duration-300 relative overflow-hidden group">
+            <div class="absolute inset-0 bg-info-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
             <div class="relative z-10 flex flex-col justify-between h-full min-h-[140px]">
                 <div class="flex items-center justify-between">
                     <p class="text-xs font-bold tracking-widest uppercase text-text-secondary">Active Listings</p>
@@ -62,7 +62,7 @@
                     </div>
                 </div>
                 <div class="mt-4">
-                    <p class="text-4xl font-black text-text-primary tracking-tighter">{{ $metrics['active_listings'] }}</p>
+                    <p class="text-4xl font-black text-text-primary tracking-tighter tabular-nums">{{ $metrics['active_listings'] }}</p>
                     <p class="mt-2.5 text-[10px] font-semibold text-text-tertiary">Properties on market</p>
                 </div>
             </div>
@@ -71,8 +71,8 @@
 
         {{-- New Leads --}}
         @if(in_array('new_leads', $enabledWidgets))
-        <div class="p-6 rounded-[2rem] glass-panel border border-border-default/80 shadow-sm hover:border-brand-primary/40 hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
-            <div class="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-brand-primary/10 blur-xl group-hover:scale-110 transition-transform duration-500"></div>
+        <div class="p-6 rounded-2xl bg-surface-card border border-border-default shadow-sm hover:border-brand-primary/40 transition-all duration-300 relative overflow-hidden group">
+            <div class="absolute inset-0 bg-brand-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
             <div class="relative z-10 flex flex-col justify-between h-full min-h-[140px]">
                 <div class="flex items-center justify-between">
                     <p class="text-xs font-bold tracking-widest uppercase text-text-secondary">New Leads</p>
@@ -81,7 +81,7 @@
                     </div>
                 </div>
                 <div class="mt-4">
-                    <p class="text-4xl font-black text-text-primary tracking-tighter">{{ $metrics['new_leads'] }}</p>
+                    <p class="text-4xl font-black text-text-primary tracking-tighter tabular-nums">{{ $metrics['new_leads'] }}</p>
                     <p class="mt-2.5 text-[10px] font-semibold text-text-tertiary">From all active channels</p>
                 </div>
             </div>
@@ -90,8 +90,8 @@
 
         {{-- Hot Buyers --}}
         @if(in_array('hot_buyers', $enabledWidgets))
-        <div class="p-6 rounded-[2rem] glass-panel border border-border-default/80 shadow-sm hover:border-warning-500/40 hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
-            <div class="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-warning-500/10 blur-xl group-hover:scale-110 transition-transform duration-500"></div>
+        <div class="p-6 rounded-2xl bg-surface-card border border-border-default shadow-sm hover:border-warning-500/40 transition-all duration-300 relative overflow-hidden group">
+            <div class="absolute inset-0 bg-warning-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
             <div class="relative z-10 flex flex-col justify-between h-full min-h-[140px]">
                 <div class="flex items-center justify-between">
                     <p class="text-xs font-bold tracking-widest uppercase text-text-secondary">Hot Buyers</p>
@@ -100,7 +100,7 @@
                     </div>
                 </div>
                 <div class="mt-4">
-                    <p class="text-4xl font-black text-text-primary tracking-tighter">{{ $metrics['hot_buyers'] }}</p>
+                    <p class="text-4xl font-black text-text-primary tracking-tighter tabular-nums">{{ $metrics['hot_buyers'] }}</p>
                     <p class="mt-2.5 text-[10px] font-semibold text-text-tertiary">> 80% Intent Score</p>
                 </div>
             </div>
@@ -109,7 +109,7 @@
 
         {{-- Occupancy Rate --}}
         @if(in_array('occupancy_rate', $enabledWidgets))
-        <div class="p-6 rounded-[2rem] glass-panel border border-border-default/80 shadow-sm hover:border-success-500/40 hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
+        <div class="p-6 rounded-2xl bg-surface-card border border-border-default shadow-sm hover:border-success-500/40 hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
             <div class="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-success-500/10 blur-xl group-hover:scale-110 transition-transform duration-500"></div>
             <div class="relative z-10 flex flex-col justify-between h-full min-h-[140px]">
                 <div class="flex items-center justify-between">
@@ -131,7 +131,7 @@
 
         {{-- Maintenance Efficiency --}}
         @if(in_array('maintenance_efficiency', $enabledWidgets))
-        <div class="p-6 rounded-[2rem] glass-panel border border-border-default/80 shadow-sm hover:border-brand-primary/40 hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
+        <div class="p-6 rounded-2xl bg-surface-card border border-border-default shadow-sm hover:border-brand-primary/40 hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
             <div class="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-brand-primary/10 blur-xl group-hover:scale-110 transition-transform duration-500"></div>
             <div class="relative z-10 flex flex-col justify-between h-full min-h-[140px]">
                 <div class="flex items-center justify-between">
@@ -154,7 +154,7 @@
         {{-- Compliance Overdue --}}
         @if(in_array('compliance_overdue', $enabledWidgets))
         @php $hasOverdue = $metrics['compliance_overdue'] > 0; @endphp
-        <a href="{{ route('compliance.calendar') }}" class="p-6 rounded-[2rem] glass-panel border {{ $hasOverdue ? 'border-danger-300' : 'border-border-default/80' }} shadow-sm hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden block">
+        <a href="{{ route('compliance.calendar') }}" class="p-6 rounded-2xl bg-surface-card border {{ $hasOverdue ? 'border-danger-300' : 'border-border-default' }} shadow-sm hover:shadow-brand-sm group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden block">
             <div class="absolute -top-10 -right-10 w-28 h-28 rounded-full {{ $hasOverdue ? 'bg-danger-500/10' : 'bg-success-500/10' }} blur-xl group-hover:scale-110 transition-transform duration-500"></div>
             <div class="relative z-10 flex flex-col justify-between h-full min-h-[140px]">
                 <div class="flex items-center justify-between">
@@ -180,10 +180,9 @@
         <div class="lg:col-span-2 space-y-8">
 
             <!-- AI Copilot Intelligence Feed -->
-            <div class="rounded-[2.5rem] border border-border-default/80 overflow-hidden relative shadow-brand-md group transition-all duration-300 hover:shadow-brand-lg hover:border-brand-primary/30">
-                <div class="absolute inset-0 bg-gradient-subtle dark:bg-gradient-hero opacity-20 pointer-events-none transition-opacity group-hover:opacity-30"></div>
-                <div class="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');"></div>
-                <div class="relative z-10 glass-panel border-none rounded-[2.5rem] backdrop-blur-3xl h-full">
+            <div class="rounded-2xl border border-border-default bg-surface-card overflow-hidden relative shadow-sm transition-all duration-300 hover:border-brand-primary/30 group">
+                <div class="absolute inset-0 bg-gradient-subtle dark:bg-gradient-hero opacity-10 pointer-events-none transition-opacity group-hover:opacity-20"></div>
+                <div class="relative z-10 h-full">
                     <div class="px-8 py-5 border-b border-border-default/40 flex items-center justify-between">
                         <div class="flex items-center space-x-3">
                             <div class="h-3 w-3 rounded-full bg-success-500 shadow-[0_0_10px_rgba(16,185,129,0.8)] animate-pulse"></div>
@@ -197,12 +196,12 @@
                                 <div class="absolute -left-8 top-1 h-7 w-7 rounded-full bg-brand-primary/10 border border-brand-primary/30 flex items-center justify-center backdrop-blur-sm z-10">
                                     <svg class="h-3.5 w-3.5 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                                 </div>
-                                <div class="p-5 rounded-2xl bg-surface-card border border-border-default/60 shadow-sm hover:shadow transition-shadow">
+                                <div class="p-5 rounded-2xl bg-surface-card border border-border-default shadow-sm hover:shadow transition-shadow">
                                     <h4 class="text-sm font-bold text-text-primary mb-1">High Intent Lead Matched</h4>
                                     <p class="text-sm text-text-secondary leading-relaxed">A new buyer lead matches 95% of criteria for your new "Victoria Island" mandate.</p>
                                     <div class="mt-4 flex space-x-3">
-                                        <button class="px-4 py-2 text-xs font-bold rounded-xl bg-brand-primary text-white hover:bg-brand-secondary transition-colors hover-spring shadow-sm">Draft Introduction</button>
-                                        <button class="px-4 py-2 text-xs font-bold rounded-xl bg-surface-raised text-text-secondary hover:text-text-primary border border-border-default/60 transition-colors">Dismiss</button>
+                                        <button class="px-4 py-2 text-xs font-bold rounded-xl bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 hover:bg-brand-secondary transition-colors hover-spring active:scale-95 shadow-sm">Draft Introduction</button>
+                                        <button class="px-4 py-2 text-xs font-bold rounded-xl bg-surface-raised text-text-secondary hover:text-text-primary border border-border-default transition-colors">Dismiss</button>
                                     </div>
                                 </div>
                             </div>
@@ -210,11 +209,11 @@
                                 <div class="absolute -left-8 top-1 h-7 w-7 rounded-full bg-warning-500/10 border border-warning-500/30 flex items-center justify-center backdrop-blur-sm z-10">
                                     <svg class="h-3.5 w-3.5 text-warning-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                                 </div>
-                                <div class="p-5 rounded-2xl bg-surface-card border border-border-default/60 shadow-sm hover:shadow transition-shadow">
+                                <div class="p-5 rounded-2xl bg-surface-card border border-border-default shadow-sm hover:shadow transition-shadow">
                                     <h4 class="text-sm font-bold text-text-primary mb-1">Price Reduction Recommended</h4>
                                     <p class="text-sm text-text-secondary leading-relaxed">Listing <span class="font-semibold text-text-primary">"Ikoyi Premium Villa"</span> has been on the market for 45 days. AI suggests a 5% reduction.</p>
                                     <div class="mt-4 flex space-x-3">
-                                        <button class="px-4 py-2 text-xs font-bold rounded-xl bg-surface-raised text-text-primary border border-border-default/60 hover:border-brand-primary/50 transition-colors">Review Pricing</button>
+                                        <button class="px-4 py-2 text-xs font-bold rounded-xl bg-surface-raised text-text-primary border border-border-default hover:border-brand-primary/50 transition-colors">Review Pricing</button>
                                     </div>
                                 </div>
                             </div>
@@ -224,7 +223,7 @@
             </div>
 
             <!-- Recent Listings -->
-            <div class="glass-panel rounded-[2rem] border border-border-default/80 shadow-md overflow-hidden transition-all duration-300 hover:border-border-strong/50">
+            <div class="bg-surface-card rounded-2xl border border-border-default shadow-sm overflow-hidden transition-all duration-300 hover:border-border-strong/50">
                 <div class="px-8 py-6 border-b border-border-default/40 flex items-center justify-between bg-surface-sunken/40">
                     <h2 class="text-lg font-bold text-text-primary flex items-center">
                         <svg class="w-5 h-5 mr-2 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
@@ -238,7 +237,7 @@
                        class="px-6 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between hover:bg-brand-primary/5 border-l-2 border-transparent hover:border-brand-primary transition-all duration-300 group cursor-pointer relative overflow-hidden gap-4">
                         <div class="absolute inset-0 bg-gradient-to-r from-brand-primary/0 to-brand-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                         <div class="flex items-center space-x-5 min-w-0">
-                            <div class="h-14 w-14 rounded-2xl bg-surface-raised border border-border-default/60 flex items-center justify-center text-text-tertiary flex-shrink-0 overflow-hidden group-hover:scale-105 transition-transform duration-300">
+                            <div class="h-14 w-14 rounded-2xl bg-surface-raised border border-border-default flex items-center justify-center text-text-tertiary flex-shrink-0 overflow-hidden group-hover:scale-105 transition-transform duration-300">
                                 @if($listing->coverPhoto)
                                     <img src="{{ asset('storage/' . $listing->coverPhoto->file_path) }}" alt="cover" class="h-full w-full object-cover">
                                 @else
@@ -251,7 +250,7 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-3 justify-between sm:justify-end w-full sm:w-auto">
-                            <span class="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-black tracking-wider bg-surface-raised border border-border-default/60 text-text-primary uppercase shadow-sm">
+                            <span class="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-black tracking-wider bg-surface-raised border border-border-default text-text-primary uppercase shadow-sm">
                                 {{ str_replace('_', ' ', $listing->status) }}
                             </span>
                             <svg class="h-4 w-4 text-text-tertiary group-hover:text-brand-primary transition-colors transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
@@ -269,7 +268,7 @@
         <div class="space-y-8">
 
             <!-- Recent Contacts -->
-            <div class="glass-panel rounded-[2rem] border border-border-default/80 shadow-md overflow-hidden transition-all duration-300 hover:border-border-strong/50">
+            <div class="bg-surface-card rounded-2xl border border-border-default shadow-sm overflow-hidden transition-all duration-300 hover:border-border-strong/50">
                 <div class="px-8 py-6 border-b border-border-default/40 flex items-center justify-between bg-surface-sunken/40">
                     <h2 class="text-lg font-bold text-text-primary flex items-center">
                         <svg class="w-5 h-5 mr-2 text-warning-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
@@ -312,12 +311,12 @@
             </div>
 
             <!-- Upcoming Tasks -->
-            <div class="glass-panel rounded-[2rem] border border-border-default/80 shadow-md overflow-hidden transition-all duration-300">
+            <div class="bg-surface-card rounded-2xl border border-border-default shadow-sm overflow-hidden transition-all duration-300">
                 <div class="px-8 py-6 border-b border-border-default/40 bg-surface-sunken/40">
                     <h2 class="text-lg font-bold text-text-primary">Upcoming Tasks</h2>
                 </div>
                 <div class="p-8 text-center flex flex-col items-center justify-center">
-                    <div class="w-16 h-16 bg-surface-raised border border-border-default/60 rounded-2xl flex items-center justify-center mb-4 shadow-sm">
+                    <div class="w-16 h-16 bg-surface-raised border border-border-default rounded-2xl flex items-center justify-center mb-4 shadow-sm">
                         <svg class="w-8 h-8 text-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 13l4 4L19 7"></path></svg>
                     </div>
                     <p class="text-sm font-semibold text-text-primary">You're all caught up!</p>
@@ -328,3 +327,6 @@
         </div>
     </div>
 </div>
+
+
+

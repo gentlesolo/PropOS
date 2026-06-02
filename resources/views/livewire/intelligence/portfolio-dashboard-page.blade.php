@@ -29,7 +29,7 @@
             ['label'=>'NOI','val'=>'R'.number_format($summary['total_noi']),'suffix'=>'','color'=> $summary['total_noi'] >= 0 ? 'success' : 'danger'],
             ['label'=>'At Risk','val'=>$summary['at_risk'],'suffix'=>'','color'=>$summary['at_risk'] > 0 ? 'danger' : 'success'],
         ] as $s)
-        <div class="glass-panel rounded-2xl border border-border-default/60 p-4 text-center">
+        <div class="bg-surface-card rounded-2xl border border-border-default p-4 text-center">
             <div class="text-xl font-bold text-{{ $s['color'] }}-600">{{ $s['val'] }}{{ $s['suffix'] }}</div>
             <div class="text-xs text-text-secondary mt-1">{{ $s['label'] }}</div>
         </div>
@@ -38,7 +38,7 @@
 
     {{-- Property Rows --}}
     @if($rows->isEmpty())
-    <div class="glass-panel rounded-2xl border border-border-default/60 p-12 text-center">
+    <div class="bg-surface-card rounded-2xl border border-border-default p-12 text-center">
         <p class="text-text-secondary text-sm">No properties match the selected filter.</p>
     </div>
     @else
@@ -50,7 +50,7 @@
             $maxTrend = max(array_filter($row['trend'], fn($v) => $v > 0)) ?: 1;
             $riskLabels = ['vacant'=>'Vacant','overdue_inspection'=>'Overdue Inspection','expiring_lease'=>'Lease Expiring','compliance'=>'Compliance Issue'];
         @endphp
-        <div class="glass-panel rounded-2xl border {{ $hasRisks ? 'border-warning-200' : 'border-border-default/60' }} p-5">
+        <div class="bg-surface-card rounded-2xl border {{ $hasRisks ? 'border-warning-200' : 'border-border-default' }} p-5">
             <div class="flex flex-col lg:flex-row lg:items-start gap-4">
 
                 {{-- Property Info --}}
@@ -82,15 +82,15 @@
 
                 {{-- Financial KPIs --}}
                 <div class="grid grid-cols-3 gap-3 flex-1">
-                    <div class="glass-panel rounded-xl border border-border-default/40 p-3 text-center">
+                    <div class="bg-surface-card rounded-xl border border-border-default/40 p-3 text-center">
                         <div class="text-xs text-text-secondary mb-1">Revenue</div>
                         <div class="font-bold text-success-600 text-sm">R{{ number_format($row['revenue']) }}</div>
                     </div>
-                    <div class="glass-panel rounded-xl border border-border-default/40 p-3 text-center">
+                    <div class="bg-surface-card rounded-xl border border-border-default/40 p-3 text-center">
                         <div class="text-xs text-text-secondary mb-1">Expenses</div>
                         <div class="font-bold text-danger-600 text-sm">R{{ number_format($row['expenses']) }}</div>
                     </div>
-                    <div class="glass-panel rounded-xl border border-border-default/40 p-3 text-center">
+                    <div class="bg-surface-card rounded-xl border border-border-default/40 p-3 text-center">
                         <div class="text-xs text-text-secondary mb-1">NOI</div>
                         <div class="font-bold text-sm {{ $row['noi'] >= 0 ? 'text-success-600' : 'text-danger-600' }}">R{{ number_format($row['noi']) }}</div>
                     </div>
@@ -121,3 +121,4 @@
     </div>
     @endif
 </div>
+

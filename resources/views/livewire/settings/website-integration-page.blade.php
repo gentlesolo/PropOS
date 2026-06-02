@@ -192,26 +192,41 @@
                             <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Endpoint</th>
                             <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Description</th>
                             <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Rate Limit</th>
+                            <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Key Type</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-50">
                         @foreach([
-                            ['GET',  '/listings',                    'Paginated active listings. Filters: city, mandate_type, min_price, max_price, bedrooms, per_page.', '60/min'],
-                            ['GET',  '/listings/{id}',               'Full listing detail with media, agent, and description.', '60/min'],
-                            ['POST', '/leads',                       'Submit a contact inquiry. Deduplicates and scores automatically.', '10/min'],
-                            ['POST', '/bookings',                    'Book a viewing slot. Returns viewing_id and agent confirmation details.', '5/min'],
-                            ['GET',  '/agents/{id}/availability',    'Timezone-aware 30-min free slots for the next 14 days.', '60/min'],
+                            ['GET',    '/listings',                 'Paginated active listings. Filters: city, mandate_type, min_price, max_price, bedrooms, per_page.', '60/min',  'public_read'],
+                            ['GET',    '/listings/{id}',            'Full listing detail with media, agent, and description.',                                            '60/min',  'public_read'],
+                            ['POST',   '/leads',                    'Submit a contact inquiry. Deduplicates and scores automatically.',                                   '10/min',  'public_read'],
+                            ['POST',   '/bookings',                 'Book a viewing slot. Returns viewing_id and agent confirmation details.',                             '5/min',   'public_read'],
+                            ['GET',    '/agents/{id}/availability', 'Timezone-aware 30-min free slots for the next 14 days.',                                             '60/min',  'public_read'],
+                            ['GET',    '/contacts',                 'List / search contacts. Filters: email, phone, type, status, tag, search.',                          '120/min', 'full_access'],
+                            ['POST',   '/contacts',                 'Create a contact. Returns 409 with existing contact_id if duplicate detected.',                       '120/min', 'full_access'],
+                            ['GET',    '/contacts/{id}',            'Full contact detail including preferences, notes, and agent assignment.',                             '120/min', 'full_access'],
+                            ['PATCH',  '/contacts/{id}',            'Update contact fields (name, status, type, notes, preferences, assigned_agent_id).',                  '120/min', 'full_access'],
+                            ['POST',   '/contacts/{id}/tags',       'Add one or more tags to a contact. Merges with existing tags.',                                      '120/min', 'full_access'],
+                            ['DELETE', '/contacts/{id}/tags',       'Remove specific tags from a contact.',                                                               '120/min', 'full_access'],
                         ] as $ep)
-                        <tr class="hover:bg-gray-50">
+                        @php $isWrite = in_array($ep[0], ['POST','PATCH','DELETE']); @endphp
+                        <tr class="hover:bg-gray-50 {{ $ep[4] === 'full_access' ? 'bg-orange-50/40' : '' }}">
                             <td class="px-5 py-3">
                                 <span class="inline-block px-2 py-0.5 text-xs font-bold rounded font-mono
-                                    {{ $ep[0] === 'GET' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700' }}">
+                                    {{ $ep[0] === 'GET' ? 'bg-green-100 text-green-700' : ($ep[0] === 'DELETE' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700') }}">
                                     {{ $ep[0] }}
                                 </span>
                             </td>
                             <td class="px-5 py-3 font-mono text-xs text-gray-700">{{ $ep[1] }}</td>
                             <td class="px-5 py-3 text-xs text-gray-600">{{ $ep[2] }}</td>
                             <td class="px-5 py-3 text-xs text-gray-500">{{ $ep[3] }}</td>
+                            <td class="px-5 py-3">
+                                @if($ep[4] === 'full_access')
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-700">Full Access</span>
+                                @else
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-600">Public Read</span>
+                                @endif
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>

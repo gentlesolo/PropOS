@@ -1,11 +1,11 @@
-﻿<div>
+<div>
     <div class="flex items-center justify-between mb-8">
         <div>
             <h1 class="text-3xl font-extrabold tracking-tight text-text-primary">Commission Ledger</h1>
             <p class="mt-2 text-text-secondary">Track gross commissions, agent splits, and payment statuses.</p>
         </div>
         <div class="flex gap-3">
-            <select wire:model="year" class="border border-border-default rounded-xl px-3 py-2 text-sm bg-surface-card text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+            <select wire:model="year" class="border border-border-default rounded-xl px-3 py-2 text-sm bg-surface-card text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                 @foreach([now()->year, now()->year - 1, now()->year - 2] as $y)
                 <option value="{{ $y }}">{{ $y }}</option>
                 @endforeach
@@ -14,13 +14,13 @@
                 @foreach(['' => 'All', 'pending' => 'Pending', 'processing' => 'Processing', 'paid' => 'Paid'] as $val => $label)
                 <button wire:click="$set('filterStatus', '{{ $val }}')"
                     class="px-3 py-2 rounded-xl text-xs font-bold transition-colors
-                    {{ $filterStatus === $val ? 'bg-brand-primary text-white' : 'border border-border-default bg-surface-card text-text-secondary hover:bg-surface-sunken' }}">
+                    {{ $filterStatus === $val ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10' : 'border border-border-default bg-surface-card text-text-secondary hover:bg-surface-sunken' }}">
                     {{ $label }}
                 </button>
                 @endforeach
             </div>
             <button wire:click="reconcile" class="px-4 py-2 border border-brand-primary/40 text-brand-primary rounded-xl text-sm font-bold hover:bg-brand-primary/5 transition-colors">
-                <span wire:loading.remove wire:target="reconcile">↻ Reconcile</span>
+                <span wire:loading.remove wire:target="reconcile">? Reconcile</span>
                 <span wire:loading wire:target="reconcile">Reconciling...</span>
             </button>
         </div>
@@ -28,30 +28,30 @@
 
     <!-- Summary Widgets -->
     <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-        <div class="glass-panel rounded-2xl border border-border-default/60 p-5 md:col-span-1">
+        <div class="bg-surface-card rounded-2xl border border-border-default p-5 md:col-span-1">
             <p class="text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-1">Gross YTD</p>
             <h3 class="text-2xl font-black text-text-primary">{{ $currencySymbol }}{{ number_format($commissions->sum('gross_commission')) }}</h3>
         </div>
-        <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+        <div class="bg-surface-card rounded-2xl border border-border-default p-5">
             <p class="text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-1">Agency Net</p>
             <h3 class="text-2xl font-black text-brand-primary">{{ $currencySymbol }}{{ number_format($totalBrokerageRevenue) }}</h3>
         </div>
-        <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+        <div class="bg-surface-card rounded-2xl border border-border-default p-5">
             <p class="text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-1">Agents Net</p>
             <h3 class="text-2xl font-black text-success-600">{{ $currencySymbol }}{{ number_format($totalAgentPayouts) }}</h3>
         </div>
-        <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+        <div class="bg-surface-card rounded-2xl border border-border-default p-5">
             <p class="text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-1">Paid Out</p>
             <h3 class="text-2xl font-black text-text-primary">{{ $currencySymbol }}{{ number_format($commissions->where('payment_status', 'paid')->sum('gross_commission')) }}</h3>
         </div>
-        <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+        <div class="bg-surface-card rounded-2xl border border-border-default p-5">
             <p class="text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-1">Pending Payouts</p>
             <h3 class="text-2xl font-black text-warning-600">{{ $commissions->whereIn('payment_status', ['pending', 'processing'])->count() }}</h3>
         </div>
     </div>
 
     <!-- Ledger Table -->
-    <div class="glass-panel rounded-2xl border border-border-default/60 shadow-sm overflow-hidden">
+    <div class="bg-surface-card rounded-2xl border border-border-default shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
@@ -135,7 +135,7 @@
                     <tr>
                         <td colspan="7" class="py-14 text-center">
                             <div class="flex flex-col items-center gap-3">
-                                <div class="h-12 w-12 bg-surface-raised rounded-2xl flex items-center justify-center text-xl">💰</div>
+                                <div class="h-12 w-12 bg-surface-raised rounded-2xl flex items-center justify-center text-xl">??</div>
                                 <p class="text-sm font-medium text-text-primary">No commission records for {{ $year }}</p>
                                 <p class="text-xs text-text-secondary">Click "Reconcile" to generate commission records from closed deals.</p>
                             </div>
@@ -150,7 +150,7 @@
     <!-- Printable Commission Statement Modal -->
     @if($activeCommission)
     <div class="fixed inset-0 bg-surface-overlay/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in print:bg-white print:p-0 print:static print:h-auto">
-        <div class="glass-panel w-full max-w-2xl rounded-3xl border border-border-default/60 shadow-2xl p-8 bg-surface-card print:border-none print:shadow-none print:bg-white print:p-0 text-text-primary print:text-black">
+        <div class="bg-surface-card w-full max-w-2xl rounded-3xl border border-border-default shadow-2xl p-8 bg-surface-card print:border-none print:shadow-none print:bg-white print:p-0 text-text-primary print:text-black">
             <!-- Header -->
             <div class="flex items-start justify-between border-b border-border-default/30 pb-4 mb-6 print:border-black">
                 <div>
@@ -213,7 +213,7 @@
                     Status: <span class="font-bold text-brand-primary uppercase print:text-black">{{ $activeCommission->payment_status }}</span>
                 </div>
                 <div class="flex gap-3 print:hidden">
-                    <button onclick="window.print()" class="px-4 py-2 bg-brand-primary text-white rounded-xl text-sm font-semibold hover:bg-brand-secondary transition-colors">
+                    <button onclick="window.print()" class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-semibold hover:bg-brand-secondary transition-colors">
                         Print Statement
                     </button>
                     <button wire:click="$set('selectedCommissionId', null)" class="px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors">
@@ -225,3 +225,6 @@
     </div>
     @endif
 </div>
+
+
+

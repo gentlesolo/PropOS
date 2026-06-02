@@ -8,8 +8,9 @@
     </div>
 
     {{-- Sidebar container --}}
-    <div :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-         class="fixed inset-y-0 left-0 z-50 w-64 bg-surface-sunken/70 backdrop-blur-md border-r border-border-default/45 h-full flex flex-col flex-shrink-0 transition-transform duration-300 ease-in-out md:relative md:translate-x-0 md:flex">
+    <div id="app-sidebar"
+         :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+         class="fixed inset-y-0 left-0 z-50 w-64 bg-surface-sunken backdrop-blur-md md:bg-surface-sunken/70 border-r border-border-default/45 h-full flex flex-col flex-shrink-0 transition-transform duration-300 ease-in-out md:relative md:translate-x-0 md:flex">
 
         {{-- Brand / Logo --}}
         <div class="flex items-center justify-between h-16 px-6 border-b border-border-default/30 shrink-0 bg-surface-sunken/10">

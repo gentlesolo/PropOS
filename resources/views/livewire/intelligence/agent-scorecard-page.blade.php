@@ -1,10 +1,10 @@
-﻿<div>
+<div>
     <div class="flex items-center justify-between mb-8">
         <div>
             <h1 class="text-3xl font-extrabold tracking-tight text-text-primary">Agent Scorecard</h1>
             <p class="mt-2 text-text-secondary">AI-driven performance metrics and coaching for {{ auth()->user()->first_name }}.</p>
         </div>
-        <select wire:model="timeframe" class="bg-surface-card border border-border-default/60 text-text-primary rounded-xl px-4 py-2 text-sm font-semibold focus:ring-brand-primary focus:border-brand-primary">
+        <select wire:model="timeframe" class="bg-surface-card border border-border-default text-text-primary rounded-xl px-4 py-2 text-sm font-semibold focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page focus:border-brand-primary">
             <option value="week">This Week</option>
             <option value="month">This Month</option>
             <option value="quarter">This Quarter</option>
@@ -19,27 +19,27 @@
 
             <!-- Key Stats -->
             <div class="grid grid-cols-2 md:grid-cols-3 gap-5">
-                <div class="glass-panel rounded-2xl border border-border-default/60 p-5 hover-spring">
+                <div class="bg-surface-card rounded-2xl border border-border-default p-5 hover-spring active:scale-95">
                     <p class="text-xs font-bold text-text-tertiary uppercase tracking-wider mb-2">Won Revenue</p>
                     <h3 class="text-2xl font-black text-text-primary">{{ $currencySymbol }}{{ number_format($metrics['won_value'] / 1000000, 1) }}M</h3>
                     <p class="text-xs text-text-secondary mt-1">{{ $metrics['won_deals'] }} deal{{ $metrics['won_deals'] !== 1 ? 's' : '' }} closed</p>
                 </div>
-                <div class="glass-panel rounded-2xl border border-border-default/60 p-5 hover-spring">
+                <div class="bg-surface-card rounded-2xl border border-border-default p-5 hover-spring active:scale-95">
                     <p class="text-xs font-bold text-text-tertiary uppercase tracking-wider mb-2">Conversion Rate</p>
                     <h3 class="text-2xl font-black text-text-primary">{{ $metrics['conversion_rate'] }}%</h3>
                     <p class="text-xs text-text-secondary mt-1">{{ $metrics['total_deals'] }} total deals</p>
                 </div>
-                <div class="glass-panel rounded-2xl border border-border-default/60 p-5 hover-spring">
+                <div class="bg-surface-card rounded-2xl border border-border-default p-5 hover-spring active:scale-95">
                     <p class="text-xs font-bold text-text-tertiary uppercase tracking-wider mb-2">Viewings Done</p>
                     <h3 class="text-2xl font-black text-text-primary">{{ $metrics['viewings_completed'] }}</h3>
                     <p class="text-xs text-text-secondary mt-1">{{ $metrics['new_leads'] }} new leads</p>
                 </div>
-                <div class="glass-panel rounded-2xl border border-border-default/60 p-5 hover-spring">
+                <div class="bg-surface-card rounded-2xl border border-border-default p-5 hover-spring active:scale-95">
                     <p class="text-xs font-bold text-text-tertiary uppercase tracking-wider mb-2">Pipeline Value</p>
                     <h3 class="text-2xl font-black text-text-primary">{{ $currencySymbol }}{{ number_format($metrics['pipeline_value'] / 1000000, 1) }}M</h3>
                     <p class="text-xs text-text-secondary mt-1">Active deals</p>
                 </div>
-                <div class="glass-panel rounded-2xl border border-border-default/60 p-5 hover-spring md:col-span-2">
+                <div class="bg-surface-card rounded-2xl border border-border-default p-5 hover-spring active:scale-95 md:col-span-2">
                     <p class="text-xs font-bold text-text-tertiary uppercase tracking-wider mb-2">Monthly Targets</p>
                     <div class="space-y-3">
                         <div>
@@ -55,7 +55,7 @@
             </div>
 
             <!-- Real Activity Chart -->
-            <div class="glass-panel rounded-2xl border border-border-default/60 p-6 shadow-sm">
+            <div class="bg-surface-card rounded-2xl border border-border-default p-6 shadow-sm">
                 <div class="flex items-center justify-between mb-5">
                     <h3 class="text-base font-bold text-text-primary">14-Week Activity (Deals & Viewings)</h3>
                     <div class="flex items-center gap-4 text-xs font-bold text-text-tertiary">
@@ -84,10 +84,10 @@
 
         <!-- Right: AI Coaching -->
         <div class="space-y-6">
-            <div class="glass-panel rounded-2xl border border-brand-primary/30 bg-gradient-to-b from-brand-primary/5 to-transparent p-6 shadow-lg relative overflow-hidden">
+            <div class="bg-surface-card rounded-2xl border border-brand-primary/30 bg-gradient-to-b from-brand-primary/5 to-transparent p-6 shadow-lg relative overflow-hidden">
                 <div class="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-brand-primary/10 blur-2xl pointer-events-none"></div>
                 <div class="flex items-center mb-5 relative z-10">
-                    <div class="h-10 w-10 rounded-xl bg-brand-primary text-white flex items-center justify-center mr-3 shadow-md">
+                    <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 flex items-center justify-center mr-3 shadow-md">
                         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 21l-.813-5.096L3 15l5.096-.813L9 9l.813 5.096L15 15l-5.188.904ZM19.006 8.246 18 12l-1.006-3.754L13.25 7.25l3.744-1.006L18 2.5l1.006 3.744 3.744 1.006-3.744 1.006Z"/></svg>
                     </div>
                     <h2 class="text-lg font-black text-text-primary">Copilot Coaching</h2>
@@ -102,7 +102,7 @@
                     @endforeach
                 </div>
 
-                <button wire:click="generateAnalysis" class="w-full py-2.5 bg-brand-primary text-white rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors flex items-center justify-center gap-2 hover-spring">
+                <button wire:click="generateAnalysis" class="w-full py-2.5 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors flex items-center justify-center gap-2 hover-spring active:scale-95">
                     <span wire:loading.remove wire:target="generateAnalysis">
                         <svg class="h-4 w-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                         Generate Full Analysis
@@ -116,3 +116,7 @@
         </div>
     </div>
 </div>
+
+
+
+

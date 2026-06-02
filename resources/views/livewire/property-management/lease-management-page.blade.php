@@ -8,7 +8,7 @@
             <button wire:click="$toggle('showPaymentForm')" class="inline-flex items-center gap-2 px-4 py-2 border border-success-300 text-success-700 rounded-xl text-sm font-medium hover:bg-success-50 transition-colors">
                 Record Payment
             </button>
-            <button wire:click="$toggle('showCreateForm')" class="inline-flex items-center gap-2 px-4 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">
+            <button wire:click="$toggle('showCreateForm')" class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 New Lease
             </button>
@@ -17,31 +17,31 @@
 
     <!-- Stats -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div class="glass-panel rounded-2xl border border-success-200 p-4 text-center">
+        <div class="bg-surface-card rounded-2xl border border-success-200 p-4 text-center">
             <div class="text-2xl font-bold text-success-600">{{ $stats['active'] }}</div>
             <div class="text-xs text-text-secondary mt-1">Active Leases</div>
         </div>
-        <div class="glass-panel rounded-2xl border border-warning-200 p-4 text-center">
+        <div class="bg-surface-card rounded-2xl border border-warning-200 p-4 text-center">
             <div class="text-2xl font-bold text-warning-600">{{ $stats['expiring'] }}</div>
             <div class="text-xs text-text-secondary mt-1">Expiring in 60 Days</div>
         </div>
-        <div class="glass-panel rounded-2xl border border-danger-200 p-4 text-center">
+        <div class="bg-surface-card rounded-2xl border border-danger-200 p-4 text-center">
             <div class="text-2xl font-bold text-danger-600">{{ $stats['overdue_payments'] }}</div>
             <div class="text-xs text-text-secondary mt-1">Overdue Payments</div>
         </div>
-        <div class="glass-panel rounded-2xl border border-border-default/60 p-4 text-center">
+        <div class="bg-surface-card rounded-2xl border border-border-default p-4 text-center">
             <div class="text-lg font-bold text-text-primary">R{{ number_format($stats['total_rent_due']) }}</div>
             <div class="text-xs text-text-secondary mt-1">Total Rent Due</div>
         </div>
     </div>
 
     @if($showCreateForm)
-    <div class="glass-panel rounded-2xl border border-border-default/60 p-5 mb-6">
+    <div class="bg-surface-card rounded-2xl border border-border-default p-5 mb-6">
         <h2 class="text-base font-semibold text-text-primary mb-4">Create New Lease</h2>
         <form wire:submit.prevent="createLease" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Tenant *</label>
-                <select wire:model="tenant_id" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                <select wire:model="tenant_id" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     <option value="">Select tenant…</option>
                     @foreach($tenants as $t)
                     <option value="{{ $t->id }}">{{ $t->contact?->full_name }}</option>
@@ -51,7 +51,7 @@
             </div>
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Property *</label>
-                <select wire:model="listing_id" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                <select wire:model="listing_id" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     <option value="">Select property…</option>
                     @foreach($listings as $l)
                     <option value="{{ $l->id }}">{{ $l->property?->address ?? 'Listing #'.$l->id }}</option>
@@ -61,37 +61,37 @@
             </div>
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Start Date *</label>
-                <input wire:model="start_date" type="date" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                <input wire:model="start_date" type="date" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                 @error('start_date') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
             </div>
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">End Date *</label>
-                <input wire:model="end_date" type="date" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                <input wire:model="end_date" type="date" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                 @error('end_date') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
             </div>
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Monthly Rent *</label>
-                <input wire:model="monthly_rent" type="number" min="1" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                <input wire:model="monthly_rent" type="number" min="1" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                 @error('monthly_rent') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
             </div>
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Deposit</label>
-                <input wire:model="deposit_amount" type="number" min="0" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                <input wire:model="deposit_amount" type="number" min="0" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
             </div>
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Annual Escalation (%)</label>
-                <input wire:model="escalation_percent" type="number" min="0" max="100" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                <input wire:model="escalation_percent" type="number" min="0" max="100" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
             </div>
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Payment Day of Month</label>
-                <select wire:model="payment_day" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                <select wire:model="payment_day" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     @foreach(['1','2','3','5','7','10','15','25','28','30'] as $d)
                     <option value="{{ $d }}">{{ $d }}</option>
                     @endforeach
                 </select>
             </div>
             <div class="md:col-span-2 flex gap-3 pt-2">
-                <button type="submit" wire:loading.attr="disabled" class="px-5 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">Create Lease + Generate Schedule</button>
+                <button type="submit" wire:loading.attr="disabled" class="px-5 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">Create Lease + Generate Schedule</button>
                 <button type="button" wire:click="$set('showCreateForm', false)" class="px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors">Cancel</button>
             </div>
         </form>
@@ -99,12 +99,12 @@
     @endif
 
     @if($showPaymentForm)
-    <div class="glass-panel rounded-2xl border border-success-200 p-5 mb-6">
+    <div class="bg-surface-card rounded-2xl border border-success-200 p-5 mb-6">
         <h2 class="text-base font-semibold text-text-primary mb-4">Record Rent Payment</h2>
         <form wire:submit.prevent="recordPayment" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Lease *</label>
-                <select wire:model="payment_lease_id" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                <select wire:model="payment_lease_id" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     <option value="">Select lease…</option>
                     @foreach($leases->getCollection() as $l)
                     <option value="{{ $l->id }}">{{ $l->tenant?->contact?->full_name }} — R{{ number_format($l->monthly_rent) }}/mo</option>
@@ -114,15 +114,15 @@
             </div>
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Amount Paid *</label>
-                <input wire:model="amount_paid" type="number" min="0.01" step="0.01" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                <input wire:model="amount_paid" type="number" min="0.01" step="0.01" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
             </div>
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Date Paid *</label>
-                <input wire:model="paid_date" type="date" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                <input wire:model="paid_date" type="date" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
             </div>
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Payment Method</label>
-                <select wire:model="payment_method" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                <select wire:model="payment_method" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     <option value="eft">EFT / Bank Transfer</option>
                     <option value="cash">Cash</option>
                     <option value="card">Card</option>
@@ -138,17 +138,17 @@
     @endif
 
     @if($showTerminateForm)
-    <div class="glass-panel rounded-2xl border border-danger-200 p-5 mb-6">
+    <div class="bg-surface-card rounded-2xl border border-danger-200 p-5 mb-6">
         <h2 class="text-base font-semibold text-text-primary mb-4">Terminate Lease</h2>
         <form wire:submit.prevent="terminateLease" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Termination Date *</label>
-                <input wire:model="termination_date" type="date" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                <input wire:model="termination_date" type="date" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                 @error('termination_date') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
             </div>
             <div class="md:col-span-2">
                 <label class="block text-xs font-medium text-text-secondary mb-1">Reason *</label>
-                <textarea wire:model="termination_reason" rows="2" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary" placeholder="State reason for termination…"></textarea>
+                <textarea wire:model="termination_reason" rows="2" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page" placeholder="State reason for termination…"></textarea>
                 @error('termination_reason') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
             </div>
             <div class="md:col-span-2 flex gap-3 pt-2">
@@ -160,10 +160,10 @@
     @endif
 
     <!-- Leases Table -->
-    <div class="glass-panel rounded-2xl border border-border-default/60 overflow-hidden">
+    <div class="bg-surface-card rounded-2xl border border-border-default overflow-hidden">
         <div class="px-4 py-3 border-b border-border-default flex flex-wrap gap-3">
             <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search tenant…"
-                class="flex-1 min-w-[200px] rounded-xl border border-border-default bg-surface-input px-4 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                class="flex-1 min-w-[200px] rounded-xl border border-border-default bg-surface-input px-4 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
             <select wire:model.live="statusFilter" class="rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary">
                 <option value="">All Statuses</option>
                 @foreach(['active','expiring_soon','renewed','terminated','expired'] as $s)
@@ -238,7 +238,7 @@
             <!-- Tabs -->
             <div class="flex gap-1 mb-5">
                 @foreach(['overview' => 'Overview', 'payments' => 'Payments'] as $tab => $label)
-                <button wire:click="$set('detailTab','{{ $tab }}')" class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {{ $detailTab === $tab ? 'bg-brand-primary text-white' : 'text-text-secondary hover:bg-surface-hover' }}">{{ $label }}</button>
+                <button wire:click="$set('detailTab','{{ $tab }}')" class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {{ $detailTab === $tab ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10' : 'text-text-secondary hover:bg-surface-hover' }}">{{ $label }}</button>
                 @endforeach
             </div>
 
@@ -286,3 +286,6 @@
     </div>
     @endif
 </div>
+
+
+

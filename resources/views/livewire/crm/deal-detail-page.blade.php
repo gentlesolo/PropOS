@@ -1,4 +1,4 @@
-﻿<div>
+<div>
     <!-- Breadcrumb -->
     <div class="flex items-center gap-3 mb-6">
         <a href="{{ route('crm.pipeline') }}" class="text-text-tertiary hover:text-brand-primary text-sm flex items-center gap-1">
@@ -12,7 +12,7 @@
     <!-- AI Next Best Action Banner -->
     @if($nextActionSuggestion)
     <div class="mb-5 flex items-start gap-3 p-4 rounded-2xl border border-brand-primary/30 bg-brand-primary/5">
-        <div class="shrink-0 h-8 w-8 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary text-sm">✦</div>
+        <div class="shrink-0 h-8 w-8 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary text-sm">?</div>
         <div class="flex-1 min-w-0">
             <p class="text-xs font-semibold text-brand-primary mb-0.5">AI Suggestion</p>
             <p class="text-sm text-text-primary">{{ $nextActionSuggestion }}</p>
@@ -29,7 +29,7 @@
         <div class="xl:col-span-1 space-y-5">
 
             <!-- Deal Card -->
-            <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+            <div class="bg-surface-card rounded-2xl border border-border-default p-5">
                 <div class="flex items-start justify-between mb-4">
                     <div>
                         <h1 class="text-xl font-bold text-text-primary">{{ $deal->title }}</h1>
@@ -43,7 +43,7 @@
                             @if($deal->momentum_score >= 70) bg-success-50 border-success-200 text-success-700
                             @elseif($deal->momentum_score >= 40) bg-warning-50 border-warning-200 text-warning-700
                             @else bg-danger-50 border-danger-200 text-danger-700 @endif">
-                            {{ $deal->momentum_score }} · {{ $deal->momentumLabel }}
+                            {{ $deal->momentum_score }} � {{ $deal->momentumLabel }}
                         </div>
                         <button wire:click="$toggle('showEditForm')" class="text-xs text-brand-primary border border-brand-primary/30 rounded-lg px-2.5 py-1.5 hover:bg-brand-primary/5 transition-colors">
                             {{ $showEditForm ? 'Cancel' : 'Edit' }}
@@ -60,16 +60,16 @@
                 <form wire:submit.prevent="saveDeal" class="space-y-3">
                     <div>
                         <label class="block text-xs font-medium text-text-secondary mb-1">Title</label>
-                        <input wire:model.defer="title" type="text" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                        <input wire:model.defer="title" type="text" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                         @error('title') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-text-secondary mb-1">Value ({{ $currencySymbol }})</label>
-                        <input wire:model.defer="value" type="number" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                        <input wire:model.defer="value" type="number" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-text-secondary mb-1">Stage</label>
-                        <select wire:model.defer="pipeline_stage_id" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                        <select wire:model.defer="pipeline_stage_id" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                             @foreach($stages as $stage)
                             <option value="{{ $stage->id }}">{{ $stage->name }}</option>
                             @endforeach
@@ -77,9 +77,9 @@
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-text-secondary mb-1">Notes</label>
-                        <textarea wire:model.defer="notes" rows="2" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary resize-none"></textarea>
+                        <textarea wire:model.defer="notes" rows="2" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page resize-none"></textarea>
                     </div>
-                    <button type="submit" class="w-full py-2 bg-brand-primary text-white rounded-lg text-sm font-medium hover:bg-brand-secondary transition-colors">
+                    <button type="submit" class="w-full py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg text-sm font-medium hover:bg-brand-secondary transition-colors">
                         <span wire:loading.remove wire:target="saveDeal">Save Changes</span>
                         <span wire:loading wire:target="saveDeal">Saving...</span>
                     </button>
@@ -120,19 +120,19 @@
                     </div>
                 </dl>
                 @if($deal->notes)
-                <div class="mt-4 pt-4 border-t border-border-default/60">
+                <div class="mt-4 pt-4 border-t border-border-default">
                     <p class="text-xs font-medium text-text-secondary mb-1">Notes</p>
                     <p class="text-sm text-text-primary">{{ $deal->notes }}</p>
                 </div>
                 @endif
 
                 <!-- AI Next Action Button -->
-                <div class="mt-4 pt-4 border-t border-border-default/60">
+                <div class="mt-4 pt-4 border-t border-border-default">
                     <button wire:click="loadNextAction"
                         wire:loading.attr="disabled"
                         wire:target="loadNextAction"
                         class="w-full flex items-center justify-center gap-2 py-2 rounded-lg border border-brand-primary/30 text-brand-primary text-xs font-medium hover:bg-brand-primary/5 transition-colors disabled:opacity-50">
-                        <span wire:loading.remove wire:target="loadNextAction">✦ Suggest Next Action</span>
+                        <span wire:loading.remove wire:target="loadNextAction">? Suggest Next Action</span>
                         <span wire:loading wire:target="loadNextAction">Thinking...</span>
                     </button>
                 </div>
@@ -140,7 +140,7 @@
             </div>
 
             <!-- Stage Checklist -->
-            <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+            <div class="bg-surface-card rounded-2xl border border-border-default p-5">
                 <h3 class="text-sm font-semibold text-text-primary mb-3">
                     Stage Checklist
                     @if($deal->checklistItems->count() > 0)
@@ -170,13 +170,13 @@
 
                 <form wire:submit.prevent="addChecklistItem" class="flex gap-2">
                     <input wire:model.defer="newChecklistItem" type="text" placeholder="Add checklist item..."
-                        class="flex-1 rounded-lg border border-border-default bg-surface-input px-3 py-1.5 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
-                    <button type="submit" class="px-3 py-1.5 bg-brand-primary text-white rounded-lg text-xs font-medium hover:bg-brand-secondary transition-colors">Add</button>
+                        class="flex-1 rounded-lg border border-border-default bg-surface-input px-3 py-1.5 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
+                    <button type="submit" class="px-3 py-1.5 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg text-xs font-medium hover:bg-brand-secondary transition-colors">Add</button>
                 </form>
             </div>
 
             <!-- Follow-up Sequences -->
-            <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+            <div class="bg-surface-card rounded-2xl border border-border-default p-5">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-sm font-semibold text-text-primary">Follow-up Sequences</h3>
                     <button wire:click="$toggle('showFollowUpForm')" class="text-xs text-brand-primary border border-brand-primary/30 rounded-lg px-2.5 py-1.5 hover:bg-brand-primary/5 transition-colors">
@@ -188,7 +188,7 @@
                 <form wire:submit.prevent="saveFollowUpSequence" class="space-y-3 mb-4">
                     <div>
                         <label class="block text-xs font-medium text-text-secondary mb-1">Sequence Name</label>
-                        <input wire:model.defer="followUpName" type="text" placeholder="e.g. Post-viewing follow-up" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                        <input wire:model.defer="followUpName" type="text" placeholder="e.g. Post-viewing follow-up" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                         @error('followUpName') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
                     </div>
 
@@ -201,19 +201,19 @@
                             @endif
                         </div>
                         <div class="grid grid-cols-2 gap-2">
-                            <select wire:model="followUpSteps.{{ $i }}.type" class="rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                            <select wire:model="followUpSteps.{{ $i }}.type" class="rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                                 <option value="email">Email</option>
                                 <option value="call">Call</option>
                                 <option value="sms">SMS</option>
                                 <option value="task">Task</option>
                             </select>
                             <div class="flex items-center gap-1">
-                                <input wire:model.defer="followUpSteps.{{ $i }}.delay_days" type="number" min="0" placeholder="Days" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                                <input wire:model.defer="followUpSteps.{{ $i }}.delay_days" type="number" min="0" placeholder="Days" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                                 <span class="text-xs text-text-secondary whitespace-nowrap">day(s)</span>
                             </div>
                         </div>
-                        <input wire:model.defer="followUpSteps.{{ $i }}.subject" type="text" placeholder="Subject (email only)" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
-                        <textarea wire:model.defer="followUpSteps.{{ $i }}.message_template" rows="3" placeholder="Message template..." class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary resize-none"></textarea>
+                        <input wire:model.defer="followUpSteps.{{ $i }}.subject" type="text" placeholder="Subject (email only)" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
+                        <textarea wire:model.defer="followUpSteps.{{ $i }}.message_template" rows="3" placeholder="Message template..." class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page resize-none"></textarea>
                         @error("followUpSteps.{$i}.message_template") <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
 
                         <!-- AI Generate Button -->
@@ -222,7 +222,7 @@
                             wire:loading.attr="disabled"
                             wire:target="generateStepMessage({{ $i }})"
                             class="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg border border-brand-primary/30 text-brand-primary text-xs font-medium hover:bg-brand-primary/5 transition-colors disabled:opacity-50">
-                            <span wire:loading.remove wire:target="generateStepMessage({{ $i }})">✦ Generate with AI</span>
+                            <span wire:loading.remove wire:target="generateStepMessage({{ $i }})">? Generate with AI</span>
                             <span wire:loading wire:target="generateStepMessage({{ $i }})">Generating...</span>
                         </button>
                     </div>
@@ -230,7 +230,7 @@
 
                     <div class="flex gap-2">
                         <button type="button" wire:click="addFollowUpStep" class="flex-1 py-1.5 border border-border-default text-text-secondary rounded-lg text-xs font-medium hover:bg-surface-sunken transition-colors">+ Add Step</button>
-                        <button type="submit" class="flex-1 py-1.5 bg-brand-primary text-white rounded-lg text-xs font-medium hover:bg-brand-secondary transition-colors">
+                        <button type="submit" class="flex-1 py-1.5 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg text-xs font-medium hover:bg-brand-secondary transition-colors">
                             <span wire:loading.remove wire:target="saveFollowUpSequence">Create Sequence</span>
                             <span wire:loading wire:target="saveFollowUpSequence">Saving...</span>
                         </button>
@@ -247,7 +247,7 @@
                             {{ $seq->status }}
                         </span>
                     </div>
-                    <p class="text-[10px] text-text-secondary">{{ $seq->steps->count() }} steps · Next: {{ $seq->next_action_at?->diffForHumans() ?? 'TBD' }}</p>
+                    <p class="text-[10px] text-text-secondary">{{ $seq->steps->count() }} steps � Next: {{ $seq->next_action_at?->diffForHumans() ?? 'TBD' }}</p>
                 </div>
                 @empty
                 <p class="text-xs text-text-secondary text-center py-2">No follow-up sequences. Create one to stay on top of this contact.</p>
@@ -259,25 +259,25 @@
         <div class="xl:col-span-2 space-y-5">
 
             <!-- Log Activity -->
-            <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+            <div class="bg-surface-card rounded-2xl border border-border-default p-5">
                 <h3 class="text-sm font-semibold text-text-primary mb-3">Log Activity</h3>
                 <div class="flex gap-2 mb-3 flex-wrap">
                     @foreach(['note' => 'Note', 'call' => 'Call', 'email' => 'Email', 'meeting' => 'Meeting'] as $val => $label)
                     <button wire:click="$set('activityType', '{{ $val }}')"
                         class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
-                        {{ $activityType === $val ? 'bg-brand-primary text-white' : 'bg-surface-sunken text-text-secondary hover:bg-brand-primary/10' }}">
+                        {{ $activityType === $val ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10' : 'bg-surface-sunken text-text-secondary hover:bg-brand-primary/10' }}">
                         {{ $label }}
                     </button>
                     @endforeach
                 </div>
                 <form wire:submit.prevent="logActivity" class="space-y-2">
                     <input wire:model.defer="activitySubject" type="text" placeholder="Subject (optional)"
-                        class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                        class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     <textarea wire:model.defer="activityBody" rows="3" placeholder="Add notes about this activity..."
-                        class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary resize-none"></textarea>
+                        class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page resize-none"></textarea>
                     @error('activityBody') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
                     <div class="flex justify-end">
-                        <button type="submit" class="px-4 py-2 bg-brand-primary text-white rounded-lg text-sm font-medium hover:bg-brand-secondary transition-colors">
+                        <button type="submit" class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg text-sm font-medium hover:bg-brand-secondary transition-colors">
                             <span wire:loading.remove wire:target="logActivity">Log {{ ucfirst($activityType) }}</span>
                             <span wire:loading wire:target="logActivity">Saving...</span>
                         </button>
@@ -286,7 +286,7 @@
             </div>
 
             <!-- Activity Timeline -->
-            <div class="glass-panel rounded-2xl border border-border-default/60 p-5">
+            <div class="bg-surface-card rounded-2xl border border-border-default p-5">
                 <h3 class="text-sm font-semibold text-text-primary mb-4">Activity Timeline</h3>
                 @forelse($deal->activities as $activity)
                 <div class="flex gap-3 mb-5 last:mb-0">
@@ -300,11 +300,11 @@
                                 @default bg-surface-sunken text-text-secondary
                             @endswitch">
                             @switch($activity->type)
-                                @case('call') 📞 @break
-                                @case('email') ✉️ @break
-                                @case('meeting') 📅 @break
-                                @case('system') 🔄 @break
-                                @default 📝
+                                @case('call') ?? @break
+                                @case('email') ?? @break
+                                @case('meeting') ?? @break
+                                @case('system') ?? @break
+                                @default ??
                             @endswitch
                         </div>
                     </div>
@@ -340,3 +340,6 @@
         </div>
     </div>
 </div>
+
+
+

@@ -1,19 +1,43 @@
-<header class="flex items-center justify-between h-16 px-6 bg-surface-card/80 backdrop-blur-xl border-b border-border-default/60 flex-shrink-0 transition-colors duration-300" x-data="{ notifOpen: @entangle('showNotifications') }">
+<header class="flex items-center justify-between h-16 px-6 bg-surface-card/80 backdrop-blur-xl border-b border-border-default flex-shrink-0 transition-colors duration-300" x-data="{ notifOpen: @entangle('showNotifications') }">
 
-    <!-- Mobile Menu & Search -->
+    <!-- Left: Mobile Menu & Breadcrumbs -->
     <div class="flex flex-1 items-center space-x-4">
         <button type="button" @click="sidebarOpen = true" class="md:hidden p-2 -ml-2 rounded-xl text-text-secondary hover:text-text-primary hover:bg-surface-raised transition-colors focus:outline-none">
             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
             </svg>
         </button>
-        <div class="w-full max-w-xs relative text-text-secondary focus-within:text-text-primary hidden sm:block">
+        
+        <!-- Breadcrumbs -->
+        <nav class="hidden md:flex items-center space-x-2 text-sm font-medium text-text-secondary">
+            @php
+                $segments = request()->segments();
+                $url = '';
+            @endphp
+            <a href="{{ route('dashboard') }}" class="hover:text-text-primary transition-colors">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+            </a>
+            @foreach($segments as $segment)
+                @php $url .= '/'.$segment; @endphp
+                <svg class="w-4 h-4 text-text-tertiary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                </svg>
+                <a href="{{ $url }}" class="{{ $loop->last ? 'text-text-primary font-bold' : 'hover:text-text-primary transition-colors' }} capitalize">
+                    {{ str_replace('-', ' ', $segment) }}
+                </a>
+            @endforeach
+        </nav>
+        
+        <!-- Global Search -->
+        <div class="w-full max-w-xs relative text-text-secondary focus-within:text-text-primary hidden lg:block ml-4">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.602 10.602Z" />
                 </svg>
             </span>
-            <input class="block w-full pl-10 pr-3 py-2 border border-border-default/60 rounded-xl bg-surface-input placeholder-text-tertiary focus:outline-none focus:bg-surface-page focus:border-brand-primary focus:ring-1 focus:ring-brand-primary text-sm text-text-primary transition-all duration-200" placeholder="Search..." type="search">
+            <input class="block w-full pl-10 pr-3 py-2 border border-border-default rounded-xl bg-surface-input placeholder-text-tertiary focus:outline-none focus:bg-surface-page focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-card text-sm text-text-primary transition-all duration-200" placeholder="Search..." type="search">
         </div>
     </div>
 
@@ -53,11 +77,11 @@
                  x-transition:leave-start="opacity-100"
                  x-transition:leave-end="opacity-0"
                  @click.outside="notifOpen = false"
-                 class="absolute right-0 top-full mt-2 w-80 bg-surface-card border border-border-default/60 rounded-2xl shadow-2xl z-50 overflow-hidden"
+                 class="absolute right-0 top-full mt-2 w-80 bg-surface-card border border-border-default rounded-2xl shadow-2xl z-50 overflow-hidden"
                  style="display:none">
 
                 <!-- Header -->
-                <div class="flex items-center justify-between px-4 py-3 border-b border-border-default/60">
+                <div class="flex items-center justify-between px-4 py-3 border-b border-border-default">
                     <span class="text-sm font-semibold text-text-primary">Notifications</span>
                     @if($unreadCount > 0)
                     <button wire:click="toggleNotifications" class="text-xs text-brand-primary hover:underline">
@@ -131,3 +155,4 @@
         </form>
     </div>
 </header>
+

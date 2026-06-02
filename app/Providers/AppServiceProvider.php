@@ -69,12 +69,21 @@ class AppServiceProvider extends ServiceProvider
             });
         });
 
+        RateLimiter::for('contact-api', function (Request $request) {
+            $key = $request->bearerToken() ?? $request->ip();
+            return Limit::perMinute(120)->by($key);
+        });
+
         \App\Infrastructure\Persistence\Models\Listing::observe(
             \App\Infrastructure\Persistence\Observers\ListingObserver::class
         );
 
         \App\Infrastructure\Persistence\Models\Viewing::observe(
             \App\Infrastructure\Persistence\Observers\ViewingObserver::class
+        );
+
+        \App\Infrastructure\Persistence\Models\Contact::observe(
+            \App\Infrastructure\Persistence\Observers\ContactObserver::class
         );
 
         View::composer('*', function ($view) {

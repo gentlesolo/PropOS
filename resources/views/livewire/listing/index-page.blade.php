@@ -1,52 +1,52 @@
-﻿<div>
+<div>
     <div class="flex items-center justify-between mb-8">
         <div>
             <h1 class="text-3xl font-extrabold tracking-tight text-text-primary dark:text-white">Properties & Listings</h1>
             <p class="mt-2 text-text-secondary dark:text-text-tertiary">Manage mandates, listings, syndication status, and property performance.</p>
         </div>
-        <button wire:click="$set('showCreateModal', true)" class="px-4 py-2 bg-brand-primary text-white rounded-lg hover:bg-brand-secondary font-medium text-sm transition-colors">
+        <button wire:click="$set('showCreateModal', true)" class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg hover:bg-brand-secondary font-medium text-sm transition-colors">
             + New Listing
         </button>
     </div>
 
     <!-- Quick Stats -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div class="glass-panel p-5 rounded-2xl border border-border-default/60">
+        <div class="bg-surface-card p-5 rounded-2xl border border-border-default shadow-sm hover:border-brand-primary/40 transition-colors">
             <p class="text-xs font-medium text-text-tertiary uppercase tracking-wider">Active Listings</p>
-            <p class="mt-2 text-3xl font-bold text-text-primary">{{ $activeCount }}</p>
+            <p class="mt-2 text-3xl font-bold text-text-primary tabular-nums">{{ $activeCount }}</p>
         </div>
-        <div class="glass-panel p-5 rounded-2xl border border-border-default/60">
+        <div class="bg-surface-card p-5 rounded-2xl border border-border-default shadow-sm hover:border-info-500/40 transition-colors">
             <p class="text-xs font-medium text-text-tertiary uppercase tracking-wider">Under Offer</p>
-            <p class="mt-2 text-3xl font-bold text-info-600">{{ $underOfferCount }}</p>
+            <p class="mt-2 text-3xl font-bold text-info-600 tabular-nums">{{ $underOfferCount }}</p>
         </div>
-        <div class="glass-panel p-5 rounded-2xl border border-border-default/60">
+        <div class="bg-surface-card p-5 rounded-2xl border border-border-default shadow-sm hover:border-brand-primary/40 transition-colors">
             <p class="text-xs font-medium text-text-tertiary uppercase tracking-wider">Active Portfolio Value</p>
-            <p class="mt-2 text-2xl font-bold text-text-primary">{{ $currencySymbol }}{{ number_format($totalValue) }}</p>
+            <p class="mt-2 text-2xl font-bold text-text-primary tabular-nums">{{ $currencySymbol }}{{ number_format($totalValue) }}</p>
         </div>
-        <div class="glass-panel p-5 rounded-2xl border border-border-default/60">
+        <div class="bg-surface-card p-5 rounded-2xl border border-border-default shadow-sm hover:border-success-500/40 transition-colors">
             <p class="text-xs font-medium text-text-tertiary uppercase tracking-wider">Avg. Days on Market</p>
-            <p class="mt-2 text-3xl font-bold {{ $avgDom > 60 ? 'text-danger-600' : ($avgDom > 30 ? 'text-warning-600' : 'text-success-600') }}">
+            <p class="mt-2 text-3xl font-bold tabular-nums {{ $avgDom > 60 ? 'text-danger-600' : ($avgDom > 30 ? 'text-warning-600' : 'text-success-600') }}">
                 {{ $avgDom ?: '—' }}
             </p>
         </div>
     </div>
 
     <!-- Filters -->
-    <div class="glass-panel rounded-2xl overflow-hidden border border-border-default/60 shadow-sm">
-        <div class="px-5 py-4 border-b border-border-default/60 flex flex-col sm:flex-row items-start sm:items-center gap-3 bg-surface-sunken/30">
+    <div class="bg-surface-card rounded-2xl overflow-hidden border border-border-default shadow-sm">
+        <div class="px-5 py-4 border-b border-border-default flex flex-col sm:flex-row items-start sm:items-center gap-3 bg-surface-sunken/30">
             <div class="relative flex-1 w-full sm:max-w-sm">
                 <svg class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 <input wire:model.debounce.300ms="search" type="text"
                     placeholder="Search address, city, area..."
-                    class="w-full pl-9 pr-3 py-2 border border-border-default bg-surface-input rounded-lg text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    class="w-full pl-9 pr-3 py-2 border border-border-default bg-surface-input rounded-lg text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
             </div>
             <div class="flex items-center gap-2 flex-wrap">
-                <select wire:model="filterType" class="px-3 py-2 border border-border-default bg-surface-input rounded-lg text-sm text-text-secondary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                <select wire:model="filterType" class="px-3 py-2 border border-border-default bg-surface-input rounded-lg text-sm text-text-secondary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     <option value="">All Types</option>
                     <option value="sale">Sales</option>
                     <option value="rental">Rentals</option>
                 </select>
-                <select wire:model="filterStatus" class="px-3 py-2 border border-border-default bg-surface-input rounded-lg text-sm text-text-secondary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                <select wire:model="filterStatus" class="px-3 py-2 border border-border-default bg-surface-input rounded-lg text-sm text-text-secondary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     <option value="">All Statuses</option>
                     <option value="draft">Draft</option>
                     <option value="active">Active</option>
@@ -78,7 +78,7 @@
                         <th class="px-5 py-3 text-right text-xs font-semibold text-text-tertiary uppercase tracking-wider"></th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-border-default/60 bg-white/10">
+                <tbody wire:loading.class="opacity-50 pointer-events-none" class="divide-y divide-border-default/60 bg-white/10 transition-opacity duration-200">
                     @forelse($listings as $listing)
                     <tr wire:click="openListing({{ $listing->id }})"
                         class="hover:bg-surface-sunken/20 transition-colors group cursor-pointer">
@@ -189,23 +189,14 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="px-6 py-16 text-center">
-                            <div class="flex flex-col items-center justify-center">
-                                <div class="h-14 w-14 rounded-full bg-brand-primary/10 flex items-center justify-center mb-4">
-                                    <svg class="h-7 w-7 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-                                </div>
-                                @if($search || $filterStatus || $filterType)
-                                <h3 class="text-sm font-semibold text-text-primary">No listings match your filters</h3>
-                                <p class="mt-1 text-sm text-text-tertiary">Try adjusting your search or clearing filters.</p>
-                                @else
-                                <h3 class="text-sm font-semibold text-text-primary">No listings yet</h3>
-                                <p class="mt-1 text-sm text-text-tertiary">Get started by creating your first property listing.</p>
-                                <button wire:click="$set('showCreateModal', true)"
-                                    class="mt-4 px-4 py-2 bg-brand-primary text-white rounded-lg hover:bg-brand-secondary font-medium text-sm transition-colors">
-                                    + Add First Listing
-                                </button>
-                                @endif
-                            </div>
+                        <td colspan="7" class="p-8">
+                            <x-ui.empty-state 
+                                icon="search" 
+                                title="{{ ($search || $filterStatus || $filterType) ? 'No listings match your filters' : 'No listings yet' }}" 
+                                description="{{ ($search || $filterStatus || $filterType) ? 'Try adjusting your search or clearing filters.' : 'Get started by creating your first property listing.' }}"
+                                actionText="{{ (!$search && !$filterStatus && !$filterType) ? 'Add First Listing' : null }}"
+                                actionClick="$set('showCreateModal', true)"
+                            />
                         </td>
                     </tr>
                     @endforelse
@@ -214,7 +205,7 @@
         </div>
 
         @if($listings->hasPages())
-        <div class="px-5 py-3 border-t border-border-default/60 bg-surface-sunken/10">
+        <div class="px-5 py-3 border-t border-border-default bg-surface-sunken/10">
             {{ $listings->links() }}
         </div>
         @endif
@@ -228,9 +219,9 @@
             <div class="absolute inset-0 overflow-hidden">
                 <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
                     <div class="pointer-events-auto w-screen max-w-lg">
-                        <div class="flex h-full flex-col overflow-y-scroll bg-surface-page shadow-xl border-l border-border-default/60">
+                        <div class="flex h-full flex-col overflow-y-scroll bg-surface-page shadow-xl border-l border-border-default">
 
-                            <div class="px-6 py-5 border-b border-border-default/60 flex items-center justify-between bg-surface-card">
+                            <div class="px-6 py-5 border-b border-border-default flex items-center justify-between bg-surface-card">
                                 <h2 class="text-lg font-bold text-text-primary">Create New Listing</h2>
                                 <button wire:click="$set('showCreateModal', false)" class="rounded-lg p-1.5 text-text-secondary hover:text-text-primary hover:bg-surface-sunken transition-colors">
                                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -240,26 +231,20 @@
                             <div class="flex-1 px-6 py-6">
                                 <form wire:submit.prevent="saveListing" class="space-y-5">
 
-                                    <p class="text-xs font-semibold text-text-tertiary uppercase tracking-wider border-b border-border-default/60 pb-2">Property Details</p>
+                                    <p class="text-xs font-semibold text-text-tertiary uppercase tracking-wider border-b border-border-default pb-2">Property Details</p>
 
                                     <div>
-                                        <label class="block text-sm font-medium text-text-primary mb-1">Street Address *</label>
-                                        <input wire:model.defer="address_line_1" type="text" placeholder="123 Broad Street"
-                                            class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2.5 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                                        <x-ui.floating-input id="address_line_1" label="Street Address *" model="address_line_1" defer="true" />
                                         @error('address_line_1') <span class="text-xs text-danger-600 mt-1 block">{{ $message }}</span> @enderror
                                     </div>
 
                                     <div class="grid grid-cols-2 gap-4">
                                         <div>
-                                            <label class="block text-sm font-medium text-text-primary mb-1">City *</label>
-                                            <input wire:model.defer="city" type="text" placeholder="Lagos"
-                                                class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2.5 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                                            <x-ui.floating-input id="city" label="City *" model="city" defer="true" />
                                             @error('city') <span class="text-xs text-danger-600 mt-1 block">{{ $message }}</span> @enderror
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-medium text-text-primary mb-1">State *</label>
-                                            <input wire:model.defer="state_province" type="text" placeholder="Lagos"
-                                                class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2.5 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                                            <x-ui.floating-input id="state_province" label="State *" model="state_province" defer="true" />
                                             @error('state_province') <span class="text-xs text-danger-600 mt-1 block">{{ $message }}</span> @enderror
                                         </div>
                                     </div>
@@ -267,7 +252,7 @@
                                     <div>
                                         <label class="block text-sm font-medium text-text-primary mb-1">Property Type *</label>
                                         <select wire:model.defer="property_type"
-                                            class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2.5 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                                            class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2.5 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                                             <option value="house">House</option>
                                             <option value="apartment">Apartment</option>
                                             <option value="townhouse">Townhouse</option>
@@ -281,39 +266,33 @@
 
                                     <div class="grid grid-cols-2 gap-4">
                                         <div>
-                                            <label class="block text-sm font-medium text-text-primary mb-1">Bedrooms</label>
-                                            <input wire:model.defer="bedrooms" type="number" min="0" placeholder="3"
-                                                class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2.5 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                                            <x-ui.floating-input id="bedrooms" type="number" label="Bedrooms" model="bedrooms" defer="true" />
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-medium text-text-primary mb-1">Bathrooms</label>
-                                            <input wire:model.defer="bathrooms" type="number" min="0" placeholder="2"
-                                                class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2.5 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                                            <x-ui.floating-input id="bathrooms" type="number" label="Bathrooms" model="bathrooms" defer="true" />
                                         </div>
                                     </div>
 
-                                    <p class="text-xs font-semibold text-text-tertiary uppercase tracking-wider border-b border-border-default/60 pb-2 pt-2">Mandate Details</p>
+                                    <p class="text-xs font-semibold text-text-tertiary uppercase tracking-wider border-b border-border-default pb-2 pt-2">Mandate Details</p>
 
                                     <div>
-                                        <label class="block text-sm font-medium text-text-primary mb-1">Listing Price ({{ $currencySymbol }}) *</label>
-                                        <input wire:model.defer="listing_price" type="number" placeholder="50000000"
-                                            class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2.5 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                                        <x-ui.floating-input id="listing_price" type="number" label="Listing Price ({{ $currencySymbol }}) *" model="listing_price" defer="true" />
                                         @error('listing_price') <span class="text-xs text-danger-600 mt-1 block">{{ $message }}</span> @enderror
                                     </div>
 
                                     <div>
                                         <label class="block text-sm font-medium text-text-primary mb-1">Mandate Type *</label>
                                         <select wire:model.defer="mandate_type"
-                                            class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2.5 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                                            class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2.5 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                                             <option value="sole">Sole Mandate (Sale)</option>
                                             <option value="open">Open Mandate (Sale)</option>
                                             <option value="rental">Rental Mandate</option>
                                         </select>
                                     </div>
 
-                                    <div class="pt-4 border-t border-border-default/60">
+                                    <div class="pt-4 border-t border-border-default">
                                         <button type="submit"
-                                            class="w-full py-2.5 bg-brand-primary text-white rounded-xl font-medium text-sm hover:bg-brand-secondary transition-colors">
+                                            class="w-full py-2.5 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl font-medium text-sm hover:bg-brand-secondary transition-colors">
                                             <span wire:loading.remove wire:target="saveListing">Create & Open Listing</span>
                                             <span wire:loading wire:target="saveListing">Creating...</span>
                                         </button>
@@ -328,3 +307,6 @@
     </div>
     @endif
 </div>
+
+
+

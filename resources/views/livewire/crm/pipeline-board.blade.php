@@ -1,15 +1,15 @@
-﻿<div class="h-[calc(100vh-8rem)] flex flex-col">
+<div class="h-[calc(100vh-8rem)] flex flex-col">
     <div class="mb-6 flex items-center justify-between shrink-0">
         <div>
             <h1 class="text-3xl font-extrabold tracking-tight text-text-primary">Pipeline Board</h1>
             <p class="mt-2 text-text-secondary">Drag and drop deals across stages to track momentum.</p>
         </div>
         <div class="flex items-center space-x-3">
-            <select wire:model="pipelineType" class="bg-surface-card border border-border-default/60 text-text-primary rounded-xl px-4 py-2 text-sm font-semibold focus:ring-brand-primary focus:border-brand-primary">
+            <select wire:model="pipelineType" class="bg-surface-card border border-border-default text-text-primary rounded-xl px-4 py-2 text-sm font-semibold focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page focus:border-brand-primary">
                 <option value="sale">Sales Pipeline</option>
                 <option value="rental">Rental Pipeline</option>
             </select>
-            <button wire:click="$set('showNewDealModal', true)" class="bg-brand-primary text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md hover:bg-brand-secondary transition-colors hover-spring">
+            <button wire:click="$set('showNewDealModal', true)" class="bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 px-5 py-2.5 rounded-xl text-sm font-bold shadow-md hover:bg-brand-secondary transition-colors hover-spring active:scale-95">
                 + New Deal
             </button>
         </div>
@@ -35,7 +35,7 @@
                     <div class="flex items-center justify-between mb-3 px-1">
                         <div class="flex items-center space-x-2">
                             <h3 class="font-bold text-text-primary uppercase tracking-wider text-sm">{{ $stage->name }}</h3>
-                            <span class="bg-surface-raised border border-border-default/60 text-text-secondary text-xs font-bold px-2 py-0.5 rounded-full">
+                            <span class="bg-surface-raised border border-border-default text-text-secondary text-xs font-bold px-2 py-0.5 rounded-full">
                                 {{ $stage->deals->count() }}
                             </span>
                             @if($stage->is_won)
@@ -70,7 +70,7 @@
                         "
                     >
                         @foreach($stage->deals as $deal)
-                            <div data-id="{{ $deal->id }}" class="bg-surface-card border border-border-default/60 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow cursor-grab active:cursor-grabbing hover-spring relative group">
+                            <div data-id="{{ $deal->id }}" class="bg-surface-card border border-border-default rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow cursor-grab active:cursor-grabbing hover-spring active:scale-95 relative group">
                                 <div class="flex justify-between items-start mb-3">
                                     <a href="{{ route('crm.deal.detail', $deal) }}" class="text-sm font-bold text-text-primary group-hover:text-brand-primary transition-colors line-clamp-2">
                                         {{ $deal->title }}
@@ -121,7 +121,7 @@
     @if($showNewDealModal)
     <div class="fixed inset-0 z-50 flex items-center justify-center">
         <div class="absolute inset-0 bg-surface-overlay backdrop-blur-sm" wire:click="$set('showNewDealModal', false)"></div>
-        <div class="relative bg-surface-card rounded-2xl border border-border-default/60 shadow-2xl w-full max-w-md mx-4 p-6">
+        <div class="relative bg-surface-card rounded-2xl border border-border-default shadow-2xl w-full max-w-md mx-4 p-6">
             <div class="flex items-center justify-between mb-5">
                 <h2 class="text-lg font-bold text-text-primary">New Deal</h2>
                 <button wire:click="$set('showNewDealModal', false)" class="text-text-secondary hover:text-text-primary">
@@ -131,12 +131,12 @@
             <form wire:submit.prevent="saveDeal" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-text-primary mb-1">Deal Title *</label>
-                    <input wire:model.defer="title" type="text" placeholder="e.g. Lekki apartment sale" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary text-sm">
+                    <input wire:model.defer="title" type="text" placeholder="e.g. Lekki apartment sale" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page text-sm">
                     @error('title') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-text-primary mb-1">Contact *</label>
-                    <select wire:model.defer="contact_id" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary text-sm">
+                    <select wire:model.defer="contact_id" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page text-sm">
                         <option value="">Select contact...</option>
                         @foreach($contacts as $c)
                         <option value="{{ $c->id }}">{{ $c->first_name }} {{ $c->last_name }}</option>
@@ -146,7 +146,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-text-primary mb-1">Listing (optional)</label>
-                    <select wire:model.defer="listing_id" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary text-sm">
+                    <select wire:model.defer="listing_id" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page text-sm">
                         <option value="">No listing attached</option>
                         @foreach($listings as $l)
                         <option value="{{ $l->id }}">{{ $l->property->address_line_1 }}</option>
@@ -155,14 +155,14 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-text-primary mb-1">Deal Value ({{ $currencySymbol }}) *</label>
-                    <input wire:model.defer="value" type="number" min="0" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary text-sm">
+                    <input wire:model.defer="value" type="number" min="0" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page text-sm">
                     @error('value') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-text-primary mb-1">Notes</label>
-                    <textarea wire:model.defer="notes" rows="2" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary text-sm resize-none"></textarea>
+                    <textarea wire:model.defer="notes" rows="2" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page text-sm resize-none"></textarea>
                 </div>
-                <button type="submit" class="w-full py-2.5 bg-brand-primary text-white rounded-xl font-semibold hover:bg-brand-secondary transition-colors">
+                <button type="submit" class="w-full py-2.5 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl font-semibold hover:bg-brand-secondary transition-colors">
                     <span wire:loading.remove wire:target="saveDeal">Create Deal</span>
                     <span wire:loading wire:target="saveDeal">Creating...</span>
                 </button>
@@ -173,3 +173,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 </div>
+
+
+
+

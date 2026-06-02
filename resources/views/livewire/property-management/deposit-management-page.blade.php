@@ -8,27 +8,27 @@
 
     <!-- Stats -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div class="glass-panel rounded-2xl border border-brand-200 p-4 text-center">
+        <div class="bg-surface-card rounded-2xl border border-brand-200 p-4 text-center">
             <div class="text-xl font-bold text-brand-600">R{{ number_format($stats['total_held']) }}</div>
             <div class="text-xs text-text-secondary mt-1">Total Deposits Held</div>
         </div>
-        <div class="glass-panel rounded-2xl border border-success-200 p-4 text-center">
+        <div class="bg-surface-card rounded-2xl border border-success-200 p-4 text-center">
             <div class="text-2xl font-bold text-success-600">{{ $stats['refunded'] }}</div>
             <div class="text-xs text-text-secondary mt-1">Deposits Refunded</div>
         </div>
-        <div class="glass-panel rounded-2xl border border-warning-200 p-4 text-center">
+        <div class="bg-surface-card rounded-2xl border border-warning-200 p-4 text-center">
             <div class="text-2xl font-bold text-warning-600">{{ $stats['pending_count'] }}</div>
             <div class="text-xs text-text-secondary mt-1">Pending Refunds</div>
         </div>
     </div>
 
     @if($showRefundForm)
-    <div class="glass-panel rounded-2xl border border-border-default/60 p-5 mb-6">
+    <div class="bg-surface-card rounded-2xl border border-border-default p-5 mb-6">
         <h2 class="text-base font-semibold text-text-primary mb-4">Process Deposit Refund</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Refund Date *</label>
-                <input wire:model="refund_date" type="date" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                <input wire:model="refund_date" type="date" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                 @error('refund_date') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
             </div>
         </div>
@@ -46,9 +46,9 @@
             </div>
             @endforeach
             <div class="grid grid-cols-2 gap-3 mt-2">
-                <input wire:model="deduction_description" type="text" placeholder="Description…" class="rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                <input wire:model="deduction_description" type="text" placeholder="Description…" class="rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                 <div class="flex gap-2">
-                    <input wire:model="deduction_amount" type="number" min="0.01" step="0.01" placeholder="Amount" class="flex-1 rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    <input wire:model="deduction_amount" type="number" min="0.01" step="0.01" placeholder="Amount" class="flex-1 rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     <button type="button" wire:click="addDeduction" class="px-3 py-2 bg-surface-hover border border-border-default rounded-lg text-xs text-text-secondary hover:bg-surface-hover/80">Add</button>
                 </div>
             </div>
@@ -60,7 +60,7 @@
         </div>
 
         <div class="flex gap-3">
-            <button wire:click="processRefund" wire:loading.attr="disabled" class="px-5 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">Confirm Refund</button>
+            <button wire:click="processRefund" wire:loading.attr="disabled" class="px-5 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">Confirm Refund</button>
             <button wire:click="$set('showRefundForm', false)" class="px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors">Cancel</button>
         </div>
     </div>
@@ -69,11 +69,11 @@
     <!-- Search -->
     <div class="mb-4">
         <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search tenant…"
-            class="w-full md:w-72 rounded-xl border border-border-default bg-surface-input px-4 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+            class="w-full md:w-72 rounded-xl border border-border-default bg-surface-input px-4 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
     </div>
 
     <!-- Deposit Table -->
-    <div class="glass-panel rounded-2xl border border-border-default/60 overflow-hidden">
+    <div class="bg-surface-card rounded-2xl border border-border-default overflow-hidden">
         <table class="w-full text-sm">
             <thead class="bg-surface-hover/50 border-b border-border-default">
                 <tr>
@@ -122,3 +122,6 @@
         <div class="px-4 py-3 border-t border-border-default">{{ $leases->links() }}</div>
     </div>
 </div>
+
+
+

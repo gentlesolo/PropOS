@@ -5,7 +5,7 @@
             <p class="mt-2 text-text-secondary">Automated email, SMS, and task touches to nurture lead relationships.</p>
         </div>
         <div>
-            <button wire:click="$toggle('showCreateForm')" class="px-4 py-2 bg-brand-primary text-white rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors">
+            <button wire:click="$toggle('showCreateForm')" class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors">
                 {{ $showCreateForm ? 'Cancel Creation' : '+ New Sequence' }}
             </button>
         </div>
@@ -14,7 +14,7 @@
     <!-- Stats -->
     <div class="grid grid-cols-4 gap-4 mb-8">
         @foreach(['total' => 'Total', 'active' => 'Active', 'paused' => 'Paused', 'completed' => 'Completed'] as $key => $label)
-        <div class="glass-panel p-5 rounded-2xl border border-border-default/60 text-center">
+        <div class="bg-surface-card p-5 rounded-2xl border border-border-default text-center">
             <p class="text-2xl font-extrabold text-text-primary">{{ $stats[$key] }}</p>
             <p class="text-xs font-medium text-text-secondary mt-1">{{ $label }}</p>
         </div>
@@ -23,13 +23,13 @@
 
     @if($showCreateForm)
     <!-- Creation Wizard Form -->
-    <div class="glass-panel rounded-2xl border border-border-default/60 shadow-md p-6 mb-8 bg-white/70">
+    <div class="bg-surface-card rounded-2xl border border-border-default shadow-md p-6 mb-8 bg-white/70">
         <h2 class="text-lg font-bold text-text-primary mb-4">Create Nurture Sequence</h2>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
                 <label class="block text-xs font-bold text-text-secondary uppercase mb-2">Preset Template</label>
-                <select wire:model.live="selectedTemplate" wire:change="applyTemplate" class="w-full px-3 py-2 border border-border-strong rounded-lg bg-white focus:ring-2 focus:ring-brand-primary text-sm">
+                <select wire:model.live="selectedTemplate" wire:change="applyTemplate" class="w-full px-3 py-2 border border-border-strong rounded-lg bg-white focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page text-sm">
                     <option value="">-- Custom (Start from scratch) --</option>
                     <option value="new_lead">New Lead Welcome Sequence</option>
                     <option value="post_viewing">Post-Viewing Feedback Loop</option>
@@ -37,7 +37,7 @@
             </div>
             <div>
                 <label class="block text-xs font-bold text-text-secondary uppercase mb-2">Assign Contact</label>
-                <select wire:model="contact_id" class="w-full px-3 py-2 border border-border-strong rounded-lg bg-white focus:ring-2 focus:ring-brand-primary text-sm">
+                <select wire:model="contact_id" class="w-full px-3 py-2 border border-border-strong rounded-lg bg-white focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page text-sm">
                     <option value="">Select a contact...</option>
                     @foreach($contacts as $contact)
                     <option value="{{ $contact->id }}">{{ $contact->first_name }} {{ $contact->last_name }} ({{ ucfirst($contact->type) }})</option>
@@ -49,7 +49,7 @@
 
         <div class="mb-6">
             <label class="block text-xs font-bold text-text-secondary uppercase mb-2">Sequence Name</label>
-            <input wire:model="name" type="text" placeholder="e.g. 3-Touch Cold Buyer Nurture" class="w-full px-3 py-2 border border-border-strong rounded-lg bg-white focus:ring-2 focus:ring-brand-primary text-sm">
+            <input wire:model="name" type="text" placeholder="e.g. 3-Touch Cold Buyer Nurture" class="w-full px-3 py-2 border border-border-strong rounded-lg bg-white focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page text-sm">
             @error('name') <span class="text-xs text-danger-600 mt-1 block">{{ $message }}</span> @enderror
         </div>
 
@@ -61,7 +61,7 @@
             </div>
 
             @foreach($steps as $index => $step)
-            <div class="p-4 bg-surface-sunken/40 rounded-xl border border-border-default/60 relative">
+            <div class="p-4 bg-surface-sunken/40 rounded-xl border border-border-default relative">
                 <button type="button" wire:click="removeStep({{ $index }})" class="absolute top-4 right-4 text-xs text-danger-500 hover:text-danger-700 font-medium">Remove</button>
                 
                 <p class="text-xs font-bold text-brand-primary mb-3">Step #{{ $index + 1 }}</p>
@@ -99,23 +99,23 @@
 
         <div class="flex justify-end gap-3">
             <button type="button" wire:click="$set('showCreateForm', false)" class="px-4 py-2 border border-border-default rounded-xl text-sm font-medium hover:bg-surface-sunken">Cancel</button>
-            <button type="button" wire:click="createSequence" class="px-4 py-2 bg-brand-primary text-white rounded-xl text-sm font-bold hover:bg-brand-secondary">Start Sequence</button>
+            <button type="button" wire:click="createSequence" class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-bold hover:bg-brand-secondary">Start Sequence</button>
         </div>
     </div>
     @endif
 
     <!-- Search and Filter -->
-    <div class="glass-panel rounded-2xl border border-border-default/60 overflow-hidden shadow-sm mb-6">
-        <div class="px-6 py-4 border-b border-border-default/60 flex items-center justify-between bg-surface-sunken/30 gap-4">
+    <div class="bg-surface-card rounded-2xl border border-border-default overflow-hidden shadow-sm mb-6">
+        <div class="px-6 py-4 border-b border-border-default flex items-center justify-between bg-surface-sunken/30 gap-4">
             <div class="w-1/3">
                 <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search sequences..."
-                    class="w-full px-3 py-2 border border-border-strong rounded-lg bg-white/50 focus:ring-2 focus:ring-brand-primary text-sm">
+                    class="w-full px-3 py-2 border border-border-strong rounded-lg bg-white/50 focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page text-sm">
             </div>
             <div class="flex gap-2">
                 @foreach(['' => 'All', 'active' => 'Active', 'paused' => 'Paused', 'completed' => 'Completed', 'cancelled' => 'Cancelled'] as $val => $label)
                 <button wire:click="$set('statusFilter', '{{ $val }}')"
                     class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
-                    {{ $statusFilter === $val ? 'bg-brand-primary text-white' : 'bg-surface-card border border-border-default/60 text-text-secondary hover:bg-surface-sunken' }}">
+                    {{ $statusFilter === $val ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10' : 'bg-surface-card border border-border-default text-text-secondary hover:bg-surface-sunken' }}">
                     {{ $label }}
                 </button>
                 @endforeach
@@ -192,9 +192,12 @@
         </div>
 
         @if($sequences->hasPages())
-        <div class="px-6 py-3 border-t border-border-default/60">
+        <div class="px-6 py-3 border-t border-border-default">
             {{ $sequences->links() }}
         </div>
         @endif
     </div>
 </div>
+
+
+

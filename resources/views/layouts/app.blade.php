@@ -5,12 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'PropOS') }}</title>
+    <!-- Dynamic Brand Styles (early — prevents FOUC on brand colors) -->
+    @php
+        $resolver = app(\App\Infrastructure\Tenancy\TenantResolver::class);
+        $agency   = $resolver->getCurrentAgency();
+        $fontMap  = [
+            'Inter'   => 'Inter:wght@300..700',
+            'Poppins' => 'Poppins:wght@300;400;500;600;700',
+            'Lato'    => 'Lato:wght@300;400;700',
+            'Roboto'  => 'Roboto:wght@300;400;500;700',
+        ];
+        $selectedFont = $agency->font_family ?? '';
+        $radiusMap = [
+            'sharp'   => ['--radius-button:2px;--radius-input:2px;--radius-card:4px;--radius-dialog:6px;'],
+            'default' => [],
+            'rounded' => ['--radius-button:10px;--radius-input:10px;--radius-card:18px;--radius-dialog:24px;'],
+            'pill'    => ['--radius-button:9999px;--radius-input:9999px;--radius-card:24px;--radius-dialog:28px;'],
+        ];
+        $radiusVars = implode('', $radiusMap[$agency->border_radius ?? 'default'] ?? []);
+    @endphp
+
+    <title>{{ $agency->name ?? config('app.name', 'PropOS') }}</title>
+
+    @if($agency->favicon_path)
+    <link rel="icon" type="image/x-icon" href="{{ asset('storage/'.$agency->favicon_path) }}">
+    @endif
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+    @if($selectedFont && isset($fontMap[$selectedFont]))
+    <link href="https://fonts.googleapis.com/css2?family={{ urlencode($fontMap[$selectedFont]) }}&display=swap" rel="stylesheet">
+    @else
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap" rel="stylesheet">
+    @endif
 
     <!-- Theme Initialization script to prevent FOUC -->
     <script>
@@ -29,20 +57,37 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 
-    <!-- Dynamic Brand Styles -->
-    @php
-        $resolver = app(\App\Infrastructure\Tenancy\TenantResolver::class);
-        $agency = $resolver->getCurrentAgency();
-    @endphp
     <style>
         :root {
-            --brand-primary: {{ $agency->primary_color ?? '#1E40AF' }};
-            --brand-secondary: {{ $agency->secondary_color ?? '#3B82F6' }};
-            --brand-accent: {{ $agency->accent_color ?? '#F59E0B' }};
+            --brand-primary:   {{ $agency->primary_color   ?? '#1E40AF' }};
+            --brand-secondary: {{ $agency->secondary_color ?? '#18181B' }};
+            --brand-accent:    {{ $agency->accent_color    ?? '#F59E0B' }};
+            @if($selectedFont)--font-sans: '{{ $selectedFont }}', sans-serif;@endif
+            {{ $radiusVars }}
         }
+        @if($agency->sidebar_style === 'light')
+        #app-sidebar {
+            background: rgba(255,255,255,0.85) !important;
+            border-color: rgba(0,0,0,0.08) !important;
+        }
+        @elseif($agency->sidebar_style === 'brand')
+        #app-sidebar {
+            background: {{ $agency->primary_color ?? '#1E40AF' }} !important;
+            border-color: rgba(255,255,255,0.12) !important;
+        }
+        #app-sidebar .text-text-secondary,
+        #app-sidebar .text-text-tertiary,
+        #app-sidebar .text-text-primary { color: rgba(255,255,255,0.85) !important; }
+        #app-sidebar .text-brand-primary { color: #ffffff !important; }
+        #app-sidebar a:hover { background: rgba(255,255,255,0.15) !important; }
+        #app-sidebar a.border-brand-primary\/15 { background: rgba(255,255,255,0.2) !important; border-color: rgba(255,255,255,0.3) !important; }
+        @endif
     </style>
+    @if($agency->custom_css)
+    <style id="agency-custom-css">{!! $agency->custom_css !!}</style>
+    @endif
 </head>
-<body class="h-full font-sans antialiased text-text-primary bg-surface-page transition-colors duration-300 overflow-x-hidden">
+<body class="h-full font-sans antialiased text-text-primary bg-surface-page transition-colors duration-300 overflow-x-hidden selection:bg-brand-primary/30 selection:text-brand-primary">
     <div x-data="{ 
             sidebarOpen: false,
             lastKey: '',

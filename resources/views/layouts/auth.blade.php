@@ -5,12 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'PropOS') }}</title>
+    @php
+        $resolver = app(\App\Infrastructure\Tenancy\TenantResolver::class);
+        $agency   = $resolver->getCurrentAgency();
+        $fontMap  = [
+            'Inter'   => 'Inter:wght@300..700',
+            'Poppins' => 'Poppins:wght@300;400;500;600;700',
+            'Lato'    => 'Lato:wght@300;400;700',
+            'Roboto'  => 'Roboto:wght@300;400;500;700',
+        ];
+        $selectedFont = $agency->font_family ?? '';
+    @endphp
+
+    <title>{{ $agency->name ?? config('app.name', 'PropOS') }}</title>
+
+    @if($agency->favicon_path)
+    <link rel="icon" type="image/x-icon" href="{{ asset('storage/'.$agency->favicon_path) }}">
+    @endif
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    @if($selectedFont && isset($fontMap[$selectedFont]))
+    <link href="https://fonts.googleapis.com/css2?family={{ urlencode($fontMap[$selectedFont]) }}&display=swap" rel="stylesheet">
+    @else
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+    @endif
 
     <!-- Theme Initialization script to prevent FOUC -->
     <script>
@@ -28,12 +48,24 @@
     <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+
+    <style>
+        :root {
+            --brand-primary:   {{ $agency->primary_color   ?? '#1E40AF' }};
+            --brand-secondary: {{ $agency->secondary_color ?? '#18181B' }};
+            --brand-accent:    {{ $agency->accent_color    ?? '#F59E0B' }};
+            @if($selectedFont)--font-sans: '{{ $selectedFont }}', sans-serif;@endif
+        }
+    </style>
+    @if($agency->custom_css)
+    <style id="agency-custom-css">{!! $agency->custom_css !!}</style>
+    @endif
 </head>
 <body class="h-full font-sans antialiased text-text-primary bg-surface-page transition-colors duration-300">
     <div class="flex min-h-full relative">
         <!-- Theme Toggle Button -->
         <div class="absolute top-6 right-6 z-50">
-            <button type="button" x-data @click="$store.theme.toggle()" class="p-2.5 rounded-xl border border-border-default bg-surface-card hover:bg-surface-raised text-text-secondary hover:text-text-primary shadow-sm hover:shadow hover-spring cursor-pointer focus:outline-none">
+            <button type="button" x-data @click="$store.theme.toggle()" class="p-2.5 rounded-xl border border-border-default bg-surface-card hover:bg-surface-raised text-text-secondary hover:text-text-primary shadow-sm hover:shadow hover-spring active:scale-95 cursor-pointer focus:outline-none">
                 <!-- Sun Icon (visible in dark mode) -->
                 <svg x-show="$store.theme.isDark" style="display: none;" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
@@ -69,14 +101,18 @@
                 </svg>
                 <div class="absolute inset-0 flex flex-col justify-between p-16 text-text-primary transition-colors duration-300">
                     <div class="flex items-center space-x-3">
-                        <div class="h-10 w-10 rounded-xl bg-brand-primary/10 flex items-center justify-center border border-brand-primary/20 backdrop-blur-sm">
-                            <span class="font-black tracking-wider text-xl text-brand-primary">P</span>
-                        </div>
-                        <span class="text-2xl font-bold tracking-tight text-text-primary">PropOS</span>
+                        @if($agency->logo_path)
+                            <img src="{{ asset('storage/'.$agency->logo_path) }}" alt="{{ $agency->name }}" class="h-10 w-auto object-contain">
+                        @else
+                            <div class="h-10 w-10 rounded-xl bg-brand-primary/10 flex items-center justify-center border border-brand-primary/20 backdrop-blur-sm">
+                                <span class="font-black tracking-wider text-xl text-brand-primary">{{ strtoupper(substr($agency->name ?? 'P', 0, 1)) }}</span>
+                            </div>
+                            <span class="text-2xl font-bold tracking-tight text-text-primary">{{ $agency->name ?? config('app.name', 'PropOS') }}</span>
+                        @endif
                     </div>
 
                     <!-- Floating Glass Panel (Mockup Dashboard / AI Feed) -->
-                    <div class="glass-panel rounded-3xl p-8 max-w-lg shadow-2xl relative overflow-hidden transition-all duration-300">
+                    <div class="bg-surface-card rounded-3xl p-8 max-w-lg shadow-2xl relative overflow-hidden transition-all duration-300">
                         <!-- Tiny header representing an active agency context -->
                         <div class="flex items-center justify-between mb-6">
                             <div class="flex items-center space-x-2">
@@ -87,7 +123,7 @@
                         </div>
                         
                         <div class="space-y-4">
-                            <div class="p-3.5 bg-white/45 dark:bg-white/5 rounded-xl border border-border-default/60 dark:border-white/10 flex items-start space-x-3 transition-colors duration-300">
+                            <div class="p-3.5 bg-white/45 dark:bg-white/5 rounded-xl border border-border-default dark:border-white/10 flex items-start space-x-3 transition-colors duration-300">
                                 <div class="mt-0.5 h-6 w-6 rounded-lg bg-success-500/10 text-success-600 dark:text-success-200 flex items-center justify-center text-xs font-bold">✓</div>
                                 <div>
                                     <div class="text-sm font-semibold text-text-primary">Lead Auto-Responded</div>
@@ -95,7 +131,7 @@
                                 </div>
                             </div>
                             
-                            <div class="p-3.5 bg-white/45 dark:bg-white/5 rounded-xl border border-border-default/60 dark:border-white/10 flex items-start space-x-3 transition-colors duration-300">
+                            <div class="p-3.5 bg-white/45 dark:bg-white/5 rounded-xl border border-border-default dark:border-white/10 flex items-start space-x-3 transition-colors duration-300">
                                 <div class="mt-0.5 h-6 w-6 rounded-lg bg-brand-primary/10 text-brand-primary dark:text-brand-primary-muted flex items-center justify-center text-xs font-bold">⚡</div>
                                 <div>
                                     <div class="text-sm font-semibold text-text-primary">AI Negotiation Complete</div>
@@ -104,7 +140,7 @@
                             </div>
                         </div>
 
-                        <div class="mt-6 pt-4 border-t border-border-default/60 dark:border-white/10 flex items-center justify-between text-xs text-text-secondary">
+                        <div class="mt-6 pt-4 border-t border-border-default dark:border-white/10 flex items-center justify-between text-xs text-text-secondary">
                             <span>Daily Leads Handled: <strong class="text-text-primary">142</strong></span>
                             <span>Conversion Rate: <strong class="text-text-primary">+18.4%</strong></span>
                         </div>
@@ -149,3 +185,5 @@
     @livewireScripts
 </body>
 </html>
+
+

@@ -8,7 +8,7 @@
         <span class="text-sm font-medium text-text-secondary">Two-Factor Authentication</span>
     </div>
 
-    <div class="glass-panel rounded-2xl border border-border-default/60 p-6">
+    <div class="bg-surface-card rounded-2xl border border-border-default p-6">
         @if($enabled)
         <!-- 2FA is ON -->
         <div class="text-center mb-6">
@@ -30,7 +30,7 @@
             <p class="text-sm text-text-secondary">Enter your password to confirm disabling 2FA:</p>
             <div>
                 <input wire:model.defer="disable_password" type="password" placeholder="Your password"
-                    class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                 @error('disable_password') <span class="text-xs text-danger-600 mt-1 block">{{ $message }}</span> @enderror
             </div>
             <div class="flex gap-3">
@@ -64,10 +64,10 @@
             <div>
                 <label class="block text-sm font-medium text-text-primary mb-1">Verification Code</label>
                 <input wire:model.defer="code" type="text" inputmode="numeric" maxlength="6" placeholder="000000"
-                    class="w-full rounded-xl border border-border-default bg-surface-input px-4 py-3 text-center text-xl font-mono tracking-widest text-text-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20">
+                    class="w-full rounded-xl border border-border-default bg-surface-input px-4 py-3 text-center text-xl font-mono tracking-widest text-text-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page/20">
                 @error('code') <span class="text-xs text-danger-600 mt-1 block text-center">{{ $message }}</span> @enderror
             </div>
-            <button type="submit" class="w-full py-3 bg-brand-primary text-white rounded-xl font-semibold hover:bg-brand-secondary transition-colors">
+            <button type="submit" class="w-full py-3 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl font-semibold hover:bg-brand-secondary transition-colors">
                 <span wire:loading.remove wire:target="enable">Enable 2FA</span>
                 <span wire:loading wire:target="enable">Verifying...</span>
             </button>
@@ -75,3 +75,6 @@
         @endif
     </div>
 </div>
+
+
+

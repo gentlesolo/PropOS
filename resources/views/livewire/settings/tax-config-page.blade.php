@@ -4,18 +4,18 @@
             <h1 class="text-2xl font-bold text-text-primary">Tax Configuration</h1>
             <p class="text-sm text-text-secondary mt-0.5">Configure VAT and tax rules for your agency</p>
         </div>
-        <button wire:click="$set('showForm', true)" class="px-4 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">
+        <button wire:click="$set('showForm', true)" class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">
             + Add Tax Rule
         </button>
     </div>
 
     @if($showForm)
-    <div class="glass-panel rounded-2xl border border-brand-200 p-6 mb-6">
+    <div class="bg-surface-card rounded-2xl border border-brand-200 p-6 mb-6">
         <h2 class="text-base font-semibold text-text-primary mb-4">{{ $editId ? 'Edit Tax Rule' : 'New Tax Rule' }}</h2>
         <form wire:submit.prevent="save" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Name *</label>
-                <input wire:model="name" type="text" placeholder="e.g. Standard VAT 15%" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                <input wire:model="name" type="text" placeholder="e.g. Standard VAT 15%" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                 @error('name') <p class="text-xs text-danger-600 mt-1">{{ $message }}</p> @enderror
             </div>
             <div>
@@ -28,7 +28,7 @@
             </div>
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Rate (%) *</label>
-                <input wire:model="rate" type="number" step="0.01" min="0" max="100" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                <input wire:model="rate" type="number" step="0.01" min="0" max="100" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                 @error('rate') <p class="text-xs text-danger-600 mt-1">{{ $message }}</p> @enderror
             </div>
             <div>
@@ -50,14 +50,14 @@
                 </div>
             </div>
             <div class="md:col-span-2 flex gap-3">
-                <button type="submit" wire:loading.attr="disabled" class="px-5 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">Save</button>
+                <button type="submit" wire:loading.attr="disabled" class="px-5 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">Save</button>
                 <button type="button" wire:click="resetForm" class="px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors">Cancel</button>
             </div>
         </form>
     </div>
     @endif
 
-    <div class="glass-panel rounded-2xl border border-border-default/60 overflow-hidden">
+    <div class="bg-surface-card rounded-2xl border border-border-default overflow-hidden">
         <table class="w-full text-sm">
             <thead class="bg-surface-hover/50 border-b border-border-default">
                 <tr>
@@ -102,3 +102,6 @@
         </table>
     </div>
 </div>
+
+
+

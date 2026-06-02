@@ -1,6 +1,6 @@
 <div class="relative" x-data>
     <button wire:click="$set('open', true)"
-        class="glass-panel px-5 py-2.5 text-xs font-bold text-text-primary hover:border-brand-primary/50 hover:text-brand-primary transition-all flex items-center space-x-2 shadow-sm">
+        class="bg-surface-card px-5 py-2.5 text-xs font-bold text-text-primary hover:border-brand-primary/50 hover:text-brand-primary transition-all flex items-center space-x-2 shadow-sm">
         <svg class="h-4 w-4 text-text-tertiary" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"/>
         </svg>
@@ -10,7 +10,7 @@
     @if($open)
     <div class="fixed inset-0 z-50 flex items-center justify-center p-4" wire:click.self="$set('open', false)">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
-        <div class="relative z-10 glass-panel rounded-2xl border border-border-default shadow-2xl w-full max-w-sm p-6">
+        <div class="relative z-10 bg-surface-card rounded-2xl border border-border-default shadow-2xl w-full max-w-sm p-6">
             <div class="flex items-center justify-between mb-5">
                 <h3 class="text-base font-bold text-text-primary">Customise Dashboard</h3>
                 <button wire:click="$set('open', false)" class="text-text-tertiary hover:text-text-primary transition-colors">
@@ -24,14 +24,14 @@
                     <input type="checkbox"
                         wire:click="toggle('{{ $widget }}')"
                         @checked(in_array($widget, $enabledWidgets))
-                        class="rounded border-border-default text-brand-primary focus:ring-brand-primary w-4 h-4">
+                        class="rounded border-border-default text-brand-primary focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page w-4 h-4">
                     <span class="text-sm font-medium text-text-primary">{{ $labels[$widget] ?? ucfirst(str_replace('_', ' ', $widget)) }}</span>
                 </label>
                 @endforeach
             </div>
             <div class="flex gap-3">
                 <button wire:click="save"
-                    class="flex-1 py-2.5 bg-brand-primary text-white rounded-xl text-sm font-semibold hover:bg-brand-secondary transition-colors">
+                    class="flex-1 py-2.5 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-semibold hover:bg-brand-secondary transition-colors">
                     Save Layout
                 </button>
                 <button wire:click="$set('open', false)"
@@ -43,3 +43,6 @@
     </div>
     @endif
 </div>
+
+
+
