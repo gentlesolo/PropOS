@@ -132,58 +132,58 @@
        ========================================================================= */
 
     /* Surfaces */
-    --surface-page:    #f8fafc;        /* Cool slate backplate */
-    --surface-card:    #ffffff;        /* Flat content cards */
-    --surface-raised:  #ffffff;        /* Modals and floating elements */
-    --surface-sunken:  #f1f5f9;        /* Input backgrounds & sub-headers */
+    --surface-page:    #f8fafc;        /* Cool slate backplate — not pure white */
+    --surface-card:    #ffffff;        /* Clean card surface */
+    --surface-raised:  #ffffff;        /* Modals, floating panels */
+    --surface-sunken:  #f1f5f9;        /* Input fills, sub-headers, sidebar bg */
     --surface-input:   #ffffff;
-    --surface-overlay: rgba(15, 23, 42, 0.60);
+    --surface-overlay: rgba(15, 23, 42, 0.55);
 
     /* Text */
-    --text-primary:    var(--color-neutral-900);
-    --text-secondary:  var(--color-neutral-600);
-    --text-tertiary:   var(--color-neutral-400);
-    --text-disabled:   var(--color-neutral-300);
-    --text-inverse:    #ffffff;
-    --text-on-brand:   #ffffff;
-    --text-link:       var(--color-primary-600);
-    --text-link-hover: var(--color-primary-700);
+    --text-primary:   #09090b;         /* Zinc-950 — near black, not pure black */
+    --text-secondary: #52525b;         /* Zinc-600 */
+    --text-tertiary:  #a1a1aa;         /* Zinc-400 */
+    --text-disabled:  #d4d4d8;         /* Zinc-300 */
+    --text-inverse:   #ffffff;
+    --text-on-brand:  #ffffff;
+    --text-link:      #059669;         /* Emerald-600 — darker for light bg contrast */
+    --text-link-hover:#047857;         /* Emerald-700 */
 
     /* Borders using transparent values for soft overlay blending */
-    --border-subtle:  rgba(24, 24, 27, 0.04);
-    --border-default: rgba(24, 24, 27, 0.08);
-    --border-strong:  rgba(24, 24, 27, 0.16);
-    --border-brand:   var(--brand-primary);
-    --border-focus:   var(--brand-primary);
+    --border-subtle:  rgba(9, 9, 11, 0.05);
+    --border-default: rgba(9, 9, 11, 0.10);
+    --border-strong:  rgba(9, 9, 11, 0.20);
+    --border-brand:   #10B981;
+    --border-focus:   #10B981;
 
     /* Focus ring */
-    --focus-ring-color:  var(--brand-primary);
+    --focus-ring-color:  #10B981;
     --focus-ring-width:  2px;
     --focus-ring-offset: 2px;
 
     /* Semantic feedback surfaces */
-    --color-success-bg:     var(--color-success-50);
-    --color-success-text:   var(--color-success-700);
-    --color-success-border: var(--color-success-200);
+    --color-success-bg:     #f0fdf4;
+    --color-success-text:   #15803d;   /* Green-700 — dark enough for light bg */
+    --color-success-border: #bbf7d0;
 
-    --color-info-bg:     var(--color-info-50);
-    --color-info-text:   var(--color-info-700);
-    --color-info-border: var(--color-info-200);
+    --color-info-bg:        #f0f9ff;
+    --color-info-text:      #0369a1;
+    --color-info-border:    #bae6fd;
 
-    --color-warning-bg:     var(--color-warning-50);
-    --color-warning-text:   var(--color-warning-700);
-    --color-warning-border: var(--color-warning-200);
+    --color-warning-bg:     #fffbeb;
+    --color-warning-text:   #b45309;
+    --color-warning-border: #fde68a;
 
-    --color-danger-bg:     var(--color-danger-50);
-    --color-danger-text:   var(--color-danger-700);
-    --color-danger-border: var(--color-danger-200);
+    --color-danger-bg:      #fff1f2;
+    --color-danger-text:    #be123c;
+    --color-danger-border:  #fecdd3;
 
     /* Interactive states */
-    --state-hover-bg:         rgba(0, 0, 0, 0.04);
-    --state-active-bg:        rgba(0, 0, 0, 0.08);
-    --state-selected-bg:      var(--color-primary-50);
-    --state-selected-text:    var(--color-primary-700);
-    --state-focus-bg:         var(--color-primary-50);
+    --state-hover-bg:      rgba(0, 0, 0, 0.04);
+    --state-active-bg:     rgba(0, 0, 0, 0.08);
+    --state-selected-bg:   #ecfdf5;    /* Emerald-50 */
+    --state-selected-text: #047857;    /* Emerald-700 */
+    --state-focus-bg:      #ecfdf5;
     --state-disabled-opacity: 0.4;
 
     /* Brand-derived tints */
@@ -324,17 +324,17 @@
        8. ELEVATION & SHADOWS
        ========================================================================= */
     --shadow-xs:    0 1px 2px 0 rgba(0, 0, 0, 0.04);
-    --shadow-sm:    0 1px 3px 0 rgba(0, 0, 0, 0.07), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
+    --shadow-sm:    0 1px 3px 0 rgba(0,0,0,0.08), 0 1px 2px -1px rgba(0,0,0,0.06);
     --shadow-base:  0 2px 4px 0 rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
-    --shadow-md:    0 4px 8px -2px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-    --shadow-lg:    0 12px 24px -6px rgba(0, 0, 0, 0.08), 0 4px 8px -4px rgba(0, 0, 0, 0.05);
+    --shadow-md:    0 4px 8px -2px rgba(0,0,0,0.10), 0 2px 4px -2px rgba(0,0,0,0.06);
+    --shadow-lg:    0 12px 24px -6px rgba(0,0,0,0.10), 0 4px 8px -4px rgba(0,0,0,0.06);
     --shadow-xl:    0 20px 40px -8px rgba(0, 0, 0, 0.10), 0 8px 16px -6px rgba(0, 0, 0, 0.06);
     --shadow-2xl:   0 40px 64px -16px rgba(0, 0, 0, 0.12);
     --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
 
     /* Brand-tinted glow shadows */
-    --shadow-brand-sm: 0 2px 8px 0 rgba(16, 185, 129, 0.12), 0 0 0 1px rgba(16, 185, 129, 0.08);
-    --shadow-brand-md: 0 8px 24px -4px rgba(16, 185, 129, 0.16), 0 0 0 1px rgba(16, 185, 129, 0.12);
+    --shadow-brand-sm: 0 2px 8px 0 rgba(16,185,129,0.14), 0 0 0 1px rgba(16,185,129,0.10);
+    --shadow-brand-md: 0 8px 24px -4px rgba(16,185,129,0.20), 0 0 0 1px rgba(16,185,129,0.14);
     --shadow-brand-lg: 0 16px 40px -8px rgba(16, 185, 129, 0.24), 0 0 0 1px rgba(16, 185, 129, 0.16);
 
     /* =========================================================================
@@ -386,11 +386,11 @@
     /* =========================================================================
        11. GLASS EFFECTS
        ========================================================================= */
-    --glass-bg:          rgba(255, 255, 255, 0.72);
+    --glass-bg:          rgba(255, 255, 255, 0.80);
     --glass-bg-dark:     rgba(15, 23, 42, 0.72);
-    --glass-border:      1px solid rgba(255, 255, 255, 0.20);
+    --glass-border:      1px solid rgba(255, 255, 255, 0.60);
     --glass-border-dark: 1px solid rgba(255, 255, 255, 0.08);
-    --glass-shadow:      0 8px 32px 0 rgba(15, 23, 42, 0.10);
+    --glass-shadow:      0 8px 32px 0 rgba(15, 23, 42, 0.08);
 
     /* Legacy alias */
     --glass-background: var(--glass-bg);
@@ -517,53 +517,65 @@
 /* Tailwind dark-class variant */
 .dark {
     /* Surfaces */
-    --surface-page:    #030712;        /* Darkest backplate */
-    --surface-card:    #090d16;        /* Sleek raised container */
-    --surface-raised:  #111827;        /* Modals / floating items */
-    --surface-sunken:  #050811;        /* Insets and sidebar base */
+    --surface-page:    #030712;        /* Deepest base — near black with blue undertone */
+    --surface-card:    #090d16;        /* Raised card — 1 step above base */
+    --surface-raised:  #111827;        /* Modals, dropdowns, popovers */
+    --surface-sunken:  #050811;        /* Inset areas, sidebar base */
     --surface-input:   #111827;
     --surface-overlay: rgba(2, 6, 23, 0.80);
 
     /* Text */
-    --text-primary:    var(--color-neutral-50);
-    --text-secondary:  var(--color-neutral-400);
-    --text-tertiary:   var(--color-neutral-500);
-    --text-disabled:   var(--color-neutral-700);
-    --text-link:       var(--color-primary-400);
-    --text-link-hover: var(--color-primary-300);
+    --text-primary:   #fafafa;         /* Zinc-50 */
+    --text-secondary: #a1a1aa;         /* Zinc-400 */
+    --text-tertiary:  #71717a;         /* Zinc-500 */
+    --text-disabled:  #3f3f46;         /* Zinc-700 */
+    --text-inverse:   #09090b;
+    --text-on-brand:  #ffffff;
+    --text-link:      #34d399;         /* Emerald-400 — lighter for dark bg contrast */
+    --text-link-hover:#6ee7b7;         /* Emerald-300 */
 
     /* Borders using sub-pixel translucent values that render beautifully on dark backdrops */
     --border-subtle:  rgba(255, 255, 255, 0.03);
     --border-default: rgba(255, 255, 255, 0.06);
     --border-strong:  rgba(255, 255, 255, 0.12);
+    --border-brand:   #10B981;
+    --border-focus:   #10B981;
+    
+    /* Shadows are minimal on dark — rely on border + glow instead */
+    --shadow-sm:    0 1px 3px 0 rgba(0,0,0,0.40);
+    --shadow-md:    0 4px 8px -2px rgba(0,0,0,0.50);
+    --shadow-lg:    0 12px 24px -6px rgba(0,0,0,0.60);
+    --shadow-brand-sm: 0 2px 8px 0 rgba(16,185,129,0.12), 0 0 0 1px rgba(16,185,129,0.08);
+    --shadow-brand-md: 0 8px 24px -4px rgba(16,185,129,0.16), 0 0 0 1px rgba(16,185,129,0.12);
 
     /* Glass */
-    --glass-bg:     var(--glass-bg-dark);
-    --glass-border: var(--glass-border-dark);
+    --glass-bg:       rgba(15, 23, 42, 0.72);
+    --glass-border:   1px solid rgba(255, 255, 255, 0.08);
+    --glass-shadow:   0 8px 32px 0 rgba(0, 0, 0, 0.40);
 
     /* Feedback semantic surfaces */
-    --color-success-bg:     var(--color-success-900);
-    --color-success-text:   var(--color-success-400);
+    --color-success-bg:     #14532d;
+    --color-success-text:   #4ade80;
     --color-success-border: rgba(74, 222, 128, 0.20);
 
-    --color-info-bg:     var(--color-info-900);
-    --color-info-text:   var(--color-info-400);
-    --color-info-border: rgba(56, 189, 248, 0.20);
+    --color-info-bg:        #0c4a6e;
+    --color-info-text:      #38bdf8;
+    --color-info-border:    rgba(56, 189, 248, 0.20);
 
-    --color-warning-bg:     var(--color-warning-900);
-    --color-warning-text:   var(--color-warning-400);
+    --color-warning-bg:     #78350f;
+    --color-warning-text:   #fbbf24;
     --color-warning-border: rgba(251, 191, 36, 0.20);
 
-    --color-danger-bg:     var(--color-danger-900);
-    --color-danger-text:   var(--color-danger-400);
-    --color-danger-border: rgba(251, 113, 133, 0.20);
+    --color-danger-bg:      #881337;
+    --color-danger-text:    #fb7185;
+    --color-danger-border:  rgba(251, 113, 133, 0.20);
 
     /* Interactive states */
     --state-hover-bg:      rgba(255, 255, 255, 0.06);
     --state-active-bg:     rgba(255, 255, 255, 0.10);
-    --state-selected-bg:   var(--color-primary-950);
-    --state-selected-text: var(--color-primary-400);
-    --state-focus-bg:      var(--color-primary-950);
+    --state-selected-bg:   #022c22;    /* Emerald-950 */
+    --state-selected-text: #34d399;    /* Emerald-400 */
+    --state-focus-bg:      #022c22;
 
     /* Brand-derived tints */
     --brand-primary-tint:  var(--color-primary-950);

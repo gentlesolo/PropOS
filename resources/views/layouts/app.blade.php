@@ -42,15 +42,19 @@
 
     <!-- Theme Initialization script to prevent FOUC -->
     <script>
-        function applyTheme() {
-            if (localStorage.getItem('color-theme') === 'dark') {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
-        }
-        applyTheme();
-        document.addEventListener('livewire:navigated', applyTheme);
+        (function() {
+            var theme = localStorage.getItem('propos-theme') || 'system';
+            var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            var resolved = theme === 'system' ? (prefersDark ? 'dark' : 'light') : theme;
+            document.documentElement.classList.add(resolved);
+        })();
+        document.addEventListener('livewire:navigated', function() {
+            var theme = localStorage.getItem('propos-theme') || 'system';
+            var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            var resolved = theme === 'system' ? (prefersDark ? 'dark' : 'light') : theme;
+            document.documentElement.classList.remove('light', 'dark');
+            document.documentElement.classList.add(resolved);
+        });
     </script>
 
     <!-- Styles -->
@@ -132,15 +136,34 @@
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.store('theme', {
-                isDark: document.documentElement.classList.contains('dark'),
-                toggle() {
-                    this.isDark = !this.isDark;
-                    if (this.isDark) {
-                        document.documentElement.classList.add('dark');
-                        localStorage.setItem('color-theme', 'dark');
-                    } else {
-                        document.documentElement.classList.remove('dark');
-                        localStorage.setItem('color-theme', 'light');
+                mode: localStorage.getItem('propos-theme') || 'system',
+                init() {
+                    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                        if (this.mode === 'system') {
+                            this.applyTheme('system', true);
+                        }
+                    });
+                },
+                setTheme(theme) {
+                    this.mode = theme;
+                    localStorage.setItem('propos-theme', theme);
+                    this.applyTheme(theme, true);
+                },
+                applyTheme(theme, animate) {
+                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    const resolved = theme === 'system' ? (prefersDark ? 'dark' : 'light') : theme;
+                    
+                    if (animate) {
+                        document.documentElement.classList.add('theme-transitioning');
+                    }
+                    
+                    document.documentElement.classList.remove('light', 'dark');
+                    document.documentElement.classList.add(resolved);
+                    
+                    if (animate) {
+                        setTimeout(() => {
+                            document.documentElement.classList.remove('theme-transitioning');
+                        }, 350);
                     }
                 }
             });
