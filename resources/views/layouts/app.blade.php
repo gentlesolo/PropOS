@@ -88,46 +88,8 @@
     @endif
 </head>
 <body class="h-full font-sans antialiased text-text-primary bg-surface-page transition-colors duration-300 overflow-x-hidden selection:bg-brand-primary/30 selection:text-brand-primary">
-    <div x-data="{ 
-            sidebarOpen: false,
-            sidebarCollapsed: localStorage.getItem('sidebar-collapsed') === 'true',
-            toggleSidebar() {
-                this.sidebarCollapsed = !this.sidebarCollapsed;
-                localStorage.setItem('sidebar-collapsed', this.sidebarCollapsed);
-            },
-            lastKey: '',
-            keyTimeout: null
-         }"
-         @keydown.window="
-            if (['INPUT', 'TEXTAREA', 'SELECT'].includes($event.target.tagName) || $event.target.isContentEditable) return;
-            
-            const key = $event.key.toLowerCase();
-            
-            // Single key shortcut
-            if (key === 'c' && !$event.ctrlKey && !$event.metaKey) {
-                $dispatch('toggleChatPanel');
-                return;
-            }
-            
-            // Sequence shortcuts starting with 'g'
-            if (lastKey === 'g') {
-                if (key === 'c') {
-                    window.location.href = '{{ route('crm.contacts') }}';
-                } else if (key === 'l') {
-                    window.location.href = '{{ route('listing.index') }}';
-                } else if (key === 'p') {
-                    window.location.href = '{{ route('crm.pipeline') }}';
-                }
-                lastKey = '';
-                return;
-            }
-            
-            if (key === 'g') {
-                lastKey = 'g';
-                clearTimeout(keyTimeout);
-                keyTimeout = setTimeout(() => { lastKey = ''; }, 1000);
-            }
-         }"
+    <div x-data="layoutState"
+         @keydown.window="handleKeydown($event)"
          class="flex h-screen overflow-hidden">
         <!-- Sidebar Navigation -->
         <livewire:shared.sidebar />
@@ -182,6 +144,47 @@
                     }
                 }
             });
+
+            Alpine.data('layoutState', () => ({
+                sidebarOpen: false,
+                sidebarCollapsed: localStorage.getItem('sidebar-collapsed') === 'true',
+                toggleSidebar() {
+                    this.sidebarCollapsed = !this.sidebarCollapsed;
+                    localStorage.setItem('sidebar-collapsed', this.sidebarCollapsed);
+                },
+                lastKey: '',
+                keyTimeout: null,
+                handleKeydown(event) {
+                    if (['INPUT', 'TEXTAREA', 'SELECT'].includes(event.target.tagName) || event.target.isContentEditable) return;
+                    
+                    const key = event.key.toLowerCase();
+                    
+                    // Single key shortcut
+                    if (key === 'c' && !event.ctrlKey && !event.metaKey) {
+                        this.$dispatch('toggleChatPanel');
+                        return;
+                    }
+                    
+                    // Sequence shortcuts starting with 'g'
+                    if (this.lastKey === 'g') {
+                        if (key === 'c') {
+                            window.location.href = '{{ route('crm.contacts') }}';
+                        } else if (key === 'l') {
+                            window.location.href = '{{ route('listing.index') }}';
+                        } else if (key === 'p') {
+                            window.location.href = '{{ route('crm.pipeline') }}';
+                        }
+                        this.lastKey = '';
+                        return;
+                    }
+                    
+                    if (key === 'g') {
+                        this.lastKey = 'g';
+                        clearTimeout(this.keyTimeout);
+                        this.keyTimeout = setTimeout(() => { this.lastKey = ''; }, 1000);
+                    }
+                }
+            }));
         });
     </script>
 

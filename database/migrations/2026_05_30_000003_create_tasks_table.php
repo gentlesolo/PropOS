@@ -24,6 +24,8 @@ return new class extends Migration
             $table->enum('status', ['pending', 'in_progress', 'completed', 'cancelled'])->default('pending');
             $table->dateTime('due_at')->nullable();
             $table->dateTime('completed_at')->nullable();
+            $table->json('subtasks')->nullable();
+            $table->json('activity_log')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

@@ -17,6 +17,8 @@ class Task extends Model
     protected $casts = [
         'due_at' => 'datetime',
         'completed_at' => 'datetime',
+        'subtasks' => 'array',
+        'activity_log' => 'array',
     ];
 
     public function assignedTo(): BelongsTo { return $this->belongsTo(User::class, 'assigned_to'); }

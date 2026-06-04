@@ -75,6 +75,13 @@
 
                             {{-- Label --}}
                             <span x-show="!sidebarCollapsed" class="truncate transition-colors duration-200">{{ $item['title'] }}</span>
+
+                            @if($item['title'] === 'Offers' && \App\Infrastructure\Persistence\Models\Offer::where('agency_id', auth()->user()?->agency_id)->where('status', 'pending')->exists())
+                                <span class="absolute right-3.5 top-1/2 -translate-y-1/2 flex h-1.5 w-1.5" :class="sidebarCollapsed ? 'right-2' : 'right-3.5'">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#F59E0B] opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#F59E0B]"></span>
+                                </span>
+                            @endif
                         </a>
                     </li>
                     @endforeach

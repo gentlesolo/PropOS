@@ -24,6 +24,7 @@ class OffersPage extends Component
     // ── Detail panel ──────────────────────────────────────────────────────────
     public bool $showDetail    = false;
     public ?int $detailOfferId = null;
+    public bool $compareMode   = false;
 
     // ── Create form ───────────────────────────────────────────────────────────
     public bool   $showCreateForm              = false;
@@ -66,6 +67,7 @@ class OffersPage extends Component
         $this->showCreateForm = false;
         $this->showEditForm   = false;
         $this->showCounterForm = false;
+        $this->compareMode    = false;
     }
 
     public function closeDetail(): void
@@ -86,6 +88,7 @@ class OffersPage extends Component
         $this->showDetail     = false;
         $this->showEditForm   = false;
         $this->showCounterForm = false;
+        $this->compareMode    = false;
     }
 
     public function createOffer(): void
@@ -302,6 +305,15 @@ class OffersPage extends Component
 
         $detailOffer = null;
         if ($this->showDetail && $this->detailOfferId) {
+            $detailOffer = Offer::with(['deal.listing.property', 'contact', 'listing.property', 'submittedBy', 'contract'])
+                ->where('agency_id', $agencyId)
+                ->find($this->detailOfferId);
+        }
+
+        if (!$detailOffer && !$this->showCreateForm && !$this->showEditForm && $offers->count() > 0) {
+            $firstOffer = $offers->first();
+            $this->detailOfferId = $firstOffer->id;
+            $this->showDetail = true;
             $detailOffer = Offer::with(['deal.listing.property', 'contact', 'listing.property', 'submittedBy', 'contract'])
                 ->where('agency_id', $agencyId)
                 ->find($this->detailOfferId);
