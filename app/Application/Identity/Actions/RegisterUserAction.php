@@ -21,6 +21,8 @@ class RegisterUserAction
                 'name' => $data->agencyName,
                 'slug' => $data->slug,
                 'email' => $data->email,
+                'country_code' => $data->country,
+                'settings' => ['size' => $data->size],
             ]);
 
             // Set Spatie Permission team context to target this agency
@@ -33,6 +35,7 @@ class RegisterUserAction
                 'last_name' => $data->lastName,
                 'email' => $data->email,
                 'phone' => $data->phone,
+                'job_title' => $data->role,
                 'password' => Hash::make($data->password),
                 'status' => 'active',
                 'email_verified_at' => now(), // Auto-verify for simplicity initially

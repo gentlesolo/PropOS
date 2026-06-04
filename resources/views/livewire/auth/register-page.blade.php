@@ -1,96 +1,329 @@
-<div>
-    <!-- Logo & Header -->
+<div x-data="{ step: @entangle('step'), invitation: @json(!!$invitationToken) }" 
+     x-init="$watch('step', val => {
+        let progressBar = document.getElementById('auth-progress-bar');
+        if (progressBar) {
+            if (invitation) {
+                progressBar.style.width = val === 2 ? '50%' : '100%';
+            } else {
+                progressBar.style.width = val === 1 ? '33.33%' : (val === 2 ? '66.66%' : '100%');
+            }
+        }
+     }); 
+     let progressBar = document.getElementById('auth-progress-bar');
+     if (progressBar) {
+         if (invitation) {
+             progressBar.style.width = step === 2 ? '50%' : '100%';
+         } else {
+             progressBar.style.width = step === 1 ? '33.33%' : (step === 2 ? '66.66%' : '100%');
+         }
+     }"
+     class="relative">
+
+    <!-- Styles for validation slide down -->
+    <style>
+        @keyframes slide-down {
+            0% { opacity: 0; transform: translateY(-4px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-down {
+            animation: slide-down 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+
+    <!-- Header Section -->
     <div class="mb-8">
-        <div class="text-3xl font-extrabold tracking-tight bg-gradient-brand bg-clip-text text-transparent">
-            PropOS
+        <!-- Mini mobile logo mark (visible on mobile only) -->
+        <div class="lg:hidden flex items-center space-x-2.5 mb-6">
+            <div class="h-8 w-8 rounded-md bg-[#10B981]/10 flex items-center justify-center border border-[#10B981]/25">
+                <span class="font-bold text-base text-[#10B981]">P</span>
+            </div>
+            <span class="text-lg font-bold tracking-tight text-[#FAFAFA]">PropOS</span>
         </div>
-        <h2 class="mt-6 text-2xl font-bold tracking-tight text-text-primary">Create your agency</h2>
-        <p class="mt-2 text-sm text-text-secondary">
-            Or
-            <a href="{{ route('login') }}" class="font-semibold text-brand-primary hover:text-brand-secondary transition-colors">sign in to your account</a>
-        </p>
+
+        @if($invitationToken)
+            <h2 class="text-2xl font-semibold tracking-tight text-[#FAFAFA] font-sans">Complete your profile</h2>
+            <p class="mt-2 text-sm text-[#A1A1AA]">
+                You have been invited to join <span class="text-[#FAFAFA] font-semibold">{{ $invitationAgencyName }}</span> as a <span class="text-[#10B981] font-semibold">{{ ucfirst($invitationRole) }}</span>.
+            </p>
+        @else
+            <h2 class="text-2xl font-semibold tracking-tight text-[#FAFAFA] font-sans">Create your agency</h2>
+            <p class="mt-2 text-sm text-[#A1A1AA]">
+                Establish your command center for property operations.
+            </p>
+        @endif
     </div>
 
-    <!-- Form -->
-    <form wire:submit.prevent="submit" class="space-y-5">
-        <!-- Agency Details -->
-        <div class="border-b border-border-subtle pb-5 mb-5">
-            <h3 class="text-xs font-bold text-text-tertiary uppercase tracking-wider mb-4">Agency Details</h3>
-            
-            <div class="space-y-4">
+    <!-- Multi-Step Indicators -->
+    @if(!$invitationToken)
+        <div class="flex items-center space-x-4 mb-8 text-xs font-mono">
+            <div class="flex items-center space-x-1.5">
+                <span :class="step >= 1 ? 'bg-[#10B981] text-white border-[#10B981]' : 'bg-[#111827] text-[#52525B] border-white/5'" class="h-5 w-5 rounded-full flex items-center justify-center border text-[10px] font-bold transition-colors">1</span>
+                <span :class="step >= 1 ? 'text-[#FAFAFA]' : 'text-[#52525B]'" class="font-semibold transition-colors">Agency</span>
+            </div>
+            <div class="h-px bg-white/5 flex-1"></div>
+            <div class="flex items-center space-x-1.5">
+                <span :class="step >= 2 ? 'bg-[#10B981] text-white border-[#10B981]' : 'bg-[#111827] text-[#52525B] border-white/5'" class="h-5 w-5 rounded-full flex items-center justify-center border text-[10px] font-bold transition-colors">2</span>
+                <span :class="step >= 2 ? 'text-[#FAFAFA]' : 'text-[#52525B]'" class="font-semibold transition-colors">Owner</span>
+            </div>
+            <div class="h-px bg-white/5 flex-1"></div>
+            <div class="flex items-center space-x-1.5">
+                <span :class="step >= 3 ? 'bg-[#10B981] text-white border-[#10B981]' : 'bg-[#111827] text-[#52525B] border-white/5'" class="h-5 w-5 rounded-full flex items-center justify-center border text-[10px] font-bold transition-colors">3</span>
+                <span :class="step >= 3 ? 'text-[#FAFAFA]' : 'text-[#52525B]'" class="font-semibold transition-colors">Security</span>
+            </div>
+        </div>
+    @else
+        <div class="flex items-center space-x-4 mb-8 text-xs font-mono">
+            <div class="flex items-center space-x-1.5">
+                <span :class="step >= 2 ? 'bg-[#10B981] text-white border-[#10B981]' : 'bg-[#111827] text-[#52525B] border-white/5'" class="h-5 w-5 rounded-full flex items-center justify-center border text-[10px] font-bold transition-colors">1</span>
+                <span :class="step >= 2 ? 'text-[#FAFAFA]' : 'text-[#52525B]'" class="font-semibold transition-colors">Details</span>
+            </div>
+            <div class="h-px bg-white/5 flex-1"></div>
+            <div class="flex items-center space-x-1.5">
+                <span :class="step >= 3 ? 'bg-[#10B981] text-white border-[#10B981]' : 'bg-[#111827] text-[#52525B] border-white/5'" class="h-5 w-5 rounded-full flex items-center justify-center border text-[10px] font-bold transition-colors">2</span>
+                <span :class="step >= 3 ? 'text-[#FAFAFA]' : 'text-[#52525B]'" class="font-semibold transition-colors">Password</span>
+            </div>
+        </div>
+    @endif
+
+    <!-- Sliding Steps Container -->
+    <div class="relative w-full">
+
+        <!-- STEP 1: Agency Details (Ignored in invitation mode) -->
+        @if(!$invitationToken)
+            <div x-show="step === 1"
+                 x-transition:enter="transition ease-spring duration-300 transform"
+                 x-transition:enter-start="translate-x-full opacity-0"
+                 x-transition:enter-end="translate-x-0 opacity-100"
+                 x-transition:leave="transition ease-spring duration-300 transform absolute top-0 left-0 w-full"
+                 x-transition:leave-start="translate-x-0 opacity-100"
+                 x-transition:leave-end="-translate-x-full opacity-0"
+                 class="space-y-5">
+                 
                 <div>
-                    <label for="agency_name" class="block text-sm font-semibold text-text-primary">Agency Name</label>
-                    <div class="mt-1.5">
-                        <input wire:model.blur="agency_name" id="agency_name" type="text" required class="block w-full rounded-xl border border-border-default py-2.5 px-3.5 text-text-primary bg-surface-input shadow-sm placeholder:text-text-tertiary focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page sm:text-sm">
-                        @error('agency_name') <span class="text-danger-600 text-xs mt-1 block">{{ $message }}</span> @enderror
-                    </div>
+                    <label for="agency_name" class="block text-xs font-semibold uppercase tracking-wider text-[#A1A1AA] mb-1.5">Agency Name</label>
+                    <input wire:model.blur="agency_name" id="agency_name" type="text" required placeholder="Lagos Crest Realty"
+                        class="w-full h-11 bg-[#111827] border @error('agency_name') border-[#F43F5E] @else border-white/10 @enderror text-sm text-[#FAFAFA] placeholder-[#52525B] px-3.5 rounded-md focus:outline-none focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] focus:shadow-[0_0_12px_rgba(16,185,129,0.16)] transition-all duration-200">
+                    @error('agency_name') 
+                        <span class="block text-xs text-[#F43F5E] mt-1.5 animate-slide-down">{{ $message }}</span> 
+                    @enderror
                 </div>
 
                 <div>
-                    <label for="slug" class="block text-sm font-semibold text-text-primary">Agency Slug / ID</label>
-                    <div class="mt-1.5">
-                        <input wire:model="slug" id="slug" type="text" required class="block w-full rounded-xl border border-border-default py-2.5 px-3.5 text-text-primary bg-surface-input shadow-sm placeholder:text-text-tertiary focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page sm:text-sm">
-                        @error('slug') <span class="text-danger-600 text-xs mt-1 block">{{ $message }}</span> @enderror
-                    </div>
+                    <label for="slug" class="block text-xs font-semibold uppercase tracking-wider text-[#A1A1AA] mb-1.5">Agency Subdomain / Slug</label>
+                    <input wire:model="slug" id="slug" type="text" required autocomplete="off" placeholder="lagos-crest"
+                        class="w-full h-11 bg-[#111827] border @error('slug') border-[#F43F5E] @else border-white/10 @enderror text-sm text-[#FAFAFA] placeholder-[#52525B] px-3.5 rounded-md focus:outline-none focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] focus:shadow-[0_0_12px_rgba(16,185,129,0.16)] transition-all duration-200">
+                    @if($slug)
+                        <div class="text-[11px] font-mono text-[#52525B] mt-1.5">
+                            Subdomain: <span class="text-[#10B981]">{{ $slug }}.propos.app</span>
+                        </div>
+                    @endif
+                    @error('slug') 
+                        <span class="block text-xs text-[#F43F5E] mt-1.5 animate-slide-down">{{ $message }}</span> 
+                    @enderror
                 </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-[#A1A1AA] mb-2.5">Operating Country</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <!-- Nigeria -->
+                        <button type="button" wire:click="$set('country', 'NG')"
+                            class="flex items-center space-x-3 p-3 border rounded-md text-sm transition-all focus:outline-none text-left cursor-pointer @if($country === 'NG') border-[#10B981] bg-[#10B981]/5 text-white @else border-white/10 bg-[#111827] text-[#A1A1AA] hover:border-white/20 @endif">
+                            <span class="text-lg">🇳🇬</span>
+                            <div>
+                                <div class="font-semibold text-xs text-[#FAFAFA]">Nigeria</div>
+                                <div class="text-[10px] text-[#A1A1AA] font-mono">NGN (₦)</div>
+                            </div>
+                        </button>
+                        <!-- South Africa -->
+                        <button type="button" wire:click="$set('country', 'ZA')"
+                            class="flex items-center space-x-3 p-3 border rounded-md text-sm transition-all focus:outline-none text-left cursor-pointer @if($country === 'ZA') border-[#10B981] bg-[#10B981]/5 text-white @else border-white/10 bg-[#111827] text-[#A1A1AA] hover:border-white/20 @endif">
+                            <span class="text-lg">🇿🇦</span>
+                            <div>
+                                <div class="font-semibold text-xs text-[#FAFAFA]">South Africa</div>
+                                <div class="text-[10px] text-[#A1A1AA] font-mono">ZAR (R)</div>
+                            </div>
+                        </button>
+                        <!-- Kenya -->
+                        <button type="button" wire:click="$set('country', 'KE')"
+                            class="flex items-center space-x-3 p-3 border rounded-md text-sm transition-all focus:outline-none text-left cursor-pointer @if($country === 'KE') border-[#10B981] bg-[#10B981]/5 text-white @else border-white/10 bg-[#111827] text-[#A1A1AA] hover:border-white/20 @endif">
+                            <span class="text-lg">🇰🇪</span>
+                            <div>
+                                <div class="font-semibold text-xs text-[#FAFAFA]">Kenya</div>
+                                <div class="text-[10px] text-[#A1A1AA] font-mono">KES (KSh)</div>
+                            </div>
+                        </button>
+                        <!-- Ghana -->
+                        <button type="button" wire:click="$set('country', 'GH')"
+                            class="flex items-center space-x-3 p-3 border rounded-md text-sm transition-all focus:outline-none text-left cursor-pointer @if($country === 'GH') border-[#10B981] bg-[#10B981]/5 text-white @else border-white/10 bg-[#111827] text-[#A1A1AA] hover:border-white/20 @endif">
+                            <span class="text-lg">🇬🇭</span>
+                            <div>
+                                <div class="font-semibold text-xs text-[#FAFAFA]">Ghana</div>
+                                <div class="text-[10px] text-[#A1A1AA] font-mono">GHS (₵)</div>
+                            </div>
+                        </button>
+                    </div>
+                    @error('country') 
+                        <span class="block text-xs text-[#F43F5E] mt-1.5 animate-slide-down">{{ $message }}</span> 
+                    @enderror
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-[#A1A1AA] mb-2.5">Agency Size</label>
+                    <div class="grid grid-cols-3 gap-2.5">
+                        <button type="button" wire:click="$set('size', '1-5')"
+                            class="h-10 text-xs font-semibold border rounded-md transition-all focus:outline-none cursor-pointer @if($size === '1-5') border-[#10B981] bg-[#10B981]/5 text-white @else border-white/10 bg-[#111827] text-[#A1A1AA] hover:border-white/20 @endif">
+                            1-5 agents
+                        </button>
+                        <button type="button" wire:click="$set('size', '6-20')"
+                            class="h-10 text-xs font-semibold border rounded-md transition-all focus:outline-none cursor-pointer @if($size === '6-20') border-[#10B981] bg-[#10B981]/5 text-white @else border-white/10 bg-[#111827] text-[#A1A1AA] hover:border-white/20 @endif">
+                            6-20 agents
+                        </button>
+                        <button type="button" wire:click="$set('size', '21+')"
+                            class="h-10 text-xs font-semibold border rounded-md transition-all focus:outline-none cursor-pointer @if($size === '21+') border-[#10B981] bg-[#10B981]/5 text-white @else border-white/10 bg-[#111827] text-[#A1A1AA] hover:border-white/20 @endif">
+                            21+ agents
+                        </button>
+                    </div>
+                    @error('size') 
+                        <span class="block text-xs text-[#F43F5E] mt-1.5 animate-slide-down">{{ $message }}</span> 
+                    @enderror
+                </div>
+
+                <div class="pt-2">
+                    <button type="button" wire:click="nextStep" class="cta-shimmer w-full h-[44px] bg-[#10B981] text-white text-sm font-semibold rounded-md shadow-[0_2px_8px_rgba(16,185,129,0.16)] hover:bg-[#10B981]/90 active:scale-[0.98] transition-all flex items-center justify-center cursor-pointer">
+                        Continue to profile
+                    </button>
+                </div>
+            </div>
+        @endif
+
+        <!-- STEP 2: Your Details -->
+        <div x-show="step === 2"
+             x-transition:enter="transition ease-spring duration-300 transform"
+             x-transition:enter-start="translate-x-full opacity-0"
+             x-transition:enter-end="translate-x-0 opacity-100"
+             x-transition:leave="transition ease-spring duration-300 transform absolute top-0 left-0 w-full"
+             x-transition:leave-start="translate-x-0 opacity-100"
+             x-transition:leave-end="-translate-x-full opacity-0"
+             class="space-y-5"
+             style="display: none;">
+             
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="first_name" class="block text-xs font-semibold uppercase tracking-wider text-[#A1A1AA] mb-1.5">First Name</label>
+                    <input wire:model="first_name" id="first_name" type="text" required placeholder="Tunde"
+                        class="w-full h-11 bg-[#111827] border @error('first_name') border-[#F43F5E] @else border-white/10 @enderror text-sm text-[#FAFAFA] placeholder-[#52525B] px-3.5 rounded-md focus:outline-none focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] focus:shadow-[0_0_12px_rgba(16,185,129,0.16)] transition-all duration-200">
+                    @error('first_name') 
+                        <span class="block text-xs text-[#F43F5E] mt-1.5 animate-slide-down">{{ $message }}</span> 
+                    @enderror
+                </div>
+                <div>
+                    <label for="last_name" class="block text-xs font-semibold uppercase tracking-wider text-[#A1A1AA] mb-1.5">Last Name</label>
+                    <input wire:model="last_name" id="last_name" type="text" required placeholder="Adeniji"
+                        class="w-full h-11 bg-[#111827] border @error('last_name') border-[#F43F5E] @else border-white/10 @enderror text-sm text-[#FAFAFA] placeholder-[#52525B] px-3.5 rounded-md focus:outline-none focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] focus:shadow-[0_0_12px_rgba(16,185,129,0.16)] transition-all duration-200">
+                    @error('last_name') 
+                        <span class="block text-xs text-[#F43F5E] mt-1.5 animate-slide-down">{{ $message }}</span> 
+                    @enderror
+                </div>
+            </div>
+
+            <div>
+                <label for="email" class="block text-xs font-semibold uppercase tracking-wider text-[#A1A1AA] mb-1.5">Email Address</label>
+                <input wire:model="email" id="email" type="email" required placeholder="tunde@lagoscrest.com" @if($invitationToken) disabled @endif
+                    class="w-full h-11 @if($invitationToken) bg-[#111827]/40 text-[#52525B] cursor-not-allowed border-white/5 @else bg-[#111827] text-[#FAFAFA] border-white/10 @endif border @error('email') border-[#F43F5E] @enderror text-sm placeholder-[#52525B] px-3.5 rounded-md focus:outline-none focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] focus:shadow-[0_0_12px_rgba(16,185,129,0.16)] transition-all duration-200">
+                @error('email') 
+                    <span class="block text-xs text-[#F43F5E] mt-1.5 animate-slide-down">{{ $message }}</span> 
+                @enderror
+            </div>
+
+            <div>
+                <label for="phone" class="block text-xs font-semibold uppercase tracking-wider text-[#A1A1AA] mb-1.5">Phone Number</label>
+                <input wire:model="phone" id="phone" type="text" placeholder="+234 803 123 4567"
+                    class="w-full h-11 bg-[#111827] border @error('phone') border-[#F43F5E] @else border-white/10 @enderror text-sm text-[#FAFAFA] placeholder-[#52525B] px-3.5 rounded-md focus:outline-none focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] focus:shadow-[0_0_12px_rgba(16,185,129,0.16)] transition-all duration-200">
+                @error('phone') 
+                    <span class="block text-xs text-[#F43F5E] mt-1.5 animate-slide-down">{{ $message }}</span> 
+                @enderror
+            </div>
+
+            <div>
+                <label for="role" class="block text-xs font-semibold uppercase tracking-wider text-[#A1A1AA] mb-1.5">Your Role</label>
+                <select wire:model="role" id="role" @if($invitationToken) disabled @endif
+                    class="w-full h-11 @if($invitationToken) bg-[#111827]/40 text-[#52525B] cursor-not-allowed border-white/5 @else bg-[#111827] text-[#FAFAFA] border-white/10 @endif border @error('role') border-[#F43F5E] @enderror text-sm px-3 rounded-md focus:outline-none focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] transition-all duration-200">
+                    <option value="principal" class="bg-[#090d16]">Principal / Broker-Owner</option>
+                    <option value="agent" class="bg-[#090d16]">Real Estate Agent</option>
+                    <option value="admin" class="bg-[#090d16]">Administrator</option>
+                </select>
+                @error('role') 
+                    <span class="block text-xs text-[#F43F5E] mt-1.5 animate-slide-down">{{ $message }}</span> 
+                @enderror
+            </div>
+
+            <div class="flex items-center space-x-3 pt-2">
+                @if(!$invitationToken)
+                    <button type="button" wire:click="previousStep" 
+                        class="w-24 h-[44px] border border-white/10 hover:bg-white/5 text-[#A1A1AA] hover:text-[#FAFAFA] text-sm font-semibold rounded-md transition-all flex items-center justify-center cursor-pointer">
+                        Back
+                    </button>
+                @endif
+                <button type="button" wire:click="nextStep" 
+                    class="cta-shimmer flex-1 h-[44px] bg-[#10B981] text-white text-sm font-semibold rounded-md shadow-[0_2px_8px_rgba(16,185,129,0.16)] hover:bg-[#10B981]/90 active:scale-[0.98] transition-all flex items-center justify-center cursor-pointer">
+                    Continue to security
+                </button>
             </div>
         </div>
 
-        <!-- Principal Details -->
-        <div>
-            <h3 class="text-xs font-bold text-text-tertiary uppercase tracking-wider mb-4">Owner Profile</h3>
+        <!-- STEP 3: Security & Terms -->
+        <div x-show="step === 3"
+             x-transition:enter="transition ease-spring duration-300 transform"
+             x-transition:enter-start="translate-x-full opacity-0"
+             x-transition:enter-end="translate-x-0 opacity-100"
+             x-transition:leave="transition ease-spring duration-300 transform absolute top-0 left-0 w-full"
+             x-transition:leave-start="translate-x-0 opacity-100"
+             x-transition:leave-end="-translate-x-full opacity-0"
+             class="space-y-5"
+             style="display: none;">
+             
+            <div>
+                <label for="password" class="block text-xs font-semibold uppercase tracking-wider text-[#A1A1AA] mb-1.5">Set Password</label>
+                <input wire:model="password" id="password" type="password" required placeholder="Min. 8 characters"
+                    class="w-full h-11 bg-[#111827] border @error('password') border-[#F43F5E] @else border-white/10 @enderror text-sm text-[#FAFAFA] placeholder-[#52525B] px-3.5 rounded-md focus:outline-none focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] focus:shadow-[0_0_12px_rgba(16,185,129,0.16)] transition-all duration-200">
+                @error('password') 
+                    <span class="block text-xs text-[#F43F5E] mt-1.5 animate-slide-down">{{ $message }}</span> 
+                @enderror
+            </div>
 
-            <div class="space-y-4">
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label for="first_name" class="block text-sm font-semibold text-text-primary">First Name</label>
-                        <div class="mt-1.5">
-                            <input wire:model="first_name" id="first_name" type="text" required class="block w-full rounded-xl border border-border-default py-2.5 px-3.5 text-text-primary bg-surface-input shadow-sm placeholder:text-text-tertiary focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page sm:text-sm">
-                            @error('first_name') <span class="text-danger-600 text-xs mt-1 block">{{ $message }}</span> @enderror
-                        </div>
-                    </div>
+            <!-- Agree to terms of service -->
+            <div class="pt-1">
+                <label class="flex items-start cursor-pointer select-none">
+                    <input wire:model="agree_to_terms" id="agree_to_terms" type="checkbox"
+                        class="h-4 w-4 mt-0.5 bg-[#111827] border border-white/10 rounded text-[#10B981] focus:ring-offset-0 focus:ring-[#10B981]">
+                    <span class="ml-2.5 text-xs text-[#A1A1AA] leading-relaxed">
+                        I agree to the <a href="#" class="text-[#F59E0B] hover:underline font-semibold">Terms of Service</a> and <a href="#" class="text-[#F59E0B] hover:underline font-semibold">Privacy Policy</a> of PropOS.
+                    </span>
+                </label>
+                @error('agree_to_terms') 
+                    <span class="block text-xs text-[#F43F5E] mt-1.5 animate-slide-down">{{ $message }}</span> 
+                @enderror
+            </div>
 
-                    <div>
-                        <label for="last_name" class="block text-sm font-semibold text-text-primary">Last Name</label>
-                        <div class="mt-1.5">
-                            <input wire:model="last_name" id="last_name" type="text" required class="block w-full rounded-xl border border-border-default py-2.5 px-3.5 text-text-primary bg-surface-input shadow-sm placeholder:text-text-tertiary focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page sm:text-sm">
-                            @error('last_name') <span class="text-danger-600 text-xs mt-1 block">{{ $message }}</span> @enderror
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <label for="email" class="block text-sm font-semibold text-text-primary">Email Address</label>
-                    <div class="mt-1.5">
-                        <input wire:model="email" id="email" type="email" required class="block w-full rounded-xl border border-border-default py-2.5 px-3.5 text-text-primary bg-surface-input shadow-sm placeholder:text-text-tertiary focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page sm:text-sm">
-                        @error('email') <span class="text-danger-600 text-xs mt-1 block">{{ $message }}</span> @enderror
-                    </div>
-                </div>
-
-                <div>
-                    <label for="phone" class="block text-sm font-semibold text-text-primary">Phone Number (Optional)</label>
-                    <div class="mt-1.5">
-                        <input wire:model="phone" id="phone" type="text" class="block w-full rounded-xl border border-border-default py-2.5 px-3.5 text-text-primary bg-surface-input shadow-sm placeholder:text-text-tertiary focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page sm:text-sm">
-                        @error('phone') <span class="text-danger-600 text-xs mt-1 block">{{ $message }}</span> @enderror
-                    </div>
-                </div>
-
-                <div>
-                    <label for="password" class="block text-sm font-semibold text-text-primary">Password</label>
-                    <div class="mt-1.5">
-                        <input wire:model="password" id="password" type="password" required class="block w-full rounded-xl border border-border-default py-2.5 px-3.5 text-text-primary bg-surface-input shadow-sm placeholder:text-text-tertiary focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page sm:text-sm">
-                        @error('password') <span class="text-danger-600 text-xs mt-1 block">{{ $message }}</span> @enderror
-                    </div>
-                </div>
+            <div class="flex items-center space-x-3 pt-2">
+                <button type="button" wire:click="previousStep" 
+                    class="w-24 h-[44px] border border-white/10 hover:bg-white/5 text-[#A1A1AA] hover:text-[#FAFAFA] text-sm font-semibold rounded-md transition-all flex items-center justify-center cursor-pointer">
+                    Back
+                </button>
+                <button type="submit" wire:click.prevent="submit"
+                    class="cta-shimmer flex-1 h-[44px] bg-[#10B981] text-white text-sm font-semibold rounded-md shadow-[0_2px_8px_rgba(16,185,129,0.16)] hover:bg-[#10B981]/90 active:scale-[0.98] transition-all flex items-center justify-center cursor-pointer">
+                    @if($invitationToken) Complete Registration @else Complete Agency Setup @endif
+                </button>
             </div>
         </div>
 
-        <div class="pt-2">
-            <button type="submit" class="flex w-full justify-center rounded-xl bg-brand-primary px-4 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:opacity-90 hover:shadow-brand-md hover-spring active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary cursor-pointer">
-                Get Started
-            </button>
-        </div>
-    </form>
+    </div>
+
+    <!-- Redirect footer link -->
+    <div class="mt-8 pt-6 border-t border-white/5 text-center">
+        <p class="text-xs text-[#A1A1AA]">
+            Already have an agency?
+            <a href="{{ route('login') }}" class="font-semibold text-[#F59E0B] hover:underline transition-colors ml-1">Sign in</a>
+        </p>
+    </div>
 </div>
-
-

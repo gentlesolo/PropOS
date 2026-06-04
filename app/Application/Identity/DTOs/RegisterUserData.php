@@ -11,7 +11,10 @@ class RegisterUserData
         public readonly string $lastName,
         public readonly string $email,
         public readonly ?string $phone,
-        public readonly string $password
+        public readonly string $password,
+        public readonly string $country = 'NG',
+        public readonly string $size = '1-5',
+        public readonly string $role = 'principal'
     ) {}
 
     public static function fromArray(array $data): self
@@ -23,7 +26,10 @@ class RegisterUserData
             lastName: $data['last_name'],
             email: $data['email'],
             phone: $data['phone'] ?? null,
-            password: $data['password']
+            password: $data['password'],
+            country: $data['country'] ?? 'NG',
+            size: $data['size'] ?? '1-5',
+            role: $data['role'] ?? 'principal'
         );
     }
 }

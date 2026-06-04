@@ -22,13 +22,19 @@ class RegisterPage extends Component
     // New-agency fields (hidden in invite mode)
     public string $agency_name = '';
     public string $slug        = '';
+    public string $country     = 'NG';
+    public string $size        = '1-5';
 
     // Always present
     public string $first_name = '';
     public string $last_name  = '';
     public string $email      = '';
     public string $phone      = '';
+    public string $role       = 'principal';
     public string $password   = '';
+    public bool $agree_to_terms = false;
+
+    public int $step = 1;
 
     public function mount(): void
     {
@@ -45,6 +51,8 @@ class RegisterPage extends Component
                 $this->invitationAgencyName = $invitation->agency?->name ?? 'the agency';
                 $this->invitationRole       = $invitation->role;
                 $this->email                = $invitation->email;
+                $this->role                 = $invitation->role;
+                $this->step                 = 2; // Skip step 1 if invited
             }
         }
     }
@@ -54,16 +62,52 @@ class RegisterPage extends Component
         $this->slug = Str::slug($this->agency_name);
     }
 
+    public function nextStep(): void
+    {
+        if ($this->step === 1) {
+            $this->validate([
+                'agency_name' => 'required|string|max:255',
+                'slug'        => 'required|string|alpha_dash|max:255|unique:agencies,slug',
+                'country'     => 'required|string|in:NG,ZA,KE,GH',
+                'size'        => 'required|string',
+            ]);
+            $this->step = 2;
+        } elseif ($this->step === 2) {
+            // If invitation mode, email is prefilled so we don't validate unique:users unless it's changed
+            $emailRule = $this->invitationToken ? 'required|email|max:255' : 'required|email|max:255|unique:users,email';
+            $this->validate([
+                'first_name' => 'required|string|max:255',
+                'last_name'  => 'required|string|max:255',
+                'email'      => $emailRule,
+                'phone'      => 'nullable|string|max:20',
+                'role'       => 'required|string',
+            ]);
+            $this->step = 3;
+        }
+    }
+
+    public function previousStep(): void
+    {
+        if ($this->step > 1) {
+            // Cannot go back to step 1 in invitation mode
+            if ($this->invitationToken && $this->step === 2) {
+                return;
+            }
+            $this->step--;
+        }
+    }
+
     public function submit(RegisterUserAction $registerAction): mixed
     {
         // ── Invitation flow ────────────────────────────────────────────────
         if ($this->invitationToken) {
             $this->validate([
-                'first_name' => 'required|string|max:255',
-                'last_name'  => 'required|string|max:255',
-                'email'      => 'required|email|max:255|unique:users,email',
-                'phone'      => 'nullable|string|max:20',
-                'password'   => 'required|string|min:8',
+                'first_name'     => 'required|string|max:255',
+                'last_name'      => 'required|string|max:255',
+                'email'          => 'required|email|max:255|unique:users,email',
+                'phone'          => 'nullable|string|max:20',
+                'password'       => 'required|string|min:8',
+                'agree_to_terms' => 'accepted',
             ]);
 
             $invitation = TeamInvitation::where('token', $this->invitationToken)
@@ -78,6 +122,7 @@ class RegisterPage extends Component
                 'last_name'          => $this->last_name,
                 'email'              => $this->email,
                 'phone'              => $this->phone ?: null,
+                'job_title'          => $this->role,
                 'password'           => Hash::make($this->password),
                 'status'             => 'active',
                 'email_verified_at'  => now(),
@@ -94,13 +139,17 @@ class RegisterPage extends Component
 
         // ── New-agency flow ───────────────────────────────────────────────
         $this->validate([
-            'agency_name' => 'required|string|max:255',
-            'slug'        => 'required|string|alpha_dash|max:255|unique:agencies,slug',
-            'first_name'  => 'required|string|max:255',
-            'last_name'   => 'required|string|max:255',
-            'email'       => 'required|email|max:255|unique:users,email',
-            'phone'       => 'nullable|string|max:20',
-            'password'    => 'required|string|min:8',
+            'agency_name'    => 'required|string|max:255',
+            'slug'           => 'required|string|alpha_dash|max:255|unique:agencies,slug',
+            'country'        => 'required|string|in:NG,ZA,KE,GH',
+            'size'           => 'required|string',
+            'first_name'     => 'required|string|max:255',
+            'last_name'      => 'required|string|max:255',
+            'email'          => 'required|email|max:255|unique:users,email',
+            'phone'          => 'nullable|string|max:20',
+            'role'           => 'required|string',
+            'password'       => 'required|string|min:8',
+            'agree_to_terms' => 'accepted',
         ]);
 
         $dto = RegisterUserData::fromArray([
@@ -111,6 +160,9 @@ class RegisterPage extends Component
             'email'       => $this->email,
             'phone'       => $this->phone,
             'password'    => $this->password,
+            'country'     => $this->country,
+            'size'        => $this->size,
+            'role'        => $this->role,
         ]);
 
         $user = $registerAction->execute($dto);

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark h-full">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,13 +8,6 @@
     @php
         $resolver = app(\App\Infrastructure\Tenancy\TenantResolver::class);
         $agency   = $resolver->getCurrentAgency() ?? new \App\Infrastructure\Persistence\Models\Agency();
-        $fontMap  = [
-            'Inter'   => 'Inter:wght@300..700',
-            'Poppins' => 'Poppins:wght@300;400;500;600;700',
-            'Lato'    => 'Lato:wght@300;400;700',
-            'Roboto'  => 'Roboto:wght@300;400;500;700',
-        ];
-        $selectedFont = $agency->font_family ?? '';
     @endphp
 
     <title>{{ $agency->name ?? config('app.name', 'PropOS') }}</title>
@@ -23,27 +16,10 @@
     <link rel="icon" type="image/x-icon" href="{{ asset('storage/'.$agency->favicon_path) }}">
     @endif
 
-    <!-- Google Fonts -->
+    <!-- Google Fonts: Geist & Geist Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    @if($selectedFont && isset($fontMap[$selectedFont]))
-    <link href="https://fonts.googleapis.com/css2?family={{ urlencode($fontMap[$selectedFont]) }}&display=swap" rel="stylesheet">
-    @else
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
-    @endif
-
-    <!-- Theme Initialization script to prevent FOUC -->
-    <script>
-        function applyTheme() {
-            if (localStorage.getItem('color-theme') === 'dark') {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
-        }
-        applyTheme();
-        document.addEventListener('livewire:navigated', applyTheme);
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -51,139 +27,210 @@
 
     <style>
         :root {
-            --brand-primary:   {{ $agency->primary_color   ?? '#1E40AF' }};
-            --brand-secondary: {{ $agency->secondary_color ?? '#18181B' }};
-            --brand-accent:    {{ $agency->accent_color    ?? '#F59E0B' }};
-            @if($selectedFont)--font-sans: '{{ $selectedFont }}', sans-serif;@endif
+            --brand-primary:   #10B981;
+            --brand-secondary: #030712;
+            --brand-accent:    #F59E0B;
+            --font-sans: 'Geist', sans-serif;
+            --font-mono: 'Geist Mono', monospace;
+        }
+
+        body {
+            font-family: 'Geist', sans-serif;
+            background-color: #030712 !important;
+            color: #FAFAFA !important;
+        }
+
+        /* Easing & Spring Animations */
+        .ease-spring {
+            transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Slow panning grid background */
+        @keyframes pan-grid {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(40px, 40px); }
+        }
+        .animated-grid {
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(16, 185, 129, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(16, 185, 129, 0.04) 1px, transparent 1px);
+            animation: pan-grid 60s linear infinite;
+        }
+
+        /* Pulsing emerald glow */
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.15; transform: scale(1); }
+            50% { opacity: 0.28; transform: scale(1.15); }
+        }
+        .pulse-glow-1 {
+            animation: pulse-glow 12s ease-in-out infinite;
+        }
+        .pulse-glow-2 {
+            animation: pulse-glow 8s ease-in-out infinite alternate;
+        }
+
+        /* Infinite marquee ticker */
+        @keyframes marquee {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
+        }
+        .ticker-scroll {
+            display: flex;
+            width: max-content;
+            animation: marquee 45s linear infinite;
+        }
+        .ticker-scroll:hover {
+            animation-play-state: paused;
+        }
+
+        /* Shimmer sweep animation for CTA button */
+        @keyframes shimmer-sweep {
+            0% { left: -100%; }
+            100% { left: 200%; }
+        }
+        .cta-shimmer {
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-shimmer::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
+            transform: skewX(-20deg);
+        }
+        .cta-shimmer:hover::after {
+            animation: shimmer-sweep 0.85s ease-in-out;
+        }
+
+        /* Override Chrome autofill background colors */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active {
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: #FAFAFA !important;
+            transition: background-color 5000s ease-in-out 0s;
+            box-shadow: inset 0 0 20px 20px #111827 !important;
         }
     </style>
-    @if($agency->custom_css)
-    <style id="agency-custom-css">{!! $agency->custom_css !!}</style>
-    @endif
 </head>
-<body class="h-full font-sans antialiased text-text-primary bg-surface-page transition-colors duration-300">
-    <div class="flex min-h-full relative">
-        <!-- Theme Toggle Button -->
-        <div class="absolute top-6 right-6 z-50">
-            <button type="button" x-data @click="$store.theme.toggle()" class="p-2.5 rounded-xl border border-border-default bg-surface-card hover:bg-surface-raised text-text-secondary hover:text-text-primary shadow-sm hover:shadow hover-spring active:scale-95 cursor-pointer focus:outline-none">
-                <!-- Sun Icon (visible in dark mode) -->
-                <svg x-show="$store.theme.isDark" style="display: none;" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+<body class="h-full antialiased text-[#FAFAFA] bg-[#030712] selection:bg-[#10B981]/30 selection:text-white">
+    <div class="flex flex-col lg:flex-row min-h-screen relative bg-[#030712] font-sans">
+        
+        <!-- Ambient Left Panel (collapses to a slim header strip on mobile) -->
+        <div class="relative flex flex-col justify-between w-full lg:w-auto lg:flex-1 bg-[#030712] p-6 lg:p-16 border-b lg:border-b-0 lg:border-r border-white/5 overflow-hidden min-h-[120px] lg:min-h-screen">
+            <!-- Background grids & ambient glows -->
+            <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                <!-- Slow panning grid background -->
+                <div class="absolute -inset-10 animated-grid opacity-75"></div>
+                <!-- Pulsing Glows -->
+                <div class="absolute top-1/4 left-1/4 w-[400px] h-[400px] rounded-full bg-[#10B981] opacity-[0.06] blur-[120px] pulse-glow-1"></div>
+                <div class="absolute bottom-1/4 right-1/4 w-[350px] h-[350px] rounded-full bg-[#F59E0B] opacity-[0.03] blur-[100px] pulse-glow-2"></div>
+                <!-- Faint Map lines SVG overlay -->
+                <svg class="absolute inset-0 w-full h-full stroke-white/[0.015] [mask-image:radial-gradient(100%_100%_at_top_left,white,transparent)]" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M-100 300 C 200 400, 400 200, 800 600" stroke-width="1.5" />
+                    <path d="M0 600 C 300 500, 500 700, 1000 400" stroke-width="1" />
+                    <circle cx="200" cy="350" r="3" fill="#10B981" class="animate-pulse" />
+                    <circle cx="800" cy="600" r="3" fill="#10B981" class="animate-pulse" />
+                    <circle cx="500" cy="550" r="2" fill="#F59E0B" class="animate-pulse" />
                 </svg>
-                <!-- Moon Icon (visible in light mode) -->
-                <svg x-show="!$store.theme.isDark" style="display: none;" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
-                </svg>
-            </button>
+            </div>
+
+            <!-- Top Header Logo (Desktop) or Mobile Row -->
+            <div class="relative z-10 flex items-center justify-between w-full">
+                <div class="flex items-center space-x-3">
+                    <div class="h-9 w-9 rounded-md bg-[#10B981]/10 flex items-center justify-center border border-[#10B981]/25 backdrop-blur-sm">
+                        <!-- Custom premium logo box -->
+                        <span class="font-bold tracking-wider text-lg text-[#10B981]">P</span>
+                    </div>
+                    <span class="text-xl font-bold tracking-tight text-[#FAFAFA]">
+                        Prop<span class="relative inline-block text-[#FAFAFA]">O<span class="absolute top-[4px] left-[3px] w-[5px] h-[5px] bg-[#10B981] rounded-full shadow-[0_0_8px_#10B981]"></span></span>S
+                    </span>
+                </div>
+                <!-- Active stats indicator badge -->
+                <div class="flex items-center space-x-2 px-2.5 py-1 rounded-full bg-[#111827] border border-white/5 text-[11px] font-mono text-[#A1A1AA]">
+                    <span class="h-1.5 w-1.5 rounded-full bg-[#10B981] animate-pulse"></span>
+                    <span>System Active · Emerging Markets</span>
+                </div>
+            </div>
+
+            <!-- Desktop Middle branding copy (hidden on mobile) -->
+            <div class="hidden lg:block relative z-10 my-auto max-w-xl space-y-8">
+                <div class="space-y-3">
+                    <div class="inline-flex px-2.5 py-1 rounded-md bg-[#10B981]/10 border border-[#10B981]/20 text-xs font-mono text-[#10B981] font-semibold tracking-wider uppercase">
+                        AI-Native Property OS
+                    </div>
+                    <h1 class="text-4xl xl:text-5xl font-bold leading-[1.1] text-[#FAFAFA] tracking-[-0.02em]">
+                        Your agency.<br>One system.
+                    </h1>
+                </div>
+
+                <!-- 3 Sleek Micro Stats -->
+                <div class="grid grid-cols-3 gap-6 pt-6 border-t border-white/5">
+                    <div class="space-y-1">
+                        <div class="text-xl font-semibold font-mono text-[#10B981]">₦4.2B+</div>
+                        <div class="text-xs text-[#A1A1AA]">Transactions tracked</div>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="text-xl font-semibold font-mono text-[#FAFAFA]">12k+</div>
+                        <div class="text-xs text-[#A1A1AA]">Listings managed</div>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="text-xl font-semibold font-mono text-[#FAFAFA]">94%</div>
+                        <div class="text-xs text-[#A1A1AA]">Agent retention</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Desktop Bottom Scrolling Deals Ticker (hidden on mobile) -->
+            <div class="hidden lg:block relative z-10 w-full overflow-hidden border-t border-white/5 pt-6 pointer-events-none">
+                <div class="ticker-scroll text-[11px] font-mono text-[#52525B] space-x-12 uppercase tracking-wider">
+                    <div class="flex items-center space-x-12">
+                        <span>LAGOS · 3BR Luxury Penthouse · ₦320M · Closed</span>
+                        <span class="text-[#10B981]">●</span>
+                        <span>CAPE TOWN · Sea Point Studio · R4.2M · Closed</span>
+                        <span class="text-[#10B981]">●</span>
+                        <span>NAIROBI · Kilimani Heights · KSh 18.5M · Closed</span>
+                        <span class="text-[#10B981]">●</span>
+                        <span>ACCRA · Airport Residential Duplex · $450K · Closed</span>
+                        <span class="text-[#10B981]">●</span>
+                    </div>
+                    <!-- Duplicate for seamless looping -->
+                    <div class="flex items-center space-x-12">
+                        <span>LAGOS · 3BR Luxury Penthouse · ₦320M · Closed</span>
+                        <span class="text-[#10B981]">●</span>
+                        <span>CAPE TOWN · Sea Point Studio · R4.2M · Closed</span>
+                        <span class="text-[#10B981]">●</span>
+                        <span>NAIROBI · Kilimani Heights · KSh 18.5M · Closed</span>
+                        <span class="text-[#10B981]">●</span>
+                        <span>ACCRA · Airport Residential Duplex · $450K · Closed</span>
+                        <span class="text-[#10B981]">●</span>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
-        <!-- Left Side: Form Column -->
-        <div class="flex flex-1 flex-col justify-center px-6 py-12 sm:px-12 lg:flex-none lg:px-20 xl:px-24 bg-surface-card z-10 w-full lg:max-w-xl shadow-xl transition-colors duration-300">
-            <div class="mx-auto w-full max-w-md lg:w-96">
+        <!-- Form Right Panel -->
+        <div class="relative flex flex-col justify-center items-center w-full lg:max-w-2xl xl:max-w-3xl lg:w-[600px] xl:w-[680px] bg-[#090d16] p-6 sm:p-12 lg:p-20 z-10 border-t lg:border-t-0 border-white/5 transition-colors duration-300 min-h-screen">
+            <!-- Thin Emerald Progress Bar (Dynamic line at top of form panel) -->
+            <div class="absolute top-0 left-0 right-0 h-1 bg-[#111827] z-20">
+                <div id="auth-progress-bar" class="h-full bg-[#10B981] transition-all duration-300 ease-spring" style="width: 0%;"></div>
+            </div>
+
+            <!-- Vertical Centered Form Slot -->
+            <div class="w-full max-w-[420px] py-8">
                 {{ $slot }}
             </div>
         </div>
 
-        <!-- Right Side: Graphic/Promo Column -->
-        <div class="relative hidden w-0 flex-1 lg:block">
-            <div class="absolute inset-0 bg-gradient-subtle dark:bg-gradient-hero transition-all duration-500">
-                <!-- Decorative geometric lines and pattern overlays -->
-                <svg class="absolute inset-0 h-full w-full stroke-text-secondary/10 dark:stroke-white/10 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]" aria-hidden="true">
-                    <defs>
-                        <pattern id="grid-pattern" width="200" height="200" x="100%" y="-1" patternUnits="userSpaceOnUse">
-                            <path d="M.5 200V.5H200" fill="none" />
-                        </pattern>
-                    </defs>
-                    <svg x="50%" y="-1" class="overflow-visible fill-text-secondary/3 dark:fill-white/5">
-                        <path d="M-200 0h201v201h-201Z M600 0h201v201h-201Z M-400 600h201v201h-201Z M200 800h201v201h-201Z" stroke-width="0" />
-                    </svg>
-                    <rect width="100%" height="100%" stroke-width="0" fill="url(#grid-pattern)" />
-                </svg>
-                <div class="absolute inset-0 flex flex-col justify-between p-16 text-text-primary transition-colors duration-300">
-                    <div class="flex items-center space-x-3">
-                        @if($agency->logo_path)
-                            <img src="{{ asset('storage/'.$agency->logo_path) }}" alt="{{ $agency->name }}" class="h-10 w-auto object-contain">
-                        @else
-                            <div class="h-10 w-10 rounded-xl bg-brand-primary/10 flex items-center justify-center border border-brand-primary/20 backdrop-blur-sm">
-                                <span class="font-black tracking-wider text-xl text-brand-primary">{{ strtoupper(substr($agency->name ?? 'P', 0, 1)) }}</span>
-                            </div>
-                            <span class="text-2xl font-bold tracking-tight text-text-primary">{{ $agency->name ?? config('app.name', 'PropOS') }}</span>
-                        @endif
-                    </div>
-
-                    <!-- Floating Glass Panel (Mockup Dashboard / AI Feed) -->
-                    <div class="bg-surface-card rounded-3xl p-8 max-w-lg shadow-2xl relative overflow-hidden transition-all duration-300">
-                        <!-- Tiny header representing an active agency context -->
-                        <div class="flex items-center justify-between mb-6">
-                            <div class="flex items-center space-x-2">
-                                <div class="h-2 w-2 rounded-full bg-success-500 dark:bg-success-400 animate-pulse"></div>
-                                <span class="text-xs font-semibold tracking-wider uppercase text-text-secondary">PropOS Copilot Active</span>
-                            </div>
-                            <span class="text-[10px] font-mono text-text-tertiary">v1.2.0-stable</span>
-                        </div>
-                        
-                        <div class="space-y-4">
-                            <div class="p-3.5 bg-white/45 dark:bg-white/5 rounded-xl border border-border-default dark:border-white/10 flex items-start space-x-3 transition-colors duration-300">
-                                <div class="mt-0.5 h-6 w-6 rounded-lg bg-success-500/10 text-success-600 dark:text-success-200 flex items-center justify-center text-xs font-bold">✓</div>
-                                <div>
-                                    <div class="text-sm font-semibold text-text-primary">Lead Auto-Responded</div>
-                                    <div class="text-xs text-text-secondary">WhatsApp response dispatched to Sarah K. for luxury listing.</div>
-                                </div>
-                            </div>
-                            
-                            <div class="p-3.5 bg-white/45 dark:bg-white/5 rounded-xl border border-border-default dark:border-white/10 flex items-start space-x-3 transition-colors duration-300">
-                                <div class="mt-0.5 h-6 w-6 rounded-lg bg-brand-primary/10 text-brand-primary dark:text-brand-primary-muted flex items-center justify-center text-xs font-bold">⚡</div>
-                                <div>
-                                    <div class="text-sm font-semibold text-text-primary">AI Negotiation Complete</div>
-                                    <div class="text-xs text-text-secondary">Recommended counters generated for Nairobi Heights project.</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mt-6 pt-4 border-t border-border-default dark:border-white/10 flex items-center justify-between text-xs text-text-secondary">
-                            <span>Daily Leads Handled: <strong class="text-text-primary">142</strong></span>
-                            <span>Conversion Rate: <strong class="text-text-primary">+18.4%</strong></span>
-                        </div>
-                    </div>
-
-                    <!-- Bottom branding statement -->
-                    <div class="space-y-4">
-                        <p class="text-3xl font-bold leading-normal tracking-tight text-text-primary">The next-generation, AI-native operating platform for real estate agencies.</p>
-                        <div class="flex items-center space-x-4">
-                            <div class="flex -space-x-2">
-                                <span class="inline-block h-8 w-8 rounded-full ring-2 ring-border-subtle bg-surface-raised flex items-center justify-center text-xs font-bold font-mono text-text-secondary">A</span>
-                                <span class="inline-block h-8 w-8 rounded-full ring-2 ring-border-subtle bg-surface-raised flex items-center justify-center text-xs font-bold font-mono text-text-secondary">K</span>
-                                <span class="inline-block h-8 w-8 rounded-full ring-2 ring-border-subtle bg-surface-raised flex items-center justify-center text-xs font-bold font-mono text-text-secondary">M</span>
-                            </div>
-                            <span class="text-sm font-medium text-text-secondary">Empowering agencies in African & emerging markets.</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
-
-    <!-- Theme Toggle Alpine Store -->
-    <script>
-        document.addEventListener('alpine:init', () => {
-            Alpine.store('theme', {
-                isDark: document.documentElement.classList.contains('dark'),
-                toggle() {
-                    this.isDark = !this.isDark;
-                    if (this.isDark) {
-                        document.documentElement.classList.add('dark');
-                        localStorage.setItem('color-theme', 'dark');
-                    } else {
-                        document.documentElement.classList.remove('dark');
-                        localStorage.setItem('color-theme', 'light');
-                    }
-                }
-            });
-        });
-    </script>
 
     @livewireScripts
 </body>
 </html>
-
-
