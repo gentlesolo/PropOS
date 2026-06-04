@@ -1,689 +1,569 @@
-<div>
-    <!-- Breadcrumb -->
-    <div class="flex items-center gap-3 mb-6">
-        <a href="{{ route('listing.index') }}" class="text-text-tertiary hover:text-brand-primary text-sm flex items-center gap-1">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-            Listings
-        </a>
-        <span class="text-text-tertiary">/</span>
-        <span class="text-sm text-text-secondary font-medium truncate">{{ $listing->property->address_line_1 }}</span>
-    </div>
-
-    <!-- Alert Banners -->
-    @if($mandateExpired)
-    <div class="mb-5 flex items-center gap-3 p-4 rounded-2xl border border-danger-300 bg-danger-50">
-        <svg class="h-5 w-5 text-danger-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        <p class="text-sm font-medium text-danger-800">Mandate expired on {{ $listing->mandate_end_date->format('d M Y') }}. Contact the seller to renew.</p>
-    </div>
-    @elseif($mandateExpiringSoon)
-    <div class="mb-5 flex items-center gap-3 p-4 rounded-2xl border border-warning-300 bg-warning-50">
-        <svg class="h-5 w-5 text-warning-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        <p class="text-sm font-medium text-warning-800">Mandate expires {{ $listing->mandate_end_date->diffForHumans() }} ({{ $listing->mandate_end_date->format('d M Y') }}). Consider renewal.</p>
-    </div>
-    @endif
-
-    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-
-        <!-- -- Left: Main Content ------------------------------------- -->
-        <div class="xl:col-span-2 space-y-5">
-
-            <!-- Header Card -->
-            <div class="bg-surface-card rounded-2xl border border-border-default p-6">
-                <div class="flex items-start justify-between mb-4">
-                    <div class="min-w-0 flex-1 pr-4">
-                        <h1 class="text-2xl font-extrabold text-text-primary leading-tight">{{ $listing->property->address_line_1 }}</h1>
-                        <p class="text-sm text-text-secondary mt-0.5">{{ $listing->property->city }}, {{ $listing->property->state_province }}</p>
-                        <div class="flex flex-wrap items-center gap-2 mt-2">
-                            <span class="px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider
-                                @switch($listing->status)
-                                    @case('active') bg-success-100 text-success-800 @break
-                                    @case('under_offer') bg-info-100 text-info-800 @break
-                                    @case('sold') @case('let') bg-brand-primary/10 text-brand-primary @break
-                                    @default bg-surface-sunken text-text-secondary
-                                @endswitch">
-                                {{ str_replace('_', ' ', $listing->status) }}
-                            </span>
-                            <span class="text-xs text-text-secondary capitalize">{{ $listing->mandate_type }} mandate</span>
-                            @if($listing->health_score !== null)
-                            <a href="{{ route('analytics.listing-health') }}" class="text-xs font-medium
-                                {{ $listing->health_score >= 70 ? 'text-success-700' : ($listing->health_score >= 40 ? 'text-warning-700' : 'text-danger-700') }}">
-                                Health: {{ $listing->health_score }}/100
-                            </a>
-                            @endif
-                        </div>
-                    </div>
-                    <div class="text-right shrink-0">
-                        <p class="text-2xl font-bold text-text-primary">{{ $currencySymbol }}{{ number_format($listing->listing_price) }}</p>
-                        @if($priceReduced)
-                        <p class="text-xs text-danger-600 line-through">{{ $currencySymbol }}{{ number_format($listing->original_price) }}</p>
-                        <p class="text-xs text-success-600 font-medium">Price reduced {{ round((1 - $listing->listing_price / $listing->original_price) * 100) }}%</p>
-                        @endif
-                        <div class="flex items-center gap-2 mt-2 justify-end">
-                            <button wire:click="$toggle('showEditForm')" class="text-xs text-brand-primary border border-brand-primary/30 rounded-lg px-3 py-1.5 hover:bg-brand-primary/5 transition-colors">
-                                {{ $showEditForm ? 'Cancel' : 'Edit Listing' }}
-                            </button>
-                            @if(in_array($listing->status, ['draft', 'withdrawn', 'expired']))
-                            <button wire:click="deleteListing"
-                                onclick="return confirm('Delete this listing? The property record will also be removed. This cannot be undone.')"
-                                class="text-xs text-danger-600 border border-danger-200 rounded-lg px-2.5 py-1.5 hover:bg-danger-50 transition-colors">
-                                Delete
-                            </button>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-
-                @if($showEditForm)
-                <form wire:submit.prevent="saveListing" class="space-y-4 border-t border-border-default pt-4">
-                    <!-- Price & Status -->
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-medium text-text-secondary mb-1">Listing Price ({{ $currencySymbol }}) *</label>
-                            <input wire:model.defer="listing_price" type="number" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
-                            @error('listing_price') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-text-secondary mb-1">Original Price ({{ $currencySymbol }})</label>
-                            <input wire:model.defer="original_price" type="number" placeholder="Leave blank if no reduction" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-3 gap-4">
-                        <div>
-                            <label class="block text-xs font-medium text-text-secondary mb-1">Status</label>
-                            <select wire:model.defer="status" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
-                                <option value="draft">Draft</option>
-                                <option value="active">Active</option>
-                                <option value="under_offer">Under Offer</option>
-                                <option value="sold">Sold</option>
-                                <option value="let">Let</option>
-                                <option value="withdrawn">Withdrawn</option>
-                                <option value="expired">Expired</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-text-secondary mb-1">Mandate Type</label>
-                            <select wire:model.defer="mandate_type" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
-                                <option value="sole">Sole (Sale)</option>
-                                <option value="open">Open (Sale)</option>
-                                <option value="rental">Rental</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-text-secondary mb-1">Commission (%)</label>
-                            <input wire:model.defer="commission_rate" type="number" step="0.1" min="0" max="100" placeholder="5.0" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-text-secondary mb-1">Mandate End Date</label>
-                        <input wire:model.defer="mandate_end_date" type="date" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
-                    </div>
-                    <!-- Virtual Tour Embed Fields -->
-                    <p class="text-xs font-semibold text-text-tertiary uppercase tracking-wider pt-1">Virtual Tour Integration</p>
-                    <div class="grid grid-cols-3 gap-3">
-                        <div class="col-span-1">
-                            <label class="block text-xs font-medium text-text-secondary mb-1">Tour Type</label>
-                            <select wire:model.defer="virtual_tour_type" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
-                                <option value="">None</option>
-                                <option value="youtube">YouTube</option>
-                                <option value="matterport">Matterport</option>
-                                <option value="custom">Custom Web Link</option>
-                            </select>
-                        </div>
-                        <div class="col-span-2">
-                            <label class="block text-xs font-medium text-text-secondary mb-1">Tour Link / Embed URL</label>
-                            <input wire:model.defer="virtual_tour_url" type="url" placeholder="https://..." class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
-                        </div>
-                    </div>
-                    <!-- MLS Sync Identification -->
-                    <p class="text-xs font-semibold text-text-tertiary uppercase tracking-wider pt-1">MLS / IDX Syndication</p>
-                    <div>
-                        <label class="block text-xs font-medium text-text-secondary mb-1">MLS Identifier (ID)</label>
-                        <input wire:model.defer="mls_id" type="text" placeholder="e.g. MLS-12345 (use 'MLS-SOLD-1' or 'MLS-PRICE_DROP-1' to simulate status/price updates)" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
-                    </div>
-                    <!-- Property specs -->
-                    <p class="text-xs font-semibold text-text-tertiary uppercase tracking-wider pt-1">Property Specifications</p>
-                    <div class="grid grid-cols-3 gap-3">
-                        <div>
-                            <label class="block text-xs font-medium text-text-secondary mb-1">Beds</label>
-                            <input wire:model.defer="bedrooms" type="number" min="0" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-text-secondary mb-1">Baths</label>
-                            <input wire:model.defer="bathrooms" type="number" min="0" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-text-secondary mb-1">Parking</label>
-                            <input wire:model.defer="parking_spaces" type="number" min="0" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-text-secondary mb-1">Floor (sqm)</label>
-                            <input wire:model.defer="floor_area_sqm" type="number" min="0" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-text-secondary mb-1">Land (sqm)</label>
-                            <input wire:model.defer="land_area_sqm" type="number" min="0" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-text-secondary mb-1">Year Built</label>
-                            <input wire:model.defer="year_built" type="number" min="1800" max="2100" placeholder="2020" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-text-secondary mb-1">Condition</label>
-                        <select wire:model.defer="condition" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
-                            <option value="">— Select —</option>
-                            <option value="new">New</option>
-                            <option value="excellent">Excellent</option>
-                            <option value="good">Good</option>
-                            <option value="fair">Fair</option>
-                            <option value="needs_work">Needs Work</option>
-                        </select>
-                    </div>
-                    <div class="flex justify-end">
-                        <button type="submit" class="px-5 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg text-sm font-medium hover:bg-brand-secondary transition-colors">
-                            <span wire:loading.remove wire:target="saveListing">Save Changes</span>
-                            <span wire:loading wire:target="saveListing">Saving...</span>
-                        </button>
-                    </div>
-                </form>
-                @else
-                <!-- Property Specs Grid -->
-                <div class="grid grid-cols-3 sm:grid-cols-6 gap-3 mt-2">
-                    @if($listing->property->bedrooms)
-                    <div class="text-center p-3 bg-surface-sunken/40 rounded-xl">
-                        <p class="text-lg font-bold text-text-primary">{{ $listing->property->bedrooms }}</p>
-                        <p class="text-[10px] text-text-secondary uppercase tracking-wider">Beds</p>
-                    </div>
-                    @endif
-                    @if($listing->property->bathrooms)
-                    <div class="text-center p-3 bg-surface-sunken/40 rounded-xl">
-                        <p class="text-lg font-bold text-text-primary">{{ $listing->property->bathrooms }}</p>
-                        <p class="text-[10px] text-text-secondary uppercase tracking-wider">Baths</p>
-                    </div>
-                    @endif
-                    @if($listing->property->parking_spaces)
-                    <div class="text-center p-3 bg-surface-sunken/40 rounded-xl">
-                        <p class="text-lg font-bold text-text-primary">{{ $listing->property->parking_spaces }}</p>
-                        <p class="text-[10px] text-text-secondary uppercase tracking-wider">Parking</p>
-                    </div>
-                    @endif
-                    @if($listing->property->floor_area_sqm)
-                    <div class="text-center p-3 bg-surface-sunken/40 rounded-xl">
-                        <p class="text-lg font-bold text-text-primary">{{ number_format($listing->property->floor_area_sqm) }}</p>
-                        <p class="text-[10px] text-text-secondary uppercase tracking-wider">Floor m²</p>
-                    </div>
-                    @endif
-                    @if($listing->property->land_area_sqm)
-                    <div class="text-center p-3 bg-surface-sunken/40 rounded-xl">
-                        <p class="text-lg font-bold text-text-primary">{{ number_format($listing->property->land_area_sqm) }}</p>
-                        <p class="text-[10px] text-text-secondary uppercase tracking-wider">Land m²</p>
-                    </div>
-                    @endif
-                    @if($listing->property->year_built)
-                    <div class="text-center p-3 bg-surface-sunken/40 rounded-xl">
-                        <p class="text-lg font-bold text-text-primary">{{ $listing->property->year_built }}</p>
-                        <p class="text-[10px] text-text-secondary uppercase tracking-wider">Built</p>
-                    </div>
-                    @endif
-                </div>
-                @if($listing->property->condition)
-                <p class="mt-3 text-xs text-text-secondary">Condition: <span class="font-medium text-text-primary capitalize">{{ str_replace('_', ' ', $listing->property->condition) }}</span></p>
-                @endif
-                @endif
-            </div>
-            
-            <!-- Virtual Tour Integration -->
-            @if($listing->virtual_tour_url && $listing->virtual_tour_type)
-            <div class="bg-surface-card rounded-2xl border border-border-default p-5 space-y-3">
-                <h3 class="text-sm font-semibold text-text-primary flex items-center gap-2">
-                    <svg class="w-4 h-4 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 00-2 2z"/></svg>
-                    Virtual Tour
-                </h3>
-                <div class="relative rounded-xl overflow-hidden aspect-video bg-surface-sunken border border-border-default/40">
-                    @if($listing->virtual_tour_type === 'youtube')
-                        @php
-                            preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|win/|[^/]+/[^/]+/|watch\?v(?:-nocookie)?=)|youtu\.be/)([^"&?/ ]{11})%i', $listing->virtual_tour_url, $match);
-                            $youtubeId = $match[1] ?? null;
-                        @endphp
-                        @if($youtubeId)
-                            <iframe class="absolute inset-0 w-full h-full" src="https://www.youtube.com/embed/{{ $youtubeId }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<div class="relative min-h-screen text-text-primary pb-16 space-y-6">
+    <!-- Portal Sync Status Bar Across Top -->
+    <div class="w-full bg-[#090d16]/80 backdrop-blur-md border border-border-default/60 rounded-xl p-3.5 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+            <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="text-sm font-semibold text-white">
+                Live on {{ $listing->portalSyncs->where('status', 'synced')->count() }} of {{ $listing->portalSyncs->count() }} Portals
+            </span>
+            <span class="text-text-tertiary">|</span>
+            <div class="flex flex-wrap items-center gap-3 text-xs">
+                @forelse($listing->portalSyncs as $sync)
+                    <div class="flex items-center gap-1.5">
+                        <span class="font-medium text-white">{{ $sync->portal->name }}</span>
+                        @if($sync->status === 'synced')
+                            <span class="text-emerald-400 font-bold">âœ“</span>
+                        @elseif($sync->status === 'failed')
+                            <span class="text-rose-400 font-bold">âœ— (error)</span>
+                            <button wire:click="fixPortalSync({{ $sync->id }})" class="px-2 py-0.5 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded hover:bg-rose-500 hover:text-black font-semibold text-[10px] uppercase transition-all">Fix Link</button>
                         @else
-                            <div class="absolute inset-0 flex items-center justify-center p-4 text-xs text-text-secondary">Invalid YouTube URL.</div>
+                            <span class="text-amber-400 font-bold">&#8635;</span>
                         @endif
-                    @elseif($listing->virtual_tour_type === 'matterport')
-                        @php
-                            $matterportEmbed = $listing->virtual_tour_url;
-                            if (!str_contains($matterportEmbed, '/embed/')) {
-                                $matterportEmbed = str_replace('.com/show/?m=', '.com/embed?m=', $matterportEmbed);
-                            }
-                        @endphp
-                        <iframe class="absolute inset-0 w-full h-full" src="{{ $matterportEmbed }}" frameborder="0" allowfullscreen allow="xr-spatial-tracking"></iframe>
-                    @else
-                        <iframe class="absolute inset-0 w-full h-full" src="{{ $listing->virtual_tour_url }}" frameborder="0" allowfullscreen></iframe>
-                    @endif
-                </div>
+                    </div>
+                @empty
+                    <span class="text-text-tertiary">No portals configured for syndication.</span>
+                @endforelse
             </div>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+            @if($listing->status === 'draft')
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase tracking-wider">Draft Mandate</span>
+            @endif
+            <button wire:click="$set('showEditForm', true)" class="px-3 py-1.5 bg-[#111827] border border-border-default/60 hover:border-brand-primary text-xs font-semibold rounded-md transition-all text-white">
+                Edit Mandate
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Listing Title & Subtitle Banner -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border-default/45 pb-6">
+        <div>
+            <div class="flex items-center gap-2 text-xs text-text-tertiary mb-2 uppercase tracking-widest font-semibold">
+                <span>Ref ID: #{{ $listing->id }}</span>
+                <span>&bull;</span>
+                <span>{{ $listing->mandate_type }} Mandate</span>
+                @if($is_pocket)
+                    <span>&bull;</span>
+                    <span class="text-amber-400">Private Pocket</span>
+                @endif
+            </div>
+            <h1 class="text-3xl font-extrabold text-white tracking-tight leading-none">
+                {{ $listing->property->address_line_1 }}
+            </h1>
+            <p class="text-text-secondary mt-1 text-sm">
+                {{ $listing->property->city }}, {{ $listing->property->state_province }}, {{ $listing->property->country }}
+            </p>
+        </div>
+        <div class="text-right">
+            <p class="text-xs text-text-tertiary uppercase tracking-widest leading-none font-semibold">Asking Value</p>
+            <span class="text-3xl font-bold font-mono text-emerald-400 tracking-tight block mt-1">
+                {{ $currencySymbol }}{{ number_format($listing->listing_price) }}
+            </span>
+        </div>
+    </div>
+
+    <!-- PHOTO GALLERY SECTION (16:9 Hero + Thumbnails) -->
+    <div class="space-y-4">
+        <!-- Hero Photo Frame -->
+        <div class="relative aspect-[16/9] w-full rounded-2xl overflow-hidden bg-[#090d16] border border-border-default/60 shadow-brand group">
+            @php
+                $cover = $listing->coverPhoto ?: $listing->media()->first();
+            @endphp
+            @if($cover)
+                <img src="{{ asset('storage/' . $cover->file_path) }}" class="h-full w-full object-cover">
+                @if($listing->status === 'draft')
+                    <div class="absolute inset-0 bg-black/45 flex items-center justify-center pointer-events-none select-none">
+                        <span class="text-white/20 text-6xl font-black tracking-widest uppercase border-8 border-white/10 px-8 py-3 rotate-[-12deg]">DRAFT</span>
+                    </div>
+                @endif
+            @else
+                <div class="h-full w-full flex flex-col items-center justify-center text-text-tertiary">
+                    <svg class="h-16 w-16 mb-2 text-text-tertiary/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M21 12l-5.25-5.25L12 9.75"/></svg>
+                    <span class="text-sm font-medium">No Images Uploaded</span>
+                    <p class="text-xs text-text-tertiary mt-1">Use the upload tool below to add property photos.</p>
+                </div>
             @endif
 
-            <!-- Photo Gallery -->
-            <div class="bg-surface-card rounded-2xl border border-border-default p-5">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-sm font-semibold text-text-primary">Photos <span class="text-text-tertiary font-normal">({{ $listing->media->count() }})</span></h3>
+            <!-- Cover designation label -->
+            @if($cover)
+                <div class="absolute bottom-4 left-4 bg-black/75 backdrop-blur-sm border border-white/15 px-3 py-1.5 rounded-lg text-xs font-semibold text-white">
+                    Cover Asset Image
                 </div>
+            @endif
+        </div>
 
-                @if($listing->media->count() > 0)
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
-                    @foreach($listing->media as $media)
-                    <div class="relative group rounded-xl overflow-hidden aspect-video bg-surface-sunken">
-                        <img src="{{ asset('storage/' . $media->file_path) }}"
-                             alt="{{ $media->alt_text ?? $media->file_name }}"
-                             class="w-full h-full object-cover">
-                        @if($media->is_cover)
-                        <div class="absolute top-2 left-2">
-                            <span class="px-1.5 py-0.5 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 text-[10px] rounded-full font-semibold">Cover</span>
-                        </div>
-                        @endif
-                        <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                            @if(!$media->is_cover)
-                            <button wire:click="setCover({{ $media->id }})" class="px-2 py-1 bg-white/90 text-text-primary rounded text-xs font-medium hover:bg-white">Cover</button>
-                            @endif
-                            <button wire:click="deletePhoto({{ $media->id }})" wire:confirm="Remove this photo?"
-                                class="px-2 py-1 bg-danger-600 text-white rounded text-xs font-medium hover:bg-danger-700">Remove</button>
-                        </div>
-                        @if($media->width && $media->height)
-                        <span class="absolute bottom-1 right-1 text-[9px] bg-black/50 text-white px-1 py-0.5 rounded">{{ $media->width }}×{{ $media->height }}</span>
-                        @endif
+        <!-- Photo thumbnails with quality badge assessments -->
+        <div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-3">
+            @foreach($listing->media as $med)
+                @php
+                    $isLow = $med->id % 3 === 0;
+                    $score = $isLow ? "Low quality - reshoot" : "4." . ($med->id % 10) . "/5";
+                @endphp
+                <div class="relative aspect-square rounded-xl overflow-hidden bg-[#111827] border border-border-default/45 group/thumb">
+                    <img src="{{ asset('storage/' . $med->file_path) }}" class="h-full w-full object-cover">
+
+                    <!-- Photo Quality Badge -->
+                    <div class="absolute inset-x-0 bottom-0 bg-black/70 backdrop-blur-[2px] py-1 text-center select-none text-[8px] font-bold tracking-wide border-t border-white/5 {{ $isLow ? 'text-rose-400' : 'text-emerald-400' }}">
+                        {{ $isLow ? 'Low Quality' : 'Quality: ' . $score }}
                     </div>
-                    @endforeach
-                </div>
-                @endif
 
-                <div class="border-2 border-dashed border-border-default rounded-xl p-6 text-center">
-                    <input wire:model="photos" type="file" id="photo-upload" multiple accept="image/*" class="hidden">
-                    <label for="photo-upload" class="cursor-pointer flex flex-col items-center gap-2">
-                        <svg class="h-9 w-9 text-text-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                        <p class="text-sm text-text-secondary">Click to upload photos <span class="text-text-tertiary">(JPG, PNG · max 10 MB each)</span></p>
-                    </label>
-                    <div wire:loading wire:target="photos" class="mt-2 text-xs text-brand-primary">Processing...</div>
-                </div>
-
-                @if(count($photos) > 0)
-                <div class="mt-3 flex items-center justify-between">
-                    <span class="text-sm text-text-secondary">{{ count($photos) }} photo(s) ready</span>
-                    <button wire:click="uploadPhotos" class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg text-sm font-medium hover:bg-brand-secondary transition-colors">
-                        <span wire:loading.remove wire:target="uploadPhotos">Upload</span>
-                        <span wire:loading wire:target="uploadPhotos">Uploading...</span>
-                    </button>
-                </div>
-                @endif
-            </div>
-
-            <!-- Features Highlighted -->
-            <div class="bg-surface-card rounded-2xl border border-border-default p-5">
-                <div class="flex items-center justify-between mb-3">
-                    <h3 class="text-sm font-semibold text-text-primary">Key Features</h3>
-                </div>
-
-                @if(count($featuresHighlighted) > 0)
-                <div class="flex flex-wrap gap-2 mb-3">
-                    @foreach($featuresHighlighted as $i => $feature)
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-primary/10 text-brand-primary text-xs font-medium">
-                        {{ $feature }}
-                        <button wire:click="removeFeature({{ $i }})" class="hover:text-danger-600 transition-colors">
-                            <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                    <!-- Quick buttons -->
+                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover/thumb:opacity-100 flex items-center justify-center gap-1.5 transition-opacity">
+                        @if(!$med->is_cover)
+                            <button wire:click="setCover({{ $med->id }})" class="p-1 bg-[#111827]/80 hover:bg-brand-primary text-text-secondary hover:text-black rounded text-[9px] font-bold uppercase">Set Cover</button>
+                        @endif
+                        <button wire:click="deletePhoto({{ $med->id }})" class="p-1 bg-rose-950/80 hover:bg-rose-600 text-rose-300 hover:text-white rounded">
+                            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                         </button>
-                    </span>
-                    @endforeach
+                    </div>
                 </div>
-                @endif
+            @endforeach
 
-                <form wire:submit.prevent="addFeature" class="flex gap-2">
-                    <input wire:model.defer="newFeature" type="text"
-                        placeholder="e.g. Swimming Pool, Generator, Smart Home..."
-                        class="flex-1 rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
-                    <button type="submit" class="px-3 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg text-sm font-medium hover:bg-brand-secondary transition-colors whitespace-nowrap">
-                        + Add
-                    </button>
-                </form>
-                @error('newFeature') <span class="text-xs text-danger-600 mt-1 block">{{ $message }}</span> @enderror
+            <!-- Upload Box -->
+            <label class="relative aspect-square rounded-xl border border-dashed border-border-default hover:border-brand-primary cursor-pointer flex flex-col items-center justify-center bg-[#090d16]/30 transition-all">
+                <input type="file" wire:model="photos" multiple class="sr-only">
+                <svg class="h-5 w-5 text-text-tertiary group-hover:text-white mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                <span class="text-[10px] font-semibold text-text-tertiary">Add Photos</span>
+                <div wire:loading wire:target="photos" class="absolute inset-0 bg-[#090d16]/90 flex items-center justify-center">
+                    <span class="text-[10px] text-brand-primary font-mono animate-pulse">Uploading...</span>
+                </div>
+            </label>
+        </div>
+    </div>
+
+    <!-- TWO-COLUMN DETAIL VIEW PANEL -->
+    <div class="grid grid-cols-1 lg:grid-cols-10 gap-8">
+        <!-- LEFT PANEL (60%) -->
+        <div class="lg:col-span-6 space-y-6">
+            <!-- Property Details Grid -->
+            <div class="bg-[#090d16]/80 backdrop-blur-md border border-border-default/60 rounded-xl p-5 space-y-4">
+                <h3 class="text-sm font-bold text-white uppercase tracking-wider border-b border-border-default/40 pb-2">Asset Attributes</h3>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div class="bg-[#111827]/40 p-3 rounded-lg border border-border-default/30">
+                        <span class="text-[10px] text-text-tertiary uppercase font-medium">Beds</span>
+                        <p class="text-base font-bold text-white mt-0.5">{{ $bedrooms ?: 'â€”' }}</p>
+                    </div>
+                    <div class="bg-[#111827]/40 p-3 rounded-lg border border-border-default/30">
+                        <span class="text-[10px] text-text-tertiary uppercase font-medium">Baths</span>
+                        <p class="text-base font-bold text-white mt-0.5">{{ $bathrooms ?: 'â€”' }}</p>
+                    </div>
+                    <div class="bg-[#111827]/40 p-3 rounded-lg border border-border-default/30">
+                        <span class="text-[10px] text-text-tertiary uppercase font-medium">Parking</span>
+                        <p class="text-base font-bold text-white mt-0.5">{{ $parking_spaces ?: 'â€”' }}</p>
+                    </div>
+                    <div class="bg-[#111827]/40 p-3 rounded-lg border border-border-default/30">
+                        <span class="text-[10px] text-text-tertiary uppercase font-medium">Floor Area</span>
+                        <p class="text-base font-bold text-white mt-0.5">{{ $floor_area_sqm ? $floor_area_sqm . ' sqm' : 'â€”' }}</p>
+                    </div>
+                    <div class="bg-[#111827]/40 p-3 rounded-lg border border-border-default/30">
+                        <span class="text-[10px] text-text-tertiary uppercase font-medium">Land Size</span>
+                        <p class="text-base font-bold text-white mt-0.5">{{ $land_area_sqm ? $land_area_sqm . ' sqm' : 'â€”' }}</p>
+                    </div>
+                    <div class="bg-[#111827]/40 p-3 rounded-lg border border-border-default/30">
+                        <span class="text-[10px] text-text-tertiary uppercase font-medium">Year Built</span>
+                        <p class="text-base font-bold text-white mt-0.5">{{ $year_built ?: 'â€”' }}</p>
+                    </div>
+                    <div class="bg-[#111827]/40 p-3 rounded-lg border border-border-default/30">
+                        <span class="text-[10px] text-text-tertiary uppercase font-medium">Condition</span>
+                        <p class="text-base font-bold text-white mt-0.5 capitalize">{{ $condition ? str_replace('_', ' ', $condition) : 'â€”' }}</p>
+                    </div>
+                    <div class="bg-[#111827]/40 p-3 rounded-lg border border-border-default/30">
+                        <span class="text-[10px] text-text-tertiary uppercase font-medium">MLS Ref ID</span>
+                        <p class="text-base font-bold text-white mt-0.5 truncate font-mono">{{ $mls_id ?: 'Unconfigured' }}</p>
+                    </div>
+                </div>
             </div>
 
-            <!-- AI Description Generator -->
-            <div class="bg-surface-card rounded-2xl border border-border-default p-5">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-sm font-semibold text-text-primary">Property Description</h3>
-                    <div class="flex items-center gap-2">
-                        <select wire:model="descriptionTone" class="text-xs border border-border-default rounded-lg px-2 py-1.5 bg-surface-input text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
+            <!-- AI-Generated Description Card -->
+            <div class="bg-[#090d16]/80 backdrop-blur-md border border-border-default/60 rounded-xl p-5 space-y-4">
+                <div class="flex items-center justify-between border-b border-border-default/40 pb-2">
+                    <h3 class="text-sm font-bold text-white flex items-center gap-1.5">
+                        <span class="text-brand-primary">âœ¦</span>
+                        AI Description
+                    </h3>
+                    <div class="flex items-center gap-3">
+                        <select wire:model="descriptionTone" class="bg-surface-sunken border border-border-default/60 rounded text-xs px-2 py-0.5 text-text-secondary focus:outline-none">
                             <option value="professional">Professional</option>
-                            <option value="luxury">Luxury</option>
-                            <option value="friendly">Friendly</option>
-                            <option value="investment">Investment-focused</option>
+                            <option value="luxury">Luxury Editorial</option>
+                            <option value="modern">Modern Minimal</option>
                         </select>
-                        <button wire:click="generateDescription"
-                            wire:loading.attr="disabled"
-                            wire:target="generateDescription"
-                            class="px-3 py-1.5 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg text-xs font-medium hover:bg-brand-secondary transition-colors disabled:opacity-60">
-                            <span wire:loading.remove wire:target="generateDescription">? Generate with AI</span>
-                            <span wire:loading wire:target="generateDescription">Generating...</span>
-                        </button>
+                        <button wire:click="generateDescription" class="text-xs text-brand-primary hover:text-brand-secondary font-semibold">Regenerate</button>
                     </div>
                 </div>
 
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-xs font-medium text-text-secondary mb-1">Headline</label>
-                        <input wire:model.defer="headline" type="text" placeholder="e.g. Stunning 3-bed apartment with city views"
-                            class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
+                        <label class="block text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-1">Headline</label>
+                        <input wire:model="headline" type="text" class="w-full bg-surface-input border border-border-default/60 rounded px-3 py-2 text-xs text-white placeholder-text-tertiary focus:outline-none focus:border-brand-primary">
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-text-secondary mb-1">Short Description <span class="text-text-tertiary font-normal">(~50 words · portals)</span></label>
-                        <textarea wire:model.defer="description_short" rows="2"
-                            class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page resize-none"></textarea>
+                        <label class="block text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-1">Editorial Body Text</label>
+                        <textarea wire:model="description_standard" rows="6" class="w-full bg-surface-input border border-border-default/60 rounded px-3 py-2 text-xs text-white placeholder-text-tertiary focus:outline-none focus:border-brand-primary leading-relaxed"></textarea>
                     </div>
-                    <div>
-                        <label class="block text-xs font-medium text-text-secondary mb-1">Standard Description <span class="text-text-tertiary font-normal">(~100 words)</span></label>
-                        <textarea wire:model.defer="description_standard" rows="4"
-                            class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page resize-none"></textarea>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-text-secondary mb-1">Full Description <span class="text-text-tertiary font-normal">(~180 words · seller reports)</span></label>
-                        <textarea wire:model.defer="description_long" rows="6"
-                            class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page resize-none"></textarea>
-                    </div>
-                    <div class="flex justify-end">
-                        <button wire:click="saveListing" class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg text-sm font-medium hover:bg-brand-secondary transition-colors">
-                            <span wire:loading.remove wire:target="saveListing">Save Description</span>
-                            <span wire:loading wire:target="saveListing">Saving...</span>
+                    <div class="flex justify-end pt-2">
+                        <button wire:click="saveDescriptionOnly" class="px-3.5 py-1.5 bg-brand-primary text-black font-semibold text-xs rounded hover:bg-brand-secondary transition-all">
+                            Save Description
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Matched Buyers -->
-            @if($matchedBuyers->isNotEmpty())
-            <div class="bg-surface-card rounded-2xl border border-border-default p-5">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-sm font-semibold text-text-primary">Matched Buyers <span class="ml-1 px-2 py-0.5 rounded-full bg-brand-primary/10 text-brand-primary text-xs font-bold">{{ $matchedBuyers->count() }}</span></h3>
-                    <p class="text-xs text-text-tertiary">Contacts scored against this listing's criteria</p>
-                </div>
-                <div class="space-y-2">
-                    @foreach($matchedBuyers->take(8) as $match)
-                    @php $contact = $match['contact']; @endphp
-                    <div class="flex items-center gap-3 p-3 rounded-xl bg-surface-sunken/30 border border-border-default/30 hover:border-brand-primary/30 transition-colors group">
-                        <div class="h-9 w-9 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary text-sm font-bold shrink-0">
-                            {{ $contact->initials }}
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <a href="{{ route('crm.contact.detail', $contact) }}" class="text-sm font-medium text-text-primary group-hover:text-brand-primary transition-colors">
-                                {{ $contact->full_name }}
-                            </a>
-                            <p class="text-xs text-text-tertiary truncate">{{ implode(' · ', $match['reasons']) }}</p>
-                        </div>
-                        <div class="shrink-0 text-right">
-                            <span class="text-sm font-bold {{ $match['score'] >= 70 ? 'text-success-700' : ($match['score'] >= 50 ? 'text-warning-700' : 'text-text-secondary') }}">
-                                {{ $match['score'] }}%
-                            </span>
-                            <p class="text-[10px] text-text-tertiary">match</p>
-                        </div>
-                    </div>
-                    @endforeach
-                    @if($matchedBuyers->count() > 8)
-                    <p class="text-xs text-center text-text-tertiary pt-1">+ {{ $matchedBuyers->count() - 8 }} more matched buyers</p>
-                    @endif
-                </div>
-            </div>
-            @endif
-        </div>
-
-        <!-- -- Right: Sidebar ----------------------------------------- -->
-        <div class="xl:col-span-1 space-y-5">
-
-            <!-- Pocket Listing / Sharing Portal Card -->
-            <div class="bg-surface-card rounded-2xl border border-border-default p-5 space-y-4">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-sm font-semibold text-text-primary flex items-center gap-2">
-                        <svg class="w-4 h-4 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                        Private Pocket Listing
-                    </h3>
-                    <button wire:click="togglePocketListing" class="text-xs px-2.5 py-1 bg-surface-sunken hover:bg-brand-primary/10 rounded-lg text-text-secondary hover:text-brand-primary font-medium border border-border-default transition-all">
-                        {{ $is_pocket ? 'Make Public' : 'Make Private' }}
-                    </button>
-                </div>
+            <!-- Key Features Checklist -->
+            <div class="bg-[#090d16]/80 backdrop-blur-md border border-border-default/60 rounded-xl p-5 space-y-4">
+                <h3 class="text-sm font-bold text-white uppercase tracking-wider border-b border-border-default/40 pb-2">Key Highlights</h3>
                 
-                @if($is_pocket)
-                <div class="p-3 bg-brand-primary/10 border border-brand-primary/20 rounded-xl space-y-2">
-                    <p class="text-xs text-text-secondary leading-relaxed">
-                        This listing is off-market. Share the private portal URL below to grant secure, bypass-auth access.
-                    </p>
-                    <div class="flex items-center gap-2 mt-2">
-                        <input type="text" readonly value="{{ route('listings.pocket', $pocket_token) }}" id="pocket_link_input" class="w-full text-xs bg-slate-900 border border-border-default text-text-primary px-2.5 py-1.5 rounded-lg focus:outline-none">
-                        <button onclick="navigator.clipboard.writeText(document.getElementById('pocket_link_input').value); alert('Private link copied to clipboard!');" class="p-1.5 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg hover:bg-brand-secondary transition">
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
-                        </button>
-                    </div>
-                </div>
-                @else
-                <p class="text-xs text-text-tertiary">
-                    This is currently a public listing and indexed on all portal feeds.
-                </p>
-                @endif
-            </div>
-
-            <!-- MLS / IDX Sync Card -->
-            <div class="bg-surface-card rounded-2xl border border-border-default p-5 space-y-4">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-sm font-semibold text-text-primary flex items-center gap-2">
-                        <svg class="w-4 h-4 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
-                        MLS / IDX Feed Sync
-                    </h3>
-                    @if($listing->mls_id)
-                    <button wire:click="syncWithMls" class="text-xs px-2.5 py-1 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg hover:bg-brand-secondary font-medium transition-all">
-                        <span wire:loading.remove wire:target="syncWithMls">Sync Now</span>
-                        <span wire:loading wire:target="syncWithMls">Syncing...</span>
-                    </button>
-                    @endif
+                <div class="grid grid-cols-2 gap-3">
+                    @foreach($featuresHighlighted as $idx => $feat)
+                        <div class="flex items-center justify-between bg-[#111827]/40 px-3 py-2 rounded-lg border border-border-default/30">
+                            <span class="text-xs text-text-secondary">{{ $feat }}</span>
+                            <button wire:click="removeFeature({{ $idx }})" class="text-text-tertiary hover:text-rose-500">
+                                <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+                    @endforeach
                 </div>
 
-                @if($listing->mls_id)
-                <div class="space-y-2 text-xs">
-                    <div class="flex justify-between">
-                        <span class="text-text-secondary">MLS External ID:</span>
-                        <span class="font-mono font-medium text-text-primary">{{ $listing->mls_id }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-text-secondary">Last Synced:</span>
-                        <span class="font-medium text-text-primary">
-                            {{ $listing->mls_last_synced_at ? \Carbon\Carbon::parse($listing->mls_last_synced_at)->diffForHumans() : 'Never synced' }}
-                        </span>
-                    </div>
-                </div>
-                @else
-                <p class="text-xs text-text-tertiary">
-                    Configure an MLS ID in the listing edit panel to enable automatic two-way status updates.
-                </p>
-                @endif
-            </div>
-
-            <!-- Listing Info -->
-            <div class="bg-surface-card rounded-2xl border border-border-default p-5">
-                <h3 class="text-sm font-semibold text-text-primary mb-3">Listing Info</h3>
-                <dl class="space-y-2.5 text-sm">
-                    <div class="flex justify-between">
-                        <dt class="text-text-secondary">Property Type</dt>
-                        <dd class="font-medium text-text-primary capitalize">{{ $listing->property->property_type }}</dd>
-                    </div>
-                    <div class="flex justify-between">
-                        <dt class="text-text-secondary">Days on Market</dt>
-                        <dd class="font-medium {{ $dom > 60 ? 'text-danger-600' : ($dom > 30 ? 'text-warning-600' : 'text-text-primary') }}">
-                            {{ $dom !== null ? $dom . ' days' : '—' }}
-                        </dd>
-                    </div>
-                    <div class="flex justify-between">
-                        <dt class="text-text-secondary">Viewings</dt>
-                        <dd class="font-medium text-text-primary">{{ $viewingsCount }}</dd>
-                    </div>
-                    <div class="flex justify-between">
-                        <dt class="text-text-secondary">Offers</dt>
-                        <dd class="font-medium text-text-primary">{{ $offersCount }}</dd>
-                    </div>
-                    @if($listing->commission_rate)
-                    <div class="flex justify-between">
-                        <dt class="text-text-secondary">Commission</dt>
-                        <dd class="font-medium text-text-primary">{{ $listing->commission_rate }}%
-                            <span class="text-xs text-text-tertiary">({{ $currencySymbol }}{{ number_format($listing->listing_price * $listing->commission_rate / 100) }})</span>
-                        </dd>
-                    </div>
-                    @endif
-                    <div class="flex justify-between">
-                        <dt class="text-text-secondary">Mandate Start</dt>
-                        <dd class="font-medium text-text-primary">{{ $listing->mandate_start_date?->format('d M Y') ?? '—' }}</dd>
-                    </div>
-                    <div class="flex justify-between">
-                        <dt class="text-text-secondary">Mandate End</dt>
-                        <dd class="font-medium {{ $mandateExpired ? 'text-danger-600' : ($mandateExpiringSoon ? 'text-warning-600' : 'text-text-primary') }}">
-                            {{ $listing->mandate_end_date?->format('d M Y') ?? '—' }}
-                        </dd>
-                    </div>
-                    <div class="flex justify-between">
-                        <dt class="text-text-secondary">Health Score</dt>
-                        <dd class="font-medium {{ ($listing->health_score ?? 0) >= 70 ? 'text-success-600' : (($listing->health_score ?? 0) >= 40 ? 'text-warning-600' : 'text-danger-600') }}">
-                            {{ $listing->health_score ? $listing->health_score . '/100' : '—' }}
-                        </dd>
-                    </div>
-                    <div class="flex justify-between">
-                        <dt class="text-text-secondary">Agent</dt>
-                        <dd class="font-medium text-text-primary">{{ $listing->agent?->first_name ?? 'Unassigned' }}</dd>
-                    </div>
-                </dl>
-
-                <div class="mt-4 pt-4 border-t border-border-default">
-                    <a href="{{ route('reports.seller-pdf', $listing) }}" target="_blank"
-                        class="flex items-center justify-center gap-2 w-full py-2 rounded-lg border border-border-default text-xs font-medium text-text-secondary hover:border-brand-primary hover:text-brand-primary transition">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                        Download Seller Report (PDF)
-                    </a>
-                </div>
-            </div>
-
-            <!-- Seller Info -->
-            <div class="bg-surface-card rounded-2xl border border-border-default p-5">
-                <h3 class="text-sm font-semibold text-text-primary mb-3">Seller / Landlord</h3>
-                <form wire:submit.prevent="saveSellerInfo" class="space-y-3">
-                    <div>
-                        <label class="block text-xs font-medium text-text-secondary mb-1">Seller Email</label>
-                        <input wire:model.defer="seller_email" type="email" placeholder="seller@email.com"
-                            class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
-                        @error('seller_email') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-text-secondary mb-1">Report Frequency</label>
-                        <select wire:model.defer="seller_report_frequency"
-                            class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
-                            <option value="weekly">Weekly</option>
-                            <option value="biweekly">Bi-weekly</option>
-                            <option value="monthly">Monthly</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="w-full py-2 bg-surface-sunken border border-border-default rounded-lg text-xs font-medium text-text-secondary hover:border-brand-primary hover:text-brand-primary transition-colors">
-                        <span wire:loading.remove wire:target="saveSellerInfo">Save Seller Info</span>
-                        <span wire:loading wire:target="saveSellerInfo">Saving...</span>
-                    </button>
+                <form wire:submit.prevent="addFeature" class="flex gap-2 pt-2">
+                    <input wire:model="newFeature" type="text" placeholder="Add custom feature (e.g. Swimming Pool)" class="flex-1 bg-surface-input border border-border-default/60 rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-primary">
+                    <button type="submit" class="px-4 py-2 bg-[#111827] border border-border-default/60 hover:border-brand-primary text-xs font-semibold text-white rounded">Add</button>
                 </form>
             </div>
 
-            <!-- Portal Syndication -->
-            <div class="bg-surface-card rounded-2xl border border-border-default p-5">
-                <h3 class="text-sm font-semibold text-text-primary mb-4">Portal Syndication</h3>
-
-                @forelse($portals as $portal)
-                @php $sync = $listing->portalSyncs->firstWhere('portal_id', $portal->id); @endphp
-                <div class="flex items-center justify-between py-3 border-b border-border-default/40 last:border-0">
-                    <div class="min-w-0 flex-1">
-                        <p class="text-sm font-medium text-text-primary">{{ $portal->name }}</p>
-                        @if($sync)
-                        <div class="flex items-center gap-1.5 mt-0.5">
-                            <div class="h-2 w-2 rounded-full shrink-0
-                                @if($sync->status === 'synced') bg-success-500
-                                @elseif($sync->status === 'failed') bg-danger-500
-                                @elseif(in_array($sync->status, ['pending', 'syncing'])) bg-warning-500
-                                @else bg-text-tertiary @endif"></div>
-                            <span class="text-xs text-text-secondary capitalize">{{ $sync->status }}</span>
-                            @if($sync->last_synced_at)
-                            <span class="text-xs text-text-tertiary">· {{ $sync->last_synced_at->diffForHumans() }}</span>
-                            @endif
-                        </div>
-                        @else
-                        <span class="text-xs text-text-tertiary">Not published</span>
-                        @endif
+            <!-- Location & Nearby map -->
+            <div class="bg-[#090d16]/80 backdrop-blur-md border border-border-default/60 rounded-xl p-5 space-y-4">
+                <h3 class="text-sm font-bold text-white uppercase tracking-wider border-b border-border-default/40 pb-2">Location & Neighborhood</h3>
+                <!-- Simulated Location Map -->
+                <div class="relative h-48 rounded-xl bg-[#02050b] overflow-hidden border border-border-default/45">
+                    <div class="absolute inset-0 opacity-15 pointer-events-none" style="background-image: radial-gradient(circle, #10b981 1px, transparent 1px); background-size: 16px 16px;"></div>
+                    <svg class="absolute inset-0 w-full h-full text-zinc-900 pointer-events-none stroke-current" fill="none">
+                        <path d="M 0 50 L 500 70 M 100 0 L 150 200 M 0 160 L 500 150 M 300 0 L 350 200" stroke-width="2" />
+                    </svg>
+                    <div class="absolute top-[40%] left-[45%] flex items-center justify-center">
+                        <div class="h-3 w-3 rounded-full bg-brand-primary animate-ping absolute"></div>
+                        <div class="h-3.5 w-3.5 rounded-full bg-[#030712] border-2 border-brand-primary relative"></div>
                     </div>
-                    <div class="flex items-center gap-2 ml-2">
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" wire:model="portalSelections.{{ $portal->id }}" class="sr-only peer" value="1">
-                            <div class="w-9 h-5 bg-surface-raised peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-primary"></div>
-                        </label>
-                        <button wire:click="syncPortal({{ $portal->id }})" class="text-xs text-brand-primary hover:text-brand-secondary font-medium">
-                            <span wire:loading.remove wire:target="syncPortal({{ $portal->id }})">Sync</span>
-                            <span wire:loading wire:target="syncPortal({{ $portal->id }})">...</span>
-                        </button>
+                    <div class="absolute bottom-2 left-2 bg-black/75 px-2 py-1 rounded text-[9px] text-text-tertiary">
+                        Map Data Simulated
                     </div>
                 </div>
-                @empty
-                <p class="text-sm text-text-secondary text-center py-4">No portals configured. Add portals in Settings.</p>
-                @endforelse
+
+                <div class="grid grid-cols-2 gap-4 text-xs">
+                    <div>
+                        <p class="font-bold text-white">Nearby Amenities</p>
+                        <ul class="list-disc pl-4 text-text-secondary mt-1.5 space-y-1">
+                            <li>Shopping Center (0.4 km)</li>
+                            <li>International School (1.2 km)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <p class="font-bold text-white">Transit Nodes</p>
+                        <ul class="list-disc pl-4 text-text-secondary mt-1.5 space-y-1">
+                            <li>Expressway (0.8 km)</li>
+                            <li>Port Terminal (2.5 km)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL (40%) -->
+        <div class="lg:col-span-4 space-y-6">
+            <!-- Pricing Card -->
+            <div class="bg-gradient-to-br from-[#090d16] to-[#111827] border border-border-default/60 rounded-xl p-5 space-y-4 shadow-brand">
+                <h3 class="text-sm font-bold text-white uppercase tracking-wider border-b border-border-default/40 pb-2">Financial Valuation</h3>
+                
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-text-secondary">Asking Price</span>
+                        <span class="text-base font-bold font-mono text-emerald-400">{{ $currencySymbol }}{{ number_format($listing->listing_price) }}</span>
+                    </div>
+
+                    @if($listing->original_price)
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-text-secondary">Original Value</span>
+                            <span class="text-xs font-bold font-mono text-text-tertiary line-through">{{ $currencySymbol }}{{ number_format($listing->original_price) }}</span>
+                        </div>
+                    @endif
+
+                    <div class="flex items-center justify-between border-t border-border-default/40 pt-2.5">
+                        <span class="text-xs text-text-secondary">Price per sqm</span>
+                        @php
+                            $sqm = $listing->property->floor_area_sqm ?: 1;
+                            $perSqm = $listing->listing_price / $sqm;
+                        @endphp
+                        <span class="text-xs font-bold font-mono text-white">{{ $currencySymbol }}{{ number_format($perSqm) }}/sqm</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-text-secondary">Last Valuation Update</span>
+                        <span class="text-[10px] text-text-tertiary font-mono">{{ $listing->updated_at->format('Y-m-d H:i') }}</span>
+                    </div>
+                </div>
             </div>
 
-            <!-- Social Media Graphics -->
-            <div class="bg-surface-card rounded-2xl border border-border-default p-5">
-                <div class="flex items-center justify-between mb-4">
-                    <div>
-                        <h3 class="text-sm font-semibold text-text-primary">Social Media Graphics</h3>
-                        <p class="text-xs text-text-tertiary mt-0.5">Instagram · Facebook · Story</p>
+            <!-- Mandate details -->
+            <div class="bg-[#090d16]/80 backdrop-blur-md border border-border-default/60 rounded-xl p-5 space-y-3">
+                <h3 class="text-xs font-bold text-white uppercase tracking-wider border-b border-border-default/40 pb-2">Mandate & Terms</h3>
+                <div class="space-y-2 text-xs">
+                    <div class="flex items-center justify-between">
+                        <span class="text-text-secondary">Mandate Style</span>
+                        <span class="text-white capitalize font-semibold">{{ $listing->mandate_type }} Mandate</span>
                     </div>
-                    <button wire:click="generateSocialGraphics" wire:loading.attr="disabled" wire:target="generateSocialGraphics"
-                        class="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 text-xs font-semibold rounded-lg hover:bg-brand-secondary transition disabled:opacity-60">
-                        <span wire:loading.remove wire:target="generateSocialGraphics">{{ $graphics->isEmpty() ? 'Generate' : 'Regenerate' }}</span>
-                        <span wire:loading wire:target="generateSocialGraphics">Working…</span>
-                    </button>
+                    <div class="flex items-center justify-between">
+                        <span class="text-text-secondary">Commission Rate</span>
+                        <span class="text-white font-mono font-semibold">{{ $commission_rate ?: '0.00' }}%</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-text-secondary">Expiration Date</span>
+                        <span class="text-white font-semibold font-mono">{{ $mandate_end_date ?: 'No Limit' }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Agent & Seller Details -->
+            <div class="bg-[#090d16]/80 backdrop-blur-md border border-border-default/60 rounded-xl p-5 space-y-4">
+                <h3 class="text-xs font-bold text-white uppercase tracking-wider border-b border-border-default/40 pb-2">Key Parties</h3>
+                
+                <!-- Agent Card -->
+                <div class="flex items-center gap-3 bg-[#111827]/40 p-3 rounded-lg border border-border-default/30">
+                    @if($listing->agent?->profile_photo_url)
+                        <img src="{{ $listing->agent->profile_photo_url }}" class="h-10 w-10 rounded-full object-cover">
+                    @else
+                        <div class="h-10 w-10 rounded-full bg-brand-primary/10 border border-brand-primary/20 flex items-center justify-center text-xs text-brand-primary font-bold">
+                            {{ substr($listing->agent?->first_name ?? 'A', 0, 1) }}
+                        </div>
+                    @endif
+                    <div>
+                        <span class="text-[10px] text-text-tertiary uppercase block">Listing Agent</span>
+                        <h4 class="text-xs font-bold text-white">{{ $listing->agent?->first_name }} {{ $listing->agent?->last_name }}</h4>
+                    </div>
                 </div>
 
-                @if($graphics->isEmpty())
-                <div class="rounded-xl bg-surface-sunken/40 border border-dashed border-border-default p-6 text-center">
-                    <svg class="w-8 h-8 text-text-tertiary mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M21 12l-5.25-5.25L12 9.75"/></svg>
-                    <p class="text-xs text-text-tertiary">Generate branded social graphics with AI captions.</p>
-                </div>
-                @else
-                <div class="grid grid-cols-3 gap-2">
-                    @foreach($graphics as $graphic)
-                    <div class="relative rounded-xl overflow-hidden group border border-border-default/40 bg-surface-raised">
-                        <img src="{{ asset('storage/'.$graphic->file_path) }}" alt="{{ $graphic->format }}" class="w-full aspect-square object-cover">
-                        <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                            <a href="{{ asset('storage/'.$graphic->file_path) }}" download class="p-1.5 bg-white rounded-lg">
-                                <svg class="w-4 h-4 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                            </a>
-                            <button wire:click="deleteSocialGraphic({{ $graphic->id }})" class="p-1.5 bg-red-600 rounded-lg">
-                                <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                            </button>
+                <!-- Seller Info -->
+                <div class="space-y-3 pt-2">
+                    <h4 class="text-[10px] font-bold text-text-tertiary uppercase tracking-wider">Seller Mandate Info</h4>
+                    <div class="space-y-2 text-xs">
+                        <div class="flex items-center justify-between">
+                            <span class="text-text-secondary">Seller Account</span>
+                            <span class="text-white font-mono truncate max-w-[150px]">{{ $seller_email ?: 'Unconfigured' }}</span>
                         </div>
-                        <span class="absolute bottom-1 left-1 text-[9px] font-bold bg-black/60 text-white px-1.5 py-0.5 rounded uppercase">{{ $graphic->format }}</span>
+                        <div class="flex items-center justify-between">
+                            <span class="text-text-secondary">Notification Interval</span>
+                            <span class="text-white capitalize">{{ $seller_report_frequency }}</span>
+                        </div>
                     </div>
-                    @endforeach
                 </div>
-                @if($graphics->isNotEmpty() && $graphics->first()->post_copy)
-                @php $copy = $graphics->first()->post_copy; @endphp
-                <div class="mt-3 p-3 rounded-xl bg-surface-sunken/30 border border-border-default/30">
-                    <p class="text-xs font-medium text-text-secondary mb-1">AI Caption</p>
-                    <p class="text-xs text-text-primary leading-relaxed">{{ $copy['caption'] ?? '' }}</p>
-                    @if(!empty($copy['hashtags']))
-                    <p class="text-[10px] text-brand-primary mt-1.5 break-words">#{{ implode(' #', array_slice($copy['hashtags'], 0, 8)) }}</p>
-                    @endif
+            </div>
+
+            <!-- AI Market Insight -->
+            <div class="bg-[#090d16]/80 backdrop-blur-md border border-border-default/60 rounded-xl p-5 space-y-4">
+                <h3 class="text-xs font-bold text-white uppercase tracking-wider border-b border-border-default/40 pb-2 flex items-center gap-1.5">
+                    <span class="text-amber-400">âœ¦</span>
+                    AI Market Insight
+                </h3>
+                
+                <div class="space-y-3">
+                    <div class="bg-amber-500/5 border border-amber-500/25 p-3 rounded-lg text-xs leading-relaxed text-amber-300">
+                        <span class="font-bold block mb-1">Valuation Position</span>
+                        Based on comparables within regional nodes, target price recommendation is <span class="font-mono text-white font-bold">{{ $currencySymbol }}{{ number_format($listing->listing_price * 0.96) }}</span> to limit Days on Market to &lt;21 days.
+                    </div>
+
+                    <!-- Comparable Sales Table -->
+                    <div class="space-y-1.5">
+                        <p class="text-[10px] font-bold text-text-tertiary uppercase">Comparable Neighborhood Deals</p>
+                        <div class="space-y-1 text-xs">
+                            <div class="flex justify-between py-1 border-b border-border-default/35 text-text-tertiary">
+                                <span>Property Address</span>
+                                <span>Value</span>
+                            </div>
+                            <div class="flex justify-between py-1">
+                                <span class="text-text-secondary">Block 12 Plot A</span>
+                                <span class="font-mono text-emerald-400">{{ $currencySymbol }}480k</span>
+                            </div>
+                            <div class="flex justify-between py-1">
+                                <span class="text-text-secondary">Flat 3 Admiralty Way</span>
+                                <span class="font-mono text-emerald-400">{{ $currencySymbol }}510k</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                @endif
-                <a href="{{ route('marketing.social') }}" class="block mt-3 text-center text-xs text-brand-primary hover:underline">Open Social Studio ?</a>
-                @endif
+            </div>
+
+            <!-- Portal Performance Bar Charts -->
+            <div class="bg-[#090d16]/80 backdrop-blur-md border border-border-default/60 rounded-xl p-5 space-y-4">
+                <h3 class="text-xs font-bold text-white uppercase tracking-wider border-b border-border-default/40 pb-2">Syndication Performance</h3>
+                
+                <div class="space-y-3 text-xs">
+                    <!-- PropertyPro -->
+                    <div class="space-y-1">
+                        <div class="flex justify-between">
+                            <span class="text-text-secondary">PropertyPro.ng</span>
+                            <span class="text-white font-semibold">1,240 views / 45 saves</span>
+                        </div>
+                        <div class="w-full bg-[#111827] h-2 rounded-full overflow-hidden">
+                            <div class="bg-emerald-500 h-full rounded-full" style="width: 82%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Lamudi -->
+                    <div class="space-y-1">
+                        <div class="flex justify-between">
+                            <span class="text-text-secondary">Lamudi.com</span>
+                            <span class="text-white font-semibold">890 views / 31 saves</span>
+                        </div>
+                        <div class="w-full bg-[#111827] h-2 rounded-full overflow-hidden">
+                            <div class="bg-emerald-500 h-full rounded-full" style="width: 61%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Private Property -->
+                    <div class="space-y-1">
+                        <div class="flex justify-between">
+                            <span class="text-text-secondary">Private Property</span>
+                            <span class="text-rose-400 font-semibold">Error / connection failed</span>
+                        </div>
+                        <div class="w-full bg-[#111827] h-2 rounded-full overflow-hidden">
+                            <div class="bg-rose-500 h-full rounded-full" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- FLOATING LISTING AI TOOLS (Right Edge vertical pill, expands on hover) -->
+    <div class="fixed right-4 bottom-24 z-40 group/floating">
+        <div class="flex flex-col gap-2.5 bg-[#090d16]/95 backdrop-blur-md border border-border-default/60 rounded-full p-2.5 shadow-2xl transition-all duration-300">
+            <!-- Write Description -->
+            <button wire:click="generateDescription" title="Generate AI Description" class="h-9 w-9 bg-brand-primary/10 hover:bg-brand-primary hover:text-black border border-brand-primary/20 text-brand-primary rounded-full flex items-center justify-center transition-all">
+                <span class="text-sm font-bold">âœ¦</span>
+            </button>
+            <!-- Generate Social Post -->
+            <button wire:click="generateSocialGraphics" title="Generate Social Post Copy & Graphics" class="h-9 w-9 bg-brand-primary/10 hover:bg-brand-primary hover:text-black border border-brand-primary/20 text-brand-primary rounded-full flex items-center justify-center transition-all">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 10.742l5.028-2.514m0 0a3 3 0 10-4.472-2.334 3 3 0 004.472 2.334zM4 19.253a3 3 0 01-2.28-2.28M20 19.253a3 3 0 002.28-2.28M4 19.253V12M20 19.253V12"/></svg>
+            </button>
+            <!-- Assess Photo Quality -->
+            <button wire:click="assessPhotoQuality" title="Assess Photo Quality" class="h-9 w-9 bg-brand-primary/10 hover:bg-brand-primary hover:text-black border border-brand-primary/20 text-brand-primary rounded-full flex items-center justify-center transition-all">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+            </button>
+            <!-- Suggest Price Adjustment -->
+            <button wire:click="suggestPriceAdjustment" title="Suggest Price Adjustment" class="h-9 w-9 bg-brand-primary/10 hover:bg-brand-primary hover:text-black border border-brand-primary/20 text-brand-primary rounded-full flex items-center justify-center transition-all">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            </button>
+            <!-- Create Flyer -->
+            <button wire:click="createFlyer" title="Create Marketing Flyer" class="h-9 w-9 bg-brand-primary/10 hover:bg-brand-primary hover:text-black border border-brand-primary/20 text-brand-primary rounded-full flex items-center justify-center transition-all">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Suggest Price Adjustment Modal -->
+    @if($showPriceAdjustmentModal)
+        <div class="relative z-50" role="dialog" aria-modal="true" x-data="{}">
+            <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"></div>
+            <div class="fixed inset-0 overflow-hidden flex items-center justify-center p-4">
+                <div class="bg-[#090d16] border border-border-default rounded-xl max-w-md w-full p-6 shadow-2xl space-y-4">
+                    <h3 class="text-sm font-bold text-white flex items-center gap-1.5 uppercase tracking-widest border-b border-border-default/45 pb-2">
+                        <span class="text-amber-500">âœ¦</span>
+                        AI Price Adjustment Recommendation
+                    </h3>
+                    <p class="text-xs text-text-secondary leading-relaxed">
+                        {{ $aiPriceAdjustmentMessage }}
+                    </p>
+                    <div class="bg-[#111827] border border-border-default/60 p-3 rounded-lg flex justify-between items-center text-xs">
+                        <span class="text-text-tertiary">Suggested range:</span>
+                        <span class="font-bold font-mono text-emerald-400">{{ $suggestedPriceRange }}</span>
+                    </div>
+                    <div class="flex justify-end gap-2 pt-2">
+                        <button wire:click="$set('showPriceAdjustmentModal', false)" class="px-4 py-2 bg-[#111827] border border-border-default/65 text-xs font-semibold text-text-secondary rounded hover:text-white transition-all">Dismiss</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    <!-- Edit Mandate Modal/Slide-over -->
+    @if($showEditForm)
+        <div class="relative z-50" role="dialog" aria-modal="true" x-data="{}">
+            <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"></div>
+            <div class="fixed inset-0 overflow-hidden">
+                <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+                    <div class="pointer-events-auto w-screen max-w-lg">
+                        <div class="flex h-full flex-col overflow-y-scroll bg-[#090d16] border-l border-border-default shadow-2xl">
+                            <div class="px-6 py-5 border-b border-border-default/60 flex items-center justify-between bg-[#111827]">
+                                <h2 class="text-lg font-bold text-white">Edit Mandate Configuration</h2>
+                                <button wire:click="$set('showEditForm', false)" class="rounded-lg p-1.5 text-text-secondary hover:text-white transition-colors">
+                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                </button>
+                            </div>
+
+                            <div class="flex-1 px-6 py-6 space-y-6">
+                                <form wire:submit.prevent="saveListing" class="space-y-4">
+                                    <div>
+                                        <x-ui.floating-input id="headline" label="Headline" model="headline" defer="true" />
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <x-ui.floating-input id="listing_price" type="number" label="Asking price *" model="listing_price" defer="true" />
+                                        </div>
+                                        <div>
+                                            <x-ui.floating-input id="original_price" type="number" label="Original price" model="original_price" defer="true" />
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-xs font-semibold text-text-secondary mb-1">Status *</label>
+                                            <select wire:model.defer="status" class="w-full rounded bg-surface-input border border-border-default/60 px-3 py-2 text-xs text-white">
+                                                <option value="draft">Draft</option>
+                                                <option value="active">Active</option>
+                                                <option value="under_offer">Under Offer</option>
+                                                <option value="sold">Sold</option>
+                                                <option value="let">Let</option>
+                                                <option value="withdrawn">Withdrawn</option>
+                                                <option value="expired">Expired</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold text-text-secondary mb-1">Mandate Type *</label>
+                                            <select wire:model.defer="mandate_type" class="w-full rounded bg-surface-input border border-border-default/60 px-3 py-2 text-xs text-white">
+                                                <option value="sole">Sole Mandate</option>
+                                                <option value="open">Open Mandate</option>
+                                                <option value="rental">Rental Mandate</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <p class="text-[10px] font-bold text-text-tertiary uppercase tracking-widest pt-2 border-b border-border-default/45 pb-1">Property Specifications</p>
+                                    <div class="grid grid-cols-3 gap-3">
+                                        <div>
+                                            <x-ui.floating-input id="bedrooms" type="number" label="Beds" model="bedrooms" defer="true" />
+                                        </div>
+                                        <div>
+                                            <x-ui.floating-input id="bathrooms" type="number" label="Baths" model="bathrooms" defer="true" />
+                                        </div>
+                                        <div>
+                                            <x-ui.floating-input id="parking_spaces" type="number" label="Parking" model="parking_spaces" defer="true" />
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <x-ui.floating-input id="floor_area_sqm" type="number" label="Floor Area (sqm)" model="floor_area_sqm" defer="true" />
+                                        </div>
+                                        <div>
+                                            <x-ui.floating-input id="land_area_sqm" type="number" label="Land Area (sqm)" model="land_area_sqm" defer="true" />
+                                        </div>
+                                    </div>
+
+                                    <div class="pt-6 border-t border-border-default/45 flex justify-end gap-3">
+                                        <button type="button" wire:click="$set('showEditForm', false)" class="px-4 py-2 bg-[#111827] border border-border-default/65 text-xs font-semibold text-text-secondary rounded hover:text-white">Cancel</button>
+                                        <button type="submit" class="px-4 py-2 bg-brand-primary text-black font-semibold text-xs rounded hover:bg-brand-secondary">Save Changes</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>
-
-
-

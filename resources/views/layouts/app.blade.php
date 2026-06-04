@@ -173,6 +173,12 @@
                             window.location.href = '{{ route('listing.index') }}';
                         } else if (key === 'p') {
                             window.location.href = '{{ route('crm.pipeline') }}';
+                        } else if (key === 'o') {
+                            window.location.href = '{{ route('offers.index') }}';
+                        } else if (key === 't') {
+                            window.location.href = '{{ route('tasks.board') }}';
+                        } else if (key === 'd') {
+                            window.location.href = '{{ route('dashboard') }}';
                         }
                         this.lastKey = '';
                         return;

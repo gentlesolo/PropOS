@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Listing;
 
 use App\Infrastructure\Persistence\Models\Listing;
 use App\Infrastructure\Persistence\Models\Property;
+use App\Infrastructure\Persistence\Models\User;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -13,10 +14,18 @@ class IndexPage extends Component
 
     public bool $showCreateModal = false;
 
+    // View Mode
+    public string $viewMode = 'grid'; // grid, list, map
+
     // Filters
     public string $search = '';
-    public string $filterStatus = '';
-    public string $filterType = '';
+    public string $filterBar = 'all'; // all, sale, rental, sold, off_market
+    public string $suburb = '';
+    public string $minPrice = '';
+    public string $maxPrice = '';
+    public string $bedroomsFilter = '';
+    public string $agentFilter = '';
+    public string $portalStatusFilter = '';
 
     // Create form — Property
     public string $address_line_1 = '';
@@ -32,9 +41,15 @@ class IndexPage extends Component
     public string $mandate_type = 'open';
 
     protected $queryString = [
-        'search'       => ['except' => ''],
-        'filterStatus' => ['except' => ''],
-        'filterType'   => ['except' => ''],
+        'search'             => ['except' => ''],
+        'filterBar'          => ['except' => 'all'],
+        'suburb'             => ['except' => ''],
+        'minPrice'           => ['except' => ''],
+        'maxPrice'           => ['except' => ''],
+        'bedroomsFilter'     => ['except' => ''],
+        'agentFilter'        => ['except' => ''],
+        'portalStatusFilter' => ['except' => ''],
+        'viewMode'           => ['except' => 'grid'],
     ];
 
     protected $rules = [
@@ -68,17 +83,58 @@ class IndexPage extends Component
         $this->dispatch('notify', message: 'Listing deleted.', type: 'info');
     }
 
+    public function clearFilters(): void
+    {
+        $this->reset([
+            'search', 'filterBar', 'suburb', 'minPrice', 'maxPrice',
+            'bedroomsFilter', 'agentFilter', 'portalStatusFilter'
+        ]);
+        $this->resetPage();
+    }
+
+    public function setViewMode(string $mode): void
+    {
+        if (in_array($mode, ['grid', 'list', 'map'])) {
+            $this->viewMode = $mode;
+        }
+    }
+
     public function updatingSearch(): void
     {
         $this->resetPage();
     }
 
-    public function updatingFilterStatus(): void
+    public function updatingFilterBar(): void
     {
         $this->resetPage();
     }
 
-    public function updatingFilterType(): void
+    public function updatingSuburb(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingMinPrice(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingMaxPrice(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingBedroomsFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingAgentFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingPortalStatusFilter(): void
     {
         $this->resetPage();
     }
@@ -124,26 +180,68 @@ class IndexPage extends Component
     {
         $agencyId = auth()->user()->agency_id;
 
-        $query = Listing::with(['property', 'agent', 'coverPhoto', 'media'])
+        $query = Listing::with(['property', 'agent', 'coverPhoto', 'media', 'portalSyncs.portal'])
             ->where('agency_id', $agencyId)
             ->when($this->search, function ($q) {
-                $q->whereHas('property', fn($p) => $p
-                    ->where('address_line_1', 'like', "%{$this->search}%")
-                    ->orWhere('city', 'like', "%{$this->search}%")
-                    ->orWhere('state_province', 'like', "%{$this->search}%")
-                );
+                $q->where(function ($sub) {
+                    $sub->whereHas('property', fn($p) => $p
+                        ->where('address_line_1', 'like', "%{$this->search}%")
+                        ->orWhere('city', 'like', "%{$this->search}%")
+                        ->orWhere('state_province', 'like', "%{$this->search}%")
+                    )->orWhere('id', 'like', "%{$this->search}%");
+                });
             })
-            ->when($this->filterStatus, fn($q) => $q->where('status', $this->filterStatus))
-            ->when($this->filterType, function ($q) {
-                if ($this->filterType === 'rental') {
-                    $q->where('mandate_type', 'rental');
-                } elseif ($this->filterType === 'sale') {
-                    $q->whereIn('mandate_type', ['sole', 'open']);
+            ->when($this->filterBar, function ($q) {
+                switch ($this->filterBar) {
+                    case 'sale':
+                        $q->whereIn('mandate_type', ['sole', 'open'])->whereNotIn('status', ['sold', 'let', 'withdrawn', 'expired']);
+                        break;
+                    case 'rental':
+                        $q->where('mandate_type', 'rental')->whereNotIn('status', ['sold', 'let', 'withdrawn', 'expired']);
+                        break;
+                    case 'sold':
+                        $q->whereIn('status', ['sold', 'let']);
+                        break;
+                    case 'off_market':
+                        $q->whereIn('status', ['withdrawn', 'expired', 'draft']);
+                        break;
+                }
+            })
+            ->when($this->suburb, function ($q) {
+                $q->whereHas('property', fn($p) => $p->where('city', $this->suburb));
+            })
+            ->when($this->minPrice, function ($q) {
+                $q->where('listing_price', '>=', (float) $this->minPrice);
+            })
+            ->when($this->maxPrice, function ($q) {
+                $q->where('listing_price', '<=', (float) $this->maxPrice);
+            })
+            ->when($this->bedroomsFilter !== '', function ($q) {
+                $q->whereHas('property', fn($p) => $p->where('bedrooms', $this->bedroomsFilter));
+            })
+            ->when($this->agentFilter, function ($q) {
+                $q->where('agent_id', $this->agentFilter);
+            })
+            ->when($this->portalStatusFilter, function ($q) {
+                if ($this->portalStatusFilter === 'synced') {
+                    $q->whereHas('portalSyncs', fn($s) => $s->where('status', 'synced'));
+                } elseif ($this->portalStatusFilter === 'error') {
+                    $q->whereHas('portalSyncs', fn($s) => $s->where('status', 'failed'));
+                } elseif ($this->portalStatusFilter === 'not_synced') {
+                    $q->whereDoesntHave('portalSyncs');
                 }
             })
             ->latest();
 
-        $listings        = $query->paginate(12);
+        $listings = $query->paginate(12);
+
+        // Sidebar / Dropdown Options
+        $agents = User::where('agency_id', $agencyId)->get();
+        $suburbs = Property::where('agency_id', $agencyId)
+            ->whereNotNull('city')
+            ->distinct()
+            ->pluck('city');
+
         $activeCount     = Listing::where('agency_id', $agencyId)->where('status', 'active')->count();
         $underOfferCount = Listing::where('agency_id', $agencyId)->where('status', 'under_offer')->count();
         $totalValue      = Listing::where('agency_id', $agencyId)->where('status', 'active')->sum('listing_price');
@@ -153,7 +251,7 @@ class IndexPage extends Component
             ->avg(fn($l) => $l->mandate_start_date->diffInDays(now()));
 
         return view('livewire.listing.index-page', compact(
-            'listings', 'activeCount', 'underOfferCount', 'totalValue', 'avgDom'
+            'listings', 'activeCount', 'underOfferCount', 'totalValue', 'avgDom', 'agents', 'suburbs'
         ))->layout('layouts.app');
     }
 }

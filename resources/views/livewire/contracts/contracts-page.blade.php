@@ -257,15 +257,17 @@
                 <div class="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-2">Signatories</div>
                 <div class="space-y-2">
                     @foreach($detailContract->signatories as $sig)
-                    <div class="flex items-center justify-between text-xs">
-                        <div>
-                            <span class="text-text-primary font-medium">{{ $sig['name'] ?? '—' }}</span>
-                            <span class="ml-1 text-text-tertiary capitalize">({{ $sig['role'] ?? '' }})</span>
+                        @if(is_array($sig))
+                        <div class="flex items-center justify-between text-xs">
+                            <div>
+                                <span class="text-text-primary font-medium">{{ $sig['name'] ?? '—' }}</span>
+                                <span class="ml-1 text-text-tertiary capitalize">({{ $sig['role'] ?? '' }})</span>
+                            </div>
+                            @if(!empty($sig['sent_at']))
+                            <span class="text-success-600 font-medium">Sent</span>
+                            @endif
                         </div>
-                        @if(!empty($sig['sent_at']))
-                        <span class="text-success-600 font-medium">Sent</span>
                         @endif
-                    </div>
                     @endforeach
                 </div>
             </div>

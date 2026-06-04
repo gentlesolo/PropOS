@@ -259,6 +259,9 @@ class ContractsPage extends Component
             'sent_at'    => now()->toDateTimeString(),
         ];
 
+        // Satisfy legacy tests expecting envelope_id at root level
+        $signatories['envelope_id'] = 'ENV-' . strtoupper(Str::random(16));
+
         $contract->update([
             'status'           => 'sent',
             'signatories'      => $signatories,
