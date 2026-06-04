@@ -10,7 +10,7 @@
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                 <span>New Mandate</span>
             </button>
-            <button class="px-5 py-2.5 rounded-xl bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 text-sm font-bold hover:bg-brand-secondary transition-colors shadow-brand-md flex items-center space-x-2 hover-spring active:scale-95 hover:shadow-brand-lg">
+            <button class="px-5 py-2.5 rounded-xl bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-border-strong text-sm font-bold hover:bg-brand-secondary transition-colors shadow-brand-md flex items-center space-x-2 hover-spring active:scale-95 hover:shadow-brand-lg">
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
                 <span>Sync</span>
             </button>
@@ -20,7 +20,7 @@
     <!-- KPI Metrics - Bento Box Style -->
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-10">
         <!-- Metric 1: Pipeline (Hero Style) -->
-        <div class="p-6 rounded-2xl bg-gradient-hero text-white shadow-2xl relative overflow-hidden group hover:scale-[1.02] hover:shadow-brand-lg transition-all duration-300">
+        <div class="p-6 rounded-2xl bg-gradient-hero text-text-primary shadow-2xl relative overflow-hidden group hover:scale-[1.02] hover:shadow-brand-lg transition-all duration-300">
             <div class="absolute inset-0 bg-brand-primary opacity-30 mix-blend-overlay pointer-events-none"></div>
             <!-- Glowing accent in card -->
             <div class="absolute -top-12 -right-12 w-44 h-44 rounded-full bg-brand-accent/25 blur-2xl group-hover:scale-125 transition-transform duration-500"></div>
@@ -28,7 +28,7 @@
                 <div class="flex items-center justify-between mb-8">
                     <p class="text-xs font-bold tracking-widest uppercase opacity-80">Pipeline Value</p>
                     <div class="p-2.5 bg-white/10 rounded-xl backdrop-blur-sm">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <svg class="w-5 h-5 text-text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
                 </div>
                 <div>
@@ -113,7 +113,7 @@
                                 </div>
                                 <div>
                                     <h4 class="text-sm font-bold text-text-primary group-hover:text-brand-primary transition-colors">{{ $listing->property->address_line_1 }}</h4>
-                                    <p class="text-xs font-semibold text-text-secondary mt-1">{{ $listing->property->city }} • {{ $currencySymbol }}{{ number_format($listing->listing_price) }}</p>
+                                    <p class="text-xs font-semibold text-text-secondary mt-1">{{ $listing->property->city }} ï¿½ {{ $currencySymbol }}{{ number_format($listing->listing_price) }}</p>
                                 </div>
                             </div>
                             <span class="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-black tracking-wider bg-surface-raised border border-border-default text-text-primary uppercase shadow-sm">
@@ -191,7 +191,7 @@
                         </div>
                         <h4 class="text-sm font-bold text-text-primary mb-2">High Intent Buyer</h4>
                         <p class="text-xs font-medium text-text-secondary leading-relaxed mb-4">A new buyer lead matches 95% of criteria for your new "Victoria Island" mandate.</p>
-                        <button class="w-full py-2.5 text-xs font-bold rounded-xl bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 hover:bg-brand-secondary transition-colors shadow-brand-sm">Draft Introduction</button>
+                        <button class="w-full py-2.5 text-xs font-bold rounded-xl bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-border-strong hover:bg-brand-secondary transition-colors shadow-brand-sm">Draft Introduction</button>
                     </div>
                     
                     <!-- Suggestion 2 -->

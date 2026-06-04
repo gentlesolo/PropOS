@@ -45,7 +45,7 @@
         
         <!-- View Toggle & New Deal -->
         <div class="flex items-center space-x-3">
-            <button wire:click="$toggle('showAiInsightPanel')" class="flex items-center space-x-2 px-3 py-1.5 rounded border border-border-default/60 hover:border-brand-primary transition-colors focus:ring-1 focus:ring-brand-primary/30 bg-[#090d16]">
+            <button wire:click="$toggle('showAiInsightPanel')" class="flex items-center space-x-2 px-3 py-1.5 rounded border border-border-default/60 hover:border-brand-primary transition-colors focus:ring-1 focus:ring-brand-primary/30 bg-surface-card">
                 <svg class="h-4 w-4 text-brand-primary animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                 </svg>
@@ -59,16 +59,16 @@
     </div>
 
     <!-- Filters & Settings bar -->
-    <div class="flex flex-wrap items-center justify-between gap-4 p-4 rounded border border-border-default/60 bg-[#090d16] mb-6 shadow-sm">
+    <div class="flex flex-wrap items-center justify-between gap-4 p-4 rounded border border-border-default/60 bg-surface-card mb-6 shadow-sm">
         <!-- Left: View Toggle -->
         <div class="inline-flex rounded p-0.5 bg-surface-raised border border-border-default/40">
-            <button wire:click="$set('view', 'kanban')" class="px-4 py-1.5 rounded text-xs font-bold transition-all uppercase tracking-wider {{ $view === 'kanban' ? 'bg-[#030712] text-brand-primary border border-border-default/40' : 'text-text-secondary hover:text-text-primary' }}">
+            <button wire:click="$set('view', 'kanban')" class="px-4 py-1.5 rounded text-xs font-bold transition-all uppercase tracking-wider {{ $view === 'kanban' ? 'bg-surface-page text-brand-primary border border-border-default/40' : 'text-text-secondary hover:text-text-primary' }}">
                 Kanban
             </button>
-            <button wire:click="$set('view', 'list')" class="px-4 py-1.5 rounded text-xs font-bold transition-all uppercase tracking-wider {{ $view === 'list' ? 'bg-[#030712] text-brand-primary border border-border-default/40' : 'text-text-secondary hover:text-text-primary' }}">
+            <button wire:click="$set('view', 'list')" class="px-4 py-1.5 rounded text-xs font-bold transition-all uppercase tracking-wider {{ $view === 'list' ? 'bg-surface-page text-brand-primary border border-border-default/40' : 'text-text-secondary hover:text-text-primary' }}">
                 List View
             </button>
-            <button wire:click="$set('view', 'forecast')" class="px-4 py-1.5 rounded text-xs font-bold transition-all uppercase tracking-wider {{ $view === 'forecast' ? 'bg-[#030712] text-brand-primary border border-border-default/40' : 'text-text-secondary hover:text-text-primary' }}">
+            <button wire:click="$set('view', 'forecast')" class="px-4 py-1.5 rounded text-xs font-bold transition-all uppercase tracking-wider {{ $view === 'forecast' ? 'bg-surface-page text-brand-primary border border-border-default/40' : 'text-text-secondary hover:text-text-primary' }}">
                 Forecast
             </button>
         </div>
@@ -114,7 +114,7 @@
             </select>
 
             <!-- Add Deal Trigger -->
-            <button wire:click="$set('showNewDealModal', true)" class="bg-[#10B981] hover:bg-[#059669] text-white font-bold px-4 py-1.5 rounded text-xs transition-colors uppercase tracking-wider">
+            <button wire:click="$set('showNewDealModal', true)" class="bg-brand-primary hover:opacity-90 text-white font-bold px-4 py-1.5 rounded text-xs transition-colors uppercase tracking-wider">
                 + Add Deal
             </button>
         </div>
@@ -352,7 +352,7 @@
                 }"
                 @touchstart="handleTouchStart($event)"
                 @touchend="handleTouchEnd($event)"
-                class="md:hidden flex flex-col h-full bg-[#030712]"
+                class="md:hidden flex flex-col h-full bg-surface-page"
             >
                 <!-- Navigator Controls -->
                 <div class="flex items-center justify-between px-4 py-2.5 border-b border-border-default/40 bg-surface-sunken">
@@ -414,7 +414,7 @@
 
         <!-- 2. LIST VIEW -->
         @if($view === 'list')
-        <div class="flex-1 overflow-x-auto rounded border border-border-default/60 bg-[#090d16]">
+        <div class="flex-1 overflow-x-auto rounded border border-border-default/60 bg-surface-card">
             <table class="min-w-full divide-y divide-border-default/40">
                 <thead class="bg-surface-sunken">
                     <tr>
@@ -461,7 +461,7 @@
                                             <path d="{{ $this->getSparklinePoints($deal, $stages, false) }}" class="stroke-text-disabled/10" stroke-width="1.5" />
                                             <path d="{{ $this->getSparklinePoints($deal, $stages, true) }}" class="stroke-brand-primary" stroke-width="2" />
                                             @php
-                                                $currIdx = $stages->pluck('id')->indexOf($deal->pipeline_stage_id);
+                                                $currIdx = $stages->pluck('id')->search($deal->pipeline_stage_id) ?: 0;
                                                 $dotX = count($stages) > 1 ? ($currIdx / (count($stages) - 1)) * 100 : 50;
                                                 $dotY = count($stages) > 0 ? (22 - (($deal->stage?->order ?? 1) / count($stages)) * 15) : 15;
                                             @endphp
@@ -500,7 +500,7 @@
         <div class="flex-1 flex flex-col space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 shrink-0">
                 <!-- SVG Area Chart (Projected vs Actual Revenue) -->
-                <div class="lg:col-span-2 p-6 rounded border border-border-default/60 bg-[#090d16] flex flex-col justify-between">
+                <div class="lg:col-span-2 p-6 rounded border border-border-default/60 bg-surface-card flex flex-col justify-between">
                     <div>
                         <h3 class="text-xs font-extrabold text-text-primary uppercase tracking-widest mb-1 font-mono">Capital Revenue Forecast Projection</h3>
                         <p class="text-[10px] text-text-tertiary uppercase">3-Month horizons based on contract stages & close probability vectors</p>
@@ -562,7 +562,7 @@
                                 <span class="text-text-secondary font-bold uppercase tracking-wider">Projected Portfolio</span>
                             </div>
                             <div class="flex items-center space-x-2">
-                                <div class="h-2 w-3 rounded-full bg-[#F59E0B]"></div>
+                                <div class="h-2 w-3 rounded-full bg-brand-accent"></div>
                                 <span class="text-text-secondary font-bold uppercase tracking-wider">Confirmed Revenue</span>
                             </div>
                         </div>
@@ -570,7 +570,7 @@
                 </div>
 
                 <!-- AI Forecast Probability analysis card -->
-                <div class="p-6 rounded border border-border-default/60 bg-[#090d16] flex flex-col justify-between">
+                <div class="p-6 rounded border border-border-default/60 bg-surface-card flex flex-col justify-between">
                     <div>
                         <h3 class="text-xs font-extrabold text-text-primary uppercase tracking-widest mb-1 font-mono">Conversion Matrix Analytics</h3>
                         <p class="text-[10px] text-text-tertiary uppercase mb-4">AI-generated lead qualification probability</p>
@@ -606,7 +606,7 @@
             </div>
 
             <!-- Table of "Deals likely to close" -->
-            <div class="overflow-x-auto rounded border border-border-default/60 bg-[#090d16]">
+            <div class="overflow-x-auto rounded border border-border-default/60 bg-surface-card">
                 <div class="p-4 border-b border-border-default/40 bg-surface-sunken">
                     <h3 class="text-xs font-extrabold text-text-primary uppercase tracking-widest font-mono">Likely to close this month</h3>
                 </div>
@@ -687,8 +687,8 @@
     <!-- 4. NEW DEAL MODAL -->
     @if($showNewDealModal)
     <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-[#030712]/80 backdrop-blur-md" wire:click="$set('showNewDealModal', false)"></div>
-        <div class="relative bg-[#090d16] rounded border border-border-default/80 shadow-2xl w-full max-w-md p-6 z-10">
+        <div class="absolute inset-0 bg-surface-page/80 backdrop-blur-md" wire:click="$set('showNewDealModal', false)"></div>
+        <div class="relative bg-surface-card rounded border border-border-default/80 shadow-2xl w-full max-w-md p-6 z-10">
             <div class="flex items-center justify-between mb-5 border-b border-border-default/40 pb-3">
                 <h2 class="text-sm font-extrabold text-text-primary uppercase tracking-widest font-mono">Create Deal Entry</h2>
                 <button wire:click="$set('showNewDealModal', false)" class="text-text-tertiary hover:text-text-primary transition-colors">
@@ -698,12 +698,12 @@
             <form wire:submit.prevent="saveDeal" class="space-y-4">
                 <div>
                     <label class="block text-[10px] font-bold text-text-secondary uppercase mb-1.5">Deal Label *</label>
-                    <input wire:model.defer="title" type="text" placeholder="e.g. Lekki Heights Unit 401" class="w-full rounded border border-border-default bg-[#030712] px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary text-xs font-medium">
+                    <input wire:model.defer="title" type="text" placeholder="e.g. Lekki Heights Unit 401" class="w-full rounded border border-border-default bg-surface-page px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary text-xs font-medium">
                     @error('title') <span class="text-[10px] text-danger-500 mt-1 block">{{ $message }}</span> @enderror
                 </div>
                 <div>
                     <label class="block text-[10px] font-bold text-text-secondary uppercase mb-1.5">Associated Client *</label>
-                    <select wire:model.defer="contact_id" class="w-full rounded border border-border-default bg-[#030712] px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary text-xs font-bold uppercase tracking-wide">
+                    <select wire:model.defer="contact_id" class="w-full rounded border border-border-default bg-surface-page px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary text-xs font-bold uppercase tracking-wide">
                         <option value="">Select client...</option>
                         @foreach($contacts as $c)
                             <option value="{{ $c->id }}">{{ $c->first_name }} {{ $c->last_name }}</option>
@@ -713,7 +713,7 @@
                 </div>
                 <div>
                     <label class="block text-[10px] font-bold text-text-secondary uppercase mb-1.5">Listing Attachment (optional)</label>
-                    <select wire:model.defer="listing_id" class="w-full rounded border border-border-default bg-[#030712] px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary text-xs font-bold uppercase tracking-wide">
+                    <select wire:model.defer="listing_id" class="w-full rounded border border-border-default bg-surface-page px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary text-xs font-bold uppercase tracking-wide">
                         <option value="">No Listing Reference</option>
                         @foreach($listings as $l)
                             <option value="{{ $l->id }}">{{ $l->property->address_line_1 }}</option>
@@ -722,14 +722,14 @@
                 </div>
                 <div>
                     <label class="block text-[10px] font-bold text-text-secondary uppercase mb-1.5">Deal Capital Value (₦) *</label>
-                    <input wire:model.defer="value" type="number" min="0" placeholder="0" class="w-full rounded border border-border-default bg-[#030712] px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary text-xs font-mono font-bold">
+                    <input wire:model.defer="value" type="number" min="0" placeholder="0" class="w-full rounded border border-border-default bg-surface-page px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary text-xs font-mono font-bold">
                     @error('value') <span class="text-[10px] text-danger-500 mt-1 block">{{ $message }}</span> @enderror
                 </div>
                 <div>
                     <label class="block text-[10px] font-bold text-text-secondary uppercase mb-1.5">Internal Notes</label>
-                    <textarea wire:model.defer="notes" rows="2" class="w-full rounded border border-border-default bg-[#030712] px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary text-xs font-medium resize-none"></textarea>
+                    <textarea wire:model.defer="notes" rows="2" class="w-full rounded border border-border-default bg-surface-page px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary text-xs font-medium resize-none"></textarea>
                 </div>
-                <button type="submit" class="w-full py-2.5 bg-[#10B981] hover:bg-[#059669] text-white font-bold rounded text-xs transition-colors uppercase tracking-wider shadow">
+                <button type="submit" class="w-full py-2.5 bg-brand-primary hover:opacity-90 text-white font-bold rounded text-xs transition-colors uppercase tracking-wider shadow">
                     Create Deal Entry
                 </button>
             </form>
@@ -741,10 +741,10 @@
     @if($showDealDetailModal && $modalDeal)
     <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
         <!-- Backdrop -->
-        <div class="absolute inset-0 bg-[#030712]/90 backdrop-blur-md" wire:click="$set('showDealDetailModal', false)"></div>
+        <div class="absolute inset-0 bg-surface-page/90 backdrop-blur-md" wire:click="$set('showDealDetailModal', false)"></div>
         
         <!-- Modal Container -->
-        <div class="relative bg-[#090d16] border border-border-default/60 shadow-2xl rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto z-10 flex flex-col no-scrollbar">
+        <div class="relative bg-surface-card border border-border-default/60 shadow-2xl rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto z-10 flex flex-col no-scrollbar">
             <!-- Close Trigger -->
             <button wire:click="$set('showDealDetailModal', false)" class="absolute right-4 top-4 text-text-tertiary hover:text-text-primary transition-colors">
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -768,7 +768,7 @@
                         @endphp
                         <div class="flex flex-col items-center space-y-1.5 z-10">
                             <button wire:click="updateDealStage({{ $modalDeal->id }}, {{ $stg->id }})" class="h-7 w-7 rounded-full flex items-center justify-center font-bold text-xs border transition-all duration-300
-                                {{ $isCompleted ? 'bg-brand-primary border-brand-primary text-white' : ($isActive ? 'bg-[#030712] border-brand-primary text-brand-primary shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'bg-[#0c121e] border-border-default text-text-secondary') }}">
+                                {{ $isCompleted ? 'bg-brand-primary border-brand-primary text-white' : ($isActive ? 'bg-surface-page border-brand-primary text-brand-primary shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'bg-surface-sunken border-border-default text-text-secondary') }}">
                                 @if($isCompleted)
                                     <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                                 @else
@@ -791,19 +791,19 @@
                         
                         <form wire:submit.prevent="logModalActivity" class="space-y-3">
                             <div class="flex space-x-2">
-                                <select wire:model="activityType" class="bg-[#030712] border border-border-default text-text-primary rounded px-2 py-1.5 text-xs font-bold focus:ring-brand-primary focus:border-brand-primary flex-1 uppercase tracking-wider">
+                                <select wire:model="activityType" class="bg-surface-page border border-border-default text-text-primary rounded px-2 py-1.5 text-xs font-bold focus:ring-brand-primary focus:border-brand-primary flex-1 uppercase tracking-wider">
                                     <option value="note">Note</option>
                                     <option value="call">Call</option>
                                     <option value="email">Email</option>
                                     <option value="meeting">Meeting</option>
                                 </select>
-                                <input wire:model="activitySubject" type="text" placeholder="Subject (optional)" class="bg-[#030712] border border-border-default text-text-primary rounded px-2.5 py-1.5 text-xs focus:ring-brand-primary focus:border-brand-primary flex-[2] font-semibold">
+                                <input wire:model="activitySubject" type="text" placeholder="Subject (optional)" class="bg-surface-page border border-border-default text-text-primary rounded px-2.5 py-1.5 text-xs focus:ring-brand-primary focus:border-brand-primary flex-[2] font-semibold">
                             </div>
-                            <textarea wire:model="activityBody" placeholder="Enter activity details..." rows="3" class="w-full bg-[#030712] border border-border-default text-text-primary rounded px-2.5 py-2 text-xs focus:ring-brand-primary focus:border-brand-primary resize-none"></textarea>
+                            <textarea wire:model="activityBody" placeholder="Enter activity details..." rows="3" class="w-full bg-surface-page border border-border-default text-text-primary rounded px-2.5 py-2 text-xs focus:ring-brand-primary focus:border-brand-primary resize-none"></textarea>
                             @error('activityBody') <span class="text-[10px] text-danger-500">{{ $message }}</span> @enderror
                             
                             <div class="flex justify-end">
-                                <button type="submit" class="bg-brand-primary hover:bg-[#059669] text-white font-bold px-3 py-1 rounded text-xs transition-colors uppercase tracking-wider">
+                                <button type="submit" class="bg-brand-primary hover:opacity-90 text-white font-bold px-3 py-1 rounded text-xs transition-colors uppercase tracking-wider">
                                     Log Activity
                                 </button>
                             </div>
@@ -811,17 +811,17 @@
                     </div>
 
                     <!-- Checklist -->
-                    <div class="p-4 rounded border border-border-default/60 bg-[#0c121e]">
+                    <div class="p-4 rounded border border-border-default/60 bg-surface-sunken">
                         <h3 class="text-[10px] font-extrabold text-text-primary uppercase tracking-widest mb-3 font-mono">Stage Checklist Compliance</h3>
                         
                         <div class="space-y-2 max-h-48 overflow-y-auto mb-3 pr-1">
                             @forelse($modalDeal->checklistItems as $item)
-                                <div class="flex items-center justify-between p-2 rounded bg-[#030712] border border-border-default/40">
+                                <div class="flex items-center justify-between p-2 rounded bg-surface-page border border-border-default/40">
                                     <label class="flex items-center space-x-2.5 cursor-pointer">
-                                        <input type="checkbox" wire:click="toggleModalChecklistItem({{ $item->id }})" {{ $item->completed ? 'checked' : '' }} class="rounded border-border-default text-brand-primary focus:ring-brand-primary/30 h-3.5 w-3.5 bg-[#090d16]">
+                                        <input type="checkbox" wire:click="toggleModalChecklistItem({{ $item->id }})" {{ $item->completed ? 'checked' : '' }} class="rounded border-border-default text-brand-primary focus:ring-brand-primary/30 h-3.5 w-3.5 bg-surface-card">
                                         <span class="text-xs {{ $item->completed ? 'line-through text-text-tertiary' : 'text-text-secondary font-medium' }}">{{ $item->title }}</span>
                                     </label>
-                                    <button wire:click="deleteModalChecklistItem({{ $item->id }})" class="text-text-tertiary hover:text-[#F43F5E] transition-colors p-0.5">
+                                    <button wire:click="deleteModalChecklistItem({{ $item->id }})" class="text-text-tertiary hover:text-color-danger-500 transition-colors p-0.5">
                                         <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                     </button>
                                 </div>
@@ -834,7 +834,7 @@
 
                         <!-- Add checklist item -->
                         <div class="flex space-x-2">
-                            <input wire:model="newChecklistItem" type="text" placeholder="Add checklist item..." class="flex-1 bg-[#030712] border border-border-default text-text-primary rounded px-3 py-1 text-xs focus:ring-brand-primary focus:border-brand-primary font-medium" @keydown.enter.prevent="addModalChecklistItem">
+                            <input wire:model="newChecklistItem" type="text" placeholder="Add checklist item..." class="flex-1 bg-surface-page border border-border-default text-text-primary rounded px-3 py-1 text-xs focus:ring-brand-primary focus:border-brand-primary font-medium" @keydown.enter.prevent="addModalChecklistItem">
                             <button wire:click="addModalChecklistItem" class="bg-surface-raised border border-border-default hover:border-brand-primary text-text-primary font-bold px-3 py-1 rounded text-xs transition-colors uppercase tracking-wider">
                                 Add
                             </button>
@@ -900,16 +900,16 @@
                         <form wire:submit.prevent="saveModalDeal" class="space-y-3">
                             <div>
                                 <label class="block text-[9px] font-bold text-text-secondary uppercase mb-1">Deal Label</label>
-                                <input wire:model="editTitle" type="text" class="w-full bg-[#030712] border border-border-default text-text-primary rounded px-3 py-1.5 text-xs focus:ring-brand-primary focus:border-brand-primary font-semibold">
+                                <input wire:model="editTitle" type="text" class="w-full bg-surface-page border border-border-default text-text-primary rounded px-3 py-1.5 text-xs focus:ring-brand-primary focus:border-brand-primary font-semibold">
                             </div>
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
                                     <label class="block text-[9px] font-bold text-text-secondary uppercase mb-1">Capital Value (₦)</label>
-                                    <input wire:model="editValue" type="number" class="w-full bg-[#030712] border border-border-default text-text-primary rounded px-3 py-1.5 text-xs focus:ring-brand-primary focus:border-brand-primary font-mono font-bold">
+                                    <input wire:model="editValue" type="number" class="w-full bg-surface-page border border-border-default text-text-primary rounded px-3 py-1.5 text-xs focus:ring-brand-primary focus:border-brand-primary font-mono font-bold">
                                 </div>
                                 <div>
                                     <label class="block text-[9px] font-bold text-text-secondary uppercase mb-1">Target Stage</label>
-                                    <select wire:model="editStageId" class="w-full bg-[#030712] border border-border-default text-text-primary rounded px-3 py-1.5 text-xs focus:ring-brand-primary focus:border-brand-primary font-bold uppercase tracking-wide">
+                                    <select wire:model="editStageId" class="w-full bg-surface-page border border-border-default text-text-primary rounded px-3 py-1.5 text-xs focus:ring-brand-primary focus:border-brand-primary font-bold uppercase tracking-wide">
                                         @foreach($modalStages as $stg)
                                             <option value="{{ $stg->id }}">{{ $stg->name }}</option>
                                         @endforeach
@@ -918,13 +918,13 @@
                             </div>
                             <div>
                                 <label class="block text-[9px] font-bold text-text-secondary uppercase mb-1">Internal Ledger Notes</label>
-                                <textarea wire:model="editNotes" rows="2" class="w-full bg-[#030712] border border-border-default text-text-primary rounded px-3 py-1.5 text-xs focus:ring-brand-primary focus:border-brand-primary resize-none font-medium"></textarea>
+                                <textarea wire:model="editNotes" rows="2" class="w-full bg-surface-page border border-border-default text-text-primary rounded px-3 py-1.5 text-xs focus:ring-brand-primary focus:border-brand-primary resize-none font-medium"></textarea>
                             </div>
                             <div class="flex justify-between items-center pt-2">
-                                <button type="button" wire:click="deleteDeal({{ $modalDeal->id }})" onclick="return confirm('Permanently purge this deal record?')" class="text-[#F43F5E] hover:text-red-700 text-xs font-bold transition-colors uppercase tracking-wider">
+                                <button type="button" wire:click="deleteDeal({{ $modalDeal->id }})" onclick="return confirm('Permanently purge this deal record?')" class="text-color-danger-500 hover:text-red-700 text-xs font-bold transition-colors uppercase tracking-wider">
                                     Purge Record
                                 </button>
-                                <button type="submit" class="bg-brand-primary hover:bg-[#059669] text-white font-bold px-4 py-1.5 rounded text-xs transition-colors uppercase tracking-wider">
+                                <button type="submit" class="bg-brand-primary hover:opacity-90 text-white font-bold px-4 py-1.5 rounded text-xs transition-colors uppercase tracking-wider">
                                     Save Details
                                 </button>
                             </div>
@@ -994,16 +994,16 @@
                     </div>
 
                     <!-- AI Assessment Panel -->
-                    <div class="p-4 rounded border border-border-default/60 bg-[#160d0f] relative overflow-hidden">
+                    <div class="p-4 rounded border border-border-default/60 bg-surface-sunken relative overflow-hidden">
                         <div class="flex items-center justify-between mb-3 border-b border-[#F43F5E]/20 pb-2">
-                            <h3 class="text-[10px] font-extrabold text-[#F43F5E] uppercase tracking-widest font-mono">Neural Risk Diagnostics</h3>
-                            <button wire:click="generateAiRiskAssessment" class="px-2 py-0.5 rounded text-[10px] font-bold border border-[#F43F5E]/30 text-[#F43F5E] hover:bg-[#F43F5E]/10 transition-colors uppercase tracking-wider">
+                            <h3 class="text-[10px] font-extrabold text-color-danger-500 uppercase tracking-widest font-mono">Neural Risk Diagnostics</h3>
+                            <button wire:click="generateAiRiskAssessment" class="px-2 py-0.5 rounded text-[10px] font-bold border border-[#F43F5E]/30 text-color-danger-500 hover:bg-color-danger-500/10 transition-colors uppercase tracking-wider">
                                 Scan Risk
                             </button>
                         </div>
 
                         @if($aiRiskAssessment)
-                            <div class="text-xs space-y-2 mt-2 leading-relaxed text-[#F43F5E] font-bold">
+                            <div class="text-xs space-y-2 mt-2 leading-relaxed text-color-danger-500 font-bold">
                                 {!! nl2br(e($aiRiskAssessment)) !!}
                             </div>
                         @else
