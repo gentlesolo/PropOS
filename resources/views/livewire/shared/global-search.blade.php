@@ -1,6 +1,7 @@
 <div x-data="{ open: @entangle('isOpen') }" 
      @keydown.window.prevent.cmd.k="open = true; @this.call('toggle')" 
      @keydown.window.prevent.ctrl.k="open = true; @this.call('toggle')" 
+     @open-global-search.window="open = true; @this.call('toggle')"
      x-show="open" 
      class="fixed inset-0 z-50 overflow-y-auto p-4 sm:p-6 md:p-20" 
      style="display: none;">

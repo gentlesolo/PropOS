@@ -1,68 +1,113 @@
 <div>
-    <!-- Trigger Button (Floating FAB) -->
-    <button wire:click="toggle" class="fixed bottom-6 right-6 z-40 h-14 w-14 rounded-full bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 shadow-lg shadow-brand flex items-center justify-center hover:bg-brand-secondary transition-all hover:-translate-y-1 hover:shadow-xl focus:outline-none">
-        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
-        <span class="absolute top-0 right-0 h-3.5 w-3.5 rounded-full bg-success-500 border-2 border-white dark:border-surface-page animate-pulse"></span>
+    <!-- Trigger Button (Floating FAB) - Only on Mobile -->
+    <button wire:click="toggle" class="md:hidden fixed bottom-6 right-6 z-40 h-14 w-14 rounded-full bg-gradient-to-br from-[#10B981] to-[#0ea5e9] text-white shadow-lg shadow-[#10B981]/25 border border-white/15 flex items-center justify-center hover:scale-105 active:scale-95 transition-all focus:outline-none">
+        <svg class="h-6 w-6 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21l-.813-5.096L3 15l5.096-.813L9 9l.813 5.096L15 15l-5.188.904zm9.193-7.658L18 12l-1.006-3.754L13.25 7.25l3.744-1.006L18 2.5l1.006 3.744 3.744 1.006-3.744 1.006z"/>
+        </svg>
+        <span class="absolute top-0 right-0 h-3 w-3 rounded-full bg-[#22C55E] border-2 border-[#030712] animate-pulse"></span>
     </button>
 
     <!-- Slide-over Panel -->
-    <div x-data="{ open: @entangle('isOpen') }" x-show="open" class="fixed inset-0 z-50 overflow-hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true" style="display: none;">
+    <div x-data="{ open: @entangle('isOpen') }" 
+         @toggle-chat-panel.window="open = !open; @this.call('toggle')"
+         @toggle-chat-panel-open.window="open = true"
+         @toggle-chat-panel-close.window="open = false"
+         @toggle-chat-panel-toggle.window="open = !open"
+         @toggle-chat-panel-dispatch.window="open = !open; @this.call('toggle')"
+         @toggle-chat-panel-direct.window="open = true; @this.call('toggle')"
+         @toggleChatPanel.window="open = !open; @this.call('toggle')"
+         x-show="open" 
+         class="fixed inset-0 z-50 overflow-hidden" 
+         aria-labelledby="slide-over-title" 
+         role="dialog" 
+         aria-modal="true" 
+         style="display: none;">
         <div class="absolute inset-0 overflow-hidden">
             <!-- Background backdrop -->
-            <div x-show="open" x-transition:enter="ease-in-out duration-500" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in-out duration-500" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="absolute inset-0 bg-surface-overlay backdrop-blur-sm transition-opacity" @click="open = false"></div>
+            <div x-show="open" 
+                 x-transition:enter="ease-in-out duration-300" 
+                 x-transition:enter-start="opacity-0" 
+                 x-transition:enter-end="opacity-100" 
+                 x-transition:leave="ease-in-out duration-300" 
+                 x-transition:leave-start="opacity-100" 
+                 x-transition:leave-end="opacity-0" 
+                 class="absolute inset-0 bg-[#030712]/60 backdrop-blur-sm transition-opacity" 
+                 @click="open = false; @this.call('toggle')"></div>
 
             <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
-                <div x-show="open" x-transition:enter="transform transition ease-in-out duration-500 sm:duration-700" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transform transition ease-in-out duration-500 sm:duration-700" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full" class="pointer-events-auto w-screen max-w-md">
+                <div x-show="open" 
+                     x-transition:enter="transform transition ease-spring duration-300" 
+                     x-transition:enter-start="translate-x-full" 
+                     x-transition:enter-end="translate-x-0" 
+                     x-transition:leave="transform transition ease-spring duration-300" 
+                     x-transition:leave-start="translate-x-0" 
+                     x-transition:leave-end="translate-x-full" 
+                     class="pointer-events-auto w-screen max-w-md">
                     
-                    <div class="flex h-full flex-col bg-surface-card border-l border-border-default shadow-2xl">
+                    <div class="flex h-full flex-col bg-[#090d16]/95 backdrop-blur-xl border-l border-white/5 shadow-2xl">
                         
                         <!-- Header -->
-                        <div class="px-6 py-4 bg-brand-primary/5 border-b border-border-default flex items-center justify-between">
+                        <div class="px-6 py-4 bg-[#030712]/40 border-b border-white/5 flex items-center justify-between">
                             <div class="flex items-center space-x-3">
-                                <div class="h-10 w-10 rounded-xl bg-brand-primary flex items-center justify-center text-white shadow-sm">
-                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                <div class="h-9 w-9 rounded-md bg-gradient-to-br from-[#10B981] to-[#0ea5e9] flex items-center justify-center text-white shadow-md shadow-[#10B981]/25 border border-white/10">
+                                    <svg class="h-5 w-5 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                                 </div>
                                 <div>
-                                    <h2 class="text-base font-bold text-text-primary" id="slide-over-title">PropOS Copilot</h2>
-                                    <p class="text-xs font-semibold text-success-500 flex items-center">
-                                        <span class="h-1.5 w-1.5 rounded-full bg-success-500 mr-1.5 animate-pulse"></span> Online
+                                    <h2 class="text-xs font-black uppercase tracking-wider text-[#FAFAFA]" id="slide-over-title">AI Command Assistant</h2>
+                                    <p class="text-[9px] font-black text-[#10B981] flex items-center mt-0.5 tracking-widest uppercase">
+                                        <span class="h-1.5 w-1.5 rounded-full bg-[#10B981] mr-1.5 animate-pulse"></span> Terminal Active
                                     </p>
                                 </div>
                             </div>
-                            <div class="flex items-center space-x-3">
-                                <button wire:click="startNewSession" class="text-text-secondary hover:text-brand-primary transition-colors focus:outline-none" title="New Chat">
-                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
+                            <div class="flex items-center space-x-2">
+                                <button wire:click="startNewSession" class="p-1.5 rounded text-[#A1A1AA] hover:text-[#10B981] hover:bg-[#111827] transition-colors focus:outline-none" title="New Session">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
                                 </button>
-                                <button @click="open = false" class="text-text-tertiary hover:text-text-primary transition-colors focus:outline-none">
-                                    <span class="sr-only">Close panel</span>
-                                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                                <button @click="open = false; @this.call('toggle')" class="p-1.5 rounded text-[#52525B] hover:text-[#FAFAFA] hover:bg-[#111827] transition-colors focus:outline-none">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                                 </button>
                             </div>
                         </div>
 
+                        <!-- Quick Prompts Chips -->
+                        <div class="px-6 py-2.5 bg-[#030712]/20 border-b border-white/5 flex gap-1.5 overflow-x-auto whitespace-nowrap scrollbar-none select-none">
+                            <button @click="$wire.set('newMessage', 'My tasks today'); $wire.sendMessage()" 
+                                    class="px-2.5 py-1 bg-[#111827] hover:bg-[#10B981]/10 border border-white/5 hover:border-[#10B981]/30 rounded text-[10px] font-bold text-[#A1A1AA] hover:text-[#10B981] transition-all">
+                                Tasks Today
+                            </button>
+                            <button @click="$wire.set('newMessage', 'Find quiet leads'); $wire.sendMessage()" 
+                                    class="px-2.5 py-1 bg-[#111827] hover:bg-[#10B981]/10 border border-white/5 hover:border-[#10B981]/30 rounded text-[10px] font-bold text-[#A1A1AA] hover:text-[#10B981] transition-all">
+                                Quiet Leads
+                            </button>
+                            <button @click="$wire.set('newMessage', 'Draft follow-up email'); $wire.sendMessage()" 
+                                    class="px-2.5 py-1 bg-[#111827] hover:bg-[#10B981]/10 border border-white/5 hover:border-[#10B981]/30 rounded text-[10px] font-bold text-[#A1A1AA] hover:text-[#10B981] transition-all">
+                                Draft Follow-Up
+                            </button>
+                        </div>
+
                         <!-- Chat Messages Container -->
-                        <div class="flex-1 overflow-y-auto p-6 space-y-6 bg-surface-page relative">
-                            <!-- Subtle Background Pattern -->
-                            <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: url('data:image/svg+xml,%3Csvg width=%2220%22 height=%2220%22 viewBox=%220 0 20 20%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg fill=%22%239C92AC%22 fill-opacity=%220.4%22 fill-rule=%22evenodd%22%3E%3Ccircle cx=%223%22 cy=%223%22 r=%223%22/%3E%3Ccircle cx=%2213%22 cy=%2213%22 r=%223%22/%3E%3C/g%3E%3C/svg%3E');"></div>
+                        <div class="flex-1 overflow-y-auto p-6 space-y-4 bg-[#030712]/30 relative">
+                            <!-- Subtle Grid Background -->
+                            <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: radial-gradient(#10B981 1px, transparent 0); background-size: 12px 12px;"></div>
                             
                             @foreach($this->messages as $msg)
                                 @if($msg->role === 'assistant')
-                                    <!-- Assistant Message -->
+                                    <!-- Assistant Message (Geist Mono font family for terminal look) -->
                                     <div class="flex items-start space-x-3 relative z-10">
-                                        <div class="h-8 w-8 rounded-full bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 flex items-center justify-center shrink-0 shadow">
-                                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                        <div class="h-7 w-7 rounded bg-gradient-to-br from-[#10B981] to-[#10B981]/80 text-[#FAFAFA] flex items-center justify-center shrink-0 border border-white/10 shadow shadow-[#10B981]/20">
+                                            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                                         </div>
-                                        <div class="bg-surface-card border border-border-default rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm max-w-[85%]">
-                                            <p class="text-sm text-text-primary leading-relaxed whitespace-pre-wrap">{{ $msg->content }}</p>
+                                        <div class="bg-[#111827]/80 border border-white/5 rounded px-3.5 py-2.5 shadow-sm max-w-[85%] font-mono text-[11px] leading-relaxed text-[#FAFAFA]">
+                                            <p class="whitespace-pre-wrap">{{ $msg->content }}</p>
                                         </div>
                                     </div>
                                 @else
                                     <!-- User Message -->
                                     <div class="flex items-start justify-end space-x-3 relative z-10">
-                                        <div class="bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-2xl rounded-tr-sm px-4 py-3 shadow max-w-[85%]">
-                                            <p class="text-sm leading-relaxed whitespace-pre-wrap">{{ $msg->content }}</p>
+                                        <div class="bg-[#10B981]/10 border border-[#10B981]/25 text-[#10B981] rounded px-3.5 py-2.5 shadow max-w-[85%] text-xs font-bold leading-relaxed">
+                                            <p class="whitespace-pre-wrap">{{ $msg->content }}</p>
                                         </div>
-                                        <div class="h-8 w-8 rounded-full bg-surface-raised border border-border-default text-text-primary font-bold text-xs flex items-center justify-center shrink-0">
+                                        <div class="h-7 w-7 rounded bg-[#111827] border border-white/5 text-[#FAFAFA] font-bold text-xs flex items-center justify-center shrink-0">
                                             {{ substr(auth()->user()->first_name, 0, 1) }}
                                         </div>
                                     </div>
@@ -70,28 +115,44 @@
                             @endforeach
                             
                             <div wire:loading wire:target="sendMessage" class="flex items-start space-x-3 relative z-10">
-                                <div class="h-8 w-8 rounded-full bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 flex items-center justify-center shrink-0 shadow">
-                                    <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                <div class="h-7 w-7 rounded bg-gradient-to-br from-[#10B981] to-[#10B981]/80 text-[#FAFAFA] flex items-center justify-center shrink-0 border border-white/10 shadow">
+                                    <svg class="h-3.5 w-3.5 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                                 </div>
-                                <div class="bg-surface-card border border-border-default rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm flex items-center space-x-2">
-                                    <div class="h-2 w-2 bg-brand-primary/50 rounded-full animate-bounce"></div>
-                                    <div class="h-2 w-2 bg-brand-primary/50 rounded-full animate-bounce delay-75"></div>
-                                    <div class="h-2 w-2 bg-brand-primary/50 rounded-full animate-bounce delay-150"></div>
+                                <div class="bg-[#111827]/80 border border-white/5 rounded px-3.5 py-2 shadow-sm flex items-center space-x-1.5">
+                                    <div class="h-1.5 w-1.5 bg-[#10B981]/60 rounded-full animate-bounce"></div>
+                                    <div class="h-1.5 w-1.5 bg-[#10B981]/60 rounded-full animate-bounce [animation-delay:0.2s]"></div>
+                                    <div class="h-1.5 w-1.5 bg-[#10B981]/60 rounded-full animate-bounce [animation-delay:0.4s]"></div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Input Area -->
-                        <div class="p-4 bg-surface-card border-t border-border-default">
-                            <form wire:submit.prevent="sendMessage" class="relative">
-                                <input wire:model="newMessage" type="text" class="w-full pl-4 pr-12 py-3 bg-surface-input border border-border-default rounded-xl text-sm text-text-primary placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page focus:border-transparent transition-all" placeholder="Ask Copilot anything..." autocomplete="off" />
-                                <button type="submit" class="absolute right-2 top-1.5 bottom-1.5 aspect-square rounded-lg bg-brand-primary hover:bg-brand-secondary transition-colors text-white flex items-center justify-center disabled:opacity-50" wire:loading.attr="disabled">
-                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                        <!-- Input Area with voice icon -->
+                        <div class="p-4 bg-[#090d16] border-t border-white/5">
+                            <form wire:submit.prevent="sendMessage" class="relative flex items-center gap-2">
+                                <div class="relative flex-1">
+                                    <input wire:model="newMessage" 
+                                           type="text" 
+                                           class="w-full pl-3 pr-10 py-2.5 bg-[#030712] border border-white/5 rounded text-xs text-[#FAFAFA] placeholder-[#52525B] focus:outline-none focus:border-[#10B981]/50 focus:ring-1 focus:ring-[#10B981]/20 transition-all font-mono" 
+                                           placeholder="Type terminal instruction..." 
+                                           autocomplete="off" />
+                                    <!-- Voice icon inside input -->
+                                    <button type="button" 
+                                            class="absolute right-3 top-2 text-[#52525B] hover:text-[#10B981] transition-colors"
+                                            title="Voice Input (mocked)">
+                                        <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V4.5a3 3 0 1 1 6 0v8.25a3 3 0 0 1-3 3Z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <button type="submit" 
+                                        class="p-2.5 rounded bg-[#10B981] hover:bg-[#10B981]/80 transition-colors text-white flex items-center justify-center shrink-0 disabled:opacity-50" 
+                                        wire:loading.attr="disabled">
+                                    <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"></path></svg>
                                 </button>
                             </form>
-                            <div class="mt-3 flex items-center justify-between text-[10px] text-text-tertiary uppercase font-bold tracking-wider">
-                                <span>Powered by OpenAI & DeepSeek</span>
-                                <a href="#" class="hover:text-brand-primary">Prompt Guide</a>
+                            <div class="mt-3 flex items-center justify-between text-[9px] text-[#52525B] font-black uppercase tracking-wider">
+                                <span>Engine: DeepSeek-R1-Hybrid</span>
+                                <span class="text-[#10B981]">Terminal V2.4</span>
                             </div>
                         </div>
 
@@ -101,6 +162,3 @@
         </div>
     </div>
 </div>
-
-
-

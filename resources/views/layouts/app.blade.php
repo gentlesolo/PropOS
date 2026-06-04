@@ -90,6 +90,11 @@
 <body class="h-full font-sans antialiased text-text-primary bg-surface-page transition-colors duration-300 overflow-x-hidden selection:bg-brand-primary/30 selection:text-brand-primary">
     <div x-data="{ 
             sidebarOpen: false,
+            sidebarCollapsed: localStorage.getItem('sidebar-collapsed') === 'true',
+            toggleSidebar() {
+                this.sidebarCollapsed = !this.sidebarCollapsed;
+                localStorage.setItem('sidebar-collapsed', this.sidebarCollapsed);
+            },
             lastKey: '',
             keyTimeout: null
          }"
