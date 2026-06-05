@@ -7,10 +7,10 @@
         <div class="flex items-center justify-between mb-6">
             <div>
                 <h1 class="text-2xl font-bold text-text-primary">Messaging Inbox</h1>
-                <p class="text-sm text-text-secondary mt-0.5">Unified email, SMS, and WhatsApp conversation history</p>
+                <p class="text-sm text-text-secondary mt-0.5">Email threads, SMS, and WhatsApp in one place</p>
             </div>
-            <button wire:click="openCompose()"
-                class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">
+            <button onclick="Livewire.dispatch('openEmailComposer', {})"
+                class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:opacity-90 transition">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 Compose
             </button>
@@ -19,79 +19,25 @@
         {{-- Stats --}}
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <div class="bg-surface-card rounded-2xl border border-border-default p-4 text-center">
-                <div class="text-2xl font-bold text-text-primary">{{ $stats['emails_sent'] }}</div>
-                <div class="text-xs text-text-secondary mt-1">Emails Sent</div>
-            </div>
-            <div class="bg-surface-card rounded-2xl border border-border-default p-4 text-center">
-                <div class="text-2xl font-bold text-text-primary">{{ $stats['emails_opened'] }}</div>
-                <div class="text-xs text-text-secondary mt-1">Emails Opened</div>
+                <div class="text-2xl font-bold text-text-primary">{{ $stats['email_threads'] }}</div>
+                <div class="text-xs text-text-secondary mt-1">Email Threads</div>
+                @if($stats['email_unread'] > 0)
+                <div class="text-xs text-brand-primary font-semibold mt-0.5">{{ $stats['email_unread'] }} unread</div>
+                @endif
             </div>
             <div class="bg-surface-card rounded-2xl border border-border-default p-4 text-center">
                 <div class="text-2xl font-bold text-text-primary">{{ $stats['sms_sent'] }}</div>
                 <div class="text-xs text-text-secondary mt-1">SMS Sent</div>
             </div>
             <div class="bg-surface-card rounded-2xl border border-border-default p-4 text-center">
+                <div class="text-2xl font-bold text-text-primary">{{ $stats['sms_inbound'] }}</div>
+                <div class="text-xs text-text-secondary mt-1">SMS Received</div>
+            </div>
+            <div class="bg-surface-card rounded-2xl border border-border-default p-4 text-center">
                 <div class="text-2xl font-bold text-text-primary">{{ $stats['wa_total'] }}</div>
                 <div class="text-xs text-text-secondary mt-1">WhatsApp Total</div>
             </div>
         </div>
-
-        {{-- Compose form --}}
-        @if($showCompose)
-        <div class="bg-surface-card rounded-2xl border border-brand-200 p-5 mb-6">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-base font-semibold text-text-primary">Compose Message</h2>
-                <button wire:click="$set('showCompose', false)" class="text-text-tertiary hover:text-text-secondary text-xl leading-none">&times;</button>
-            </div>
-            <form wire:submit.prevent="sendMessage" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-xs font-medium text-text-secondary mb-1">Channel</label>
-                        <select wire:model.live="composeChannel"
-                            class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
-                            <option value="email">Email</option>
-                            <option value="sms">SMS</option>
-                            <option value="whatsapp">WhatsApp</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-text-secondary mb-1">
-                            To ({{ $composeChannel === 'email' ? 'Email address' : 'Phone number' }}) *
-                        </label>
-                        <input wire:model="compose_to"
-                            type="{{ $composeChannel === 'email' ? 'email' : 'tel' }}"
-                            class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page"
-                            placeholder="{{ $composeChannel === 'email' ? 'name@example.com' : '+2347012345678' }}">
-                        @error('compose_to') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
-                    </div>
-                    @if($composeChannel === 'email')
-                    <div>
-                        <label class="block text-xs font-medium text-text-secondary mb-1">Subject *</label>
-                        <input wire:model="compose_subject" type="text"
-                            class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
-                        @error('compose_subject') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
-                    </div>
-                    @endif
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-text-secondary mb-1">Message *</label>
-                    <textarea wire:model="compose_body" rows="4"
-                        class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page resize-none"
-                        placeholder="Type your message…"></textarea>
-                    @error('compose_body') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
-                </div>
-                <div class="flex gap-3">
-                    <button type="submit" wire:loading.attr="disabled"
-                        class="px-5 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">
-                        <span wire:loading.remove wire:target="sendMessage">Send</span>
-                        <span wire:loading wire:target="sendMessage">Sending…</span>
-                    </button>
-                    <button type="button" wire:click="$set('showCompose', false)"
-                        class="px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors">Cancel</button>
-                </div>
-            </form>
-        </div>
-        @endif
 
         {{-- Channel tabs + search --}}
         <div class="flex flex-wrap items-center gap-3 mb-4">
@@ -105,47 +51,94 @@
             </div>
             <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search messages…"
                 class="flex-1 min-w-48 rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary">
+
+            {{-- Thread filter (email only) --}}
+            @if(in_array($channel, ['all', 'email']))
+            <select wire:model.live="threadFilter"
+                    class="rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary">
+                <option value="all">All Threads</option>
+                <option value="mine">Assigned to me</option>
+                <option value="unassigned">Unassigned</option>
+                <option value="unread">Unread only</option>
+            </select>
+            @endif
         </div>
 
         {{-- Main grid --}}
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
 
-            {{-- Message lists --}}
+            {{-- Left: thread/message lists --}}
             <div class="xl:col-span-2 space-y-3">
 
-                {{-- Email section --}}
+                {{-- ── Email threads ── --}}
                 @if(in_array($channel, ['all', 'email']))
                 <div class="bg-surface-card rounded-2xl border border-border-default overflow-hidden">
-                    <div class="px-4 py-3 border-b border-border-default bg-surface-hover/30 flex items-center gap-2">
-                        <svg class="w-4 h-4 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                        <span class="text-sm font-semibold text-text-primary">Email ({{ $emailLogs->count() }})</span>
+                    <div class="px-4 py-3 border-b border-border-default bg-surface-hover/30 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                            <span class="text-sm font-semibold text-text-primary">Email Threads ({{ $emailThreads->count() }})</span>
+                        </div>
+                        <a href="{{ route('settings.email-accounts') }}"
+                           class="text-xs text-text-tertiary hover:text-brand-primary transition">
+                            Manage accounts →
+                        </a>
                     </div>
+
                     <div class="divide-y divide-border-default">
-                        @forelse($emailLogs as $log)
-                        @php $sc = $log->statusColor; @endphp
-                        <div class="px-4 py-3 hover:bg-surface-hover/30 transition-colors">
+                        @forelse($emailThreads as $thread)
+                        <button wire:click="selectThread({{ $thread->id }})"
+                                class="w-full text-left px-4 py-3 hover:bg-surface-hover/30 transition-colors {{ $selectedThreadId === $thread->id ? 'bg-brand-primary/5 border-l-2 border-brand-primary' : '' }}">
                             <div class="flex items-start justify-between gap-2">
                                 <div class="min-w-0 flex-1">
-                                    <p class="text-sm font-medium text-text-primary truncate">{{ $log->subject }}</p>
-                                    <p class="text-xs text-text-secondary">To: {{ $log->to_name ?? $log->to_email }}</p>
-                                    @if($log->contact)
-                                    <button wire:click="selectContact({{ $log->contact->id }})" class="text-xs text-brand-600 hover:underline mt-0.5">{{ $log->contact->full_name }}</button>
+                                    <div class="flex items-center gap-2">
+                                        @if($thread->unread_count > 0)
+                                        <span class="w-2 h-2 rounded-full bg-brand-primary shrink-0"></span>
+                                        @endif
+                                        <p class="text-sm font-{{ $thread->unread_count > 0 ? 'semibold' : 'medium' }} text-text-primary truncate">
+                                            {{ $thread->subject }}
+                                        </p>
+                                    </div>
+                                    <div class="flex items-center gap-2 mt-0.5">
+                                        @if($thread->contact)
+                                        <span class="text-xs text-brand-primary font-medium">{{ $thread->contact->full_name }}</span>
+                                        <span class="text-xs text-text-tertiary">·</span>
+                                        @endif
+                                        <span class="text-xs text-text-tertiary truncate">
+                                            {{ implode(', ', array_slice((array) $thread->participants, 0, 2)) }}
+                                        </span>
+                                    </div>
+                                    @if($thread->assignedAgent)
+                                    <span class="text-xs text-text-tertiary">→ {{ $thread->assignedAgent->first_name }}</span>
                                     @endif
                                 </div>
-                                <div class="flex items-center gap-2 shrink-0">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-{{ $sc }}-50 text-{{ $sc }}-700 border border-{{ $sc }}-200">{{ ucfirst($log->status) }}</span>
-                                    <span class="text-xs text-text-tertiary">{{ $log->created_at->diffForHumans() }}</span>
+                                <div class="flex flex-col items-end gap-1 shrink-0">
+                                    <span class="text-xs text-text-tertiary">{{ $thread->last_message_at?->diffForHumans() }}</span>
+                                    @if($thread->unread_count > 0)
+                                    <span class="px-1.5 py-0.5 bg-brand-primary text-white text-xs rounded-full font-semibold min-w-[1.25rem] text-center">
+                                        {{ $thread->unread_count }}
+                                    </span>
+                                    @endif
                                 </div>
                             </div>
-                        </div>
+                        </button>
                         @empty
-                        <div class="px-4 py-8 text-center text-text-tertiary text-sm">No emails sent yet.</div>
+                        <div class="px-4 py-10 text-center">
+                            <svg class="w-10 h-10 mx-auto mb-2 text-text-tertiary opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                            <p class="text-sm text-text-tertiary">No email threads yet.</p>
+                            <p class="text-xs text-text-tertiary mt-1">
+                                <a href="{{ route('settings.email-accounts') }}" class="text-brand-primary hover:underline">Connect an email account</a> to start receiving emails.
+                            </p>
+                        </div>
                         @endforelse
                     </div>
                 </div>
                 @endif
 
-                {{-- SMS section --}}
+                {{-- ── SMS ── --}}
                 @if(in_array($channel, ['all', 'sms']))
                 <div class="bg-surface-card rounded-2xl border border-border-default overflow-hidden">
                     <div class="px-4 py-3 border-b border-border-default bg-surface-hover/30 flex items-center gap-2">
@@ -161,7 +154,7 @@
                                     <p class="text-sm text-text-primary line-clamp-2">{{ $msg->body }}</p>
                                     <p class="text-xs text-text-secondary mt-0.5">{{ $msg->direction === 'outbound' ? 'To: '.$msg->to_number : 'From: '.$msg->from_number }}</p>
                                     @if($msg->contact)
-                                    <button wire:click="selectContact({{ $msg->contact->id }})" class="text-xs text-brand-600 hover:underline mt-0.5">{{ $msg->contact->full_name }}</button>
+                                    <button wire:click="selectContact({{ $msg->contact->id }})" class="text-xs text-brand-primary hover:underline mt-0.5">{{ $msg->contact->full_name }}</button>
                                     @endif
                                 </div>
                                 <div class="flex items-center gap-2 shrink-0">
@@ -177,15 +170,11 @@
                 </div>
                 @endif
 
-                {{-- WhatsApp section --}}
+                {{-- ── WhatsApp ── --}}
                 @if(in_array($channel, ['all', 'whatsapp']))
                 <div class="bg-surface-card rounded-2xl border border-border-default overflow-hidden">
-                    <div class="px-4 py-3 border-b border-border-default bg-surface-hover/30 flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <svg class="w-4 h-4 text-success-600" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2C6.48 2 2 6.48 2 12c0 1.85.504 3.584 1.379 5.074L2 22l5.09-1.355A9.942 9.942 0 0012.004 22C17.52 22 22 17.52 22 12S17.52 2 12.004 2zm0 18.18a8.162 8.162 0 01-4.17-1.144l-.297-.178-3.085.82.824-3.012-.196-.31A8.14 8.14 0 013.82 12c0-4.51 3.67-8.18 8.184-8.18 4.515 0 8.185 3.67 8.185 8.18s-3.67 8.18-8.185 8.18z"/></svg>
-                            <span class="text-sm font-semibold text-text-primary">WhatsApp ({{ $whatsAppMessages->count() }})</span>
-                        </div>
-                        <button wire:click="openCompose()" class="text-xs px-2.5 py-1 bg-success-600 text-white rounded-lg hover:bg-success-700 transition-colors">+ New</button>
+                    <div class="px-4 py-3 border-b border-border-default bg-surface-hover/30 flex items-center gap-2">
+                        <span class="text-sm font-semibold text-text-primary">WhatsApp ({{ $whatsAppMessages->count() }})</span>
                     </div>
                     <div class="divide-y divide-border-default">
                         @forelse($whatsAppMessages as $msg)
@@ -193,23 +182,18 @@
                             <div class="flex items-start justify-between gap-2">
                                 <div class="min-w-0 flex-1">
                                     <div class="flex items-center gap-2 mb-0.5">
-                                        <span class="text-xs px-1.5 py-0.5 rounded {{ $msg->direction === 'inbound' ? 'bg-success-50 text-success-700' : 'bg-brand-50 text-brand-700' }}">
+                                        <span class="text-xs px-1.5 py-0.5 rounded {{ $msg->direction === 'inbound' ? 'bg-green-50 text-green-700' : 'bg-brand-50 text-brand-700' }}">
                                             {{ $msg->direction === 'inbound' ? 'In' : 'Out' }}
                                         </span>
                                         @if($msg->contact)
-                                        <button wire:click="selectContact({{ $msg->contact->id }})" class="text-xs font-medium text-brand-600 hover:underline">{{ $msg->contact->full_name }}</button>
+                                        <button wire:click="selectContact({{ $msg->contact->id }})" class="text-xs font-medium text-brand-primary hover:underline">{{ $msg->contact->full_name }}</button>
                                         @else
                                         <span class="text-xs text-text-secondary">{{ $msg->to_number }}</span>
                                         @endif
                                     </div>
                                     <p class="text-sm text-text-primary line-clamp-2">{{ $msg->body }}</p>
                                 </div>
-                                <div class="flex items-center gap-2 shrink-0">
-                                    @if($msg->status)
-                                    <span class="text-xs text-text-tertiary capitalize">{{ $msg->status }}</span>
-                                    @endif
-                                    <span class="text-xs text-text-tertiary">{{ ($msg->sent_at ?? $msg->created_at)?->diffForHumans() }}</span>
-                                </div>
+                                <span class="text-xs text-text-tertiary shrink-0">{{ ($msg->sent_at ?? $msg->created_at)?->diffForHumans() }}</span>
                             </div>
                         </div>
                         @empty
@@ -219,36 +203,139 @@
                 </div>
                 @endif
 
+                {{-- SMS/WA compose form --}}
+                @if($showCompose && in_array($composeChannel, ['sms', 'whatsapp']))
+                <div class="bg-surface-card rounded-2xl border border-brand-200 p-5">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-base font-semibold text-text-primary">Compose {{ ucfirst($composeChannel) }}</h2>
+                        <button wire:click="$set('showCompose', false)" class="text-text-tertiary hover:text-text-secondary text-xl leading-none">&times;</button>
+                    </div>
+                    <form wire:submit.prevent="sendMessage" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-medium text-text-secondary mb-1">To (phone number) *</label>
+                            <input wire:model="compose_to" type="tel"
+                                class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary"
+                                placeholder="+2347012345678">
+                            @error('compose_to') <span class="text-xs text-red-600">{{ $message }}</span> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-text-secondary mb-1">Message *</label>
+                            <textarea wire:model="compose_body" rows="4"
+                                class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary resize-none"
+                                placeholder="Type your message…"></textarea>
+                            @error('compose_body') <span class="text-xs text-red-600">{{ $message }}</span> @enderror
+                        </div>
+                        <div class="flex gap-3">
+                            <button type="submit" wire:loading.attr="disabled"
+                                class="px-5 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:opacity-90 transition">Send</button>
+                            <button type="button" wire:click="$set('showCompose', false)"
+                                class="px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+                @endif
+
             </div>
 
-            {{-- Contact panel / Thread --}}
+            {{-- ── Right panel: thread viewer or contact thread ── --}}
             <div>
-                @if($selectedContact)
-                {{-- Thread view --}}
-                <div class="bg-surface-card rounded-2xl border border-brand-200 overflow-hidden flex flex-col" style="max-height:70vh">
-                    <div class="px-4 py-3 border-b border-border-default bg-brand-50/30 flex items-center justify-between shrink-0">
+                @if($selectedThread)
+                {{-- Email thread view --}}
+                <div class="bg-surface-card rounded-2xl border border-brand-200 overflow-hidden flex flex-col sticky top-6" style="max-height: 80vh;">
+                    {{-- Thread header --}}
+                    <div class="px-4 py-3 border-b border-border-default bg-brand-primary/5 shrink-0">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="min-w-0">
+                                <p class="text-sm font-semibold text-text-primary truncate">{{ $selectedThread->subject }}</p>
+                                @if($selectedThread->contact)
+                                <a href="{{ route('crm.contact.detail', $selectedThread->contact) }}"
+                                   class="text-xs text-brand-primary hover:underline">{{ $selectedThread->contact->full_name }}</a>
+                                @endif
+                                <p class="text-xs text-text-tertiary mt-0.5">
+                                    {{ implode(' · ', (array) $selectedThread->participants) }}
+                                </p>
+                            </div>
+                            <button wire:click="closeThread" class="text-text-tertiary hover:text-text-secondary text-xl leading-none shrink-0">&times;</button>
+                        </div>
+
+                        {{-- Assign to agent --}}
+                        <div class="mt-2 flex items-center gap-2">
+                            <span class="text-xs text-text-tertiary">Assigned:</span>
+                            <select wire:change="assignThread({{ $selectedThread->id }}, $event.target.value)"
+                                    class="text-xs border-0 bg-transparent text-text-secondary outline-none cursor-pointer">
+                                <option value="">Unassigned</option>
+                                @foreach($teamMembers as $member)
+                                <option value="{{ $member->id }}" {{ $selectedThread->assigned_to === $member->id ? 'selected' : '' }}>
+                                    {{ $member->first_name }} {{ $member->last_name }}
+                                </option>
+                                @endforeach
+                            </select>
+                            <button wire:click="archiveThread({{ $selectedThread->id }})"
+                                    class="ml-auto text-xs text-text-tertiary hover:text-text-primary">
+                                Archive
+                            </button>
+                        </div>
+                    </div>
+
+                    {{-- Messages --}}
+                    <div class="overflow-y-auto flex-1 p-3 space-y-3">
+                        @forelse($threadMessages as $msg)
+                        <div class="flex {{ $msg->direction === 'outbound' ? 'justify-end' : 'justify-start' }}">
+                            <div class="max-w-[90%] {{ $msg->direction === 'outbound' ? 'bg-brand-primary/10 border border-brand-primary/20' : 'bg-surface-elevated border border-border-default' }} rounded-xl px-3 py-2.5">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-semibold text-text-primary">
+                                        {{ $msg->direction === 'inbound' ? ($msg->from_name ?: $msg->from_email) : ($msg->sentBy?->first_name ?? 'You') }}
+                                    </span>
+                                    <span class="text-xs text-text-tertiary">{{ $msg->sent_at?->format('d M H:i') ?? $msg->created_at->format('d M H:i') }}</span>
+                                    @if($msg->status && $msg->direction === 'outbound')
+                                    <span class="text-xs text-text-tertiary">· {{ ucfirst($msg->status) }}</span>
+                                    @endif
+                                </div>
+                                @if($msg->body_html)
+                                <div class="text-sm text-text-primary prose prose-sm max-w-none">
+                                    {!! \Illuminate\Support\Str::limit(strip_tags($msg->body_html), 400) !!}
+                                </div>
+                                @elseif($msg->body_text)
+                                <p class="text-sm text-text-primary leading-relaxed">{{ \Illuminate\Support\Str::limit($msg->body_text, 400) }}</p>
+                                @else
+                                <p class="text-xs text-text-tertiary italic">{{ $msg->subject }}</p>
+                                @endif
+                            </div>
+                        </div>
+                        @empty
+                        <p class="text-center text-text-tertiary text-xs py-6">No messages in this thread yet.</p>
+                        @endforelse
+                    </div>
+
+                    {{-- Reply bar --}}
+                    <div class="p-3 border-t border-border-default shrink-0">
+                        <button wire:click="openComposeForThread"
+                                class="w-full flex items-center gap-2 px-4 py-2.5 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-elevated hover:text-text-primary transition text-left">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
+                            </svg>
+                            Reply to this thread…
+                        </button>
+                    </div>
+                </div>
+
+                @elseif($selectedContact)
+                {{-- SMS/WA contact thread --}}
+                <div class="bg-surface-card rounded-2xl border border-brand-200 overflow-hidden flex flex-col sticky top-6" style="max-height: 70vh;">
+                    <div class="px-4 py-3 border-b border-border-default bg-brand-primary/5 flex items-center justify-between shrink-0">
                         <div>
                             <p class="text-sm font-semibold text-text-primary">{{ $selectedContact->full_name }}</p>
                             <p class="text-xs text-text-tertiary">{{ $selectedContact->email ?? $selectedContact->phone ?? '' }}</p>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <button wire:click="openCompose({{ $selectedContact->id }})" class="text-xs px-2.5 py-1 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg hover:bg-brand-hover transition-colors">Reply</button>
-                            <button wire:click="closeThread" class="text-text-tertiary hover:text-text-secondary text-xl leading-none">&times;</button>
-                        </div>
+                        <button wire:click="$set('selectedContactId', null)" class="text-text-tertiary hover:text-text-secondary text-xl leading-none">&times;</button>
                     </div>
                     <div class="overflow-y-auto flex-1 p-3 space-y-2">
                         @forelse($thread as $msg)
                         <div class="flex {{ $msg['direction'] === 'outbound' ? 'justify-end' : 'justify-start' }}">
                             <div class="max-w-[85%] rounded-xl px-3 py-2 text-xs
-                                {{ $msg['direction'] === 'outbound' ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10' : 'bg-surface-hover text-text-primary' }}">
-                                <div class="flex items-center gap-1.5 mb-1 opacity-75">
-                                    @if($msg['type'] === 'email')
-                                    <span>Email</span>
-                                    @elseif($msg['type'] === 'sms')
-                                    <span>SMS</span>
-                                    @else
-                                    <span>WhatsApp</span>
-                                    @endif
+                                {{ $msg['direction'] === 'outbound' ? 'bg-brand-primary text-white' : 'bg-surface-elevated text-text-primary' }}">
+                                <div class="opacity-75 mb-1 flex items-center gap-1">
+                                    <span>{{ strtoupper($msg['type']) }}</span>
                                     @if($msg['status'])
                                     <span>· {{ ucfirst($msg['status']) }}</span>
                                     @endif
@@ -262,23 +349,14 @@
                         @endforelse
                     </div>
                 </div>
+
                 @else
-                {{-- Contact list --}}
-                <div class="bg-surface-card rounded-2xl border border-border-default p-4">
-                    <p class="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-3">Contacts</p>
-                    <input wire:model.live.debounce.300ms="contactSearch" type="text" placeholder="Search contacts…"
-                        class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-1.5 text-xs text-text-primary mb-3">
-                    <div class="space-y-1">
-                        @forelse($contacts as $c)
-                        <button wire:click="selectContact({{ $c->id }})"
-                            class="w-full text-left px-3 py-2 rounded-lg hover:bg-surface-hover/50 transition-colors">
-                            <div class="text-sm font-medium text-text-primary">{{ $c->first_name }} {{ $c->last_name }}</div>
-                            <div class="text-xs text-text-tertiary">{{ $c->email ?? $c->phone ?? '' }}</div>
-                        </button>
-                        @empty
-                        <p class="text-xs text-text-tertiary text-center py-4">No contacts found.</p>
-                        @endforelse
-                    </div>
+                {{-- Placeholder --}}
+                <div class="bg-surface-card rounded-2xl border border-border-default p-8 text-center text-text-tertiary sticky top-6">
+                    <svg class="w-10 h-10 mx-auto mb-3 opacity-30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                    <p class="text-sm">Select a thread to read it</p>
                 </div>
                 @endif
             </div>
@@ -287,6 +365,3 @@
     </div>
 
 </div>
-
-
-

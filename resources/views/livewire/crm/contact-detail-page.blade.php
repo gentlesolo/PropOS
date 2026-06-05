@@ -32,6 +32,13 @@
                         {{ $contact->initials }}
                     </div>
                     <div class="flex items-center gap-2">
+                        @if($contact->email)
+                        <button wire:click="sendEmail"
+                                class="text-xs text-white bg-brand-primary border border-brand-primary rounded-lg px-2.5 py-1.5 hover:opacity-90 transition-colors flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                            Email
+                        </button>
+                        @endif
                         <button wire:click="loadNextAction"
                             wire:loading.attr="disabled"
                             wire:target="loadNextAction"
@@ -223,7 +230,7 @@
                     <div class="flex justify-between">
                         <dt class="text-text-secondary">Budget</dt>
                         <dd class="font-medium text-text-primary">
-                            {{ $currencySymbol }}{{ number_format($prefs['min_budget'] ?? 0) }} – {{ $currencySymbol }}{{ number_format($prefs['max_budget'] ?? 0) }}
+                            {{ $currencySymbol }}{{ number_format($prefs['min_budget'] ?? 0) }} ï¿½ {{ $currencySymbol }}{{ number_format($prefs['max_budget'] ?? 0) }}
                         </dd>
                     </div>
                     @endif
@@ -269,7 +276,7 @@
                             <p class="text-xs font-medium text-text-primary truncate">{{ $match['listing']->property->address_line_1 ?? 'Property' }}</p>
                             <span class="shrink-0 ml-2 text-[10px] font-bold text-brand-primary bg-brand-primary/10 rounded px-1.5 py-0.5">{{ $match['score'] }}%</span>
                         </div>
-                        <p class="text-[10px] text-text-secondary">{{ implode(' · ', $match['reasons']) }}</p>
+                        <p class="text-[10px] text-text-secondary">{{ implode(' ï¿½ ', $match['reasons']) }}</p>
                     </div>
                     @endforeach
                 </div>
@@ -340,7 +347,7 @@
                             @if(!empty($child['birthday']) || !empty($child['school']))
                             <span class="text-text-tertiary block text-[10px]">
                                 {{ $child['birthday'] ? 'BD: ' . $child['birthday'] : '' }}
-                                {{ $child['school'] ? ' · ' . $child['school'] : '' }}
+                                {{ $child['school'] ? ' ï¿½ ' . $child['school'] : '' }}
                             </span>
                             @endif
                         </dd>
@@ -393,8 +400,8 @@
                         <p class="text-xs font-bold text-text-primary truncate">{{ $item['address'] }}</p>
                         <p class="text-[10px] text-text-secondary mt-0.5">
                             @if(!empty($item['price'])) Value: {{ $currencySymbol }}{{ number_format((float)$item['price']) }} @endif
-                            @if(!empty($item['year_acquired'])) · Acquired: {{ $item['year_acquired'] }} @endif
-                            @if(!empty($item['year_sold'])) · Sold: {{ $item['year_sold'] }} @endif
+                            @if(!empty($item['year_acquired'])) ï¿½ Acquired: {{ $item['year_acquired'] }} @endif
+                            @if(!empty($item['year_sold'])) ï¿½ Sold: {{ $item['year_sold'] }} @endif
                         </p>
                     </div>
                     @endforeach
@@ -416,7 +423,7 @@
                     <li class="py-2 flex items-center justify-between gap-2 text-xs">
                         <div class="min-w-0">
                             <p class="font-bold text-text-primary truncate">{{ $doc['title'] }}</p>
-                            <span class="text-[10px] text-text-tertiary">{{ $doc['file_name'] }} · {{ \Carbon\Carbon::parse($doc['uploaded_at'])->diffForHumans() }}</span>
+                            <span class="text-[10px] text-text-tertiary">{{ $doc['file_name'] }} ï¿½ {{ \Carbon\Carbon::parse($doc['uploaded_at'])->diffForHumans() }}</span>
                         </div>
                         <div class="flex items-center gap-1.5 shrink-0">
                             <a href="{{ Storage::url($doc['file_path']) }}" target="_blank" class="p-1 text-brand-primary hover:bg-brand-primary/10 rounded">
@@ -481,6 +488,85 @@
                 </form>
             </div>
 
+            <!-- Tab switcher: Activity / Emails -->
+            <div class="flex gap-1 p-1 bg-surface-hover/50 rounded-xl w-fit">
+                <button wire:click="$set('activeTab', 'activity')"
+                        class="px-4 py-1.5 rounded-lg text-sm font-medium transition-colors {{ $activeTab === 'activity' ? 'bg-white text-text-primary shadow-sm dark:bg-surface-card' : 'text-text-secondary hover:text-text-primary' }}">
+                    Activity
+                </button>
+                <button wire:click="$set('activeTab', 'emails')"
+                        class="px-4 py-1.5 rounded-lg text-sm font-medium transition-colors {{ $activeTab === 'emails' ? 'bg-white text-text-primary shadow-sm dark:bg-surface-card' : 'text-text-secondary hover:text-text-primary' }}">
+                    Emails
+                    @if($emailThreads->sum('unread_count') > 0)
+                    <span class="ml-1 px-1.5 py-0.5 bg-brand-primary text-white text-xs rounded-full">{{ $emailThreads->sum('unread_count') }}</span>
+                    @endif
+                </button>
+            </div>
+
+            @if($activeTab === 'emails')
+            <!-- Emails tab -->
+            <div class="bg-surface-card rounded-2xl border border-border-default p-5 space-y-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-semibold text-text-primary">Email Threads</h3>
+                    @if($contact->email)
+                    <button wire:click="sendEmail"
+                            class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-primary text-white text-xs font-medium rounded-lg hover:opacity-90 transition">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                        New Email
+                    </button>
+                    @endif
+                </div>
+
+                @forelse($emailThreads as $thread)
+                <div class="border border-border-default rounded-xl overflow-hidden">
+                    <div class="px-4 py-3 bg-surface-elevated flex items-start justify-between gap-2">
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-2">
+                                @if($thread->unread_count > 0)
+                                <span class="w-2 h-2 rounded-full bg-brand-primary shrink-0"></span>
+                                @endif
+                                <p class="text-sm font-semibold text-text-primary truncate">{{ $thread->subject }}</p>
+                            </div>
+                            <p class="text-xs text-text-tertiary mt-0.5">{{ $thread->last_message_at?->diffForHumans() }} Â· {{ $thread->messages->count() }} message(s)</p>
+                        </div>
+                        <a href="{{ route('marketing.inbox') }}"
+                           class="text-xs text-brand-primary hover:underline shrink-0">
+                            Open â†’
+                        </a>
+                    </div>
+
+                    {{-- Latest message preview --}}
+                    @php $latest = $emailLogs->where('thread_id', $thread->id)->last(); @endphp
+                    @if($latest)
+                    <div class="px-4 py-2.5">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-xs font-medium text-text-secondary">{{ $latest->sender_label }}</span>
+                            <span class="text-xs text-text-tertiary">{{ ($latest->sent_at ?? $latest->created_at)->format('d M H:i') }}</span>
+                            <span class="text-xs px-1.5 py-0.5 rounded {{ $latest->direction === 'inbound' ? 'bg-green-50 text-green-700' : 'bg-brand-primary/10 text-brand-primary' }}">
+                                {{ $latest->direction === 'inbound' ? 'Received' : 'Sent' }}
+                            </span>
+                        </div>
+                        <p class="text-sm text-text-secondary line-clamp-2">
+                            {{ $latest->body_text ? \Illuminate\Support\Str::limit($latest->body_text, 120) : \Illuminate\Support\Str::limit(strip_tags($latest->body_html ?? $latest->subject), 120) }}
+                        </p>
+                    </div>
+                    @endif
+                </div>
+                @empty
+                <div class="text-center py-8 text-text-tertiary">
+                    <svg class="w-8 h-8 mx-auto mb-2 opacity-30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                    <p class="text-sm">No emails with this contact yet.</p>
+                    @if($contact->email)
+                    <button wire:click="sendEmail" class="mt-2 text-xs text-brand-primary hover:underline">Send the first email â†’</button>
+                    @else
+                    <p class="text-xs mt-1">Add an email address to this contact to start emailing.</p>
+                    @endif
+                </div>
+                @endforelse
+            </div>
+            @else
             <!-- Timeline -->
             <div class="bg-surface-card rounded-2xl border border-border-default p-5">
                 <h3 class="text-sm font-semibold text-text-primary mb-4">Activity Timeline</h3>
@@ -540,6 +626,8 @@
                 </div>
                 @endforelse
             </div>
+            @endif
+
         </div>
     </div>
 </div>

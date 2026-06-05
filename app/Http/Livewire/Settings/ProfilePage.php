@@ -40,6 +40,7 @@ class ProfilePage extends Component
     public string $border_radius   = 'default';
     public string $sidebar_style   = 'dark';
     public string $custom_css      = '';
+    public bool   $use_platform_branding = false;
     public $agency_logo;
     public $favicon;
 
@@ -80,10 +81,11 @@ class ProfilePage extends Component
                 'primary_color'   => $agency->primary_color ?? '#1E40AF',
                 'secondary_color' => $agency->secondary_color ?? '#18181B',
                 'accent_color'    => $agency->accent_color ?? '#F59E0B',
-                'font_family'     => $agency->font_family ?? '',
-                'border_radius'   => $agency->border_radius ?? 'default',
-                'sidebar_style'   => $agency->sidebar_style ?? 'dark',
-                'custom_css'      => $agency->custom_css ?? '',
+                'font_family'          => $agency->font_family ?? '',
+                'border_radius'        => $agency->border_radius ?? 'default',
+                'sidebar_style'        => $agency->sidebar_style ?? 'dark',
+                'custom_css'           => $agency->custom_css ?? '',
+                'use_platform_branding' => (bool) ($agency->use_platform_branding ?? false),
                 'default_commission_rate' => (string) ($agency->default_commission_rate ?? '5'),
                 'split_agent_pct'      => (string) ($splits['agent'] ?? '50'),
                 'split_principal_pct'  => (string) ($splits['principal'] ?? '40'),
@@ -155,7 +157,8 @@ class ProfilePage extends Component
             'font_family'     => 'nullable|string|in:,Inter,Poppins,Lato,Roboto',
             'border_radius'   => 'required|string|in:sharp,default,rounded,pill',
             'sidebar_style'   => 'required|string|in:dark,light,brand',
-            'custom_css'      => 'nullable|string|max:10000',
+            'custom_css'           => 'nullable|string|max:10000',
+            'use_platform_branding' => 'boolean',
             'agency_logo'     => 'nullable|image|max:2048',
             'favicon'         => 'nullable|image|max:512',
         ]);
@@ -174,7 +177,8 @@ class ProfilePage extends Component
             'font_family'     => $this->font_family ?: null,
             'border_radius'   => $this->border_radius,
             'sidebar_style'   => $this->sidebar_style,
-            'custom_css'      => $this->custom_css ?: null,
+            'custom_css'           => $this->custom_css ?: null,
+            'use_platform_branding' => $this->use_platform_branding,
         ];
 
         if ($this->agency_logo) {
@@ -261,6 +265,14 @@ class ProfilePage extends Component
     {
         \App\Infrastructure\Queue\Jobs\SyncMlsListingsJob::dispatch();
         session()->flash('mls_sync_triggered', 'Background MLS sync job dispatched successfully!');
+    }
+
+    public function togglePlatformBranding(): void
+    {
+        $this->use_platform_branding = !$this->use_platform_branding;
+        auth()->user()->agency->update([
+            'use_platform_branding' => $this->use_platform_branding,
+        ]);
     }
 
     public function render()

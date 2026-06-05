@@ -13,6 +13,13 @@
             {{ $label }}
         </button>
         @endforeach
+        <a href="{{ route('settings.email-accounts') }}"
+           class="px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px border-transparent text-text-secondary hover:text-text-primary flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+            Email Accounts
+        </a>
     </div>
 
     <!-- Flash Messages -->
@@ -141,10 +148,42 @@
                 </div>
             </div>
             {{-- ── Branding ── --}}
-            <div class="pt-2 pb-1">
-                <h3 class="text-sm font-semibold text-text-primary">Branding</h3>
-                <p class="text-xs text-text-secondary mt-0.5">Customise how this agency looks to every user.</p>
+            <div class="pt-2 pb-1 flex items-start justify-between gap-4">
+                <div>
+                    <h3 class="text-sm font-semibold text-text-primary">Branding</h3>
+                    <p class="text-xs text-text-secondary mt-0.5">Customise how this agency looks to every user.</p>
+                </div>
+                <button wire:click="togglePlatformBranding" type="button"
+                    class="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors
+                        {{ $use_platform_branding
+                            ? 'bg-brand-primary/10 border-brand-primary/30 text-brand-primary hover:bg-brand-primary/15'
+                            : 'border-border-default bg-surface-sunken text-text-secondary hover:text-text-primary hover:border-border-strong' }}">
+                    @if($use_platform_branding)
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Using platform defaults
+                    @else
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                        Revert to platform defaults
+                    @endif
+                </button>
             </div>
+
+            @if($use_platform_branding)
+            {{-- Platform defaults info card --}}
+            <div class="rounded-xl border border-brand-primary/20 bg-brand-primary/5 px-4 py-3 flex items-start gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 mt-0.5 text-brand-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></svg>
+                <div>
+                    <p class="text-xs font-medium text-text-primary mb-1">Using PropOS platform defaults</p>
+                    <p class="text-xs text-text-secondary leading-relaxed">
+                        Colors: <span class="font-mono text-text-primary">#10B981</span> &middot; <span class="font-mono text-text-primary">#18181B</span> &middot; <span class="font-mono text-text-primary">#F59E0B</span>
+                        &nbsp;&nbsp;Font: <span class="font-medium text-text-primary">Geist</span>
+                        &nbsp;&nbsp;Corners: <span class="font-medium text-text-primary">Default</span>
+                        &nbsp;&nbsp;Sidebar: <span class="font-medium text-text-primary">Dark</span>
+                    </p>
+                    <p class="text-xs text-text-tertiary mt-1.5">Your custom settings are preserved — click the button above to switch back.</p>
+                </div>
+            </div>
+            @else
 
             {{-- Logo & Favicon --}}
             <div class="grid grid-cols-2 gap-4">
@@ -235,6 +274,7 @@
                 <textarea wire:model.defer="custom_css" rows="5" placeholder=".my-class { color: red; }" spellcheck="false" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary resize-y font-mono text-xs"></textarea>
                 @error('custom_css') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
             </div>
+            @endif {{-- end @else (custom branding fields) --}}
             <div class="pt-4 border-t border-border-default flex justify-end">
                 <button type="submit" class="px-5 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">
                     <span wire:loading.remove wire:target="saveAgency">Save Agency Settings</span>

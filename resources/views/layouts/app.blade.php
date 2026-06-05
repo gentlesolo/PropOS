@@ -15,14 +15,15 @@
             'Lato'    => 'Lato:wght@300;400;700',
             'Roboto'  => 'Roboto:wght@300;400;500;700',
         ];
-        $selectedFont = $agency->font_family ?? '';
+        $usePlatform  = $agency->use_platform_branding ?? false;
+        $selectedFont = $usePlatform ? '' : ($agency->font_family ?? '');
         $radiusMap = [
             'sharp'   => ['--radius-button:2px;--radius-input:2px;--radius-card:4px;--radius-dialog:6px;'],
             'default' => [],
             'rounded' => ['--radius-button:10px;--radius-input:10px;--radius-card:18px;--radius-dialog:24px;'],
             'pill'    => ['--radius-button:9999px;--radius-input:9999px;--radius-card:24px;--radius-dialog:28px;'],
         ];
-        $radiusVars = implode('', $radiusMap[$agency->border_radius ?? 'default'] ?? []);
+        $radiusVars = $usePlatform ? '' : implode('', $radiusMap[$agency->border_radius ?? 'default'] ?? []);
     @endphp
 
     <title>{{ $agency->name ?? config('app.name', 'PropOS') }}</title>
@@ -61,9 +62,10 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 
+    @unless($usePlatform)
     <style>
         :root {
-            --brand-primary:   {{ $agency->primary_color   ?? '#1E40AF' }};
+            --brand-primary:   {{ $agency->primary_color   ?? '#10B981' }};
             --brand-secondary: {{ $agency->secondary_color ?? '#18181B' }};
             --brand-accent:    {{ $agency->accent_color    ?? '#F59E0B' }};
             @if($selectedFont)--font-sans: '{{ $selectedFont }}', sans-serif;@endif
@@ -76,7 +78,7 @@
         }
         @elseif($agency->sidebar_style === 'brand')
         #app-sidebar {
-            background: {{ $agency->primary_color ?? '#1E40AF' }} !important;
+            background: {{ $agency->primary_color ?? '#10B981' }} !important;
             border-color: rgba(255,255,255,0.12) !important;
         }
         #app-sidebar .text-text-secondary,
@@ -90,6 +92,7 @@
     @if($agency->custom_css)
     <style id="agency-custom-css">{!! $agency->custom_css !!}</style>
     @endif
+    @endunless
 </head>
 <body class="h-full font-sans antialiased text-text-primary bg-surface-page transition-colors duration-300 overflow-x-hidden selection:bg-brand-primary/30 selection:text-brand-primary">
     <div x-data="layoutState"
@@ -131,6 +134,9 @@
 
     <!-- Global Spotlight Search (Cmd+K) -->
     <livewire:shared.global-search />
+
+    <!-- Global Email Composer (floating, triggered via openEmailComposer event) -->
+    <livewire:email.email-composer />
 
     <!-- Theme Toggle Alpine Store -->
     <script>

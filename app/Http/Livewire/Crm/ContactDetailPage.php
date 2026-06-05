@@ -7,6 +7,8 @@ use App\Application\CRM\Actions\MatchBuyersToListingAction;
 use App\Application\CRM\Actions\ScoreLeadAction;
 use App\Application\CRM\Actions\SuggestNextActionAction;
 use App\Infrastructure\Persistence\Models\Contact;
+use App\Infrastructure\Persistence\Models\EmailLog;
+use App\Infrastructure\Persistence\Models\EmailThread;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -61,6 +63,9 @@ class ContactDetailPage extends Component
     // AI next best action
     public ?string $nextActionSuggestion = null;
     public bool $loadingNextAction = false;
+
+    // Detail tabs
+    public string $activeTab = 'activity';
 
     protected $rules = [
         'first_name' => 'required|string|max:255',
@@ -329,6 +334,15 @@ class ContactDetailPage extends Component
         $this->nextActionSuggestion = null;
     }
 
+    public function sendEmail(): void
+    {
+        $this->dispatch('openEmailComposer', [
+            'to_email'   => $this->contact->email ?? '',
+            'to_name'    => $this->contact->full_name,
+            'contact_id' => $this->contact->id,
+        ]);
+    }
+
     public function render(MatchBuyersToListingAction $matchAction)
     {
         $activities = $this->contact->activities()->with('user')->get();
@@ -337,9 +351,21 @@ class ContactDetailPage extends Component
             ? $matchAction->matchListingsForBuyer($this->contact)
             : collect();
 
+        $emailThreads = EmailThread::with('assignedAgent')
+            ->where('contact_id', $this->contact->id)
+            ->orderByDesc('last_message_at')
+            ->get();
+
+        $emailLogs = EmailLog::where('contact_id', $this->contact->id)
+            ->orderByDesc('created_at')
+            ->limit(30)
+            ->get();
+
         return view('livewire.crm.contact-detail-page', [
-            'activities'     => $activities,
+            'activities'      => $activities,
             'matchedListings' => $matchedListings,
+            'emailThreads'    => $emailThreads,
+            'emailLogs'       => $emailLogs,
         ])->layout('layouts.app');
     }
 }

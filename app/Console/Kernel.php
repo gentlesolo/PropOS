@@ -4,6 +4,7 @@ namespace App\Console;
 
 use App\Infrastructure\Queue\Jobs\ApplyLateFeesJob;
 use App\Infrastructure\Queue\Jobs\SendComplianceRemindersJob;
+use App\Infrastructure\Queue\Jobs\SyncAllEmailAccountsJob;
 use App\Infrastructure\Queue\Jobs\DetectAndNotifyStaleDealsJob;
 use App\Infrastructure\Queue\Jobs\DispatchScheduledCampaignsJob;
 use App\Infrastructure\Queue\Jobs\GenerateMonthlyInvoicesJob;
@@ -109,6 +110,12 @@ class Kernel extends ConsoleKernel
                  ->dailyAt('06:00')
                  ->withoutOverlapping()
                  ->name('sync-payment-mandates');
+
+        // Sync all active IMAP email accounts — every 5 minutes
+        $schedule->job(new SyncAllEmailAccountsJob)
+                 ->everyFiveMinutes()
+                 ->withoutOverlapping()
+                 ->name('sync-email-accounts');
 
         // Prune stale telescope/horizon entries and expired sessions — daily at midnight
         $schedule->command('queue:prune-failed --hours=168')->daily();

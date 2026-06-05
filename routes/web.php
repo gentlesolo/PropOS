@@ -134,6 +134,9 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::get('/settings', \App\Http\Livewire\Settings\ProfilePage::class)->name('settings.profile');
     Route::get('/settings/two-factor', \App\Http\Livewire\Auth\TwoFactorSetupPage::class)->name('two-factor.setup');
 
+    // ── Email accounts (all users — personal accounts; admins see shared) ───
+    Route::get('/settings/email-accounts', \App\Http\Livewire\Settings\EmailAccountsPage::class)->name('settings.email-accounts');
+
     // ── Team Management — requires agency.manage ──────────────────────────────
     Route::middleware('permission:agency.manage')->group(function () {
         Route::get('/settings/team', \App\Http\Livewire\Settings\TeamPage::class)->name('settings.team');

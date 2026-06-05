@@ -28,6 +28,7 @@ class Agency extends Model
         'border_radius',
         'sidebar_style',
         'custom_css',
+        'use_platform_branding',
         'tagline',
         'address',
         'phone',
@@ -46,9 +47,10 @@ class Agency extends Model
     protected function casts(): array
     {
         return [
-            'settings' => 'array',
-            'commission_splits' => 'array',
+            'settings'              => 'array',
+            'commission_splits'     => 'array',
             'default_commission_rate' => 'decimal:2',
+            'use_platform_branding' => 'boolean',
         ];
     }
 

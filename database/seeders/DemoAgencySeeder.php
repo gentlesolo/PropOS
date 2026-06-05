@@ -28,10 +28,10 @@ class DemoAgencySeeder extends Seeder
 
         // Always sync branding so re-running the seeder reflects current defaults
         $agency->update([
-            'primary_color'   => '#10B981',
-            'secondary_color' => '#18181B',
-            'accent_color'    => '#F59E0B',
-            'font_family'     => null,
+            'primary_color'   => '#10B981',   // Emerald-500 — brand primary
+            'secondary_color' => '#18181B',   // Zinc-900    — brand secondary
+            'accent_color'    => '#F59E0B',   // Amber-500   — brand accent
+            'font_family'     => 'Geist',
             'border_radius'   => 'default',
             'sidebar_style'   => 'dark',
             'tagline'         => 'Redefining real estate in West Africa.',

@@ -27,9 +27,9 @@ class SecondAgencySeeder extends Seeder
                 'subscription_status' => 'active',
                 'tagline'             => 'Where vision meets value in Southern Africa.',
                 // ── Branding — Violet × Orange, Poppins, rounded, brand sidebar
-                'primary_color'   => '#7C3AED',
-                'secondary_color' => '#1C1917',
-                'accent_color'    => '#F97316',
+                'primary_color'   => '#7C3AED',   // Violet-600 — Apex brand primary
+                'secondary_color' => '#18181B',   // Zinc-900   — neutral depth (aligned to design system)
+                'accent_color'    => '#F97316',   // Orange-500 — Apex brand accent
                 'font_family'     => 'Poppins',
                 'border_radius'   => 'rounded',
                 'sidebar_style'   => 'brand',
