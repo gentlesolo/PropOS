@@ -168,7 +168,7 @@ class LeaseManagementPage extends Component
             : null;
 
         $tenants  = Tenant::with('contact:id,first_name,last_name')->where('status', 'active')->get();
-        $listings = Listing::with('property:id,address')->latest()->get(['id', 'property_id']);
+        $listings = Listing::with('property:id,address_line_1,city')->latest()->get(['id', 'property_id']);
 
         $stats = [
             'active'          => Lease::where('status', 'active')->count(),

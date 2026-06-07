@@ -7,17 +7,22 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Tells Spatie Permission which "team" (agency) to scope all permission
- * checks to for the current request.  Must run after auth resolves the user.
+ * Runs on every web request (including Livewire AJAX via the web middleware
+ * group).  Resolves the current tenant so BelongsToAgencyScope always has a
+ * valid agency_id, then tells Spatie Permission which team to scope to.
  */
 class SetPermissionTeamMiddleware
 {
+    public function __construct(private TenantResolver $resolver) {}
+
     public function handle(Request $request, Closure $next): Response
     {
-        $user = auth()->user();
+        // Resolve tenant on every web request — this covers Livewire AJAX calls
+        // that bypass route-level TenantMiddleware.
+        $agency = $this->resolver->resolve($request);
 
-        if ($user && $user->agency_id) {
-            setPermissionsTeamId($user->agency_id);
+        if ($agency) {
+            setPermissionsTeamId($agency->id);
         }
 
         return $next($request);

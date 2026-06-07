@@ -28,7 +28,7 @@
         <form wire:submit.prevent="createCampaign" class="grid grid-cols-2 md:grid-cols-3 gap-4">
             <div class="md:col-span-2">
                 <label class="block text-xs font-medium text-text-secondary mb-1">Campaign Name *</label>
-                <input wire:model.defer="name" type="text" placeholder="e.g. Lekki Apartment Leads — Q3" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
+                <input wire:model.defer="name" type="text" placeholder="e.g. Lekki Apartment Leads &#8358; Q3" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                 @error('name') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
             </div>
             <div>
@@ -58,7 +58,7 @@
                 <select wire:model.defer="campaign_id" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     <option value="">No linked campaign</option>
                     @foreach($linkedCampaigns as $c)
-                    <option value="{{ $c->id }}">{{ $c->name }} — {{ $c->listing?->property?->address_line_1 ?? 'No listing' }}</option>
+                    <option value="{{ $c->id }}">{{ $c->name }} &#8358; {{ $c->listing?->property?->address_line_1 ?? 'No listing' }}</option>
                     @endforeach
                 </select>
             </div>
@@ -101,7 +101,7 @@
                         <td class="py-4 px-5 text-sm text-text-primary">{{ number_format($ad->impressions) }}</td>
                         <td class="py-4 px-5 text-sm text-text-primary">{{ number_format($ad->clicks) }}</td>
                         <td class="py-4 px-5 text-sm font-bold text-success-600">{{ $ad->leads }}</td>
-                        <td class="py-4 px-5 text-sm text-text-primary">{{ $ad->cpl ? $currencySymbol . number_format($ad->cpl) : '—' }}</td>
+                        <td class="py-4 px-5 text-sm text-text-primary">{{ $ad->cpl ? $currencySymbol . number_format($ad->cpl) : '&#8358;' }}</td>
                         <td class="py-4 px-5">
                             <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase
                                 @if($ad->status === 'active') bg-success-100 text-success-700

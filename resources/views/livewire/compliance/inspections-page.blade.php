@@ -76,7 +76,7 @@
     @endif
 
     <div class="flex flex-wrap gap-3 mb-4">
-        <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search by inspector or address…"
+        <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search by inspector or address&#8358;"
             class="flex-1 min-w-[200px] rounded-xl border border-border-default bg-surface-input px-4 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
         <select wire:model.live="statusFilter" class="rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary">
             <option value="">All Statuses</option>
@@ -110,8 +110,8 @@
                 @php $sc = $inspection->statusColor; $rc = $inspection->resultColor; @endphp
                 <tr class="hover:bg-surface-hover/30 transition-colors">
                     <td class="px-4 py-3 text-xs font-medium text-text-primary">{{ ucwords(str_replace('_', ' ', $inspection->type)) }}</td>
-                    <td class="px-4 py-3 text-text-secondary text-xs">{{ $inspection->listing?->property?->address ?? $inspection->deal?->title ?? '—' }}</td>
-                    <td class="px-4 py-3 text-text-secondary text-xs">{{ $inspection->inspector_name ?? '—' }}</td>
+                    <td class="px-4 py-3 text-text-secondary text-xs">{{ $inspection->listing?->property?->address ?? $inspection->deal?->title ?? '&#8358;' }}</td>
+                    <td class="px-4 py-3 text-text-secondary text-xs">{{ $inspection->inspector_name ?? '&#8358;' }}</td>
                     <td class="px-4 py-3 text-text-secondary text-xs">{{ $inspection->scheduled_at->format('d M Y H:i') }}</td>
                     <td class="px-4 py-3">
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-{{ $sc }}-50 text-{{ $sc }}-700 border border-{{ $sc }}-200">{{ ucfirst($inspection->status) }}</span>

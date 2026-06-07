@@ -2,7 +2,7 @@
     <div class="flex items-center justify-between mb-8">
         <div>
             <h1 class="text-3xl font-extrabold tracking-tight text-text-primary">Listing Health Index</h1>
-            <p class="mt-2 text-text-secondary">Real-time health scoring for every active listing — viewings, media, and market signals.</p>
+            <p class="mt-2 text-text-secondary">Real-time health scoring for every active listing &#8358; viewings, media, and market signals.</p>
         </div>
     </div>
 
@@ -62,7 +62,7 @@
                     <tr class="hover:bg-surface-raised/20 transition-colors">
                         <td class="py-4 px-5">
                             <a href="{{ route('listing.detail', $listing) }}" class="text-sm font-bold text-text-primary hover:text-brand-primary">{{ $listing->property->address_line_1 }}</a>
-                            <p class="text-xs text-text-secondary">{{ $listing->property->city }} · {{ ucfirst($listing->property->property_type) }}</p>
+                            <p class="text-xs text-text-secondary">{{ $listing->property->city }} &#8358; {{ ucfirst($listing->property->property_type) }}</p>
                         </td>
                         <td class="py-4 px-5">
                             <p class="text-sm font-black text-text-primary">{{ $currencySymbol }}{{ number_format($listing->listing_price / 1000000, 1) }}M</p>

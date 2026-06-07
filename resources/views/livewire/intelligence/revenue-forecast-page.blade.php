@@ -27,7 +27,7 @@
                 <h2 class="text-5xl font-black tracking-tight text-brand-primary mb-2">
                     {{ $currencySymbol }}{{ number_format($data['weighted_forecast'] / 1000000, 1) }}M
                 </h2>
-                <p class="text-sm text-text-secondary font-medium">From {{ $data['deals_count'] }} active deals · {{ $this->timeframe }} horizon</p>
+                <p class="text-sm text-text-secondary font-medium">From {{ $data['deals_count'] }} active deals &#8358; {{ $this->timeframe }} horizon</p>
 
                 @if($showScenario && $data['scenario_upside'] > 0)
                 <div class="mt-4 p-3 bg-success-50 border border-success-200 rounded-xl">
@@ -107,7 +107,7 @@
     <!-- Scenario Planner -->
     @if($showScenario)
     <div class="bg-surface-card rounded-2xl border border-brand-primary/30 bg-brand-primary/5 p-5 mb-8">
-        <h3 class="text-sm font-bold text-text-primary mb-4">Scenario Planner — What if we close more deals?</h3>
+        <h3 class="text-sm font-bold text-text-primary mb-4">Scenario Planner &#8358; What if we close more deals?</h3>
         <div class="grid grid-cols-2 gap-4 max-w-md">
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Extra deals closed</label>
@@ -135,7 +135,7 @@
                 <span class="text-[10px] font-bold bg-surface-raised text-text-tertiary px-2 py-0.5 rounded-full">{{ $stageData['count'] }}</span>
             </div>
             <p class="text-xl font-black text-text-primary">{{ $currencySymbol }}{{ number_format($stageData['weighted'] / 1000000, 1) }}M</p>
-            <p class="text-[10px] text-text-secondary mt-0.5">weighted · {{ $currencySymbol }}{{ number_format($stageData['value'] / 1000000, 1) }}M total</p>
+            <p class="text-[10px] text-text-secondary mt-0.5">weighted &#8358; {{ $currencySymbol }}{{ number_format($stageData['value'] / 1000000, 1) }}M total</p>
             <div class="w-full bg-surface-raised rounded-full h-1.5 mt-3">
                 <div class="bg-brand-primary h-1.5 rounded-full" style="width: {{ $data['weighted_forecast'] > 0 ? min(100, ($stageData['weighted'] / $data['weighted_forecast']) * 100) : 0 }}%"></div>
             </div>

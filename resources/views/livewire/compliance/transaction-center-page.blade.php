@@ -55,7 +55,7 @@
             <div class="flex items-center justify-between p-3 bg-white rounded-xl border border-warning-100">
                 <div>
                     <p class="text-sm font-semibold text-text-primary">{{ $deal->title }}</p>
-                    <p class="text-xs text-text-secondary">{{ $deal->contact?->first_name }} {{ $deal->contact?->last_name }} · {{ $currencySymbol }}{{ number_format($deal->value) }} · {{ $deal->stage?->name }}</p>
+                    <p class="text-xs text-text-secondary">{{ $deal->contact?->first_name }} {{ $deal->contact?->last_name }} &#8358; {{ $currencySymbol }}{{ number_format($deal->value) }} &#8358; {{ $deal->stage?->name }}</p>
                 </div>
                 <button wire:click="initiateTransaction({{ $deal->id }})"
                     class="px-3 py-1.5 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg text-xs font-bold hover:bg-brand-secondary transition-colors">

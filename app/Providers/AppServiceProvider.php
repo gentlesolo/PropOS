@@ -27,10 +27,12 @@ class AppServiceProvider extends ServiceProvider
             return $app->make(\App\Infrastructure\AI\AiServiceManager::class)->textGeneration();
         });
 
-        $this->app->bind(
-            \App\Domain\AI\Contracts\AiCompletionServiceInterface::class,
-            \App\Infrastructure\AI\OpenAiCompletionService::class
-        );
+        $this->app->bind(\App\Domain\AI\Contracts\AiCompletionServiceInterface::class, function () {
+            return match (config('ai.default', 'openai')) {
+                'deepseek' => new \App\Infrastructure\AI\DeepSeek\DeepSeekCompletionService(),
+                default    => new \App\Infrastructure\AI\OpenAiCompletionService(),
+            };
+        });
 
         $this->app->bind(
             \App\Domain\AI\Contracts\PredictionInterface::class,
@@ -87,9 +89,9 @@ class AppServiceProvider extends ServiceProvider
         );
 
         View::composer('*', function ($view) {
-            $symbol = '₦';
+            $symbol = '&#8358;';
             if (auth()->check()) {
-                $symbol = auth()->user()->agency?->currency_symbol ?? '₦';
+                $symbol = auth()->user()->agency?->currency_symbol ?? '&#8358;';
             }
             $view->with('currencySymbol', $symbol);
         });

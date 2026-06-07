@@ -8,15 +8,8 @@
     </button>
 
     <!-- Slide-over Panel -->
-    <div x-data="{ open: @entangle('isOpen') }" 
-         @toggle-chat-panel.window="open = !open; @this.call('toggle')"
-         @toggle-chat-panel-open.window="open = true"
-         @toggle-chat-panel-close.window="open = false"
-         @toggle-chat-panel-toggle.window="open = !open"
-         @toggle-chat-panel-dispatch.window="open = !open; @this.call('toggle')"
-         @toggle-chat-panel-direct.window="open = true; @this.call('toggle')"
-         @toggleChatPanel.window="open = !open; @this.call('toggle')"
-         x-show="open" 
+    <div x-data="{ open: @entangle('isOpen') }"
+         x-show="open"
          class="fixed inset-0 z-50 overflow-hidden" 
          aria-labelledby="slide-over-title" 
          role="dialog" 
@@ -32,7 +25,7 @@
                  x-transition:leave-start="opacity-100" 
                  x-transition:leave-end="opacity-0" 
                  class="absolute inset-0 bg-[#030712]/60 backdrop-blur-sm transition-opacity" 
-                 @click="open = false; @this.call('toggle')"></div>
+                 @click="open = false"></div>
 
             <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
                 <div x-show="open" 
@@ -63,7 +56,7 @@
                                 <button wire:click="startNewSession" class="p-1.5 rounded text-[#A1A1AA] hover:text-[#10B981] hover:bg-[#111827] transition-colors focus:outline-none" title="New Session">
                                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
                                 </button>
-                                <button @click="open = false; @this.call('toggle')" class="p-1.5 rounded text-[#52525B] hover:text-[#FAFAFA] hover:bg-[#111827] transition-colors focus:outline-none">
+                                <button @click="open = false" class="p-1.5 rounded text-[#52525B] hover:text-[#FAFAFA] hover:bg-[#111827] transition-colors focus:outline-none">
                                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                                 </button>
                             </div>

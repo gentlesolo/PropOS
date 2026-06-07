@@ -43,7 +43,7 @@
                             @if($deal->momentum_score >= 70) bg-success-50 border-success-200 text-success-700
                             @elseif($deal->momentum_score >= 40) bg-warning-50 border-warning-200 text-warning-700
                             @else bg-danger-50 border-danger-200 text-danger-700 @endif">
-                            {{ $deal->momentum_score }} · {{ $deal->momentumLabel }}
+                            {{ $deal->momentum_score }} &#8358; {{ $deal->momentumLabel }}
                         </div>
                         <button wire:click="$toggle('showEditForm')" class="text-xs text-brand-primary border border-brand-primary/30 rounded-lg px-2.5 py-1.5 hover:bg-brand-primary/5 transition-colors">
                             {{ $showEditForm ? 'Cancel' : 'Edit' }}
@@ -247,7 +247,7 @@
                             {{ $seq->status }}
                         </span>
                     </div>
-                    <p class="text-[10px] text-text-secondary">{{ $seq->steps->count() }} steps · Next: {{ $seq->next_action_at?->diffForHumans() ?? 'TBD' }}</p>
+                    <p class="text-[10px] text-text-secondary">{{ $seq->steps->count() }} steps &#8358; Next: {{ $seq->next_action_at?->diffForHumans() ?? 'TBD' }}</p>
                 </div>
                 @empty
                 <p class="text-xs text-text-secondary text-center py-2">No follow-up sequences. Create one to stay on top of this contact.</p>

@@ -17,6 +17,9 @@ class DailyBrief extends Model
         'priority_actions' => 'array',
         'deal_alerts' => 'array',
         'viewing_schedule' => 'array',
+        'coaching_tips' => 'array',
+        'goals' => 'array',
+        'focus_score' => 'integer',
         'is_read' => 'boolean',
     ];
 

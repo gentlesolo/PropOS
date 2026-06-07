@@ -1,148 +1,451 @@
 <div>
-    <div class="mb-8 flex items-center justify-between">
+    {{-- ── Header ─────────────────────────────────────────────────────── --}}
+    <div class="mb-8 flex items-start justify-between gap-4">
         <div>
-            <div class="flex items-center space-x-3">
+            <div class="flex items-center space-x-3 mb-2">
                 <h1 class="text-3xl font-extrabold tracking-tight text-text-primary">AI Daily Planner</h1>
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-black tracking-widest bg-brand-primary/10 text-brand-primary uppercase">Beta</span>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-black tracking-widest bg-brand-primary/10 text-brand-primary uppercase">AI</span>
+                @if($brief && $brief->focus_score)
+                    @php
+                        $score = $brief->focus_score;
+                        $scoreColor = $score >= 70 ? 'bg-success-500/10 text-success-500 border-success-500/20'
+                                    : ($score >= 40 ? 'bg-warning-500/10 text-warning-500 border-warning-500/20'
+                                    : 'bg-danger-500/10 text-danger-500 border-danger-500/20');
+                    @endphp
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border {{ $scoreColor }}">
+                        <span class="w-1.5 h-1.5 rounded-full {{ $score >= 70 ? 'bg-success-500' : ($score >= 40 ? 'bg-warning-500' : 'bg-danger-500') }}"></span>
+                        Focus {{ $score }}/100
+                    </span>
+                @endif
             </div>
-            <p class="mt-2 text-text-secondary">Your personalized itinerary and strategic insights for {{ \Carbon\Carbon::parse($brief->date)->format('l, F jS') }}.</p>
+
+            {{-- Date navigation --}}
+            <div class="flex items-center space-x-2">
+                <button wire:click="previousDay" class="p-1.5 rounded-lg hover:bg-surface-raised transition-colors text-text-secondary hover:text-text-primary">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                </button>
+                <p class="text-sm font-semibold text-text-secondary">
+                    @if(\Carbon\Carbon::parse($selectedDate)->isToday())
+                        <span class="text-brand-primary font-bold">Today</span> —
+                    @endif
+                    {{ \Carbon\Carbon::parse($selectedDate)->format('l, F jS Y') }}
+                </p>
+                <button wire:click="nextDay"
+                    @if(\Carbon\Carbon::parse($selectedDate)->isToday()) disabled @endif
+                    class="p-1.5 rounded-lg hover:bg-surface-raised transition-colors text-text-secondary hover:text-text-primary disabled:opacity-30 disabled:cursor-not-allowed">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                </button>
+            </div>
         </div>
-        <div>
-            <button wire:click="regenerateBrief" class="bg-surface-card px-5 py-2.5 text-sm font-semibold text-text-primary hover:text-brand-primary transition-all duration-300 hover-spring active:scale-95 flex items-center space-x-2 border-border-default">
-                <svg wire:loading.class="animate-spin" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
-                <span>Regenerate Brief</span>
-            </button>
-        </div>
+
+        @if(\Carbon\Carbon::parse($selectedDate)->isToday())
+        <button wire:click="regenerateBrief" wire:loading.attr="disabled"
+            class="flex-shrink-0 flex items-center space-x-2 px-5 py-2.5 rounded-xl border border-border-default bg-surface-card text-sm font-semibold text-text-primary hover:text-brand-primary hover:border-brand-primary/30 transition-all duration-200 hover-spring active:scale-95 disabled:opacity-50">
+            <svg wire:loading wire:target="regenerateBrief" class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+            <svg wire:loading.remove wire:target="regenerateBrief" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+            <span wire:loading.remove wire:target="regenerateBrief">Regenerate Brief</span>
+            <span wire:loading wire:target="regenerateBrief">Generating...</span>
+        </button>
+        @endif
     </div>
 
-    <!-- Market Snapshot -->
-    <div class="mb-8 p-6 bg-surface-card rounded-3xl border border-brand-primary/20 bg-brand-primary/5 relative overflow-hidden group hover-spring active:scale-95">
-        <div class="absolute -right-12 -top-12 w-48 h-48 bg-brand-primary/20 rounded-full blur-3xl group-hover:bg-brand-primary/30 transition-colors duration-500"></div>
+    {{-- ── No brief for past date ──────────────────────────────────────── --}}
+    @if(!$brief)
+        <div class="text-center py-32">
+            <div class="w-20 h-20 bg-surface-raised border border-border-default rounded-3xl flex items-center justify-center mx-auto mb-6">
+                <svg class="w-10 h-10 text-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            </div>
+            <h3 class="text-xl font-bold text-text-primary mb-2">No brief for this date</h3>
+            <p class="text-sm text-text-secondary">Briefs are generated for today only. Navigate back to today to see your plan.</p>
+            <button wire:click="$set('selectedDate', '{{ now()->toDateString() }}')" wire:then="loadBrief"
+                class="mt-6 inline-flex items-center px-5 py-2.5 rounded-xl bg-brand-primary text-white text-sm font-bold hover:bg-brand-secondary transition-colors">
+                Back to Today
+            </button>
+        </div>
+
+    @else
+
+    {{-- ── AI Executive Summary ────────────────────────────────────────── --}}
+    @if($brief->ai_summary)
+    <div class="mb-8 p-6 bg-brand-primary/5 rounded-3xl border border-brand-primary/20 relative overflow-hidden group">
+        <div class="absolute -right-10 -top-10 w-44 h-44 bg-brand-primary/15 rounded-full blur-3xl pointer-events-none"></div>
         <div class="relative z-10 flex items-start space-x-4">
-            <div class="mt-1 h-10 w-10 rounded-2xl bg-brand-primary/10 border border-brand-primary/20 flex items-center justify-center text-brand-primary shrink-0 shadow-sm">
-                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+            <div class="mt-0.5 h-10 w-10 rounded-2xl bg-brand-primary/10 border border-brand-primary/20 flex items-center justify-center text-brand-primary flex-shrink-0">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
             </div>
             <div>
-                <h2 class="text-xs font-black uppercase tracking-widest text-brand-primary mb-2">Morning Market Snapshot</h2>
+                <h2 class="text-xs font-black uppercase tracking-widest text-brand-primary mb-1.5">AI Daily Briefing</h2>
+                <p class="text-sm font-medium text-text-primary leading-relaxed max-w-4xl">{{ $brief->ai_summary }}</p>
+            </div>
+        </div>
+    </div>
+    @elseif($brief->market_snapshot)
+    <div class="mb-8 p-6 bg-brand-primary/5 rounded-3xl border border-brand-primary/20 relative overflow-hidden">
+        <div class="absolute -right-10 -top-10 w-44 h-44 bg-brand-primary/15 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="relative z-10 flex items-start space-x-4">
+            <div class="mt-0.5 h-10 w-10 rounded-2xl bg-brand-primary/10 border border-brand-primary/20 flex items-center justify-center text-brand-primary flex-shrink-0">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+            </div>
+            <div>
+                <h2 class="text-xs font-black uppercase tracking-widest text-brand-primary mb-1.5">Morning Market Snapshot</h2>
                 <p class="text-sm font-medium text-text-primary leading-relaxed max-w-4xl">{{ $brief->market_snapshot }}</p>
             </div>
         </div>
     </div>
+    @endif
 
+    {{-- ── Main grid ───────────────────────────────────────────────────── --}}
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        <!-- Left Column: Priority Actions -->
+
+        {{-- ── Left column (2/3) ──────────────────────────────────────── --}}
         <div class="lg:col-span-2 space-y-8">
+
+            {{-- Daily Goals --}}
             <div class="bg-surface-card rounded-3xl border border-border-default overflow-hidden shadow-sm">
                 <div class="px-8 py-6 border-b border-border-default/40 flex items-center justify-between">
-                    <h2 class="text-lg font-bold text-text-primary">Priority Actions</h2>
-                    <span class="text-xs font-semibold text-text-secondary">{{ collect($brief->priority_actions)->where('completed', true)->count() }} / {{ count($brief->priority_actions) }} Completed</span>
+                    <div>
+                        <h2 class="text-lg font-bold text-text-primary">Daily Goals</h2>
+                        @php
+                            $goals = $brief->goals ?? [];
+                            $doneGoals = collect($goals)->where('completed', true)->count();
+                        @endphp
+                        @if(count($goals))
+                            <p class="text-xs text-text-secondary mt-0.5">{{ $doneGoals }} of {{ count($goals) }} complete</p>
+                        @endif
+                    </div>
+                    @if(\Carbon\Carbon::parse($selectedDate)->isToday())
+                    <button wire:click="$set('showGoalModal', true)"
+                        class="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-brand-primary border border-brand-primary/30 hover:bg-brand-primary/5 transition-colors">
+                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                        <span>Add Goal</span>
+                    </button>
+                    @endif
                 </div>
-                
-                <div class="p-8 space-y-4 bg-surface-sunken/20">
-                    @foreach($brief->priority_actions as $index => $action)
-                        <div class="p-5 rounded-2xl border transition-all duration-300 {{ $action['completed'] ? 'bg-surface-raised/50 border-border-default/40 opacity-60' : 'bg-surface-card border-border-default hover:shadow-md hover:border-brand-primary/30' }}">
-                            <div class="flex items-start justify-between">
-                                <div class="flex items-start space-x-4">
-                                    <!-- Status Checkbox -->
-                                    <button wire:click="completeAction({{ $index }})" @if($action['completed']) disabled @endif class="mt-1 h-6 w-6 rounded-lg border flex items-center justify-center transition-colors {{ $action['completed'] ? 'bg-success-500 border-success-500 text-white' : 'border-border-default hover:border-brand-primary text-transparent hover:text-brand-primary' }}">
-                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
-                                    </button>
-                                    
-                                    <div>
-                                        <div class="flex items-center space-x-3 mb-1">
-                                            <h3 class="text-base font-bold text-text-primary {{ $action['completed'] ? 'line-through text-text-tertiary' : '' }}">{{ $action['title'] }}</h3>
-                                            @if(!$action['completed'])
-                                                <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-surface-raised border border-border-default text-text-secondary">
-                                                    {{ $action['type'] }}
-                                                </span>
-                                            @endif
-                                        </div>
-                                        <p class="text-sm text-text-secondary leading-relaxed">{{ $action['context'] }}</p>
-                                    </div>
-                                </div>
-                                
-                                @if(!$action['completed'])
-                                    <div class="text-xs font-bold text-text-tertiary bg-surface-raised px-3 py-1.5 rounded-lg border border-border-default">
-                                        {{ \Carbon\Carbon::parse($action['due_at'])->format('h:i A') }}
-                                    </div>
-                                @endif
-                            </div>
-                            
-                            @if(!$action['completed'] && in_array($action['type'], ['email', 'call']))
-                                <div class="mt-4 ml-10 flex space-x-3">
-                                    <button wire:click="draftWithCopilot({{ $index }})" class="px-4 py-2 text-xs font-bold rounded-xl bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 hover:bg-brand-secondary transition-colors hover-spring active:scale-95 shadow-sm flex items-center gap-1.5">
-                                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                                        Draft with Copilot
-                                    </button>
-                                </div>
-                            @endif
-                        </div>
-                    @endforeach
-                </div>
-            </div>
 
-            <!-- Deal Alerts -->
-            <div class="bg-surface-card rounded-3xl border border-border-default overflow-hidden shadow-sm">
-                <div class="px-8 py-6 border-b border-border-default/40">
-                    <h2 class="text-lg font-bold text-text-primary">Deal Alerts</h2>
-                </div>
-                
-                <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-5 bg-surface-sunken/20">
-                    @foreach($brief->deal_alerts as $alert)
-                        <div class="p-5 rounded-2xl bg-surface-card border border-border-default hover-spring active:scale-95">
-                            <div class="flex items-center space-x-3 mb-3">
-                                <div class="h-2 w-2 rounded-full {{ $alert['severity'] === 'warning' ? 'bg-warning-500 animate-pulse' : 'bg-success-500' }}"></div>
-                                <h4 class="text-sm font-bold text-text-primary">{{ $alert['title'] }}</h4>
+                <div class="p-8 bg-surface-sunken/20">
+                    @if(empty($goals))
+                        <div class="text-center py-8">
+                            <div class="w-14 h-14 bg-surface-raised border border-border-default rounded-2xl flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-7 h-7 text-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                             </div>
-                            <p class="text-xs font-semibold text-text-secondary mb-2">{{ $alert['property'] }}</p>
-                            <p class="text-sm text-text-primary leading-relaxed opacity-80">{{ $alert['message'] }}</p>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-
-        <!-- Right Column: Viewing Schedule -->
-        <div class="space-y-8">
-            <div class="bg-surface-card rounded-3xl border border-border-default overflow-hidden shadow-sm">
-                <div class="px-8 py-6 border-b border-border-default/40 flex items-center justify-between">
-                    <h2 class="text-lg font-bold text-text-primary">Today's Viewings</h2>
-                    <a href="#" class="text-sm font-bold text-brand-primary hover:text-brand-secondary">Calendar &rarr;</a>
-                </div>
-                <div class="p-8">
-                    @if(empty($brief->viewing_schedule))
-                        <div class="text-center py-6">
-                            <div class="w-16 h-16 bg-surface-raised border border-border-default rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                <svg class="w-8 h-8 text-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            </div>
-                            <p class="text-sm font-bold text-text-primary">No viewings today.</p>
-                            <p class="text-xs text-text-secondary mt-1">Time to prospect for new leads.</p>
+                            <p class="text-sm font-bold text-text-primary">No goals yet</p>
+                            <p class="text-xs text-text-secondary mt-1">Regenerate your brief to get AI-suggested goals, or add your own.</p>
                         </div>
                     @else
-                        <div class="relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-border-default/60 before:to-transparent">
-                            @foreach($brief->viewing_schedule as $viewing)
-                                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-                                    <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-surface-card bg-surface-raised text-text-secondary shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
-                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <div class="space-y-4">
+                            @foreach($goals as $gi => $goal)
+                            @php $pct = $goal['target'] > 0 ? min(100, round(($goal['current'] / $goal['target']) * 100)) : 0; @endphp
+                            <div class="p-4 rounded-2xl border transition-all duration-200 {{ $goal['completed'] ? 'bg-success-500/5 border-success-500/20' : 'bg-surface-card border-border-default' }}">
+                                <div class="flex items-center justify-between mb-2.5">
+                                    <div class="flex items-center space-x-3 min-w-0">
+                                        <button wire:click="toggleGoal({{ $gi }})"
+                                            class="h-6 w-6 rounded-lg border flex items-center justify-center transition-colors flex-shrink-0 {{ $goal['completed'] ? 'bg-success-500 border-success-500 text-white' : 'border-border-default hover:border-success-500 text-transparent hover:text-success-500' }}">
+                                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                        </button>
+                                        <span class="text-sm font-bold text-text-primary truncate {{ $goal['completed'] ? 'line-through text-text-tertiary' : '' }}">{{ $goal['title'] }}</span>
                                     </div>
-                                    <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-2xl border border-border-default bg-surface-card shadow-sm hover:shadow hover-spring active:scale-95">
-                                        <div class="flex items-center justify-between mb-1">
-                                            <div class="text-xs font-bold text-brand-primary">{{ $viewing['time'] }}</div>
-                                        </div>
-                                        <div class="text-sm font-bold text-text-primary">{{ $viewing['client'] }}</div>
-                                        <div class="text-xs text-text-secondary mt-1">{{ $viewing['property'] }}</div>
+                                    <div class="flex items-center space-x-2 flex-shrink-0 ml-3">
+                                        <span class="text-xs font-semibold text-text-secondary">{{ $goal['current'] }}/{{ $goal['target'] }} {{ $goal['unit'] }}</span>
+                                        @if(!$goal['completed'] && \Carbon\Carbon::parse($selectedDate)->isToday())
+                                        <button wire:click="incrementGoal({{ $gi }})"
+                                            class="h-6 w-6 rounded-lg border border-brand-primary/30 flex items-center justify-center text-brand-primary hover:bg-brand-primary/10 transition-colors">
+                                            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                                        </button>
+                                        @endif
+                                        @if(\Carbon\Carbon::parse($selectedDate)->isToday())
+                                        <button wire:click="removeGoal({{ $gi }})"
+                                            class="h-6 w-6 rounded-lg flex items-center justify-center text-text-tertiary hover:text-danger-500 hover:bg-danger-500/10 transition-colors">
+                                            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                        </button>
+                                        @endif
                                     </div>
                                 </div>
+                                <div class="h-1.5 bg-surface-raised rounded-full overflow-hidden">
+                                    <div class="h-full rounded-full transition-all duration-500 {{ $goal['completed'] ? 'bg-success-500' : 'bg-brand-primary' }}"
+                                        style="width: {{ $pct }}%"></div>
+                                </div>
+                            </div>
                             @endforeach
                         </div>
                     @endif
+
+                    {{-- Add Goal inline form --}}
+                    @if($showGoalModal)
+                    <div class="mt-6 p-5 rounded-2xl border border-brand-primary/20 bg-brand-primary/5">
+                        <h4 class="text-sm font-bold text-text-primary mb-4">Add New Goal</h4>
+                        <div class="space-y-3">
+                            <input wire:model="newGoalTitle" type="text"
+                                placeholder="Goal title (e.g. Follow-up calls)"
+                                class="w-full px-4 py-2.5 rounded-xl border border-border-default bg-surface-card text-sm text-text-primary placeholder-text-tertiary focus:outline-none focus:border-brand-primary/50">
+                            <div class="flex space-x-3">
+                                <input wire:model.number="newGoalTarget" type="number" min="1"
+                                    placeholder="Target"
+                                    class="w-24 px-4 py-2.5 rounded-xl border border-border-default bg-surface-card text-sm text-text-primary focus:outline-none focus:border-brand-primary/50">
+                                <select wire:model="newGoalUnit"
+                                    class="flex-1 px-4 py-2.5 rounded-xl border border-border-default bg-surface-card text-sm text-text-primary focus:outline-none focus:border-brand-primary/50">
+                                    <option value="calls">calls</option>
+                                    <option value="emails">emails</option>
+                                    <option value="deals">deals</option>
+                                    <option value="contacts">contacts</option>
+                                    <option value="tasks">tasks</option>
+                                    <option value="viewings">viewings</option>
+                                    <option value="items">items</option>
+                                </select>
+                            </div>
+                            <div class="flex space-x-3">
+                                <button wire:click="addGoal"
+                                    class="flex-1 py-2.5 rounded-xl bg-brand-primary text-white text-sm font-bold hover:bg-brand-secondary transition-colors">
+                                    Add Goal
+                                </button>
+                                <button wire:click="$set('showGoalModal', false)"
+                                    class="flex-1 py-2.5 rounded-xl border border-border-default text-sm font-semibold text-text-secondary hover:bg-surface-raised transition-colors">
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
                 </div>
             </div>
-        </div>
 
-    </div>
+            {{-- Priority Actions --}}
+            <div class="bg-surface-card rounded-3xl border border-border-default overflow-hidden shadow-sm">
+                <div class="px-8 py-6 border-b border-border-default/40 flex items-center justify-between">
+                    <h2 class="text-lg font-bold text-text-primary">Priority Actions</h2>
+                    @php
+                        $allActions    = collect($brief->priority_actions ?? []);
+                        $activeActions = $allActions->filter(fn($a) => !($a['snoozed'] ?? false));
+                        $doneActions   = $activeActions->where('completed', true)->count();
+                    @endphp
+                    <span class="text-xs font-semibold text-text-secondary">{{ $doneActions }} / {{ $activeActions->count() }} complete</span>
+                </div>
+
+                <div class="p-8 space-y-4 bg-surface-sunken/20">
+                    @forelse($brief->priority_actions ?? [] as $ai => $action)
+
+                    {{-- Snoozed --}}
+                    @if($action['snoozed'] ?? false)
+                    <div class="flex items-center space-x-3 p-4 rounded-2xl border border-border-default/30 bg-surface-raised/20 opacity-40">
+                        <svg class="h-4 w-4 text-text-tertiary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span class="text-sm italic text-text-tertiary line-through">{{ $action['title'] }}</span>
+                        <span class="text-xs text-text-tertiary">— snoozed to tomorrow</span>
+                    </div>
+
+                    @else
+                    @php
+                        $isOverdue  = $action['is_overdue'] ?? false;
+                        $isDone     = $action['completed'] ?? false;
+                        $priority   = $action['priority'] ?? 'medium';
+                        $cardClass  = $isDone    ? 'bg-surface-raised/40 border-border-default/40 opacity-60'
+                                    : ($isOverdue ? 'bg-danger-500/5 border-danger-500/30 hover:border-danger-500/50'
+                                    : 'bg-surface-card border-border-default hover:border-brand-primary/30 hover:shadow-md');
+                        $badgeColors = [
+                            'urgent' => 'bg-danger-500/10 text-danger-500 border-danger-500/20',
+                            'high'   => 'bg-warning-500/10 text-warning-500 border-warning-500/20',
+                            'medium' => 'bg-brand-primary/10 text-brand-primary border-brand-primary/20',
+                            'low'    => 'bg-surface-raised text-text-tertiary border-border-default',
+                        ];
+                        $badgeColor = $badgeColors[$priority] ?? $badgeColors['medium'];
+                    @endphp
+                    <div class="p-5 rounded-2xl border transition-all duration-200 {{ $cardClass }}">
+                        <div class="flex items-start justify-between gap-4">
+                            <div class="flex items-start space-x-4 flex-1 min-w-0">
+                                {{-- Checkbox --}}
+                                <button wire:click="completeAction({{ $ai }})" @if($isDone) disabled @endif
+                                    class="mt-0.5 h-6 w-6 rounded-lg border flex items-center justify-center transition-colors flex-shrink-0
+                                        {{ $isDone ? 'bg-success-500 border-success-500 text-white' : 'border-border-default hover:border-brand-primary text-transparent hover:text-brand-primary' }}">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                </button>
+
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex flex-wrap items-center gap-2 mb-1">
+                                        <h3 class="text-base font-bold text-text-primary {{ $isDone ? 'line-through text-text-tertiary' : '' }}">{{ $action['title'] }}</h3>
+                                        @if(!$isDone)
+                                            <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider border {{ $badgeColor }}">{{ $priority }}</span>
+                                            @if($isOverdue)
+                                                <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-danger-500/10 text-danger-500 border border-danger-500/20">Overdue</span>
+                                            @endif
+                                            @if($action['task_created'] ?? false)
+                                                <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-success-500/10 text-success-500 border border-success-500/20">Task Created</span>
+                                            @endif
+                                        @endif
+                                    </div>
+                                    <p class="text-sm text-text-secondary leading-relaxed">{{ $action['context'] }}</p>
+                                </div>
+                            </div>
+
+                            @if(!$isDone)
+                            <div class="text-xs font-bold text-text-tertiary bg-surface-raised px-3 py-1.5 rounded-lg border border-border-default flex-shrink-0 whitespace-nowrap">
+                                {{ \Carbon\Carbon::parse($action['due_at'])->format('g:i A') }}
+                            </div>
+                            @endif
+                        </div>
+
+                        @if(!$isDone && \Carbon\Carbon::parse($selectedDate)->isToday())
+                        <div class="mt-4 ml-10 flex flex-wrap gap-2">
+                            @if(in_array($action['type'], ['email', 'call', 'follow_up']))
+                            <button wire:click="draftWithCopilot({{ $ai }})"
+                                class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-sm hover-spring active:scale-95">
+                                <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                Draft with Copilot
+                            </button>
+                            @endif
+
+                            @if(!($action['task_created'] ?? false) && !isset($action['task_id']))
+                            <button wire:click="createTaskFromAction({{ $ai }})"
+                                class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl border border-border-default bg-surface-card text-text-secondary hover:border-brand-primary/30 hover:text-brand-primary transition-colors hover-spring active:scale-95">
+                                <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                                Create Task
+                            </button>
+                            @endif
+
+                            <button wire:click="snoozeAction({{ $ai }})"
+                                class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl border border-border-default bg-surface-card text-text-tertiary hover:text-text-secondary transition-colors hover-spring active:scale-95">
+                                <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                Snooze
+                            </button>
+                        </div>
+                        @endif
+                    </div>
+                    @endif
+
+                    @empty
+                    <div class="text-center py-10">
+                        <div class="w-14 h-14 bg-success-500/10 border border-success-500/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-7 h-7 text-success-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <p class="text-sm font-bold text-text-primary">All clear!</p>
+                        <p class="text-xs text-text-secondary mt-1">No priority actions for today.</p>
+                    </div>
+                    @endforelse
+                </div>
+            </div>
+
+            {{-- Deal Alerts --}}
+            @if(!empty($brief->deal_alerts))
+            <div class="bg-surface-card rounded-3xl border border-border-default overflow-hidden shadow-sm">
+                <div class="px-8 py-6 border-b border-border-default/40">
+                    <h2 class="text-lg font-bold text-text-primary">Deal Alerts</h2>
+                    <p class="text-xs text-text-secondary mt-0.5">{{ count($brief->deal_alerts) }} deal{{ count($brief->deal_alerts) !== 1 ? 's' : '' }} need attention</p>
+                </div>
+
+                <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-5 bg-surface-sunken/20">
+                    @foreach($brief->deal_alerts as $di => $alert)
+                    @php
+                        $isCritical = ($alert['severity'] ?? '') === 'critical';
+                        $isWarning  = ($alert['severity'] ?? '') === 'warning';
+                    @endphp
+                    <div class="p-5 rounded-2xl bg-surface-card border {{ $isCritical ? 'border-danger-500/30' : 'border-border-default' }} relative group hover-spring">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex items-center space-x-2.5">
+                                <div class="h-2 w-2 rounded-full flex-shrink-0 {{ $isCritical ? 'bg-danger-500 animate-pulse' : ($isWarning ? 'bg-warning-500 animate-pulse' : 'bg-success-500') }}"></div>
+                                <h4 class="text-sm font-bold {{ $isCritical ? 'text-danger-500' : 'text-text-primary' }}">{{ $alert['title'] }}</h4>
+                            </div>
+                            @if(\Carbon\Carbon::parse($selectedDate)->isToday())
+                            <button wire:click="dismissAlert({{ $di }})"
+                                class="opacity-0 group-hover:opacity-100 p-1 rounded-lg text-text-tertiary hover:text-danger-500 hover:bg-danger-500/10 transition-all flex-shrink-0 ml-2">
+                                <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                            @endif
+                        </div>
+                        <p class="text-xs font-semibold text-text-secondary mb-1.5 truncate">{{ $alert['property'] }}</p>
+                        @if(isset($alert['value']) && $alert['value'])
+                        <p class="text-xs text-text-tertiary mb-2">Value: ${{ number_format($alert['value']) }}</p>
+                        @endif
+                        <p class="text-sm text-text-primary leading-relaxed opacity-80">{{ $alert['message'] }}</p>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+        </div>{{-- end left column --}}
+
+        {{-- ── Right column (1/3) ─────────────────────────────────────── --}}
+        <div class="space-y-8">
+
+            {{-- Today's Viewings --}}
+            <div class="bg-surface-card rounded-3xl border border-border-default overflow-hidden shadow-sm">
+                <div class="px-8 py-6 border-b border-border-default/40 flex items-center justify-between">
+                    <h2 class="text-lg font-bold text-text-primary">Today's Viewings</h2>
+                    <a href="{{ route('viewing.day') }}" class="text-sm font-bold text-brand-primary hover:text-brand-secondary transition-colors">
+                        View all &rarr;
+                    </a>
+                </div>
+                <div class="p-8">
+                    @if(empty($brief->viewing_schedule))
+                    <div class="text-center py-8">
+                        <div class="w-14 h-14 bg-surface-raised border border-border-default rounded-2xl flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-7 h-7 text-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        </div>
+                        <p class="text-sm font-bold text-text-primary">No viewings today.</p>
+                        <p class="text-xs text-text-secondary mt-1">Time to prospect for new leads.</p>
+                    </div>
+                    @else
+                    <div class="space-y-3">
+                        @foreach($brief->viewing_schedule as $viewing)
+                        <div class="flex items-start space-x-4 p-4 rounded-2xl border border-border-default hover:border-brand-primary/20 hover:bg-surface-raised/20 transition-all">
+                            <div class="text-sm font-black text-brand-primary flex-shrink-0 w-12 pt-0.5">{{ $viewing['time'] }}</div>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-sm font-bold text-text-primary truncate">{{ $viewing['client'] }}</p>
+                                <p class="text-xs text-text-secondary truncate mt-0.5">{{ $viewing['property'] }}</p>
+                                @if(isset($viewing['status']))
+                                <span class="inline-block mt-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold uppercase tracking-wider
+                                    {{ $viewing['status'] === 'completed' ? 'bg-success-500/10 text-success-500' : 'bg-surface-raised text-text-tertiary border border-border-default' }}">
+                                    {{ $viewing['status'] }}
+                                </span>
+                                @endif
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                    @endif
+                </div>
+            </div>
+
+            {{-- AI Coaching Tips --}}
+            @if(!empty($brief->coaching_tips))
+            <div class="bg-surface-card rounded-3xl border border-border-default overflow-hidden shadow-sm">
+                <div class="px-8 py-6 border-b border-border-default/40">
+                    <h2 class="text-lg font-bold text-text-primary">Coaching Tips</h2>
+                    <p class="text-xs text-text-secondary mt-0.5">Personalised by AI for your pipeline</p>
+                </div>
+                <div class="p-8 space-y-4">
+                    @foreach($brief->coaching_tips as $tip)
+                    <div class="p-4 rounded-2xl bg-surface-sunken/40 border border-border-default/50">
+                        <div class="flex items-start space-x-3">
+                            <span class="text-xl flex-shrink-0 mt-0.5">{{ $tip['icon'] ?? '💡' }}</span>
+                            <div>
+                                <span class="text-[10px] font-black uppercase tracking-widest text-text-tertiary block mb-1">
+                                    {{ ucfirst(str_replace('_', ' ', $tip['category'] ?? 'tip')) }}
+                                </span>
+                                <p class="text-sm text-text-primary leading-relaxed">{{ $tip['tip'] }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+            {{-- Market Snapshot (right column when ai_summary is main banner) --}}
+            @if($brief->ai_summary && $brief->market_snapshot)
+            <div class="bg-surface-card rounded-3xl border border-border-default overflow-hidden shadow-sm">
+                <div class="px-8 py-6 border-b border-border-default/40">
+                    <h2 class="text-lg font-bold text-text-primary">Market Snapshot</h2>
+                </div>
+                <div class="p-8">
+                    <div class="flex items-start space-x-3">
+                        <div class="h-8 w-8 rounded-xl bg-brand-primary/10 border border-brand-primary/20 flex items-center justify-center text-brand-primary flex-shrink-0 mt-0.5">
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                        </div>
+                        <p class="text-sm text-text-primary leading-relaxed">{{ $brief->market_snapshot }}</p>
+                    </div>
+                </div>
+            </div>
+            @endif
+
+        </div>{{-- end right column --}}
+    </div>{{-- end grid --}}
+    @endif
 </div>
-
-
-

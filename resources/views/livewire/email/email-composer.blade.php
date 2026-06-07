@@ -1,3 +1,4 @@
+<div>
 @if($open)
 <div class="fixed bottom-0 right-6 z-[100] flex flex-col"
      style="width: 560px; max-width: calc(100vw - 2rem);">
@@ -118,3 +119,4 @@
     @endunless
 </div>
 @endif
+</div>

@@ -111,7 +111,7 @@
                         <dt class="text-text-secondary">Compliance Deadline</dt>
                         <dd class="font-medium {{ $transaction->isOverdue ? 'text-danger-600' : 'text-text-primary' }}">
                             {{ $transaction->deadline?->format('d M Y') ?? 'Not set' }}
-                            @if($transaction->isOverdue) <span class="text-[10px]">· Overdue</span> @endif
+                            @if($transaction->isOverdue) <span class="text-[10px]">&#8358; Overdue</span> @endif
                         </dd>
                     </div>
                     <div class="flex justify-between">
@@ -138,7 +138,7 @@
                         <div class="h-2 w-2 rounded-full bg-brand-primary mt-1.5 shrink-0"></div>
                         <div>
                             <p class="text-xs font-medium text-text-primary capitalize">{{ str_replace('_', ' ', $event['status']) }}</p>
-                            <p class="text-[10px] text-text-secondary">{{ \Carbon\Carbon::parse($event['at'])->diffForHumans() }} · {{ $event['by'] ?? 'System' }}</p>
+                            <p class="text-[10px] text-text-secondary">{{ \Carbon\Carbon::parse($event['at'])->diffForHumans() }} &#8358; {{ $event['by'] ?? 'System' }}</p>
                         </div>
                     </div>
                     @endforeach
@@ -220,7 +220,7 @@
                                 @if($doc->is_fica_required)
                                 <span class="text-[10px] font-medium bg-brand-primary/10 text-brand-primary px-1.5 py-0.5 rounded uppercase">FICA</span>
                                 @endif
-                                <span class="text-[10px] text-text-secondary">{{ $doc->uploadedBy?->first_name ?? 'System' }} · {{ $doc->created_at->diffForHumans() }}</span>
+                                <span class="text-[10px] text-text-secondary">{{ $doc->uploadedBy?->first_name ?? 'System' }} &#8358; {{ $doc->created_at->diffForHumans() }}</span>
                             </div>
                         </div>
                     </div>

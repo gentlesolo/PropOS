@@ -93,7 +93,7 @@
                         <button type="button" wire:click="prefillFromActuals" wire:loading.attr="disabled"
                             class="text-xs px-3 py-1.5 border border-border-default rounded-lg text-text-secondary hover:bg-surface-hover transition-colors">
                             <span wire:loading.remove wire:target="prefillFromActuals">Prefill from actuals</span>
-                            <span wire:loading wire:target="prefillFromActuals">Loading…</span>
+                            <span wire:loading wire:target="prefillFromActuals">Loading&#8358;</span>
                         </button>
                     </div>
                     <div class="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-12 gap-2">
@@ -131,7 +131,7 @@
 
                 <div>
                     <label class="block text-xs font-medium text-text-secondary mb-1">Notes</label>
-                    <textarea wire:model="budgetNotes" rows="2" placeholder="Assumptions, context, key decisions…"
+                    <textarea wire:model="budgetNotes" rows="2" placeholder="Assumptions, context, key decisions&#8358;"
                         class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page"></textarea>
                 </div>
 
@@ -139,7 +139,7 @@
                     <button type="submit" wire:loading.attr="disabled"
                         class="px-5 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">
                         <span wire:loading.remove wire:target="saveBudget">{{ $editBudgetId ? 'Update Budget' : 'Save as Draft' }}</span>
-                        <span wire:loading wire:target="saveBudget">Saving…</span>
+                        <span wire:loading wire:target="saveBudget">Saving&#8358;</span>
                     </button>
                     <button type="button" wire:click="cancelForm"
                         class="px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors">
@@ -177,8 +177,8 @@
                             @endif
                         </div>
                         <div class="text-xs text-text-secondary">
-                            {{ $budget->year }} · {{ $budget->property?->address_line_1 ?? 'All Properties' }}
-                            @if($budget->approver) · Approved by {{ $budget->approver->first_name }} {{ $budget->approver->last_name }}@endif
+                            {{ $budget->year }} &#8358; {{ $budget->property?->address_line_1 ?? 'All Properties' }}
+                            @if($budget->approver) &#8358; Approved by {{ $budget->approver->first_name }} {{ $budget->approver->last_name }}@endif
                         </div>
                         <div class="flex gap-4 mt-2 text-xs">
                             <span class="text-success-600 font-medium">Income: {{ $currencySymbol }}{{ number_format($budget->annualIncomeTarget) }}</span>
@@ -413,7 +413,7 @@
             <div class="flex items-start justify-between mb-5">
                 <div>
                     <div class="font-semibold text-text-primary text-sm leading-tight">{{ $detailBudget->name }}</div>
-                    <div class="text-xs text-text-tertiary mt-0.5">{{ $detailBudget->year }} · {{ $detailBudget->property?->address_line_1 ?? 'All Properties' }}</div>
+                    <div class="text-xs text-text-tertiary mt-0.5">{{ $detailBudget->year }} &#8358; {{ $detailBudget->property?->address_line_1 ?? 'All Properties' }}</div>
                 </div>
                 <button wire:click="closeDetail" class="text-text-tertiary hover:text-text-secondary text-xl leading-none">&times;</button>
             </div>
@@ -449,7 +449,7 @@
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-xs text-text-secondary">Assumptions</span>
-                    <span class="text-xs text-text-primary">{{ $detailBudget->vacancy_rate_assumption }}% vacancy · {{ $detailBudget->escalation_assumption }}% escalation</span>
+                    <span class="text-xs text-text-primary">{{ $detailBudget->vacancy_rate_assumption }}% vacancy &#8358; {{ $detailBudget->escalation_assumption }}% escalation</span>
                 </div>
                 @if($detailBudget->approver)
                 <div class="flex justify-between items-center mt-1.5">

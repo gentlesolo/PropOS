@@ -32,7 +32,7 @@
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Contact *</label>
                 <select wire:model="contact_id" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
-                    <option value="">Select contact…</option>
+                    <option value="">Select contact&#8358;</option>
                     @foreach($contacts as $c)
                     <option value="{{ $c->id }}">{{ $c->first_name }} {{ $c->last_name }}</option>
                     @endforeach
@@ -96,7 +96,7 @@
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Assigned Agent</label>
                 <select wire:model="edit_assigned_agent" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary">
-                    <option value="">— Keep current —</option>
+                    <option value="">&#8358; Keep current &#8358;</option>
                     @foreach($agents as $agent)
                     <option value="{{ $agent->id }}">{{ $agent->first_name }} {{ $agent->last_name }}</option>
                     @endforeach
@@ -125,7 +125,7 @@
 
     {{-- Filters --}}
     <div class="flex flex-wrap gap-2 mb-4">
-        <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search by name or phone…"
+        <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search by name or phone&#8358;"
             class="flex-1 min-w-48 rounded-xl border border-border-default bg-surface-input px-4 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
         <select wire:model.live="statusFilter" class="rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary">
             <option value="">All Statuses</option>
@@ -160,10 +160,10 @@
                         <tr wire:click="selectTenant({{ $tenant->id }})"
                             class="cursor-pointer transition-colors {{ $selected ? 'bg-brand-50/30' : 'hover:bg-surface-hover/30' }}">
                             <td class="px-4 py-3">
-                                <div class="font-medium text-text-primary">{{ $tenant->contact?->full_name ?? '—' }}</div>
+                                <div class="font-medium text-text-primary">{{ $tenant->contact?->full_name ?? '&#8358;' }}</div>
                                 <div class="text-xs text-text-tertiary">{{ $tenant->contact?->phone ?? '' }}</div>
                             </td>
-                            <td class="px-4 py-3 text-text-secondary text-xs">{{ $tenant->listing?->property?->address_line_1 ?? '—' }}</td>
+                            <td class="px-4 py-3 text-text-secondary text-xs">{{ $tenant->listing?->property?->address_line_1 ?? '&#8358;' }}</td>
                             <td class="px-4 py-3">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-{{ $sc }}-50 text-{{ $sc }}-700 border border-{{ $sc }}-200">
                                     {{ ucfirst($tenant->status) }}
@@ -274,8 +274,8 @@
                     </div>
 
                     <dl class="space-y-2 text-sm mb-4">
-                        <div class="flex justify-between"><dt class="text-text-secondary">Employer</dt><dd class="font-medium text-text-primary">{{ $selectedTenant->employer ?? '—' }}</dd></div>
-                        <div class="flex justify-between"><dt class="text-text-secondary">Monthly Income</dt><dd class="font-bold text-success-600">{{ $selectedTenant->monthly_income ? $currencySymbol.number_format($selectedTenant->monthly_income) : '—' }}</dd></div>
+                        <div class="flex justify-between"><dt class="text-text-secondary">Employer</dt><dd class="font-medium text-text-primary">{{ $selectedTenant->employer ?? '&#8358;' }}</dd></div>
+                        <div class="flex justify-between"><dt class="text-text-secondary">Monthly Income</dt><dd class="font-bold text-success-600">{{ $selectedTenant->monthly_income ? $currencySymbol.number_format($selectedTenant->monthly_income) : '&#8358;' }}</dd></div>
                         @if($selectedTenant->notes)
                         <div><dt class="text-text-secondary text-xs mb-1">Notes</dt><dd class="text-text-primary text-xs bg-surface-hover/40 rounded-lg p-2">{{ $selectedTenant->notes }}</dd></div>
                         @endif

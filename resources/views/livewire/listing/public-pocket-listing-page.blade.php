@@ -86,7 +86,7 @@
                         @endif
                         @if($listing->property->floor_area_sqm)
                         <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 text-center">
-                            <p class="text-2xl font-extrabold text-white">{{ number_format($listing->property->floor_area_sqm) }} m²</p>
+                            <p class="text-2xl font-extrabold text-white">{{ number_format($listing->property->floor_area_sqm) }} m&#8358;</p>
                             <p class="text-xs text-slate-400 uppercase tracking-wider mt-1">Floor Area</p>
                         </div>
                         @endif

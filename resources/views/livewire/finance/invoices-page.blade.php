@@ -24,7 +24,7 @@
                     <button wire:click="generateInvoices" wire:loading.attr="disabled"
                         class="px-3 py-2 bg-surface-hover border border-border-default text-text-secondary rounded-xl text-sm hover:bg-surface-card transition-colors">
                         <span wire:loading.remove wire:target="generateInvoices">Generate Rent</span>
-                        <span wire:loading wire:target="generateInvoices">Generating…</span>
+                        <span wire:loading wire:target="generateInvoices">Generating&#8358;</span>
                     </button>
                 </div>
                 <button wire:click="openCreateForm"
@@ -80,10 +80,10 @@
                     <div>
                         <label class="block text-xs font-medium text-text-secondary mb-1">Lease / Tenant *</label>
                         <select wire:model="form_lease_id" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary">
-                            <option value="">— Select Lease —</option>
+                            <option value="">&#8358; Select Lease &#8358;</option>
                             @foreach($leases as $lease)
                             <option value="{{ $lease->id }}">
-                                {{ $lease->tenant?->contact?->full_name ?? 'Unknown' }} — {{ $lease->listing?->property?->address_line_1 ?? $lease->reference }}
+                                {{ $lease->tenant?->contact?->full_name ?? 'Unknown' }} &#8358; {{ $lease->listing?->property?->address_line_1 ?? $lease->reference }}
                             </option>
                             @endforeach
                         </select>
@@ -146,7 +146,7 @@
 
                 <div>
                     <label class="block text-xs font-medium text-text-secondary mb-1">Notes (internal)</label>
-                    <textarea wire:model="form_notes" rows="2" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page" placeholder="Internal note…"></textarea>
+                    <textarea wire:model="form_notes" rows="2" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page" placeholder="Internal note&#8358;"></textarea>
                 </div>
 
                 <div class="flex gap-3">
@@ -225,7 +225,7 @@
 
         {{-- Filters --}}
         <div class="flex flex-wrap gap-2 mb-4">
-            <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search reference, tenant…"
+            <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search reference, tenant&#8358;"
                 class="flex-1 min-w-48 rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary">
             <select wire:model.live="statusFilter" class="rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary">
                 <option value="">All Statuses</option>
@@ -272,11 +272,11 @@
                         class="cursor-pointer transition-colors {{ $isActive ? 'bg-brand-50/30' : 'hover:bg-surface-hover/30' }}">
                         <td class="px-4 py-3">
                             <div class="font-mono text-xs font-medium text-text-primary">{{ $invoice->reference }}</div>
-                            <div class="text-xs text-text-tertiary capitalize mt-0.5">{{ str_replace('_',' ',$invoice->type) }} · {{ $invoice->lineItems->count() }} line{{ $invoice->lineItems->count() === 1 ? '' : 's' }}</div>
+                            <div class="text-xs text-text-tertiary capitalize mt-0.5">{{ str_replace('_',' ',$invoice->type) }} &#8358; {{ $invoice->lineItems->count() }} line{{ $invoice->lineItems->count() === 1 ? '' : 's' }}</div>
                         </td>
                         <td class="px-4 py-3">
-                            <div class="text-sm font-medium text-text-primary">{{ $invoice->lease?->tenant?->contact?->full_name ?? '—' }}</div>
-                            <div class="text-xs text-text-tertiary">{{ $invoice->lease?->listing?->property?->address_line_1 ?? '—' }}</div>
+                            <div class="text-sm font-medium text-text-primary">{{ $invoice->lease?->tenant?->contact?->full_name ?? '&#8358;' }}</div>
+                            <div class="text-xs text-text-tertiary">{{ $invoice->lease?->listing?->property?->address_line_1 ?? '&#8358;' }}</div>
                         </td>
                         <td class="px-4 py-3">
                             <div class="text-xs text-text-secondary">{{ $invoice->due_date->format('d M Y') }}</div>
@@ -284,7 +284,7 @@
                         </td>
                         <td class="px-4 py-3 text-right font-bold text-text-primary">{{ $currencySymbol }}{{ number_format($invoice->total) }}</td>
                         <td class="px-4 py-3 text-right text-xs {{ $invoice->amount_paid > 0 ? 'text-success-600 font-medium' : 'text-text-tertiary' }}">
-                            {{ $invoice->amount_paid > 0 ? $currencySymbol.number_format($invoice->amount_paid) : '—' }}
+                            {{ $invoice->amount_paid > 0 ? $currencySymbol.number_format($invoice->amount_paid) : '&#8358;' }}
                         </td>
                         <td class="px-4 py-3">
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-{{ $c }}-50 text-{{ $c }}-700 border border-{{ $c }}-200">
@@ -358,10 +358,10 @@
             {{-- Tenant & property --}}
             <div class="bg-surface-card rounded-xl border border-border-default p-4 mb-4">
                 <div class="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-3">Tenant</div>
-                <div class="font-medium text-text-primary text-sm">{{ $detailInvoice->lease?->tenant?->contact?->full_name ?? '—' }}</div>
-                <div class="text-xs text-text-secondary mt-1">{{ $detailInvoice->lease?->listing?->property?->address_line_1 ?? '—' }}, {{ $detailInvoice->lease?->listing?->property?->city ?? '' }}</div>
+                <div class="font-medium text-text-primary text-sm">{{ $detailInvoice->lease?->tenant?->contact?->full_name ?? '&#8358;' }}</div>
+                <div class="text-xs text-text-secondary mt-1">{{ $detailInvoice->lease?->listing?->property?->address_line_1 ?? '&#8358;' }}, {{ $detailInvoice->lease?->listing?->property?->city ?? '' }}</div>
                 @if($detailInvoice->lease)
-                <div class="text-xs text-text-tertiary mt-1">Lease {{ $detailInvoice->lease->reference }} · {{ $currencySymbol }}{{ number_format($detailInvoice->lease->monthly_rent) }}/mo</div>
+                <div class="text-xs text-text-tertiary mt-1">Lease {{ $detailInvoice->lease->reference }} &#8358; {{ $currencySymbol }}{{ number_format($detailInvoice->lease->monthly_rent) }}/mo</div>
                 @endif
             </div>
 
@@ -389,7 +389,7 @@
                         <div class="flex-1 min-w-0">
                             <div class="text-xs font-medium text-text-primary truncate">{{ $item->description }}</div>
                             <div class="text-xs text-text-tertiary capitalize">{{ str_replace('_',' ',$item->category) }}
-                                @if($item->quantity != 1) · ×{{ rtrim(rtrim(number_format($item->quantity,2),'0'),'.') }}@endif
+                                @if($item->quantity != 1) &#8358; &#8358;{{ rtrim(rtrim(number_format($item->quantity,2),'0'),'.') }}@endif
                             </div>
                         </div>
                         <div class="text-xs font-bold text-text-primary whitespace-nowrap">{{ $currencySymbol }}{{ number_format($item->amount) }}</div>
@@ -491,7 +491,7 @@
                     <button type="submit" wire:loading.attr="disabled"
                         class="flex-1 py-2.5 bg-success-600 text-white rounded-xl text-sm font-semibold hover:bg-success-700 transition-colors">
                         <span wire:loading.remove wire:target="recordPayment">Record Payment</span>
-                        <span wire:loading wire:target="recordPayment">Saving…</span>
+                        <span wire:loading wire:target="recordPayment">Saving&#8358;</span>
                     </button>
                     <button type="button" wire:click="$set('showPaymentModal', false)"
                         class="px-4 py-2.5 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors">
@@ -512,7 +512,7 @@
             <form wire:submit.prevent="saveNote" class="space-y-4">
                 <div>
                     <label class="block text-xs font-medium text-text-secondary mb-1">Note</label>
-                    <textarea wire:model="noteText" rows="4" placeholder="e.g. Tenant confirmed payment by phone on 01 Jun…"
+                    <textarea wire:model="noteText" rows="4" placeholder="e.g. Tenant confirmed payment by phone on 01 Jun&#8358;"
                         class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page resize-none"></textarea>
                     @error('noteText') <p class="text-xs text-danger-600 mt-1">{{ $message }}</p> @enderror
                 </div>

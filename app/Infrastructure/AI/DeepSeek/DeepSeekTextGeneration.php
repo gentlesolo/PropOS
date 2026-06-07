@@ -37,7 +37,8 @@ class DeepSeekTextGeneration implements TextGenerationInterface
                 ]);
 
             if ($response->successful()) {
-                return $response->json('choices.0.message.content') ?? '';
+                $content = $response->json('choices.0.message.content') ?? '';
+                return mb_convert_encoding($content, 'UTF-8', 'UTF-8');
             }
 
             Log::error('DeepSeek generation failed: ' . $response->body());

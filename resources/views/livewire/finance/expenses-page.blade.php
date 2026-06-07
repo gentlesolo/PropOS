@@ -74,7 +74,7 @@
                 <div>
                     <label class="block text-xs font-medium text-text-secondary mb-1">Property (optional)</label>
                     <select wire:model="property_id" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary">
-                        <option value="">— Portfolio-wide —</option>
+                        <option value="">&#8358; Portfolio-wide &#8358;</option>
                         @foreach($properties as $p)
                             <option value="{{ $p->id }}">{{ $p->address_line_1 }}, {{ $p->city }}</option>
                         @endforeach
@@ -142,7 +142,7 @@
                 <div>
                     <label class="block text-xs font-medium text-text-secondary mb-1">Property</label>
                     <select wire:model="edit_property_id" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary">
-                        <option value="">— Portfolio-wide —</option>
+                        <option value="">&#8358; Portfolio-wide &#8358;</option>
                         @foreach($properties as $p)
                             <option value="{{ $p->id }}">{{ $p->address_line_1 }}, {{ $p->city }}</option>
                         @endforeach
@@ -181,7 +181,7 @@
                     @endforeach
                 </select>
             </div>
-            <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search vendor, description, ref…"
+            <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search vendor, description, ref&#8358;"
                 class="flex-1 min-w-48 rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary">
             <select wire:model.live="categoryFilter" class="rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary">
                 <option value="">All Categories</option>

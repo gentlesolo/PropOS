@@ -16,7 +16,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div class="md:col-span-2">
                 <label class="block text-xs font-medium text-text-secondary mb-1">Report Title *</label>
-                <input wire:model="title" type="text" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page" placeholder="CMA — 45 Oak Avenue, Sandton">
+                <input wire:model="title" type="text" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page" placeholder="CMA &#8358; 45 Oak Avenue, Sandton">
                 @error('title') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
             </div>
             <div class="md:col-span-2">
@@ -47,7 +47,7 @@
             </div>
             <div class="md:col-span-2">
                 <label class="block text-xs font-medium text-text-secondary mb-1">Executive Summary</label>
-                <textarea wire:model="summary" rows="3" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page resize-none" placeholder="Market context, key findings, recommendation…"></textarea>
+                <textarea wire:model="summary" rows="3" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page resize-none" placeholder="Market context, key findings, recommendation&#8358;"></textarea>
             </div>
         </div>
 
@@ -61,7 +61,7 @@
                     <span class="text-text-secondary ml-2">{{ $currencySymbol }}{{ number_format($comp['sale_price']) }}</span>
                     @if($comp['sale_date']) <span class="text-text-tertiary ml-2 text-xs">{{ $comp['sale_date'] }}</span> @endif
                 </div>
-                <button wire:click="removeComparable({{ $i }})" class="text-danger-500 hover:text-danger-700 text-sm">×</button>
+                <button wire:click="removeComparable({{ $i }})" class="text-danger-500 hover:text-danger-700 text-sm">&#8358;</button>
             </div>
             @endforeach
             <div class="grid grid-cols-2 md:grid-cols-5 gap-2 mt-2">
@@ -75,7 +75,7 @@
         <div class="flex gap-3">
             <button wire:click="generate" class="px-5 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">
                 <span wire:loading.remove wire:target="generate">Generate Report</span>
-                <span wire:loading wire:target="generate">Generating…</span>
+                <span wire:loading wire:target="generate">Generating&#8358;</span>
             </button>
             <button wire:click="$set('showCreateForm', false)" class="px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors">Cancel</button>
         </div>
@@ -95,7 +95,7 @@
                 </div>
                 <div class="flex justify-between">
                     <dt class="text-text-secondary">Recommended</dt>
-                    <dd class="font-bold text-text-primary">{{ $report->recommended_list_price ? $currencySymbol.number_format($report->recommended_list_price) : '—' }}</dd>
+                    <dd class="font-bold text-text-primary">{{ $report->recommended_list_price ? $currencySymbol.number_format($report->recommended_list_price) : '&#8358;' }}</dd>
                 </div>
                 <div class="flex justify-between">
                     <dt class="text-text-secondary">Comparables</dt>
