@@ -1,10 +1,10 @@
 import axios from 'axios';
-import {MMKV} from 'react-native-mmkv';
+import {createMMKV} from 'react-native-mmkv';
 
-export const storage = new MMKV();
+export const storage = createMMKV();
 
 const BASE_URL = __DEV__
-  ? 'http://10.0.2.2:8000/api/mobile'  // Android emulator → host machine
+  ? 'http://192.168.1.169:8000/api/mobile'  // Android device → host machine over Wi-Fi
   : 'https://your-propos-domain.com/api/mobile';
 
 export const apiClient = axios.create({
@@ -25,8 +25,8 @@ apiClient.interceptors.response.use(
   res => res,
   async error => {
     if (error.response?.status === 401) {
-      storage.delete('auth_token');
-      storage.delete('auth_user');
+      storage.remove('auth_token');
+      storage.remove('auth_user');
     }
     return Promise.reject(error);
   },

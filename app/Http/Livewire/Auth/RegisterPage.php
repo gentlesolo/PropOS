@@ -24,6 +24,8 @@ class RegisterPage extends Component
     public string $slug        = '';
     public string $country     = 'NG';
     public string $size        = '1-5';
+    public string $subscription_plan = 'solo';
+    public string $billing_cycle = 'monthly';
 
     // Always present
     public string $first_name = '';
@@ -83,6 +85,15 @@ class RegisterPage extends Component
                 'role'       => 'required|string',
             ]);
             $this->step = 3;
+        } elseif ($this->step === 3 && !$this->invitationToken) {
+            $this->validate([
+                'subscription_plan' => 'required|in:solo,agency_pro,enterprise',
+                'billing_cycle'     => 'required|in:monthly,annual',
+            ]);
+            $this->step = 4;
+        } elseif ($this->step === 3 && $this->invitationToken) {
+            // Invitations don't pick plans
+            $this->step = 4;
         }
     }
 
@@ -163,6 +174,8 @@ class RegisterPage extends Component
             'country'     => $this->country,
             'size'        => $this->size,
             'role'        => $this->role,
+            'subscription_plan' => $this->subscription_plan,
+            'billing_cycle' => $this->billing_cycle,
         ]);
 
         $user = $registerAction->execute($dto);

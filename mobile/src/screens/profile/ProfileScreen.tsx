@@ -3,7 +3,6 @@ import {
   Alert,
   Pressable,
   ScrollView,
-  Switch,
   Text,
   View,
 } from 'react-native';
@@ -12,6 +11,7 @@ import {useAuthStore} from '../../store/authStore';
 import {authApi} from '../../api/auth';
 import {benchmarkApi} from '../../api/benchmark';
 import {cacheService} from '../../services/cacheService';
+import {useTranslation} from '../../i18n';
 
 const LANGUAGES = [
   {code: 'en', label: 'English'},
@@ -24,6 +24,7 @@ const LANGUAGES = [
 ];
 
 export function ProfileScreen() {
+  const {t} = useTranslation();
   const {user, clearAuth} = useAuthStore();
   const queryClient = useQueryClient();
 
@@ -51,13 +52,13 @@ export function ProfileScreen() {
       setSelectedLang(lang);
       setShowLangPicker(false);
     },
-    onError: () => Alert.alert('Error', 'Could not update language preference.'),
+    onError: () => Alert.alert(t('common.error'), t('profile.languageError')),
   });
 
   const handleLogout = () => {
-    Alert.alert('Sign out', 'Are you sure you want to sign out?', [
-      {text: 'Cancel', style: 'cancel'},
-      {text: 'Sign out', style: 'destructive', onPress: () => logout.mutate()},
+    Alert.alert(t('profile.signOutTitle'), t('profile.signOutMessage'), [
+      {text: t('common.cancel'), style: 'cancel'},
+      {text: t('profile.signOut'), style: 'destructive', onPress: () => logout.mutate()},
     ]);
   };
 
@@ -89,7 +90,7 @@ export function ProfileScreen() {
 
         {/* Transcription language */}
         <Text className="text-slate-400 text-xs font-semibold uppercase tracking-wide mb-2">
-          Call transcription language
+          {t('profile.transcriptionLanguage')}
         </Text>
         <Pressable
           className="bg-surface-card rounded-xl px-4 py-3.5 flex-row items-center justify-between mb-5"
@@ -122,12 +123,12 @@ export function ProfileScreen() {
 
         {/* App info */}
         <Text className="text-slate-400 text-xs font-semibold uppercase tracking-wide mb-2">
-          About
+          {t('profile.about')}
         </Text>
         <View className="bg-surface-card rounded-xl mb-5">
           {[
-            {label: 'App version', value: '1.0.0'},
-            {label: 'Agency ID', value: String(user?.agency_id ?? '—')},
+            {label: t('profile.appVersion'), value: '1.0.0'},
+            {label: t('profile.agencyId'),   value: String(user?.agency_id ?? '—')},
           ].map(row => (
             <View
               key={row.label}
@@ -142,7 +143,7 @@ export function ProfileScreen() {
         <Pressable
           className="bg-red-950 border border-red-800 rounded-xl py-4 items-center"
           onPress={handleLogout}>
-          <Text className="text-red-400 font-semibold">Sign out</Text>
+          <Text className="text-red-400 font-semibold">{t('profile.signOut')}</Text>
         </Pressable>
       </View>
     </ScrollView>

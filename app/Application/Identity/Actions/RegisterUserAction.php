@@ -16,6 +16,8 @@ class RegisterUserAction
     public function execute(RegisterUserData $data): User
     {
         return DB::transaction(function () use ($data) {
+            $aiCredits = config("pricing.plans.{$data->subscriptionPlan}.ai_credits_monthly", 200);
+
             // 1. Create the Agency
             $agency = Agency::create([
                 'name' => $data->agencyName,
@@ -23,6 +25,11 @@ class RegisterUserAction
                 'email' => $data->email,
                 'country_code' => $data->country,
                 'settings' => ['size' => $data->size],
+                'subscription_plan' => $data->subscriptionPlan,
+                'billing_cycle' => $data->billingCycle,
+                'subscription_status' => 'trialing',
+                'ai_credits_balance' => $aiCredits,
+                'ai_credits_allocated_monthly' => $aiCredits,
             ]);
 
             // Set Spatie Permission team context to target this agency

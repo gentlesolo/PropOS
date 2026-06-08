@@ -14,7 +14,9 @@ class RegisterUserData
         public readonly string $password,
         public readonly string $country = 'NG',
         public readonly string $size = '1-5',
-        public readonly string $role = 'principal'
+        public readonly string $role = 'principal',
+        public readonly string $subscriptionPlan = 'solo',
+        public readonly string $billingCycle = 'monthly'
     ) {}
 
     public static function fromArray(array $data): self
@@ -29,7 +31,9 @@ class RegisterUserData
             password: $data['password'],
             country: $data['country'] ?? 'NG',
             size: $data['size'] ?? '1-5',
-            role: $data['role'] ?? 'principal'
+            role: $data['role'] ?? 'principal',
+            subscriptionPlan: $data['subscription_plan'] ?? 'solo',
+            billingCycle: $data['billing_cycle'] ?? 'monthly'
         );
     }
 }

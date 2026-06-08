@@ -10,8 +10,7 @@ const resources = {
   fr: {translation: fr},
 };
 
-const fallback = {languageTag: 'en', isRTL: false};
-const {languageTag} = RNLocalize.findBestAvailableLanguage(Object.keys(resources)) ?? fallback;
+const languageTag = RNLocalize.findBestLanguageTag(Object.keys(resources))?.languageTag ?? 'en';
 
 i18n
   .use(initReactI18next)

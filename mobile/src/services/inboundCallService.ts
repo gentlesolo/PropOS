@@ -1,7 +1,7 @@
 import {Platform} from 'react-native';
 import RNCallKeep from 'react-native-callkeep';
 import messaging from '@react-native-firebase/messaging';
-import {Voice, CallInvite} from '@twilio/voice-react-native-sdk';
+import {Voice, Call, CallInvite} from '@twilio/voice-react-native-sdk';
 import {callsApi} from '../api/calls';
 import {useCallStore} from '../store/callStore';
 
@@ -52,7 +52,7 @@ export const inboundCallService = {
       inboundCallService.handleCallInvite(invite);
     });
 
-    voiceInstance.on(Voice.Event.CancelledCallInvite, () => {
+    (voiceInstance as any).on('cancelledCallInvite', () => {
       RNCallKeep.endAllCalls();
       useCallStore.getState().endCall();
     });
@@ -90,7 +90,7 @@ export const inboundCallService = {
 
       useCallStore.getState().updateCallState('active');
 
-      call.on('disconnected', () => {
+      call.on(Call.Event.Disconnected, () => {
         RNCallKeep.endCall(callUUID);
         useCallStore.getState().endCall();
       });

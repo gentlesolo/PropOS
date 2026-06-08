@@ -1,6 +1,6 @@
-import {MMKV} from 'react-native-mmkv';
+import {createMMKV} from 'react-native-mmkv';
 
-const cache = new MMKV({id: 'propos_cache'});
+const cache = createMMKV({id: 'propos_cache'});
 
 const TTL = {
   contacts: 5 * 60 * 1000,   // 5 minutes
@@ -32,7 +32,7 @@ function get<T>(key: string, ttl: number): T | null {
 }
 
 function clear(key: string): void {
-  cache.delete(key);
+  cache.remove(key);
 }
 
 function clearAll(): void {

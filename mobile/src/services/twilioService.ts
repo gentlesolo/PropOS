@@ -1,4 +1,4 @@
-import {Voice, Call as TwilioCall} from '@twilio/voice-react-native-sdk';
+import {Voice, Call as TwilioCall, CallInvite} from '@twilio/voice-react-native-sdk';
 import {callsApi} from '../api/calls';
 import {useCallStore} from '../store/callStore';
 
@@ -13,7 +13,7 @@ export const twilioService = {
 
     await voice.register(data.token);
 
-    voice.on(Voice.Event.CallInvite, invite => {
+    voice.on(Voice.Event.CallInvite, (invite: CallInvite) => {
       useCallStore.getState().setActiveCall(invite.getCallSid(), {
         direction: 'inbound',
         remote_number: invite.getFrom(),

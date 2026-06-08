@@ -41,7 +41,7 @@ export interface LeaseListItem {
   outstanding_balance: number;
 }
 
-export interface LeaseDetail extends LeaseListItem {
+export interface LeaseDetail extends Omit<LeaseListItem, 'property'> {
   tenant: {id: number; first_name: string; last_name: string; phone: string | null; email: string | null} | null;
   property: {id: number; address_line_1: string; city: string} | null;
   rent_payments: PaymentItem[];

@@ -35,7 +35,7 @@ export function PostCallSummaryScreen() {
   const {data: call, isLoading} = useQuery({
     queryKey: ['call', callId],
     queryFn: () => callsApi.get(callId).then(r => r.data),
-    refetchInterval: data => (!data?.summary ? 5000 : false),
+    refetchInterval: query => (!query.state.data?.summary ? 5000 : false),
   });
 
   const summary = call?.summary;

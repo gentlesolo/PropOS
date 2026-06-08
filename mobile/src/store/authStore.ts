@@ -23,8 +23,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   clearAuth: () => {
-    storage.delete('auth_token');
-    storage.delete('auth_user');
+    storage.remove('auth_token');
+    storage.remove('auth_user');
     set({token: null, user: null, isAuthenticated: false});
   },
 
@@ -36,8 +36,8 @@ export const useAuthStore = create<AuthState>((set) => ({
         const user: User = JSON.parse(userJson);
         set({token, user, isAuthenticated: true});
       } catch {
-        storage.delete('auth_token');
-        storage.delete('auth_user');
+        storage.remove('auth_token');
+        storage.remove('auth_user');
       }
     }
   },

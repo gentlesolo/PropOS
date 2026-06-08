@@ -16,7 +16,7 @@ export type RootStackParamList = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 interface Props {
-  navigationRef?: React.RefObject<NavigationContainerRef<any>>;
+  navigationRef?: React.RefObject<NavigationContainerRef<any> | null>;
 }
 
 export function RootNavigator({navigationRef}: Props) {

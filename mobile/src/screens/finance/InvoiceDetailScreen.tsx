@@ -3,32 +3,32 @@ import {
   ActivityIndicator,
   Alert,
   Linking,
+  Pressable,
   ScrollView,
-  StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {useQuery, useMutation} from '@tanstack/react-query';
 import {invoicesApi} from '../../api/invoices';
 import {FinanceStackParamList} from '../../navigation/stacks/FinanceStack';
+import {useTranslation} from '../../i18n';
 
 type RouteProps = RouteProp<FinanceStackParamList, 'InvoiceDetail'>;
 
-const STATUS_COLOR: Record<string, string> = {
-  paid:          '#22c55e',
-  overdue:       '#ef4444',
-  partially_paid:'#f59e0b',
-  sent:          '#3b82f6',
-  draft:         '#94a3b8',
-  void:          '#94a3b8',
+const STATUS_BORDER: Record<string, string> = {
+  paid:           'border-green-500 text-green-400',
+  overdue:        'border-red-500 text-red-400',
+  partially_paid: 'border-amber-500 text-amber-400',
+  sent:           'border-blue-500 text-blue-400',
+  draft:          'border-slate-500 text-slate-400',
+  void:           'border-slate-500 text-slate-400',
 };
 
 function Section({title, children}: {title: string; children: React.ReactNode}) {
   return (
-    <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
+    <View className="bg-surface-card rounded-xl p-3.5 mb-3">
+      <Text className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2.5">{title}</Text>
       {children}
     </View>
   );
@@ -36,14 +36,15 @@ function Section({title, children}: {title: string; children: React.ReactNode}) 
 
 function Row({label, value, valueColor}: {label: string; value: string; valueColor?: string}) {
   return (
-    <View style={styles.detailRow}>
-      <Text style={styles.label}>{label}</Text>
-      <Text style={[styles.value, valueColor ? {color: valueColor} : undefined]}>{value}</Text>
+    <View className="flex-row justify-between py-1.5 border-b border-slate-700">
+      <Text className="text-slate-400 text-sm">{label}</Text>
+      <Text className={`text-sm font-semibold text-right max-w-[60%] ${valueColor ?? 'text-white'}`}>{value}</Text>
     </View>
   );
 }
 
 export function InvoiceDetailScreen() {
+  const {t} = useTranslation();
   const route = useRoute<RouteProps>();
   const {invoiceId} = route.params;
 
@@ -57,20 +58,20 @@ export function InvoiceDetailScreen() {
     onSuccess: result => {
       const url = result.data.url;
       Alert.alert(
-        'Payment Gateway',
-        'You will be redirected to the secure payment page.',
+        t('finance.paymentGateway'),
+        t('finance.redirectMessage'),
         [
-          {text: 'Cancel', style: 'cancel'},
-          {text: 'Pay Now', onPress: () => Linking.openURL(url)},
+          {text: t('common.cancel'), style: 'cancel'},
+          {text: t('finance.payNow'), onPress: () => Linking.openURL(url)},
         ],
       );
     },
-    onError: () => Alert.alert('Error', 'Could not generate payment link. Please try again.'),
+    onError: () => Alert.alert(t('common.error'), t('finance.paymentError')),
   });
 
   if (isLoading) {
     return (
-      <View style={styles.loading}>
+      <View className="flex-1 bg-surface items-center justify-center">
         <ActivityIndicator color="#3b82f6" size="large" />
       </View>
     );
@@ -79,52 +80,52 @@ export function InvoiceDetailScreen() {
   const invoice = data?.data.data;
   if (!invoice) {
     return (
-      <View style={styles.loading}>
-        <Text style={styles.errorText}>Invoice not found.</Text>
+      <View className="flex-1 bg-surface items-center justify-center">
+        <Text className="text-slate-400">{t('finance.notFound')}</Text>
       </View>
     );
   }
 
-  const statusColor = STATUS_COLOR[invoice.status] ?? '#94a3b8';
+  const statusColors = STATUS_BORDER[invoice.status] ?? 'border-slate-500 text-slate-400';
   const canPay = !['paid', 'void'].includes(invoice.status);
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView className="flex-1 bg-surface" contentContainerClassName="p-4 pb-10">
       {/* Header */}
-      <View style={styles.headerCard}>
-        <Text style={styles.reference}>{invoice.reference}</Text>
-        <View style={[styles.statusBadge, {borderColor: statusColor}]}>
-          <Text style={[styles.statusText, {color: statusColor}]}>
+      <View className="bg-surface-card rounded-2xl p-5 items-center mb-4">
+        <Text className="text-slate-400 font-bold font-mono text-sm mb-2">{invoice.reference}</Text>
+        <View className={`border rounded-xl px-2.5 py-0.5 mb-3 ${statusColors.split(' ')[0]}`}>
+          <Text className={`text-xs font-bold capitalize ${statusColors.split(' ')[1]}`}>
             {invoice.status.replace('_', ' ')}
           </Text>
         </View>
-        <Text style={styles.totalAmount}>
+        <Text className="text-white text-4xl font-extrabold">
           R {invoice.total.toLocaleString('en-ZA', {minimumFractionDigits: 2})}
         </Text>
-        <Text style={styles.dueDate}>
-          Due {new Date(invoice.due_date).toLocaleDateString('en-ZA', {day: 'numeric', month: 'long', year: 'numeric'})}
+        <Text className="text-slate-500 text-sm mt-1">
+          {t('tenants.dueDate')} {new Date(invoice.due_date).toLocaleDateString(undefined, {day: 'numeric', month: 'long', year: 'numeric'})}
         </Text>
       </View>
 
-      {/* Property & Period */}
-      <Section title="Details">
-        <Row label="Property"  value={invoice.property ?? '—'} />
-        <Row label="Period"    value={`${String(invoice.period_month).padStart(2,'0')}/${invoice.period_year}`} />
-        <Row label="Type"      value={invoice.type} />
+      {/* Details */}
+      <Section title={t('finance.details')}>
+        <Row label={t('finance.property')} value={invoice.property ?? '—'} />
+        <Row label={t('finance.period')}   value={`${String(invoice.period_month).padStart(2,'0')}/${invoice.period_year}`} />
+        <Row label={t('finance.type')}     value={invoice.type} />
         {invoice.tenant && (
-          <Row label="Tenant" value={`${invoice.tenant.first_name} ${invoice.tenant.last_name}`} />
+          <Row label={t('finance.tenant')} value={`${invoice.tenant.first_name} ${invoice.tenant.last_name}`} />
         )}
       </Section>
 
       {/* Line Items */}
-      <Section title="Line Items">
+      <Section title={t('finance.lineItems')}>
         {invoice.line_items.map((item, idx) => (
-          <View key={idx} style={styles.lineItem}>
-            <View style={styles.lineItemLeft}>
-              <Text style={styles.lineItemDesc}>{item.description}</Text>
-              <Text style={styles.lineItemCat}>{item.category}</Text>
+          <View key={idx} className="flex-row justify-between items-center py-2 border-b border-slate-700">
+            <View className="flex-1 mr-2">
+              <Text className="text-white text-sm">{item.description}</Text>
+              <Text className="text-slate-500 text-xs capitalize mt-0.5">{item.category}</Text>
             </View>
-            <Text style={styles.lineItemAmount}>
+            <Text className="text-white font-bold text-sm">
               R {item.amount.toLocaleString('en-ZA', {minimumFractionDigits: 2})}
             </Text>
           </View>
@@ -132,57 +133,30 @@ export function InvoiceDetailScreen() {
       </Section>
 
       {/* Totals */}
-      <Section title="Summary">
-        <Row label="Subtotal"   value={`R ${invoice.subtotal.toLocaleString('en-ZA', {minimumFractionDigits: 2})}`} />
+      <Section title={t('finance.summary')}>
+        <Row label={t('finance.subtotal')} value={`R ${invoice.subtotal.toLocaleString('en-ZA', {minimumFractionDigits: 2})}`} />
         {invoice.tax_amount > 0 && (
-          <Row label="Tax"      value={`R ${invoice.tax_amount.toLocaleString('en-ZA', {minimumFractionDigits: 2})}`} />
+          <Row label={t('finance.tax')} value={`R ${invoice.tax_amount.toLocaleString('en-ZA', {minimumFractionDigits: 2})}`} />
         )}
-        <Row label="Total"      value={`R ${invoice.total.toLocaleString('en-ZA', {minimumFractionDigits: 2})}`} />
-        <Row label="Paid"       value={`R ${invoice.amount_paid.toLocaleString('en-ZA', {minimumFractionDigits: 2})}`} valueColor="#22c55e" />
+        <Row label={t('finance.total')}     value={`R ${invoice.total.toLocaleString('en-ZA', {minimumFractionDigits: 2})}`} />
+        <Row label={t('finance.amountPaid')} value={`R ${invoice.amount_paid.toLocaleString('en-ZA', {minimumFractionDigits: 2})}`} valueColor="text-green-400" />
         {invoice.balance > 0 && (
-          <Row label="Balance"  value={`R ${invoice.balance.toLocaleString('en-ZA', {minimumFractionDigits: 2})}`} valueColor="#ef4444" />
+          <Row label={t('finance.balance')} value={`R ${invoice.balance.toLocaleString('en-ZA', {minimumFractionDigits: 2})}`} valueColor="text-red-400" />
         )}
       </Section>
 
       {/* Pay Now Button */}
       {canPay && (
-        <TouchableOpacity
-          style={[styles.payButton, payNowMutation.isPending && styles.payButtonDisabled]}
+        <Pressable
+          className={`rounded-xl py-4 items-center mt-2 ${payNowMutation.isPending ? 'bg-brand-800 opacity-60' : 'bg-brand-600'}`}
           onPress={() => payNowMutation.mutate()}
-          disabled={payNowMutation.isPending}
-          activeOpacity={0.8}>
+          disabled={payNowMutation.isPending}>
           {payNowMutation.isPending
             ? <ActivityIndicator color="#fff" />
-            : <Text style={styles.payButtonText}>Pay Now</Text>
+            : <Text className="text-white font-bold text-base">{t('finance.payNow')}</Text>
           }
-        </TouchableOpacity>
+        </Pressable>
       )}
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container:        {flex: 1, backgroundColor: '#0f172a'},
-  content:          {padding: 16, paddingBottom: 40},
-  loading:          {flex: 1, backgroundColor: '#0f172a', alignItems: 'center', justifyContent: 'center'},
-  errorText:        {color: '#94a3b8'},
-  headerCard:       {backgroundColor: '#1e293b', borderRadius: 16, padding: 20, alignItems: 'center', marginBottom: 16},
-  reference:        {fontSize: 14, fontWeight: '700', color: '#94a3b8', fontFamily: 'monospace', marginBottom: 8},
-  statusBadge:      {borderWidth: 1, borderRadius: 12, paddingHorizontal: 10, paddingVertical: 3, marginBottom: 12},
-  statusText:       {fontSize: 12, fontWeight: '700', textTransform: 'capitalize'},
-  totalAmount:      {fontSize: 32, fontWeight: '800', color: '#f1f5f9'},
-  dueDate:          {fontSize: 13, color: '#64748b', marginTop: 4},
-  section:          {backgroundColor: '#1e293b', borderRadius: 12, padding: 14, marginBottom: 12},
-  sectionTitle:     {fontSize: 12, fontWeight: '700', color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10},
-  detailRow:        {flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: '#334155'},
-  label:            {fontSize: 13, color: '#94a3b8'},
-  value:            {fontSize: 13, fontWeight: '600', color: '#f1f5f9', maxWidth: '60%', textAlign: 'right'},
-  lineItem:         {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: '#334155'},
-  lineItemLeft:     {flex: 1, marginRight: 8},
-  lineItemDesc:     {fontSize: 13, color: '#f1f5f9'},
-  lineItemCat:      {fontSize: 11, color: '#64748b', textTransform: 'capitalize', marginTop: 2},
-  lineItemAmount:   {fontSize: 13, fontWeight: '700', color: '#f1f5f9'},
-  payButton:        {backgroundColor: '#3b82f6', borderRadius: 14, paddingVertical: 16, alignItems: 'center', marginTop: 8},
-  payButtonDisabled:{opacity: 0.6},
-  payButtonText:    {fontSize: 16, fontWeight: '700', color: '#fff'},
-});

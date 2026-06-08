@@ -1,11 +1,11 @@
 <div x-data="{ step: @entangle('step'), invitation: @json(!!$invitationToken) }" 
-     x-init="$watch('step', val => {
+    x-init="$watch('step', val => {
         let progressBar = document.getElementById('auth-progress-bar');
         if (progressBar) {
             if (invitation) {
                 progressBar.style.width = val === 2 ? '50%' : '100%';
             } else {
-                progressBar.style.width = val === 1 ? '33.33%' : (val === 2 ? '66.66%' : '100%');
+                progressBar.style.width = val === 1 ? '25%' : (val === 2 ? '50%' : (val === 3 ? '75%' : '100%'));
             }
         }
      }); 
@@ -14,7 +14,7 @@
          if (invitation) {
              progressBar.style.width = step === 2 ? '50%' : '100%';
          } else {
-             progressBar.style.width = step === 1 ? '33.33%' : (step === 2 ? '66.66%' : '100%');
+             progressBar.style.width = step === 1 ? '25%' : (step === 2 ? '50%' : (step === 3 ? '75%' : '100%'));
          }
      }"
      class="relative">
@@ -68,7 +68,12 @@
             <div class="h-px bg-white/5 flex-1"></div>
             <div class="flex items-center space-x-1.5">
                 <span :class="step >= 3 ? 'bg-[#10B981] text-white border-[#10B981]' : 'bg-[#111827] text-[#52525B] border-white/5'" class="h-5 w-5 rounded-full flex items-center justify-center border text-[10px] font-bold transition-colors">3</span>
-                <span :class="step >= 3 ? 'text-[#FAFAFA]' : 'text-[#52525B]'" class="font-semibold transition-colors">Security</span>
+                <span :class="step >= 3 ? 'text-[#FAFAFA]' : 'text-[#52525B]'" class="font-semibold transition-colors">Plan</span>
+            </div>
+            <div class="h-px bg-white/5 flex-1"></div>
+            <div class="flex items-center space-x-1.5">
+                <span :class="step >= 4 ? 'bg-[#10B981] text-white border-[#10B981]' : 'bg-[#111827] text-[#52525B] border-white/5'" class="h-5 w-5 rounded-full flex items-center justify-center border text-[10px] font-bold transition-colors">4</span>
+                <span :class="step >= 4 ? 'text-[#FAFAFA]' : 'text-[#52525B]'" class="font-semibold transition-colors">Security</span>
             </div>
         </div>
     @else
@@ -266,13 +271,86 @@
                 @endif
                 <button type="button" wire:click="nextStep" 
                     class="cta-shimmer flex-1 h-[44px] bg-[#10B981] text-white text-sm font-semibold rounded-md shadow-[0_2px_8px_rgba(16,185,129,0.16)] hover:bg-[#10B981]/90 active:scale-[0.98] transition-all flex items-center justify-center cursor-pointer">
-                    Continue to security
+                    @if($invitationToken) Continue to security @else Choose your plan @endif
                 </button>
             </div>
         </div>
 
-        <!-- STEP 3: Security & Terms -->
+        <!-- STEP 3: Plan Selection (Only for New Agencies) -->
+        @if(!$invitationToken)
         <div x-show="step === 3"
+             x-transition:enter="transition ease-spring duration-300 transform"
+             x-transition:enter-start="translate-x-full opacity-0"
+             x-transition:enter-end="translate-x-0 opacity-100"
+             x-transition:leave="transition ease-spring duration-300 transform absolute top-0 left-0 w-full"
+             x-transition:leave-start="translate-x-0 opacity-100"
+             x-transition:leave-end="-translate-x-full opacity-0"
+             class="space-y-6"
+             style="display: none;">
+
+            <div class="text-center mb-6">
+                <h3 class="text-lg font-bold text-white">Start your 14-day free trial</h3>
+                <p class="text-xs text-[#A1A1AA] mt-1">No credit card required right now.</p>
+            </div>
+
+            <!-- Billing Cycle Toggle -->
+            <div class="flex justify-center items-center space-x-4 mb-6">
+                <span class="text-xs font-medium" :class="billing_cycle === 'monthly' ? 'text-white' : 'text-[#A1A1AA]'">Monthly</span>
+                <button type="button" wire:click="$set('billing_cycle', billing_cycle === 'monthly' ? 'annual' : 'monthly')" class="relative inline-flex flex-shrink-0 h-5 w-9 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 bg-[#10B981]">
+                    <span class="sr-only">Toggle Annual Billing</span>
+                    <span aria-hidden="true" class="pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200" :class="billing_cycle === 'annual' ? 'translate-x-4' : 'translate-x-0'"></span>
+                </button>
+                <span class="text-xs font-medium" :class="billing_cycle === 'annual' ? 'text-white' : 'text-[#A1A1AA]'">Annually <span class="text-[#10B981] ml-1">(-20%)</span></span>
+            </div>
+
+            <!-- Plan Cards -->
+            <div class="grid grid-cols-2 gap-4">
+                <!-- Solo Plan -->
+                <div wire:click="$set('subscription_plan', 'solo')" class="cursor-pointer border rounded-xl p-4 transition-all"
+                     :class="subscription_plan === 'solo' ? 'border-[#10B981] bg-[#10B981]/5 shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'border-white/10 bg-[#111827] hover:border-white/20'">
+                    <h4 class="text-sm font-bold text-white mb-1">Solo</h4>
+                    <p class="text-[10px] text-[#A1A1AA] mb-3 min-h-[30px]">Independent agents</p>
+                    <div class="text-lg font-extrabold text-white mb-4">
+                        <span x-text="billing_cycle === 'annual' ? 'R666' : 'R799'"></span><span class="text-xs font-medium text-[#A1A1AA]">/mo</span>
+                    </div>
+                    <ul class="text-[10px] text-[#D4D4D8] space-y-2">
+                        <li class="flex items-start"><span class="text-[#10B981] mr-1.5">✓</span> 1 Agent</li>
+                        <li class="flex items-start"><span class="text-[#10B981] mr-1.5">✓</span> 15 Listings</li>
+                        <li class="flex items-start"><span class="text-[#10B981] mr-1.5">✓</span> 200 AI Credits</li>
+                    </ul>
+                </div>
+
+                <!-- Agency Pro Plan -->
+                <div wire:click="$set('subscription_plan', 'agency_pro')" class="cursor-pointer border rounded-xl p-4 transition-all"
+                     :class="subscription_plan === 'agency_pro' ? 'border-[#10B981] bg-[#10B981]/5 shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'border-white/10 bg-[#111827] hover:border-white/20'">
+                    <h4 class="text-sm font-bold text-white mb-1">Agency Pro</h4>
+                    <p class="text-[10px] text-[#A1A1AA] mb-3 min-h-[30px]">Growing agencies</p>
+                    <div class="text-lg font-extrabold text-white mb-4">
+                        <span x-text="billing_cycle === 'annual' ? 'R2,499' : 'R2,999'"></span><span class="text-xs font-medium text-[#A1A1AA]">/mo</span>
+                    </div>
+                    <ul class="text-[10px] text-[#D4D4D8] space-y-2">
+                        <li class="flex items-start"><span class="text-[#10B981] mr-1.5">✓</span> 5 Agents</li>
+                        <li class="flex items-start"><span class="text-[#10B981] mr-1.5">✓</span> Unlimited Listings</li>
+                        <li class="flex items-start"><span class="text-[#10B981] mr-1.5">✓</span> 2,000 AI Credits</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3 pt-4">
+                <button type="button" wire:click="previousStep" 
+                    class="w-24 h-[44px] border border-white/10 hover:bg-white/5 text-[#A1A1AA] hover:text-[#FAFAFA] text-sm font-semibold rounded-md transition-all flex items-center justify-center cursor-pointer">
+                    Back
+                </button>
+                <button type="button" wire:click="nextStep" 
+                    class="cta-shimmer flex-1 h-[44px] bg-[#10B981] text-white text-sm font-semibold rounded-md shadow-[0_2px_8px_rgba(16,185,129,0.16)] hover:bg-[#10B981]/90 active:scale-[0.98] transition-all flex items-center justify-center cursor-pointer">
+                    Continue to security
+                </button>
+            </div>
+        </div>
+        @endif
+
+        <!-- STEP 4: Security & Terms -->
+        <div x-show="step === 4"
              x-transition:enter="transition ease-spring duration-300 transform"
              x-transition:enter-start="translate-x-full opacity-0"
              x-transition:enter-end="translate-x-0 opacity-100"
