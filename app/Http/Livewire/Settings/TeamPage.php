@@ -42,6 +42,12 @@ class TeamPage extends Component
         ]);
 
         $agencyId = auth()->user()->agency_id;
+        $agency = \App\Infrastructure\Persistence\Models\Agency::find($agencyId);
+
+        if (! $agency->canAddAgent()) {
+            $this->dispatch('show-upgrade-modal', message: 'You have reached the maximum number of agents for your plan. Please upgrade to add more agents.');
+            return;
+        }
 
         // Guard: already a member
         if (User::where('email', $this->invite_email)->where('agency_id', $agencyId)->exists()) {

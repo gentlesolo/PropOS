@@ -138,6 +138,9 @@
     <!-- Global Email Composer (floating, triggered via openEmailComposer event) -->
     <livewire:email.email-composer />
 
+    <!-- Global Upgrade Modal -->
+    <livewire:components.upgrade-modal />
+
     <!-- Theme Toggle Alpine Store -->
     <script>
         document.addEventListener('alpine:init', () => {

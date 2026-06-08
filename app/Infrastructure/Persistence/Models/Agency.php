@@ -42,6 +42,11 @@ class Agency extends Model
         'settings',
         'commission_splits',
         'default_commission_rate',
+        'ai_credits_balance',
+        'ai_credits_allocated_monthly',
+        'billing_cycle',
+        'paystack_customer_code',
+        'paystack_subscription_code',
     ];
 
     protected function casts(): array
@@ -90,5 +95,55 @@ class Agency extends Model
     public function webhookSubscriptions(): HasMany
     {
         return $this->hasMany(WebhookSubscription::class);
+    }
+
+    // --- Pricing & Subscriptions ---
+
+    public function getPricingPlanAttribute(): array
+    {
+        $planId = $this->subscription_plan ?? 'solo';
+        return config("pricing.plans.{$planId}") ?? config('pricing.plans.solo');
+    }
+
+    public function canAddAgent(): bool
+    {
+        $max = $this->pricing_plan['features']['max_agents'] ?? 1;
+        if ($max === -1) return true;
+        
+        $current = $this->users()->count();
+        return $current < $max;
+    }
+
+    public function canAddListing(): bool
+    {
+        $max = $this->pricing_plan['features']['max_listings'] ?? 15;
+        if ($max === -1) return true;
+        
+        $current = \Illuminate\Support\Facades\DB::table('listings')->where('agency_id', $this->id)->where('status', 'active')->count();
+        return $current < $max;
+    }
+
+    public function deductCredits(int $amount, string $reason): bool
+    {
+        if ($this->pricing_plan['ai_credits_monthly'] === -1) {
+            return true; // Enterprise unlimited
+        }
+
+        if ($this->ai_credits_balance < $amount) {
+            throw new \RuntimeException("Insufficient AI Credits. Please top up or upgrade your plan.");
+        }
+        
+        $this->decrement('ai_credits_balance', $amount);
+        
+        \Illuminate\Support\Facades\DB::table('ai_usage_logs')->insert([
+            'agency_id' => $this->id,
+            'user_id' => auth()->id() ?? $this->users()->first()->id,
+            'feature' => $reason,
+            'credits_used' => $amount,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        
+        return true;
     }
 }

@@ -137,9 +137,11 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     // ── Email accounts (all users — personal accounts; admins see shared) ───
     Route::get('/settings/email-accounts', \App\Http\Livewire\Settings\EmailAccountsPage::class)->name('settings.email-accounts');
 
-    // ── Team Management — requires agency.manage ──────────────────────────────
+    // ── Team Management & Billing — requires agency.manage ──────────────────────────────
     Route::middleware('permission:agency.manage')->group(function () {
         Route::get('/settings/team', \App\Http\Livewire\Settings\TeamPage::class)->name('settings.team');
+        Route::get('/settings/billing', \App\Http\Livewire\Settings\BillingPage::class)->name('settings.billing');
+        Route::get('/settings/billing/verify', [\App\Http\Controllers\PaymentWebhookController::class, 'verifyPaystackSubscription'])->name('settings.billing.verify');
     });
 
     // ── Offers ───────────────────────────────────────────────────────────────
