@@ -117,7 +117,7 @@ if /i "%MAKE_ZIP%"=="y" (
     echo  using FileZilla or cPanel File Manager.
     echo.
     echo  DO NOT upload these folders (save time + space):
-    echo    node_modules\     .git\     .env
+    echo    node_modules\     .git\     .env	mobile\
     echo.
     echo  Upload deploy\installer.php to public_html\install.php
     echo  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€

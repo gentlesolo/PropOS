@@ -96,7 +96,7 @@
                 </div>
 
                 <!-- Notification list -->
-                <div class="max-h-80 overflow-y-auto divide-y divide-border-default">
+                <div class="max-h-72 overflow-y-auto divide-y divide-border-default">
                     @forelse($notifications as $notif)
                     <div class="flex gap-3 px-4 py-3 hover:bg-state-hover-bg transition-colors
                                 {{ $notif->read_at ? 'opacity-50' : '' }}">
@@ -142,6 +142,15 @@
                         <p class="text-xs font-semibold text-text-secondary">No notifications</p>
                     </div>
                     @endforelse
+                </div>
+
+                <!-- Footer: view all -->
+                <div class="px-4 py-2.5 border-t border-border-default bg-surface-sunken">
+                    <a href="{{ route('notifications.index') }}"
+                       wire:navigate
+                       class="text-xs font-semibold text-brand-primary hover:underline">
+                        View all notifications
+                    </a>
                 </div>
             </div>
         </div>

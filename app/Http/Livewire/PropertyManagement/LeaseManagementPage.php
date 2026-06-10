@@ -33,7 +33,11 @@ class LeaseManagementPage extends Component
     public string $monthly_rent = '';
     public string $deposit_amount = '';
     public string $escalation_percent = '0';
+    public string $payment_frequency = 'yearly';
     public string $payment_day = '1';
+    public string $agency_fee = '';
+    public string $legal_fee = '';
+    public string $service_charge = '';
     public string $special_conditions = '';
 
     // Record payment form
@@ -57,14 +61,18 @@ class LeaseManagementPage extends Component
     public function createLease(CreateLeaseAction $action): void
     {
         $this->validate([
-            'tenant_id'         => 'required|exists:tenants,id',
-            'listing_id'        => 'required|exists:listings,id',
-            'start_date'        => 'required|date',
-            'end_date'          => 'required|date|after:start_date',
-            'monthly_rent'      => 'required|numeric|min:1',
-            'deposit_amount'    => 'nullable|numeric|min:0',
-            'escalation_percent'=> 'integer|min:0|max:100',
-            'payment_day'       => 'required|in:1,2,3,5,7,10,15,25,28,30',
+            'tenant_id'          => 'required|exists:tenants,id',
+            'listing_id'         => 'required|exists:listings,id',
+            'start_date'         => 'required|date',
+            'end_date'           => 'required|date|after:start_date',
+            'monthly_rent'       => 'required|numeric|min:1',
+            'deposit_amount'     => 'nullable|numeric|min:0',
+            'escalation_percent' => 'integer|min:0|max:100',
+            'payment_frequency'  => 'required|in:monthly,quarterly,bi_yearly,yearly',
+            'payment_day'        => 'required|in:1,2,3,5,7,10,15,25,28,30',
+            'agency_fee'         => 'nullable|numeric|min:0',
+            'legal_fee'          => 'nullable|numeric|min:0',
+            'service_charge'     => 'nullable|numeric|min:0',
         ]);
 
         $action->execute([
@@ -78,12 +86,17 @@ class LeaseManagementPage extends Component
             'monthly_rent'       => $this->monthly_rent,
             'deposit_amount'     => $this->deposit_amount ?: null,
             'escalation_percent' => $this->escalation_percent,
+            'payment_frequency'  => $this->payment_frequency,
             'payment_day'        => $this->payment_day,
+            'agency_fee'         => $this->agency_fee ?: null,
+            'legal_fee'          => $this->legal_fee ?: null,
+            'service_charge'     => $this->service_charge ?: null,
             'special_conditions' => $this->special_conditions ?: null,
         ]);
 
         $this->reset(['showCreateForm', 'tenant_id', 'listing_id', 'start_date', 'end_date',
-            'monthly_rent', 'deposit_amount', 'escalation_percent', 'payment_day', 'special_conditions']);
+            'monthly_rent', 'deposit_amount', 'escalation_percent', 'payment_frequency',
+            'payment_day', 'agency_fee', 'legal_fee', 'service_charge', 'special_conditions']);
         $this->dispatch('notify', message: 'Lease created with payment schedule.', type: 'success');
     }
 
@@ -155,7 +168,10 @@ class LeaseManagementPage extends Component
 
     public function render()
     {
+        $agencyId = auth()->user()->agency_id;
+
         $leases = Lease::with('tenant.contact', 'listing.property', 'rentPayments')
+            ->where('agency_id', $agencyId)
             ->when($this->search, fn ($q) => $q->whereHas('tenant.contact', fn ($sq) =>
                 $sq->where('first_name', 'like', "%{$this->search}%")
                     ->orWhere('last_name', 'like', "%{$this->search}%")))
@@ -167,14 +183,15 @@ class LeaseManagementPage extends Component
             ? Lease::with('tenant.contact', 'listing.property', 'rentPayments')->find($this->selectedLeaseId)
             : null;
 
-        $tenants  = Tenant::with('contact:id,first_name,last_name')->where('status', 'active')->get();
-        $listings = Listing::with('property:id,address_line_1,city')->latest()->get(['id', 'property_id']);
+        $tenants  = Tenant::with('contact:id,first_name,last_name')->where('agency_id', $agencyId)->where('status', 'active')->get();
+        $listings = Listing::with('property:id,address_line_1,city')->where('agency_id', $agencyId)->latest()->get(['id', 'property_id']);
 
+        $agencyId = auth()->user()->agency_id;
         $stats = [
-            'active'          => Lease::where('status', 'active')->count(),
-            'expiring'        => Lease::where('status', 'active')->where('end_date', '<=', now()->addDays(60))->count(),
-            'overdue_payments'=> RentPayment::where('status', 'overdue')->count(),
-            'total_rent_due'  => RentPayment::whereIn('status', ['pending', 'overdue'])->sum('amount_due'),
+            'active'          => Lease::where('agency_id', $agencyId)->where('status', 'active')->count(),
+            'expiring'        => Lease::where('agency_id', $agencyId)->where('status', 'active')->where('end_date', '<=', now()->addDays(90))->count(),
+            'overdue_payments'=> RentPayment::where('agency_id', $agencyId)->where('status', 'overdue')->count(),
+            'total_rent_due'  => RentPayment::where('agency_id', $agencyId)->whereIn('status', ['pending', 'overdue'])->sum('amount_due'),
         ];
 
         return view('livewire.property-management.lease-management-page', compact('leases', 'selectedLease', 'tenants', 'listings', 'stats'))

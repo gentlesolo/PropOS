@@ -44,7 +44,7 @@
         </div>
         <div class="bg-surface-card rounded-2xl border border-warning-500/20 p-4 text-center">
             <div class="text-2xl font-bold text-warning-600">{{ $stats['expiring'] }}</div>
-            <div class="text-xs text-text-secondary mt-1">Expiring in 60 Days</div>
+            <div class="text-xs text-text-secondary mt-1">Expiring in 90 Days</div>
         </div>
         <div class="bg-surface-card rounded-2xl border border-danger-500/20 p-4 text-center">
             <div class="text-2xl font-bold text-danger-600">{{ $stats['overdue_payments'] }}</div>
@@ -66,6 +66,8 @@
             </button>
         </div>
         <form wire:submit.prevent="createLease" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            {{-- Tenant & Property --}}
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Tenant *</label>
                 <select wire:model="tenant_id" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-brand-primary/50">
@@ -86,6 +88,8 @@
                 </select>
                 @error('listing_id') <p class="text-xs text-danger-600 mt-1">{{ $message }}</p> @enderror
             </div>
+
+            {{-- Dates --}}
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Start Date *</label>
                 <input wire:model="start_date" type="date" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-brand-primary/50">
@@ -96,25 +100,88 @@
                 <input wire:model="end_date" type="date" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-brand-primary/50">
                 @error('end_date') <p class="text-xs text-danger-600 mt-1">{{ $message }}</p> @enderror
             </div>
-            <div>
-                <label class="block text-xs font-medium text-text-secondary mb-1">Monthly Rent *</label>
-                <div class="relative">
-                    <span class="absolute left-3 top-2 text-sm text-text-tertiary">{{ $currencySymbol }}</span>
-                    <input wire:model="monthly_rent" type="number" min="1" class="w-full rounded-xl border border-border-default bg-surface-input pl-7 pr-3 py-2 text-sm text-text-primary focus:outline-none focus:border-brand-primary/50">
+
+            {{-- Payment frequency (prominent — Nigerian default is yearly) --}}
+            <div class="md:col-span-2">
+                <label class="block text-xs font-medium text-text-secondary mb-1">Payment Frequency *</label>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                    @foreach(['yearly' => 'Yearly (Annual)', 'bi_yearly' => 'Bi-Yearly (6 months)', 'quarterly' => 'Quarterly (3 months)', 'monthly' => 'Monthly'] as $val => $lbl)
+                    <label class="flex items-center gap-2 px-3 py-2.5 rounded-xl border cursor-pointer transition-colors
+                        {{ $payment_frequency === $val ? 'border-brand-primary bg-brand-primary/5 text-brand-primary' : 'border-border-default text-text-secondary hover:bg-surface-raised' }}">
+                        <input wire:model.live="payment_frequency" type="radio" name="payment_frequency" value="{{ $val }}" class="sr-only">
+                        <span class="text-xs font-semibold">{{ $lbl }}</span>
+                    </label>
+                    @endforeach
                 </div>
+                @error('payment_frequency') <p class="text-xs text-danger-600 mt-1">{{ $message }}</p> @enderror
+            </div>
+
+            {{-- Rent (always monthly equivalent; hint shows period amount) --}}
+            <div>
+                <label class="block text-xs font-medium text-text-secondary mb-1">Monthly Rent (₦) *</label>
+                <div class="relative">
+                    <span class="absolute left-3 top-2 text-sm text-text-tertiary">₦</span>
+                    <input wire:model.live="monthly_rent" type="number" min="1" class="w-full rounded-xl border border-border-default bg-surface-input pl-6 pr-3 py-2 text-sm text-text-primary focus:outline-none focus:border-brand-primary/50">
+                </div>
+                @if($monthly_rent && is_numeric($monthly_rent))
+                @php
+                    $periodMonths = match($payment_frequency) { 'quarterly' => 3, 'bi_yearly' => 6, 'yearly' => 12, default => 1 };
+                    $periodLabel  = match($payment_frequency) { 'quarterly' => 'quarterly', 'bi_yearly' => 'bi-yearly', 'yearly' => 'annual', default => null };
+                @endphp
+                @if($periodLabel)
+                <p class="text-xs text-brand-primary mt-1 font-medium">
+                    = ₦{{ number_format((float)$monthly_rent * $periodMonths) }} per payment ({{ $periodLabel }})
+                </p>
+                @endif
+                @endif
                 @error('monthly_rent') <p class="text-xs text-danger-600 mt-1">{{ $message }}</p> @enderror
             </div>
+
+            {{-- Caution Deposit --}}
             <div>
-                <label class="block text-xs font-medium text-text-secondary mb-1">Deposit</label>
+                <label class="block text-xs font-medium text-text-secondary mb-1">Caution Deposit</label>
                 <div class="relative">
-                    <span class="absolute left-3 top-2 text-sm text-text-tertiary">{{ $currencySymbol }}</span>
-                    <input wire:model="deposit_amount" type="number" min="0" class="w-full rounded-xl border border-border-default bg-surface-input pl-7 pr-3 py-2 text-sm text-text-primary focus:outline-none focus:border-brand-primary/50">
+                    <span class="absolute left-3 top-2 text-sm text-text-tertiary">₦</span>
+                    <input wire:model="deposit_amount" type="number" min="0" class="w-full rounded-xl border border-border-default bg-surface-input pl-6 pr-3 py-2 text-sm text-text-primary focus:outline-none focus:border-brand-primary/50">
+                </div>
+            </div>
+
+            {{-- Agency fee & Legal fee --}}
+            <div>
+                <label class="block text-xs font-medium text-text-secondary mb-1">Agency Fee</label>
+                <div class="relative">
+                    <span class="absolute left-3 top-2 text-sm text-text-tertiary">₦</span>
+                    <input wire:model="agency_fee" type="number" min="0" placeholder="e.g. 10% of annual rent"
+                        class="w-full rounded-xl border border-border-default bg-surface-input pl-6 pr-3 py-2 text-sm text-text-primary focus:outline-none focus:border-brand-primary/50">
                 </div>
             </div>
             <div>
-                <label class="block text-xs font-medium text-text-secondary mb-1">Annual Escalation (%)</label>
-                <input wire:model="escalation_percent" type="number" min="0" max="100" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-brand-primary/50">
+                <label class="block text-xs font-medium text-text-secondary mb-1">Legal / Agreement Fee</label>
+                <div class="relative">
+                    <span class="absolute left-3 top-2 text-sm text-text-tertiary">₦</span>
+                    <input wire:model="legal_fee" type="number" min="0" placeholder="e.g. 5% of annual rent"
+                        class="w-full rounded-xl border border-border-default bg-surface-input pl-6 pr-3 py-2 text-sm text-text-primary focus:outline-none focus:border-brand-primary/50">
+                </div>
             </div>
+
+            {{-- Service charge & Escalation --}}
+            <div>
+                <label class="block text-xs font-medium text-text-secondary mb-1">Annual Service Charge</label>
+                <div class="relative">
+                    <span class="absolute left-3 top-2 text-sm text-text-tertiary">₦</span>
+                    <input wire:model="service_charge" type="number" min="0" placeholder="Estate / facility charge"
+                        class="w-full rounded-xl border border-border-default bg-surface-input pl-6 pr-3 py-2 text-sm text-text-primary focus:outline-none focus:border-brand-primary/50">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-text-secondary mb-1">Annual Rent Escalation (%)</label>
+                <input wire:model="escalation_percent" type="number" min="0" max="100"
+                    class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-brand-primary/50">
+                <p class="text-xs text-text-tertiary mt-1">Applied to rent on each renewal</p>
+            </div>
+
+            {{-- Payment day (only relevant for monthly/quarterly/bi-yearly) --}}
+            @if($payment_frequency !== 'yearly')
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Payment Day of Month</label>
                 <select wire:model="payment_day" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-brand-primary/50">
@@ -123,11 +190,14 @@
                     @endforeach
                 </select>
             </div>
-            <div class="md:col-span-2">
+            @endif
+
+            <div class="{{ $payment_frequency !== 'yearly' ? '' : 'md:col-span-2' }}">
                 <label class="block text-xs font-medium text-text-secondary mb-1">Special Conditions</label>
                 <textarea wire:model="special_conditions" rows="2" placeholder="Any special conditions…"
                     class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-brand-primary/50"></textarea>
             </div>
+
             <div class="md:col-span-2 flex gap-3 pt-1">
                 <button type="submit" wire:loading.attr="disabled"
                     class="px-5 py-2 bg-brand-primary text-white rounded-xl text-sm font-semibold hover:bg-brand-secondary transition-colors disabled:opacity-60">
@@ -263,7 +333,7 @@
                 <tr>
                     <th class="px-5 py-3 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">Tenant</th>
                     <th class="px-5 py-3 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">Property</th>
-                    <th class="px-5 py-3 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">Monthly Rent</th>
+                    <th class="px-5 py-3 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">Rent</th>
                     <th class="px-5 py-3 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">Status</th>
                     <th class="px-5 py-3 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">Expires</th>
                     <th class="px-5 py-3 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">Actions</th>
@@ -271,7 +341,10 @@
             </thead>
             <tbody class="divide-y divide-border-default/60">
                 @forelse($leases as $lease)
-                @php $daysLeft = $lease->daysUntilExpiry; @endphp
+                @php
+                    $daysLeft      = $lease->daysUntilExpiry;
+                    $expiryThresh  = ($lease->payment_frequency ?? 'monthly') === 'yearly' ? 90 : 60;
+                @endphp
                 <tr wire:key="lease-{{ $lease->id }}"
                     class="hover:bg-surface-raised/20 transition-colors cursor-pointer"
                     wire:click="selectLease({{ $lease->id }})">
@@ -282,8 +355,14 @@
                     <td class="px-5 py-3.5 text-text-secondary text-xs max-w-[180px] truncate">
                         {{ $lease->listing?->property?->address ?? '—' }}
                     </td>
-                    <td class="px-5 py-3.5 font-bold text-text-primary">
-                        {{ $currencySymbol }}{{ number_format($lease->monthly_rent) }}
+                    <td class="px-5 py-3.5">
+                        <div class="font-bold text-text-primary">
+                            ₦{{ number_format($lease->periodRent) }}
+                            <span class="text-xs font-normal text-text-tertiary">{{ $lease->rentSuffix }}</span>
+                        </div>
+                        @if($lease->payment_frequency !== 'monthly')
+                        <div class="text-xs text-text-tertiary">₦{{ number_format($lease->monthly_rent) }}/mo</div>
+                        @endif
                     </td>
                     <td class="px-5 py-3.5">
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold {{ $statusClasses[$lease->status] ?? $statusClasses['expired'] }}">
@@ -292,15 +371,15 @@
                     </td>
                     <td class="px-5 py-3.5">
                         <div class="text-xs text-text-secondary">{{ $lease->end_date->format('d M Y') }}</div>
-                        @if($daysLeft > 0 && $daysLeft <= 60)
+                        @if($daysLeft > 0 && $daysLeft <= $expiryThresh)
                             <div class="text-xs text-warning-600 font-semibold mt-0.5">{{ $daysLeft }}d left</div>
-                        @elseif($daysLeft < 0 && !in_array($lease->status, ['terminated']))
+                        @elseif($daysLeft < 0 && $lease->status !== 'terminated')
                             <div class="text-xs text-danger-600 font-semibold mt-0.5">Expired</div>
                         @endif
                     </td>
                     <td class="px-5 py-3.5">
                         <div class="flex items-center gap-1.5" wire:click.stop>
-                            @if(in_array($lease->status, ['active','renewed']) && $daysLeft <= 60)
+                            @if(in_array($lease->status, ['active','renewed']) && $daysLeft <= $expiryThresh)
                             <button wire:click="renewLease({{ $lease->id }})" wire:loading.attr="disabled"
                                 class="text-xs px-2.5 py-1 rounded-lg border border-brand-primary/30 text-brand-primary hover:bg-brand-primary/5 transition-colors font-semibold">
                                 Renew
@@ -387,32 +466,35 @@
             {{-- Key figures --}}
             <div class="grid grid-cols-2 gap-3 mb-5">
                 <div class="bg-surface-raised/40 rounded-xl p-3 border border-border-default">
-                    <p class="text-xs text-text-secondary">Monthly Rent</p>
-                    <p class="text-base font-bold text-text-primary mt-0.5">{{ $currencySymbol }}{{ number_format($selectedLease->monthly_rent) }}</p>
+                    <p class="text-xs text-text-secondary">{{ $selectedLease->paymentFrequencyLabel }} Rent</p>
+                    <p class="text-base font-bold text-text-primary mt-0.5">₦{{ number_format($selectedLease->periodRent) }}</p>
+                    @if($selectedLease->payment_frequency !== 'monthly')
+                    <p class="text-xs text-text-tertiary mt-0.5">₦{{ number_format($selectedLease->monthly_rent) }}/mo</p>
+                    @endif
                 </div>
                 <div class="bg-surface-raised/40 rounded-xl p-3 border border-border-default">
                     <p class="text-xs text-text-secondary">Outstanding</p>
                     <p class="text-base font-bold mt-0.5 {{ $selectedLease->outstandingBalance > 0 ? 'text-danger-600' : 'text-success-600' }}">
-                        {{ $currencySymbol }}{{ number_format($selectedLease->outstandingBalance) }}
+                        ₦{{ number_format($selectedLease->outstandingBalance) }}
                     </p>
                 </div>
                 <div class="bg-surface-raised/40 rounded-xl p-3 border border-border-default">
-                    <p class="text-xs text-text-secondary">Deposit</p>
+                    <p class="text-xs text-text-secondary">Caution Deposit</p>
                     <p class="text-base font-bold text-text-primary mt-0.5">
-                        {{ $selectedLease->deposit_amount ? $currencySymbol.number_format($selectedLease->deposit_amount) : '—' }}
+                        {{ $selectedLease->deposit_amount ? '₦'.number_format($selectedLease->deposit_amount) : '—' }}
                     </p>
                 </div>
                 <div class="bg-surface-raised/40 rounded-xl p-3 border border-border-default">
-                    <p class="text-xs text-text-secondary">Escalation</p>
-                    <p class="text-base font-bold text-text-primary mt-0.5">{{ $selectedLease->escalation_percent }}% p.a.</p>
+                    <p class="text-xs text-text-secondary">Annual Rent</p>
+                    <p class="text-base font-bold text-text-primary mt-0.5">₦{{ number_format($selectedLease->annualRent) }}</p>
                 </div>
             </div>
 
             {{-- Details list --}}
             <dl class="space-y-2.5 text-sm mb-5">
                 <div class="flex justify-between">
-                    <dt class="text-text-secondary">Payment Day</dt>
-                    <dd class="font-medium text-text-primary">{{ $selectedLease->payment_day }}{{ match((int)$selectedLease->payment_day) { 1 => 'st', 2 => 'nd', 3 => 'rd', default => 'th' } }} of month</dd>
+                    <dt class="text-text-secondary">Payment Frequency</dt>
+                    <dd class="font-semibold text-brand-primary">{{ $selectedLease->paymentFrequencyLabel }}</dd>
                 </div>
                 <div class="flex justify-between">
                     <dt class="text-text-secondary">Start Date</dt>
@@ -422,11 +504,39 @@
                     <dt class="text-text-secondary">End Date</dt>
                     <dd class="font-medium text-text-primary">{{ $selectedLease->end_date->format('d M Y') }}</dd>
                 </div>
-                @php $dl = $selectedLease->daysUntilExpiry; @endphp
+                @if($selectedLease->payment_frequency !== 'yearly')
+                <div class="flex justify-between">
+                    <dt class="text-text-secondary">Payment Day</dt>
+                    <dd class="font-medium text-text-primary">{{ $selectedLease->payment_day }}{{ match((int)$selectedLease->payment_day) { 1 => 'st', 2 => 'nd', 3 => 'rd', default => 'th' } }} of month</dd>
+                </div>
+                @endif
+                <div class="flex justify-between">
+                    <dt class="text-text-secondary">Escalation</dt>
+                    <dd class="font-medium text-text-primary">{{ $selectedLease->escalation_percent }}% p.a.</dd>
+                </div>
+                @if($selectedLease->agency_fee)
+                <div class="flex justify-between">
+                    <dt class="text-text-secondary">Agency Fee</dt>
+                    <dd class="font-medium text-text-primary">₦{{ number_format($selectedLease->agency_fee) }}</dd>
+                </div>
+                @endif
+                @if($selectedLease->legal_fee)
+                <div class="flex justify-between">
+                    <dt class="text-text-secondary">Legal / Agreement Fee</dt>
+                    <dd class="font-medium text-text-primary">₦{{ number_format($selectedLease->legal_fee) }}</dd>
+                </div>
+                @endif
+                @if($selectedLease->service_charge)
+                <div class="flex justify-between">
+                    <dt class="text-text-secondary">Annual Service Charge</dt>
+                    <dd class="font-medium text-text-primary">₦{{ number_format($selectedLease->service_charge) }}</dd>
+                </div>
+                @endif
+                @php $dl = $selectedLease->daysUntilExpiry; $thresh = ($selectedLease->payment_frequency ?? 'monthly') === 'yearly' ? 90 : 60; @endphp
                 @if($dl > 0)
                 <div class="flex justify-between">
                     <dt class="text-text-secondary">Days Remaining</dt>
-                    <dd class="font-semibold {{ $dl <= 60 ? 'text-warning-600' : 'text-text-primary' }}">{{ $dl }} days</dd>
+                    <dd class="font-semibold {{ $dl <= $thresh ? 'text-warning-600' : 'text-text-primary' }}">{{ $dl }} days</dd>
                 </div>
                 @endif
             </dl>
@@ -440,8 +550,9 @@
 
             {{-- Quick actions --}}
             @if(in_array($selectedLease->status, ['active','renewed']))
+            @php $panelThresh = ($selectedLease->payment_frequency ?? 'monthly') === 'yearly' ? 90 : 60; @endphp
             <div class="flex flex-wrap gap-2">
-                @if($selectedLease->daysUntilExpiry <= 60)
+                @if($selectedLease->daysUntilExpiry <= $panelThresh)
                 <button wire:click="renewLease({{ $selectedLease->id }})"
                     class="flex-1 py-2 text-xs font-bold rounded-xl border border-brand-primary/30 text-brand-primary hover:bg-brand-primary/5 transition-colors">
                     Renew Lease

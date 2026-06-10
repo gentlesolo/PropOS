@@ -49,5 +49,11 @@ class DatabaseSeeder extends Seeder
 
         // 12. Seed WhatsApp and SMS messaging inbox conversations
         $this->call(MessagingInboxSeeder::class);
+
+        // 13. Seed default notification templates into agency settings
+        $this->call(NotificationTemplatesSeeder::class);
+
+        // 14. Seed demo in-app notifications
+        $this->call(NotificationSeeder::class);
     }
 }

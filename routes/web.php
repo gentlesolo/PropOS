@@ -137,6 +137,12 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     // ── Email accounts (all users — personal accounts; admins see shared) ───
     Route::get('/settings/email-accounts', \App\Http\Livewire\Settings\EmailAccountsPage::class)->name('settings.email-accounts');
 
+    // ── Notifications inbox (user's own notification list) ──────────────────
+    Route::get('/notifications', \App\Http\Livewire\Shared\NotificationsListPage::class)->name('notifications.index');
+
+    // ── Notification settings (agency-level reminder preferences) ───────────
+    Route::get('/settings/notifications', \App\Http\Livewire\Settings\NotificationsPage::class)->name('settings.notifications');
+
     // ── Team Management & Billing — requires agency.manage ──────────────────────────────
     Route::middleware('permission:agency.manage')->group(function () {
         Route::get('/settings/team', \App\Http\Livewire\Settings\TeamPage::class)->name('settings.team');

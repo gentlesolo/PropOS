@@ -1,4 +1,6 @@
-<div>
+<div
+    x-data
+    x-on:copy-to-clipboard.window="navigator.clipboard.writeText($event.detail.text)">
     <div class="flex items-center justify-between mb-6">
         <div>
             <h1 class="text-2xl font-bold text-text-primary">Tenant Management</h1>
@@ -235,6 +237,11 @@
                         <button wire:click="sendPortalLink" wire:loading.attr="disabled"
                             class="text-xs px-2.5 py-1.5 bg-brand-50 text-brand-600 border border-brand-200 rounded-lg hover:bg-brand-100">
                             Send Portal Link
+                        </button>
+                        <button wire:click="copyPortalLink" wire:loading.attr="disabled"
+                            class="text-xs px-2.5 py-1.5 bg-surface-hover text-text-secondary border border-border-default rounded-lg hover:bg-surface-card flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                            Copy Link
                         </button>
                         <button wire:click="openEditForm({{ $selectedTenant->id }})"
                             class="text-xs px-2.5 py-1.5 border border-border-default text-text-secondary rounded-lg hover:bg-surface-hover">

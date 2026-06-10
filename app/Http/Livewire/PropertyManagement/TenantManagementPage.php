@@ -211,6 +211,21 @@ class TenantManagementPage extends Component
         $this->dispatch('notify', message: 'Portal link sent to tenant.', type: 'success');
     }
 
+    public function copyPortalLink(): void
+    {
+        $tenant = $this->scopedTenant($this->selectedTenantId);
+
+        if (! $tenant->portal_token) {
+            $token = \Illuminate\Support\Str::uuid()->toString();
+            $tenant->update(['portal_token' => $token]);
+            $tenant->refresh();
+        }
+
+        $url = url("/tenant-portal/{$tenant->portal_token}");
+        $this->dispatch('copy-to-clipboard', text: $url);
+        $this->dispatch('notify', message: 'Portal link copied to clipboard.', type: 'success');
+    }
+
     // ── Maintenance request ───────────────────────────────────────────────────
 
     public function submitMaintenance(): void

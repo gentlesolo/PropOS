@@ -55,8 +55,9 @@ class Sidebar extends Component
             [
                 'label' => null,
                 'items' => [
-                    ['title' => 'Dashboard',    'route' => 'dashboard',    'icon' => 'home',     'permission' => 'dashboard.view'],
-                    ['title' => 'AI Planner',   'route' => 'ai.planner',   'icon' => 'sparkles', 'permission' => 'dashboard.view'],
+                    ['title' => 'Dashboard',       'route' => 'dashboard',          'icon' => 'home',       'permission' => 'dashboard.view'],
+                    ['title' => 'AI Planner',       'route' => 'ai.planner',         'icon' => 'sparkles',   'permission' => 'dashboard.view'],
+                    ['title' => 'Notifications',    'route' => 'notifications.index','icon' => 'bell-alert', 'permission' => 'dashboard.view'],
                 ],
             ],
             [
@@ -139,15 +140,16 @@ class Sidebar extends Component
             [
                 'label' => 'Settings',
                 'items' => [
-                    ['title' => 'Settings',           'route' => 'settings.profile',          'icon' => 'cog',             'permission' => 'agency.view'],
-                    ['title' => 'Team',               'route' => 'settings.team',             'icon' => 'user-group',      'permission' => 'agency.manage'],
-                    ['title' => 'Commission Splits',  'route' => 'settings.commission-splits','icon' => 'receipt-percent',  'permission' => 'agency.manage'],
-                    ['title' => 'Lead Routing',       'route' => 'settings.lead-routing',     'icon' => 'arrows-right-left','permission' => 'agency.manage'],
-                    ['title' => 'Pipeline Stages',    'route' => 'settings.pipeline-stages',  'icon' => 'clipboard-list',   'permission' => 'agency.manage'],
-                    ['title' => 'Tax Configuration',  'route' => 'settings.tax',              'icon' => 'adjustments',      'permission' => 'agency.manage'],
-                    ['title' => 'Website Integration', 'route' => 'settings.website-integration','icon' => 'globe-alt',        'permission' => 'agency.manage'],
-                    ['title' => 'API Keys',           'route' => 'settings.api-keys',         'icon' => 'key',              'permission' => 'agency.manage'],
-                    ['title' => 'Webhooks',           'route' => 'settings.webhooks',         'icon' => 'arrows-right-left','permission' => 'agency.manage'],
+                    ['title' => 'Settings',                'route' => 'settings.profile',           'icon' => 'cog',              'permission' => 'agency.view'],
+                    ['title' => 'Notification Templates',  'route' => 'settings.notifications',     'icon' => 'bell-alert',       'permission' => 'agency.manage'],
+                    ['title' => 'Team',                    'route' => 'settings.team',              'icon' => 'user-group',       'permission' => 'agency.manage'],
+                    ['title' => 'Commission Splits',       'route' => 'settings.commission-splits', 'icon' => 'receipt-percent',  'permission' => 'agency.manage'],
+                    ['title' => 'Lead Routing',            'route' => 'settings.lead-routing',      'icon' => 'arrows-right-left','permission' => 'agency.manage'],
+                    ['title' => 'Pipeline Stages',         'route' => 'settings.pipeline-stages',   'icon' => 'clipboard-list',   'permission' => 'agency.manage'],
+                    ['title' => 'Tax Configuration',       'route' => 'settings.tax',               'icon' => 'adjustments',      'permission' => 'agency.manage'],
+                    ['title' => 'Website Integration',     'route' => 'settings.website-integration','icon' => 'globe-alt',       'permission' => 'agency.manage'],
+                    ['title' => 'API Keys',                'route' => 'settings.api-keys',          'icon' => 'key',              'permission' => 'agency.manage'],
+                    ['title' => 'Webhooks',                'route' => 'settings.webhooks',          'icon' => 'arrows-right-left','permission' => 'agency.manage'],
                 ],
             ],
         ];

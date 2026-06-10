@@ -19,17 +19,25 @@ class SendLeaseRenewalOfferAction
         $property = $lease->listing?->property;
         $address  = $property ? "{$property->address_line_1}, {$property->city}" : 'the property';
 
-        $escalation     = (float) ($lease->escalation_percent ?? 0);
-        $proposedRent   = round((float) $lease->monthly_rent * (1 + $escalation / 100), 2);
-        $newEndDate     = $lease->end_date->copy()->addYear()->format('d M Y');
-        $currentEndDate = $lease->end_date->format('d M Y');
+        $escalation        = (float) ($lease->escalation_percent ?? 0);
+        $newMonthlyRent    = round((float) $lease->monthly_rent * (1 + $escalation / 100), 2);
+        $newPeriodRent     = round($newMonthlyRent * $lease->periodMonths, 2);
+        $frequencyLabel    = $lease->paymentFrequencyLabel;
+        $newEndDate        = $lease->end_date->copy()->addMonths($lease->periodMonths)->format('d M Y');
+        $currentEndDate    = $lease->end_date->format('d M Y');
 
         if ($contact?->email) {
+            $rentLine = $lease->payment_frequency === 'monthly'
+                ? "Proposed Monthly Rent: ₦" . number_format($newPeriodRent, 2) . "/month"
+                : "Proposed {$frequencyLabel} Rent: ₦" . number_format($newPeriodRent, 2)
+                    . " (₦" . number_format($newMonthlyRent, 2) . "/month equivalent)";
+
             $body = "Dear {$contact->first_name},\n\n"
                 . "Your lease for {$address} is due to expire on {$currentEndDate}.\n\n"
                 . "We would like to offer you a lease renewal on the following terms:\n\n"
                 . "New Lease End Date: {$newEndDate}\n"
-                . "Proposed Monthly Rent: R " . number_format($proposedRent, 2) . "\n\n"
+                . "Payment Frequency: {$frequencyLabel}\n"
+                . "{$rentLine}\n\n"
                 . "Please contact us to discuss and confirm your renewal.\n\n"
                 . "Kind regards,\nProperty Management";
 
