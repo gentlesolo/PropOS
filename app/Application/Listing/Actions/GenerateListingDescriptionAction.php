@@ -13,6 +13,10 @@ class GenerateListingDescriptionAction
     {
         $property = $listing->property;
 
+        $features = is_array($listing->features_highlighted) && count($listing->features_highlighted) > 0 
+            ? "Special features: " . implode(', ', $listing->features_highlighted) 
+            : null;
+
         $details = collect([
             "Property type: {$property->property_type}",
             "Address: {$property->address_line_1}, {$property->city}, {$property->state_province}",
@@ -22,14 +26,16 @@ class GenerateListingDescriptionAction
             $property->land_area_sqm ? "Land area: {$property->land_area_sqm} sqm" : null,
             $property->year_built ? "Year built: {$property->year_built}" : null,
             "Listing price: " . number_format((float) $listing->listing_price),
-            "Mandate type: {$listing->mandate_type}",
+            $property->condition ? "Condition: {$property->condition}" : null,
+            $features,
         ])->filter()->implode("\n");
 
-        $systemPrompt = "You are a professional real estate copywriter. Write compelling property descriptions that attract buyers and sellers. Tone: {$tone}. Keep descriptions factual, vivid, and under 200 words. Return a JSON object with keys: headline (max 12 words), description_short (50 words), description_standard (100 words), description_long (180 words).";
+        $systemPrompt = "You are an expert premium real estate copywriter. Write highly engaging, detailed, and vivid property descriptions that paint a compelling lifestyle picture for prospective buyers. Tone: {$tone}. IMPORTANT: You must output ONLY a raw JSON object (no markdown, no backticks) with these exact keys:\n- 'headline' (max 12 words)\n- 'description_short' (around 50 words)\n- 'description_standard' (around 150-200 words, structured into clear paragraphs)\n- 'description_long' (very detailed and comprehensive, 300-400+ words, highlighting lifestyle, unique features, layout, condition, and location benefits).";
 
         $userPrompt = "Write listing descriptions for this property:\n\n{$details}";
 
         $raw = $this->ai->generate($systemPrompt, $userPrompt);
+        $raw = preg_replace('/```(?:json)?\s*([\s\S]*?)\s*```/', '$1', trim($raw));
 
         $parsed = json_decode($raw, true);
 

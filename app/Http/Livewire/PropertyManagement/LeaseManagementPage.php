@@ -30,7 +30,7 @@ class LeaseManagementPage extends Component
     public string $listing_id = '';
     public string $start_date = '';
     public string $end_date = '';
-    public string $monthly_rent = '';
+    public string $rent_input = '';       // what the user types (period amount)
     public string $deposit_amount = '';
     public string $escalation_percent = '0';
     public string $payment_frequency = 'yearly';
@@ -65,7 +65,7 @@ class LeaseManagementPage extends Component
             'listing_id'         => 'required|exists:listings,id',
             'start_date'         => 'required|date',
             'end_date'           => 'required|date|after:start_date',
-            'monthly_rent'       => 'required|numeric|min:1',
+            'rent_input'         => 'required|numeric|min:1',
             'deposit_amount'     => 'nullable|numeric|min:0',
             'escalation_percent' => 'integer|min:0|max:100',
             'payment_frequency'  => 'required|in:monthly,quarterly,bi_yearly,yearly',
@@ -75,6 +75,15 @@ class LeaseManagementPage extends Component
             'service_charge'     => 'nullable|numeric|min:0',
         ]);
 
+        // Convert the period-based input to the stored monthly equivalent
+        $periodMonths = match($this->payment_frequency) {
+            'quarterly' => 3,
+            'bi_yearly' => 6,
+            'yearly'    => 12,
+            default     => 1,
+        };
+        $monthlyRent = round((float) $this->rent_input / $periodMonths, 2);
+
         $action->execute([
             'agency_id'          => auth()->user()->agency_id,
             'tenant_id'          => $this->tenant_id,
@@ -83,7 +92,7 @@ class LeaseManagementPage extends Component
             'status'             => 'active',
             'start_date'         => $this->start_date,
             'end_date'           => $this->end_date,
-            'monthly_rent'       => $this->monthly_rent,
+            'monthly_rent'       => $monthlyRent,
             'deposit_amount'     => $this->deposit_amount ?: null,
             'escalation_percent' => $this->escalation_percent,
             'payment_frequency'  => $this->payment_frequency,
@@ -95,7 +104,7 @@ class LeaseManagementPage extends Component
         ]);
 
         $this->reset(['showCreateForm', 'tenant_id', 'listing_id', 'start_date', 'end_date',
-            'monthly_rent', 'deposit_amount', 'escalation_percent', 'payment_frequency',
+            'rent_input', 'deposit_amount', 'escalation_percent', 'payment_frequency',
             'payment_day', 'agency_fee', 'legal_fee', 'service_charge', 'special_conditions']);
         $this->dispatch('notify', message: 'Lease created with payment schedule.', type: 'success');
     }

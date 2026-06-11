@@ -60,7 +60,7 @@
     @endif
 
     <!-- Filters -->
-    <div class="flex flex-wrap gap-3 mb-4">
+    <div class="flex flex-wrap items-center gap-3 mb-4">
         <input wire:model.live="monthFilter" type="month" class="rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
         <select wire:model.live="statusFilter" class="rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary">
             <option value="">All Statuses</option>
@@ -68,6 +68,15 @@
             <option value="{{ $val }}">{{ $label }}</option>
             @endforeach
         </select>
+        <button wire:click="$toggle('proofFilter')"
+            @class([
+                'inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-sm font-medium transition-colors',
+                'bg-brand-50 border-brand-300 text-brand-700' => $proofFilter,
+                'bg-surface-input border-border-default text-text-secondary hover:bg-surface-hover' => !$proofFilter,
+            ])>
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            Proof Uploaded
+        </button>
     </div>
 
     <!-- Payments Table -->
@@ -97,10 +106,38 @@
                     <td class="px-4 py-3 font-bold text-text-primary">R{{ number_format($payment->amount_due) }}</td>
                     <td class="px-4 py-3 text-text-secondary">{{ $payment->amount_paid ? 'R'.number_format($payment->amount_paid) : '—' }}</td>
                     <td class="px-4 py-3">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-{{ $pc }}-50 text-{{ $pc }}-700 border border-{{ $pc }}-200">{{ ucfirst($payment->status) }}</span>
+                        <div class="flex flex-col gap-1">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-{{ $pc }}-50 text-{{ $pc }}-700 border border-{{ $pc }}-200">{{ ucfirst($payment->status) }}</span>
+                            @if($payment->proof_of_payment)
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-brand-50 text-brand-700 border border-brand-200">
+                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                Proof uploaded
+                            </span>
+                            @endif
+                        </div>
                     </td>
                     <td class="px-4 py-3">
-                        @if(in_array($payment->status, ['pending','overdue','partial']))
+                        @if($payment->proof_of_payment)
+                        <div class="flex flex-col gap-1">
+                            <a href="{{ asset('storage/' . $payment->proof_of_payment) }}" target="_blank"
+                               class="text-xs px-2.5 py-1 bg-brand-50 text-brand-700 border border-brand-200 rounded-lg hover:bg-brand-100 transition-colors inline-flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                                View
+                            </a>
+                            @if(in_array($payment->status, ['pending','overdue','partial']))
+                            <div class="flex gap-1">
+                                <button wire:click="confirmProof({{ $payment->id }})" wire:loading.attr="disabled"
+                                    class="text-xs px-2 py-1 bg-success-50 text-success-700 border border-success-200 rounded-lg hover:bg-success-100 transition-colors">
+                                    ✓ Confirm
+                                </button>
+                                <button wire:click="rejectProof({{ $payment->id }})" wire:loading.attr="disabled"
+                                    class="text-xs px-2 py-1 bg-danger-50 text-danger-700 border border-danger-200 rounded-lg hover:bg-danger-100 transition-colors">
+                                    ✕ Reject
+                                </button>
+                            </div>
+                            @endif
+                        </div>
+                        @elseif(in_array($payment->status, ['pending','overdue','partial']))
                         <button wire:click="$set('payment_rent_id', '{{ $payment->id }}'); $set('showPaymentForm', true); $set('paid_date', '{{ now()->toDateString() }}')"
                             class="text-xs px-2.5 py-1 bg-success-50 text-success-700 border border-success-200 rounded-lg hover:bg-success-100 transition-colors">
                             Record

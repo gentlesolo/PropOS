@@ -58,6 +58,11 @@ class ListingDetailPage extends Component
     // Photo upload
     public $photos = [];
 
+    public function updatedPhotos()
+    {
+        $this->uploadPhotos();
+    }
+
     // AI generation
     public string $descriptionTone = 'professional';
 

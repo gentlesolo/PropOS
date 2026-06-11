@@ -116,25 +116,31 @@
                 @error('payment_frequency') <p class="text-xs text-danger-600 mt-1">{{ $message }}</p> @enderror
             </div>
 
-            {{-- Rent (always monthly equivalent; hint shows period amount) --}}
+            {{-- Rent — label and hint are driven by payment_frequency --}}
+            @php
+                $rentLabel    = match($payment_frequency) {
+                    'quarterly' => 'Quarterly Rent',
+                    'bi_yearly' => 'Bi-Yearly Rent (6 months)',
+                    'yearly'    => 'Annual Rent',
+                    default     => 'Monthly Rent',
+                };
+                $rentPeriodMonths = match($payment_frequency) { 'quarterly' => 3, 'bi_yearly' => 6, 'yearly' => 12, default => 1 };
+                $rentMonthlyEq = ($rent_input && is_numeric($rent_input) && $rentPeriodMonths > 1)
+                    ? round((float) $rent_input / $rentPeriodMonths, 2)
+                    : null;
+            @endphp
             <div>
-                <label class="block text-xs font-medium text-text-secondary mb-1">Monthly Rent (₦) *</label>
+                <label class="block text-xs font-medium text-text-secondary mb-1">{{ $rentLabel }} (₦) *</label>
                 <div class="relative">
                     <span class="absolute left-3 top-2 text-sm text-text-tertiary">₦</span>
-                    <input wire:model.live="monthly_rent" type="number" min="1" class="w-full rounded-xl border border-border-default bg-surface-input pl-6 pr-3 py-2 text-sm text-text-primary focus:outline-none focus:border-brand-primary/50">
+                    <input wire:model.live="rent_input" type="number" min="1"
+                        placeholder="{{ $payment_frequency === 'yearly' ? 'e.g. 6000000' : '' }}"
+                        class="w-full rounded-xl border border-border-default bg-surface-input pl-6 pr-3 py-2 text-sm text-text-primary focus:outline-none focus:border-brand-primary/50">
                 </div>
-                @if($monthly_rent && is_numeric($monthly_rent))
-                @php
-                    $periodMonths = match($payment_frequency) { 'quarterly' => 3, 'bi_yearly' => 6, 'yearly' => 12, default => 1 };
-                    $periodLabel  = match($payment_frequency) { 'quarterly' => 'quarterly', 'bi_yearly' => 'bi-yearly', 'yearly' => 'annual', default => null };
-                @endphp
-                @if($periodLabel)
-                <p class="text-xs text-brand-primary mt-1 font-medium">
-                    = ₦{{ number_format((float)$monthly_rent * $periodMonths) }} per payment ({{ $periodLabel }})
-                </p>
+                @if($rentMonthlyEq)
+                <p class="text-xs text-text-tertiary mt-1">≈ ₦{{ number_format($rentMonthlyEq) }}/month equivalent</p>
                 @endif
-                @endif
-                @error('monthly_rent') <p class="text-xs text-danger-600 mt-1">{{ $message }}</p> @enderror
+                @error('rent_input') <p class="text-xs text-danger-600 mt-1">{{ $message }}</p> @enderror
             </div>
 
             {{-- Caution Deposit --}}

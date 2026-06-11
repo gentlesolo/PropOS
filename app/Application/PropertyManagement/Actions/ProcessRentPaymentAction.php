@@ -4,11 +4,11 @@ namespace App\Application\PropertyManagement\Actions;
 
 use App\Infrastructure\Persistence\Models\Lease;
 use App\Infrastructure\Persistence\Models\RentPayment;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 class ProcessRentPaymentAction
 {
+    public function __construct(private readonly SendRentReceiptAction $receipt) {}
+
     public function execute(
         Lease $lease,
         float $amountPaid,
@@ -33,7 +33,7 @@ class ProcessRentPaymentAction
                 'notes'          => $notes,
             ]);
 
-            $payment = $pending;
+            $payment = $pending->refresh();
         } else {
             $status  = $amountPaid >= (float) $lease->monthly_rent ? 'paid' : 'partial';
             $payment = RentPayment::create([
@@ -50,36 +50,8 @@ class ProcessRentPaymentAction
             ]);
         }
 
-        if ($status === 'paid') {
-            $this->sendReceipt($lease, $payment);
-        }
+        $this->receipt->execute($payment);
 
         return $payment;
-    }
-
-    private function sendReceipt(Lease $lease, RentPayment $payment): void
-    {
-        $contact = $lease->tenant?->contact ?? $lease->contact;
-
-        if (! $contact?->email) {
-            return;
-        }
-
-        $property = $lease->listing?->property;
-        $address  = $property ? "{$property->address_line_1}, {$property->city}" : 'the property';
-
-        $body = "Dear {$contact->first_name},\n\n"
-            . "This is your payment receipt for {$address}.\n\n"
-            . "Reference: {$payment->reference}\n"
-            . "Amount Paid: R " . number_format((float) $payment->amount_paid, 2) . "\n"
-            . "Date: " . \Carbon\Carbon::parse($payment->paid_date)->format('d M Y') . "\n"
-            . "Method: " . ucfirst(str_replace('_', ' ', $payment->payment_method)) . "\n\n"
-            . "Thank you for your payment.\n\nKind regards,\nProperty Management";
-
-        try {
-            Mail::raw($body, fn ($msg) => $msg->to($contact->email, $contact->full_name)->subject("Payment Receipt — {$payment->reference}"));
-        } catch (\Exception $e) {
-            Log::error('Rent payment receipt email failed', ['payment_id' => $payment->id, 'error' => $e->getMessage()]);
-        }
     }
 }

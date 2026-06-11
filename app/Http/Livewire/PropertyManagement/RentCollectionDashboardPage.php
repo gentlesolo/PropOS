@@ -3,9 +3,8 @@
 namespace App\Http\Livewire\PropertyManagement;
 
 use App\Application\PropertyManagement\Actions\ProcessRentPaymentAction;
-use App\Infrastructure\Persistence\Models\Lease;
+use App\Application\PropertyManagement\Actions\SendRentReceiptAction;
 use App\Infrastructure\Persistence\Models\RentPayment;
-use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -15,6 +14,7 @@ class RentCollectionDashboardPage extends Component
 
     public string $statusFilter = '';
     public string $monthFilter = '';
+    public bool $proofFilter = false;
 
     // Quick payment form
     public bool $showPaymentForm = false;
@@ -28,7 +28,7 @@ class RentCollectionDashboardPage extends Component
         $this->monthFilter = now()->format('Y-m');
     }
 
-    protected $queryString = ['statusFilter', 'monthFilter'];
+    protected $queryString = ['statusFilter', 'monthFilter', 'proofFilter'];
 
     public function quickPay(ProcessRentPaymentAction $action): void
     {
@@ -52,6 +52,29 @@ class RentCollectionDashboardPage extends Component
         $this->dispatch('notify', message: 'Payment recorded.', type: 'success');
     }
 
+    public function confirmProof(int $paymentId, SendRentReceiptAction $receipt): void
+    {
+        $payment = RentPayment::findOrFail($paymentId);
+
+        $payment->update([
+            'amount_paid'    => $payment->amount_due,
+            'status'         => 'paid',
+            'paid_date'      => today()->toDateString(),
+            'payment_method' => $payment->payment_method ?? 'eft',
+        ]);
+
+        $receipt->execute($payment->refresh());
+
+        $this->dispatch('notify', message: 'Payment confirmed as paid.', type: 'success');
+    }
+
+    public function rejectProof(int $paymentId): void
+    {
+        $payment = RentPayment::findOrFail($paymentId);
+        $payment->update(['proof_of_payment' => null]);
+        $this->dispatch('notify', message: 'Proof rejected. Tenant will need to resubmit.', type: 'warning');
+    }
+
     public function render()
     {
         [$year, $month] = explode('-', $this->monthFilter ?: now()->format('Y-m'));
@@ -60,6 +83,7 @@ class RentCollectionDashboardPage extends Component
             ->whereYear('due_date', $year)
             ->whereMonth('due_date', $month)
             ->when($this->statusFilter, fn ($q) => $q->where('status', $this->statusFilter))
+            ->when($this->proofFilter, fn ($q) => $q->whereNotNull('proof_of_payment'))
             ->orderBy('due_date')
             ->paginate(20);
 
