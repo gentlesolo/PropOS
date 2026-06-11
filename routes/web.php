@@ -24,6 +24,7 @@ Route::get('/integrations/google-calendar/callback', [\App\Http\Controllers\Goog
 Route::middleware(['tenant', 'guest'])->group(function () {
     Route::get('/login', \App\Http\Livewire\Auth\LoginPage::class)->name('login');
     Route::get('/register', \App\Http\Livewire\Auth\RegisterPage::class)->name('register');
+    Route::get('/reset-password/{token}', \App\Http\Livewire\Auth\ResetPasswordPage::class)->name('password.reset');
 });
 
 // 2FA challenge — session-gated, no full auth yet
@@ -42,9 +43,18 @@ Route::post('/logout', function () {
 // Authenticated Application Routes
 Route::middleware(['auth', 'tenant'])->group(function () {
 
+    // ── Email Verification ───────────────────────────────────────────────────
+    Route::get('/email/verify', \App\Http\Livewire\Auth\VerifyEmailPage::class)->name('verification.notice');
+    Route::get('/email/verify/{id}/{hash}', function (\Illuminate\Foundation\Auth\EmailVerificationRequest $request) {
+        $request->fulfill();
+        return redirect()->route('dashboard');
+    })->middleware(['signed', 'throttle:6,1'])->name('verification.verify');
+
     // ── Dashboard (all authenticated users) ──────────────────────────────────
-    Route::get('/dashboard', \App\Http\Livewire\DashboardPage::class)->name('dashboard');
-    Route::get('/dashboard-v2', \App\Http\Livewire\DashboardPageV2::class)->name('dashboard.v2');
+    Route::middleware('verified')->group(function () {
+        Route::get('/dashboard', \App\Http\Livewire\DashboardPage::class)->name('dashboard');
+        Route::get('/dashboard-v2', \App\Http\Livewire\DashboardPageV2::class)->name('dashboard.v2');
+    });
 
     // ── CRM — requires contacts.view_own ─────────────────────────────────────
     Route::middleware('permission:contacts.view_own')->group(function () {

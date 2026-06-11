@@ -45,11 +45,14 @@ class RegisterUserAction
                 'job_title' => $data->role,
                 'password' => Hash::make($data->password),
                 'status' => 'active',
-                'email_verified_at' => now(), // Auto-verify for simplicity initially
+                'email_verified_at' => null, // Require email verification
             ]);
 
             // 3. Assign Principal Role to the User
             $user->assignRole('principal');
+
+            // 4. Send Email Verification Notification
+            $user->sendEmailVerificationNotification();
 
             return $user;
         });

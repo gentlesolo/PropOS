@@ -42,8 +42,16 @@ class LoginPage extends Component
             'email' => 'required|email',
         ]);
 
-        // Transition to success state in-place
-        $this->mode = 'forgot_password_success';
+        $status = \Illuminate\Support\Facades\Password::broker()->sendResetLink(
+            ['email' => $this->email]
+        );
+
+        if ($status === \Illuminate\Support\Facades\Password::RESET_LINK_SENT) {
+            // Transition to success state in-place
+            $this->mode = 'forgot_password_success';
+        } else {
+            $this->addError('email', __($status));
+        }
     }
 
     public function showForgotPassword()
