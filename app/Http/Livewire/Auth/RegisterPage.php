@@ -108,7 +108,7 @@ class RegisterPage extends Component
         }
     }
 
-    public function submit(RegisterUserAction $registerAction): mixed
+    public function submit(RegisterUserAction $registerAction, \App\Infrastructure\Payment\PaystackSubscriptionService $paystack): mixed
     {
         // ── Invitation flow ────────────────────────────────────────────────
         if ($this->invitationToken) {
@@ -182,6 +182,30 @@ class RegisterPage extends Component
 
         Auth::login($user);
         setPermissionsTeamId($user->agency_id);
+
+        // Redirect to Paystack if not Enterprise
+        if ($this->subscription_plan !== 'enterprise') {
+            try {
+                $amount = config("pricing.plans.{$this->subscription_plan}.price_{$this->billing_cycle}");
+                
+                $checkout = $paystack->createCheckoutLink(
+                    agency: $user->agency,
+                    amount: $amount,
+                    planCode: null,
+                    metadata: [
+                        'type' => 'subscription',
+                        'plan' => $this->subscription_plan,
+                        'cycle' => $this->billing_cycle,
+                    ]
+                );
+
+                return redirect()->away($checkout['url']);
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Paystack checkout failed during registration', ['error' => $e->getMessage()]);
+                // Fallback to dashboard if payment init fails
+                return redirect()->route('dashboard')->with('error', 'Could not initialize payment. Please update your billing settings.');
+            }
+        }
 
         return redirect()->route('dashboard');
     }

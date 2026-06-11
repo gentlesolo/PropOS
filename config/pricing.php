@@ -11,8 +11,8 @@ return [
         'solo' => [
             'name' => 'Solo',
             'job' => 'Independent agents',
-            'price_monthly' => 799,
-            'price_annual' => 7990,
+            'price_monthly' => 49900,
+            'price_annual' => 499000,
             'features' => [
                 'max_agents' => 1,
                 'max_listings' => 15,
@@ -27,8 +27,8 @@ return [
         'agency_pro' => [
             'name' => 'Agency Pro',
             'job' => 'Growing agencies',
-            'price_monthly' => 2999,
-            'price_annual' => 29990,
+            'price_monthly' => 199900,
+            'price_annual' => 1999000,
             'features' => [
                 'max_agents' => 5,
                 'max_listings' => -1, // Unlimited
@@ -37,7 +37,7 @@ return [
                 'ai_brief' => 'full', // Full brief + nudges
             ],
             'ai_credits_monthly' => 2000,
-            'additional_agent_price' => 499, // R499/agent beyond 5
+            'additional_agent_price' => 29900, // ₦29,900/agent beyond 5
         ],
 
         'enterprise' => [
@@ -82,17 +82,17 @@ return [
         'starter' => [
             'name' => 'Starter Top-up',
             'credits' => 500,
-            'price' => 199,
+            'price' => 14900,
         ],
         'pro' => [
             'name' => 'Pro Top-up',
             'credits' => 2000,
-            'price' => 599,
+            'price' => 44900,
         ],
         'bulk' => [
             'name' => 'Bulk Top-up',
             'credits' => 10000,
-            'price' => 2499,
+            'price' => 189900,
         ],
     ],
 ];

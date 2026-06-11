@@ -67,6 +67,9 @@ Route::prefix('v1/public')->name('api.v1.public.')->middleware(['api.key', 'thro
 // PayFast ITN webhook (public — verified by signature inside controller)
 Route::post('/webhooks/payfast', [PaymentWebhookController::class, 'handlePayFastItn']);
 
+// Paystack webhook (public — verified by HMAC-SHA512 inside controller)
+Route::post('/webhooks/paystack', [PaymentWebhookController::class, 'handlePaystackWebhook']);
+
 // WhatsApp webhook (public — verified by token, not Sanctum)
 Route::get('/webhooks/whatsapp', [WhatsAppWebhookController::class, 'verify']);
 Route::post('/webhooks/whatsapp', [WhatsAppWebhookController::class, 'receive']);

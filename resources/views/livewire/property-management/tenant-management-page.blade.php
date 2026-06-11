@@ -1,6 +1,21 @@
 <div
     x-data
-    x-on:copy-to-clipboard.window="navigator.clipboard.writeText($event.detail.text)">
+    x-on:copy-to-clipboard.window="
+        let text = $event.detail.text;
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text);
+        } else {
+            let el = document.createElement('textarea');
+            el.value = text;
+            el.style.position = 'fixed';
+            el.style.opacity = '0';
+            document.body.appendChild(el);
+            el.focus();
+            el.select();
+            try { document.execCommand('copy'); } catch(e) {}
+            document.body.removeChild(el);
+        }
+    ">
     <div class="flex items-center justify-between mb-6">
         <div>
             <h1 class="text-2xl font-bold text-text-primary">Tenant Management</h1>

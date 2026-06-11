@@ -239,10 +239,10 @@ A 1% improvement in pricing delivers an 8% improvement in operating profit (McKi
 
 | | Solo | Agency Pro | Enterprise |
 |---|---|---|---|
-| Price | R799/month | R2,999/month (5 seats) | Custom |
-| Additional seats | — | R499/agent | Negotiated |
+| Price | ₦49,900/month | ₦199,900/month (5 seats) | Custom |
+| Additional seats | — | ₦29,900/agent | Negotiated |
 | AI Credits | 200/month | 2,000/month | Custom |
-| Annual | R7,990/year | R29,990/year | Custom |
+| Annual | ₦499,000/year | ₦1,999,000/year | Custom |
 | Best for | Independent agents | Growing agencies | Franchises & multi-branch |
 
 The goal: 70% of paying customers on Agency Pro, 15% on Solo, 15% on Enterprise — with Enterprise generating 40%+ of total revenue.

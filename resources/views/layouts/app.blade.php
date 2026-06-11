@@ -141,6 +141,41 @@
     <!-- Global Upgrade Modal -->
     <livewire:components.upgrade-modal />
 
+    <!-- Toast Notifications -->
+    <div x-data="{
+            toasts: [],
+            addToast(detail) {
+                let id = Date.now();
+                this.toasts.push({ id, message: detail.message, type: detail.type || 'info' });
+                setTimeout(() => this.removeToast(id), 4000);
+            },
+            removeToast(id) {
+                this.toasts = this.toasts.filter(t => t.id !== id);
+            }
+        }"
+        x-on:notify.window="addToast($event.detail)"
+        class="fixed bottom-4 right-4 z-[9999] flex flex-col gap-2 pointer-events-none"
+        role="status" aria-live="polite">
+        <template x-for="toast in toasts" :key="toast.id">
+            <div x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 translate-y-2 scale-95"
+                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0 translate-y-1"
+                 :class="{
+                     'bg-success-50 border-success-200 text-success-800 dark:bg-success-900/30 dark:border-success-700 dark:text-success-300': toast.type === 'success',
+                     'bg-danger-50 border-danger-200 text-danger-800 dark:bg-danger-900/30 dark:border-danger-700 dark:text-danger-300': toast.type === 'error',
+                     'bg-warning-50 border-warning-200 text-warning-800 dark:bg-warning-900/30 dark:border-warning-700 dark:text-warning-300': toast.type === 'warning',
+                     'bg-brand-50 border-brand-200 text-brand-700 dark:bg-brand-900/30 dark:border-brand-700 dark:text-brand-300': toast.type === 'info' || !toast.type,
+                 }"
+                 class="pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl border shadow-lg text-sm font-medium max-w-sm w-full">
+                <span x-text="toast.message" class="flex-1"></span>
+                <button @click="removeToast(toast.id)" class="shrink-0 opacity-40 hover:opacity-100 transition-opacity text-lg leading-none">&times;</button>
+            </div>
+        </template>
+    </div>
+
     <!-- Theme Toggle Alpine Store -->
     <script>
         document.addEventListener('alpine:init', () => {

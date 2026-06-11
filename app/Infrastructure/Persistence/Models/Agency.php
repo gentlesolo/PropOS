@@ -5,6 +5,7 @@ namespace App\Infrastructure\Persistence\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Infrastructure\Persistence\Models\PaystackTransaction;
 
 class Agency extends Model
 {
@@ -95,6 +96,11 @@ class Agency extends Model
     public function webhookSubscriptions(): HasMany
     {
         return $this->hasMany(WebhookSubscription::class);
+    }
+
+    public function paystackTransactions(): HasMany
+    {
+        return $this->hasMany(PaystackTransaction::class);
     }
 
     // --- Pricing & Subscriptions ---

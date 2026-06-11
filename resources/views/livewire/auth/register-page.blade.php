@@ -1,4 +1,4 @@
-<div x-data="{ step: @entangle('step'), invitation: @json(!!$invitationToken) }" 
+<div x-data="{ step: @entangle('step'), invitation: @json(!!$invitationToken), billing_cycle: @entangle('billing_cycle'), subscription_plan: @entangle('subscription_plan') }" 
     x-init="$watch('step', val => {
         let progressBar = document.getElementById('auth-progress-bar');
         if (progressBar) {
@@ -106,22 +106,16 @@
                  
                 <div>
                     <label for="agency_name" class="block text-xs font-semibold uppercase tracking-wider text-[#A1A1AA] mb-1.5">Agency Name</label>
-                    <input wire:model.blur="agency_name" id="agency_name" type="text" required placeholder="Lagos Crest Realty"
+                    <input wire:model.live="agency_name" id="agency_name" type="text" required placeholder="Lagos Crest Realty"
                         class="w-full h-11 bg-[#111827] border @error('agency_name') border-[#F43F5E] @else border-white/10 @enderror text-sm text-[#FAFAFA] placeholder-[#52525B] px-3.5 rounded-md focus:outline-none focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] focus:shadow-[0_0_12px_rgba(16,185,129,0.16)] transition-all duration-200">
+                    @if($slug)
+                        <div class="text-[11px] font-mono text-[#52525B] mt-1.5">
+                            Workspace: <span class="text-[#10B981]">{{ $slug }}.propos.app</span>
+                        </div>
+                    @endif
                     @error('agency_name') 
                         <span class="block text-xs text-[#F43F5E] mt-1.5 animate-slide-down">{{ $message }}</span> 
                     @enderror
-                </div>
-
-                <div>
-                    <label for="slug" class="block text-xs font-semibold uppercase tracking-wider text-[#A1A1AA] mb-1.5">Agency Subdomain / Slug</label>
-                    <input wire:model="slug" id="slug" type="text" required autocomplete="off" placeholder="lagos-crest"
-                        class="w-full h-11 bg-[#111827] border @error('slug') border-[#F43F5E] @else border-white/10 @enderror text-sm text-[#FAFAFA] placeholder-[#52525B] px-3.5 rounded-md focus:outline-none focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] focus:shadow-[0_0_12px_rgba(16,185,129,0.16)] transition-all duration-200">
-                    @if($slug)
-                        <div class="text-[11px] font-mono text-[#52525B] mt-1.5">
-                            Subdomain: <span class="text-[#10B981]">{{ $slug }}.propos.app</span>
-                        </div>
-                    @endif
                     @error('slug') 
                         <span class="block text-xs text-[#F43F5E] mt-1.5 animate-slide-down">{{ $message }}</span> 
                     @enderror
@@ -289,14 +283,14 @@
              style="display: none;">
 
             <div class="text-center mb-6">
-                <h3 class="text-lg font-bold text-white">Start your 14-day free trial</h3>
-                <p class="text-xs text-[#A1A1AA] mt-1">No credit card required right now.</p>
+                <h3 class="text-lg font-bold text-white">Select your plan</h3>
+                <p class="text-xs text-[#A1A1AA] mt-1">You will be redirected to securely complete your payment.</p>
             </div>
 
             <!-- Billing Cycle Toggle -->
             <div class="flex justify-center items-center space-x-4 mb-6">
                 <span class="text-xs font-medium" :class="billing_cycle === 'monthly' ? 'text-white' : 'text-[#A1A1AA]'">Monthly</span>
-                <button type="button" wire:click="$set('billing_cycle', billing_cycle === 'monthly' ? 'annual' : 'monthly')" class="relative inline-flex flex-shrink-0 h-5 w-9 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 bg-[#10B981]">
+                <button type="button" @click="billing_cycle = billing_cycle === 'monthly' ? 'annual' : 'monthly'" class="relative inline-flex flex-shrink-0 h-5 w-9 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 bg-[#10B981]">
                     <span class="sr-only">Toggle Annual Billing</span>
                     <span aria-hidden="true" class="pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200" :class="billing_cycle === 'annual' ? 'translate-x-4' : 'translate-x-0'"></span>
                 </button>
@@ -304,36 +298,44 @@
             </div>
 
             <!-- Plan Cards -->
-            <div class="grid grid-cols-2 gap-4">
-                <!-- Solo Plan -->
-                <div wire:click="$set('subscription_plan', 'solo')" class="cursor-pointer border rounded-xl p-4 transition-all"
-                     :class="subscription_plan === 'solo' ? 'border-[#10B981] bg-[#10B981]/5 shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'border-white/10 bg-[#111827] hover:border-white/20'">
-                    <h4 class="text-sm font-bold text-white mb-1">Solo</h4>
-                    <p class="text-[10px] text-[#A1A1AA] mb-3 min-h-[30px]">Independent agents</p>
-                    <div class="text-lg font-extrabold text-white mb-4">
-                        <span x-text="billing_cycle === 'annual' ? 'R666' : 'R799'"></span><span class="text-xs font-medium text-[#A1A1AA]">/mo</span>
-                    </div>
-                    <ul class="text-[10px] text-[#D4D4D8] space-y-2">
-                        <li class="flex items-start"><span class="text-[#10B981] mr-1.5">✓</span> 1 Agent</li>
-                        <li class="flex items-start"><span class="text-[#10B981] mr-1.5">✓</span> 15 Listings</li>
-                        <li class="flex items-start"><span class="text-[#10B981] mr-1.5">✓</span> 200 AI Credits</li>
-                    </ul>
-                </div>
+            <div class="flex flex-col space-y-3 max-h-[380px] overflow-y-auto pr-1">
+                @foreach(config('pricing.plans') as $planKey => $plan)
+                    <div @click="subscription_plan = '{{ $planKey }}'" class="cursor-pointer border rounded-xl p-4 transition-all relative"
+                         :class="subscription_plan === '{{ $planKey }}' ? 'border-[#10B981] bg-[#10B981]/5 shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'border-white/10 bg-[#111827] hover:border-white/20'">
+                        
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="text-sm font-bold text-white mb-0.5">{{ $plan['name'] }}</h4>
+                                <p class="text-[10px] text-[#A1A1AA]">{{ $plan['job'] }}</p>
+                            </div>
+                            <div class="text-right">
+                                @if($plan['price_monthly'] === 'custom')
+                                    <div class="text-lg font-extrabold text-white leading-tight">Custom</div>
+                                    <div class="text-[10px] font-medium text-[#A1A1AA]">Let's talk</div>
+                                @else
+                                    <div class="text-lg font-extrabold text-white leading-tight flex items-baseline justify-end">
+                                        <span x-text="billing_cycle === 'annual' ? '₦{{ number_format($plan['price_annual'] / 12, 0) }}' : '₦{{ number_format($plan['price_monthly'], 0) }}'"></span>
+                                        <span class="text-[10px] font-medium text-[#A1A1AA] font-normal ml-0.5">/mo</span>
+                                    </div>
+                                    @if($planKey !== 'enterprise')
+                                    <div class="text-[10px] font-medium text-[#A1A1AA]" x-show="billing_cycle === 'annual'">
+                                        Billed ₦{{ number_format($plan['price_annual'], 0) }} yearly
+                                    </div>
+                                    @endif
+                                @endif
+                            </div>
+                        </div>
 
-                <!-- Agency Pro Plan -->
-                <div wire:click="$set('subscription_plan', 'agency_pro')" class="cursor-pointer border rounded-xl p-4 transition-all"
-                     :class="subscription_plan === 'agency_pro' ? 'border-[#10B981] bg-[#10B981]/5 shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'border-white/10 bg-[#111827] hover:border-white/20'">
-                    <h4 class="text-sm font-bold text-white mb-1">Agency Pro</h4>
-                    <p class="text-[10px] text-[#A1A1AA] mb-3 min-h-[30px]">Growing agencies</p>
-                    <div class="text-lg font-extrabold text-white mb-4">
-                        <span x-text="billing_cycle === 'annual' ? 'R2,499' : 'R2,999'"></span><span class="text-xs font-medium text-[#A1A1AA]">/mo</span>
+                        <div class="mt-4 pt-3 border-t border-white/5">
+                            <ul class="text-[10px] text-[#D4D4D8] grid grid-cols-2 gap-y-2 gap-x-2">
+                                <li class="flex items-center"><span class="text-[#10B981] mr-1.5">✓</span> {{ $plan['features']['max_agents'] === -1 ? 'Unlimited' : $plan['features']['max_agents'] }} Agent(s)</li>
+                                <li class="flex items-center"><span class="text-[#10B981] mr-1.5">✓</span> {{ $plan['features']['max_listings'] === -1 ? 'Unlimited' : $plan['features']['max_listings'] }} Listings</li>
+                                <li class="flex items-center"><span class="text-[#10B981] mr-1.5">✓</span> {{ $plan['ai_credits_monthly'] === -1 ? 'Custom' : number_format($plan['ai_credits_monthly']) }} AI Credits</li>
+                                <li class="flex items-center"><span class="text-[#10B981] mr-1.5">✓</span> {{ $plan['features']['max_portals'] === -1 ? 'Unlimited' : $plan['features']['max_portals'] }} Portals</li>
+                            </ul>
+                        </div>
                     </div>
-                    <ul class="text-[10px] text-[#D4D4D8] space-y-2">
-                        <li class="flex items-start"><span class="text-[#10B981] mr-1.5">✓</span> 5 Agents</li>
-                        <li class="flex items-start"><span class="text-[#10B981] mr-1.5">✓</span> Unlimited Listings</li>
-                        <li class="flex items-start"><span class="text-[#10B981] mr-1.5">✓</span> 2,000 AI Credits</li>
-                    </ul>
-                </div>
+                @endforeach
             </div>
 
             <div class="flex items-center space-x-3 pt-4">

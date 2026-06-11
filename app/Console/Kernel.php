@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Infrastructure\Queue\Jobs\ApplyLateFeesJob;
+use App\Infrastructure\Queue\Jobs\ResetMonthlyAiCreditsJob;
 use App\Infrastructure\Queue\Jobs\SendComplianceRemindersJob;
 use App\Infrastructure\Queue\Jobs\SyncAllEmailAccountsJob;
 use App\Infrastructure\Queue\Jobs\DetectAndNotifyStaleDealsJob;
@@ -119,6 +120,12 @@ class Kernel extends ConsoleKernel
 
         // Prune stale telescope/horizon entries and expired sessions — daily at midnight
         $schedule->command('queue:prune-failed --hours=168')->daily();
+
+        // Reset AI credit balances to monthly allocation on 1st of each month at 00:30
+        $schedule->job(new ResetMonthlyAiCreditsJob)
+                 ->monthlyOn(1, '00:30')
+                 ->withoutOverlapping()
+                 ->name('reset-monthly-ai-credits');
     }
 
     protected function commands(): void

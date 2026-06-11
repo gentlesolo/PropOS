@@ -81,4 +81,11 @@ return [
         'mode'         => env('PAYFAST_MODE', 'sandbox'),
     ],
 
+    'paystack' => [
+        'secret_key'  => env('PAYSTACK_SECRET_KEY'),
+        'public_key'  => env('PAYSTACK_PUBLIC_KEY'),
+        'currency'    => env('PAYSTACK_CURRENCY', 'NGN'),
+        'mode'        => env('PAYSTACK_MODE', 'live'),
+    ],
+
 ];
