@@ -153,7 +153,7 @@ class OpenHousePage extends Component
             [
                 'type' => 'sms',
                 'subject' => '',
-                'message_template' => 'Hi {{first_name}}, just checking in. Let me know if you would like me to send you the property prospectus or disclosure docs. - PropOS Agency',
+                'message_template' => 'Hi {{first_name}}, just checking in. Let me know if you would like me to send you the property prospectus or disclosure docs. - VillaCRM Agency',
                 'delay_days' => 2,
             ]
         ];

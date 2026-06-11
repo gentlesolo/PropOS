@@ -4,7 +4,7 @@
         <div class="flex flex-col">
             <h1 class="text-lg font-black tracking-tight text-text-primary flex items-center gap-2">
                 <span class="h-2 w-2 rounded-full bg-brand-primary animate-pulse"></span>
-                <span>PropOS Mission Control</span>
+                <span>VillaCRM Mission Control</span>
             </h1>
             <p class="text-[10px] font-mono uppercase tracking-wider text-text-tertiary mt-0.5">
                 Terminal ID: P-{{ strtoupper(auth()->user()->first_name) }}-{{ now()->format('Ymd') }}

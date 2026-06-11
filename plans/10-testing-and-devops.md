@@ -1,6 +1,6 @@
 # Plan 10 — Testing, DevOps & Deployment
 
-> Part of the [Master Plan](file:///C:/Users/ADMIN/Herd/propos/implementation_plan.md)
+> Part of the [Master Plan](file:///C:/Users/ADMIN/Herd/villacrm/implementation_plan.md)
 
 ---
 
@@ -168,7 +168,7 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_DATABASE: propos_test
+          MYSQL_DATABASE: villacrm_test
           MYSQL_ROOT_PASSWORD: password
         ports: ['3306:3306']
       redis:
@@ -216,7 +216,7 @@ Triggered on merge to `main`. Deploys to production via Laravel Forge or custom 
 - Mirror of production
 - Seeded with demo data (`DemoAgencySeeder`)
 - Connected to sandbox APIs (WhatsApp, DocuSign test accounts)
-- Accessible at `staging.propos.app`
+- Accessible at `staging.villacrm.app`
 
 ### Production Environment
 - Dedicated server or managed (Forge/Vapor)
@@ -232,8 +232,8 @@ Triggered on merge to `main`. Deploys to production via Laravel Forge or custom 
 # Database
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
-DB_DATABASE=propos
-DB_USERNAME=propos
+DB_DATABASE=villacrm
+DB_USERNAME=villacrm
 DB_PASSWORD=
 
 # Redis

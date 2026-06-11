@@ -10,7 +10,7 @@
         $agency   = $resolver->getCurrentAgency() ?? new \App\Infrastructure\Persistence\Models\Agency();
     @endphp
 
-    <title>{{ $agency->name ?? config('app.name', 'PropOS') }}</title>
+    <title>{{ $agency->name ?? config('app.name', 'VillaCRM') }}</title>
 
     @if($agency->favicon_path)
     <link rel="icon" type="image/x-icon" href="{{ asset('storage/'.$agency->favicon_path) }}">

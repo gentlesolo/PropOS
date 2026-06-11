@@ -19,7 +19,7 @@
 
     <!-- Category Filter -->
     <div class="flex gap-2 overflow-x-auto pb-2 mb-6">
-        @foreach(['all' => 'All Modules', 'onboarding' => 'Onboarding', 'skills' => 'Sales Skills', 'compliance' => 'Compliance', 'market' => 'Market Knowledge', 'tools' => 'PropOS Tools'] as $key => $label)
+        @foreach(['all' => 'All Modules', 'onboarding' => 'Onboarding', 'skills' => 'Sales Skills', 'compliance' => 'Compliance', 'market' => 'Market Knowledge', 'tools' => 'VillaCRM Tools'] as $key => $label)
         <button wire:click="$set('activeCategory', '{{ $key }}')"
             class="px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all
             {{ $activeCategory === $key ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 shadow-md' : 'bg-surface-card border border-border-default text-text-secondary hover:bg-surface-raised' }}">

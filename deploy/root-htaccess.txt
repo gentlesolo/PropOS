@@ -1,7 +1,7 @@
-# PropOS Platform — App Root Protection
+# VillaCRM Platform — App Root Protection
 #
 # INSTRUCTIONS: If your Laravel root directory is accidentally accessible via
-# the web (i.e. someone can browse to /home/username/PropOS/ through
+# the web (i.e. someone can browse to /home/username/VillaCRM/ through
 # the URL), place this file as .htaccess in that directory to block all access.
 #
 # Rename this file to ".htaccess" and place it in your Laravel root

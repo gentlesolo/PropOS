@@ -1,4 +1,4 @@
-# PropOS — Master Implementation Plan
+# VillaCRM — Master Implementation Plan
 
 > **Laravel 13 · Livewire · Tailwind CSS 4 · Clean Architecture**
 > Comprehensive plan for building the AI-powered Property Operating System.
@@ -139,16 +139,16 @@ The implementation is broken down into **10 focused planning documents**. Each d
 
 | # | Document | Scope |
 |---|---|---|
-| 01 | [Foundation & Shared Infrastructure](file:///C:/Users/ADMIN/Herd/propos/plans/01-foundation-and-infrastructure.md) | Multi-tenancy, Auth, RBAC, Notification Bus, AI Service Layer, Shared UI Shell |
-| 02 | [Database Schema & Migrations](file:///C:/Users/ADMIN/Herd/propos/plans/02-database-schema.md) | Complete ERD, all migration files, indexing strategy, seeders |
-| 03 | [Module 1 — AI Agent Assistant](file:///C:/Users/ADMIN/Herd/propos/plans/03-ai-agent-assistant.md) | Daily Planner, Lead Scoring, Comm Drafting, Call Intelligence, AI Chat, Nudges |
-| 04 | [Module 2 — Listing Intelligence](file:///C:/Users/ADMIN/Herd/propos/plans/04-listing-intelligence.md) | Mandate Intake, AI Descriptions, Valuation Engine, Media, Portal Syndication |
-| 05 | [Module 3 — Marketing Hub](file:///C:/Users/ADMIN/Herd/propos/plans/05-marketing-hub.md) | Campaign Builder, Brand Kit, Social Calendar, Ads, Email, WhatsApp Marketing |
-| 06 | [Module 4 — CRM & Pipeline](file:///C:/Users/ADMIN/Herd/propos/plans/06-crm-and-pipeline.md) | Contacts, Pipeline Boards, Buyer-Listing Matching, Follow-Up Engine, Deal Scoring |
-| 07 | [Module 5 — Transactions & Compliance](file:///C:/Users/ADMIN/Herd/propos/plans/07-transactions-and-compliance.md) | Transaction Workflows, Documents, Deadlines, FICA, Commission, Attorney Portal |
-| 08 | [Modules 6-8 — Intelligence, Viewings & Training](file:///C:/Users/ADMIN/Herd/propos/plans/08-intelligence-viewings-training.md) | Dashboards, Forecasting, Market Reports, Viewing Scheduler, Training Hub |
-| 09 | [API Integrations & External Services](file:///C:/Users/ADMIN/Herd/propos/plans/09-api-integrations.md) | WhatsApp, Portals, E-Signature, Meta Ads, Payment Gateways, Calendar Sync |
-| 10 | [Testing, DevOps & Deployment](file:///C:/Users/ADMIN/Herd/propos/plans/10-testing-and-devops.md) | Test strategy, CI/CD pipeline, staging/production environments, monitoring |
+| 01 | [Foundation & Shared Infrastructure](file:///C:/Users/ADMIN/Herd/villacrm/plans/01-foundation-and-infrastructure.md) | Multi-tenancy, Auth, RBAC, Notification Bus, AI Service Layer, Shared UI Shell |
+| 02 | [Database Schema & Migrations](file:///C:/Users/ADMIN/Herd/villacrm/plans/02-database-schema.md) | Complete ERD, all migration files, indexing strategy, seeders |
+| 03 | [Module 1 — AI Agent Assistant](file:///C:/Users/ADMIN/Herd/villacrm/plans/03-ai-agent-assistant.md) | Daily Planner, Lead Scoring, Comm Drafting, Call Intelligence, AI Chat, Nudges |
+| 04 | [Module 2 — Listing Intelligence](file:///C:/Users/ADMIN/Herd/villacrm/plans/04-listing-intelligence.md) | Mandate Intake, AI Descriptions, Valuation Engine, Media, Portal Syndication |
+| 05 | [Module 3 — Marketing Hub](file:///C:/Users/ADMIN/Herd/villacrm/plans/05-marketing-hub.md) | Campaign Builder, Brand Kit, Social Calendar, Ads, Email, WhatsApp Marketing |
+| 06 | [Module 4 — CRM & Pipeline](file:///C:/Users/ADMIN/Herd/villacrm/plans/06-crm-and-pipeline.md) | Contacts, Pipeline Boards, Buyer-Listing Matching, Follow-Up Engine, Deal Scoring |
+| 07 | [Module 5 — Transactions & Compliance](file:///C:/Users/ADMIN/Herd/villacrm/plans/07-transactions-and-compliance.md) | Transaction Workflows, Documents, Deadlines, FICA, Commission, Attorney Portal |
+| 08 | [Modules 6-8 — Intelligence, Viewings & Training](file:///C:/Users/ADMIN/Herd/villacrm/plans/08-intelligence-viewings-training.md) | Dashboards, Forecasting, Market Reports, Viewing Scheduler, Training Hub |
+| 09 | [API Integrations & External Services](file:///C:/Users/ADMIN/Herd/villacrm/plans/09-api-integrations.md) | WhatsApp, Portals, E-Signature, Meta Ads, Payment Gateways, Calendar Sync |
+| 10 | [Testing, DevOps & Deployment](file:///C:/Users/ADMIN/Herd/villacrm/plans/10-testing-and-devops.md) | Test strategy, CI/CD pipeline, staging/production environments, monitoring |
 
 ---
 
@@ -196,7 +196,7 @@ The implementation is broken down into **10 focused planning documents**. Each d
 ### 6.1 Why Clean Architecture for This Project
 
 > [!IMPORTANT]
-> The PropOS blueprint describes 8 modules, 30+ sub-features, and integrations with 15+ external services. Without strict architectural boundaries, this will become unmaintainable.
+> The VillaCRM blueprint describes 8 modules, 30+ sub-features, and integrations with 15+ external services. Without strict architectural boundaries, this will become unmaintainable.
 
 - **Domain isolation** means the CRM module can evolve independently of the Marketing module
 - **Repository interfaces** in the Domain layer allow swapping Eloquent for any persistence without touching business logic
@@ -232,12 +232,12 @@ Provider-agnostic by design. Swap providers by changing `AI_PROVIDER` in `.env`.
 
 ### 6.4 Multi-Tenancy Model (Dual Distribution)
 
-PropOS supports two distribution modes:
+VillaCRM supports two distribution modes:
 
 **SaaS Mode (hosted by us):**
 - Single database, tenant-scoped — every model has `agency_id`
 - Global scope `BelongsToAgencyScope` auto-filters all queries
-- Tenant resolution via subdomain (`acme.propos.app`) or custom domain
+- Tenant resolution via subdomain (`acme.villacrm.app`) or custom domain
 - Super-admin panel for platform management, billing, onboarding
 
 **Self-Hosted Mode (agency runs their own instance):**

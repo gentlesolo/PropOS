@@ -41,10 +41,10 @@ class DispatchWebhookJob implements ShouldQueue
             Http::timeout($this->timeout)
                 ->withHeaders([
                     'Content-Type'           => 'application/json',
-                    'X-PropOS-Event'         => $this->event,
-                    'X-PropOS-Signature-256' => "sha256={$signature}",
-                    'X-PropOS-Timestamp'     => $timestamp,
-                    'User-Agent'             => 'PropOS-Webhooks/1.0',
+                    'X-VillaCRM-Event'         => $this->event,
+                    'X-VillaCRM-Signature-256' => "sha256={$signature}",
+                    'X-VillaCRM-Timestamp'     => $timestamp,
+                    'User-Agent'             => 'VillaCRM-Webhooks/1.0',
                 ])
                 ->post($subscription->url, $this->payload)
                 ->throw();

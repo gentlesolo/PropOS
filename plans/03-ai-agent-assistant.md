@@ -1,6 +1,6 @@
 # Plan 03 — Module 1: AI Agent Assistant
 
-> Part of the [Master Plan](file:///C:/Users/ADMIN/Herd/propos/implementation_plan.md) · **Phase 2, Sprints 9–10**
+> Part of the [Master Plan](file:///C:/Users/ADMIN/Herd/villacrm/implementation_plan.md) · **Phase 2, Sprints 9–10**
 
 ---
 

@@ -2,8 +2,8 @@ const fs = require('fs');
 let content = fs.readFileSync('deploy/installer.php', 'utf8');
 
 // Replace Eezreb
-content = content.replace(/Eezreb Matchmaking/g, 'PropOS Platform');
-content = content.replace(/Eezreb/g, 'PropOS');
+content = content.replace(/Eezreb Matchmaking/g, 'VillaCRM Platform');
+content = content.replace(/Eezreb/g, 'VillaCRM');
 
 // Add cache:clear right before package:clear
 content = content.replace(

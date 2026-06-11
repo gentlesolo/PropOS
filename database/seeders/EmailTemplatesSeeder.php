@@ -14,7 +14,7 @@ class EmailTemplatesSeeder extends Seeder
     public function run(): void
     {
         $agency   = Agency::where('slug', 'demo')->firstOrFail();
-        $agent    = User::where('email', 'agent@propos.app')->firstOrFail();
+        $agent    = User::where('email', 'agent@villacrm.app')->firstOrFail();
         $contacts = Contact::where('agency_id', $agency->id)->get();
 
         $this->seedTemplates($agency->id);

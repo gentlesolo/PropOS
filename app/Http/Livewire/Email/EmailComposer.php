@@ -108,7 +108,7 @@ class EmailComposer extends Component
             ? EmailAccount::find($this->email_account_id)
             : $this->getDefaultAccount();
 
-        $messageId = '<' . Str::uuid() . '@propos>';
+        $messageId = '<' . Str::uuid() . '@villacrm>';
 
         // Resolve or create thread
         $threadId = $this->thread_id;

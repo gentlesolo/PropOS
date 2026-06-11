@@ -1,25 +1,25 @@
 {
-  "root": "C:\\Users\\ADMIN\\Herd\\propos\\mobile",
-  "reactNativePath": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native",
+  "root": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile",
+  "reactNativePath": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native",
   "reactNativeVersion": "0.85",
   "dependencies": {
     "@notifee/react-native": {
-      "root": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\@notifee\\react-native",
+      "root": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\@notifee\\react-native",
       "name": "@notifee/react-native",
       "platforms": {
         "ios": {
-          "podspecPath": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\@notifee\\react-native\\RNNotifee.podspec",
+          "podspecPath": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\@notifee\\react-native\\RNNotifee.podspec",
           "version": "9.1.8",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\@notifee\\react-native\\android",
+          "sourceDir": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\@notifee\\react-native\\android",
           "packageImportPath": "import io.invertase.notifee.NotifeePackage;",
           "packageInstance": "new NotifeePackage()",
           "buildTypes": [],
           "componentDescriptors": [],
-          "cmakeListsPath": "C:/Users/ADMIN/Herd/propos/mobile/node_modules/@notifee/react-native/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/Users/ADMIN/Herd/villacrm/mobile/node_modules/@notifee/react-native/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -28,23 +28,23 @@
       }
     },
     "@react-native-async-storage/async-storage": {
-      "root": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\@react-native-async-storage\\async-storage",
+      "root": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\@react-native-async-storage\\async-storage",
       "name": "@react-native-async-storage/async-storage",
       "platforms": {
         "ios": {
-          "podspecPath": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\@react-native-async-storage\\async-storage\\AsyncStorage.podspec",
+          "podspecPath": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\@react-native-async-storage\\async-storage\\AsyncStorage.podspec",
           "version": "3.1.1",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\@react-native-async-storage\\async-storage\\android",
+          "sourceDir": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\@react-native-async-storage\\async-storage\\android",
           "packageImportPath": "import org.asyncstorage.AsyncStoragePackage;",
           "packageInstance": "new AsyncStoragePackage()",
           "buildTypes": [],
           "libraryName": "AsyncStorageSpec",
           "componentDescriptors": [],
-          "cmakeListsPath": "C:/Users/ADMIN/Herd/propos/mobile/node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/Users/ADMIN/Herd/villacrm/mobile/node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -53,11 +53,11 @@
       }
     },
     "@react-native-firebase/app": {
-      "root": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\@react-native-firebase\\app",
+      "root": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\@react-native-firebase\\app",
       "name": "@react-native-firebase/app",
       "platforms": {
         "ios": {
-          "podspecPath": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\@react-native-firebase\\app\\RNFBApp.podspec",
+          "podspecPath": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\@react-native-firebase\\app\\RNFBApp.podspec",
           "version": "24.1.0",
           "configurations": [],
           "scriptPhases": [
@@ -72,12 +72,12 @@
           ]
         },
         "android": {
-          "sourceDir": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\@react-native-firebase\\app\\android",
+          "sourceDir": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\@react-native-firebase\\app\\android",
           "packageImportPath": "import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;",
           "packageInstance": "new ReactNativeFirebaseAppPackage()",
           "buildTypes": [],
           "componentDescriptors": [],
-          "cmakeListsPath": "C:/Users/ADMIN/Herd/propos/mobile/node_modules/@react-native-firebase/app/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/Users/ADMIN/Herd/villacrm/mobile/node_modules/@react-native-firebase/app/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -86,22 +86,22 @@
       }
     },
     "@react-native-firebase/messaging": {
-      "root": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\@react-native-firebase\\messaging",
+      "root": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\@react-native-firebase\\messaging",
       "name": "@react-native-firebase/messaging",
       "platforms": {
         "ios": {
-          "podspecPath": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\@react-native-firebase\\messaging\\RNFBMessaging.podspec",
+          "podspecPath": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\@react-native-firebase\\messaging\\RNFBMessaging.podspec",
           "version": "24.1.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\@react-native-firebase\\messaging\\android",
+          "sourceDir": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\@react-native-firebase\\messaging\\android",
           "packageImportPath": "import io.invertase.firebase.messaging.ReactNativeFirebaseMessagingPackage;",
           "packageInstance": "new ReactNativeFirebaseMessagingPackage()",
           "buildTypes": [],
           "componentDescriptors": [],
-          "cmakeListsPath": "C:/Users/ADMIN/Herd/propos/mobile/node_modules/@react-native-firebase/messaging/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/Users/ADMIN/Herd/villacrm/mobile/node_modules/@react-native-firebase/messaging/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -110,17 +110,17 @@
       }
     },
     "@sentry/react-native": {
-      "root": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\@sentry\\react-native",
+      "root": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\@sentry\\react-native",
       "name": "@sentry/react-native",
       "platforms": {
         "ios": {
-          "podspecPath": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\@sentry\\react-native\\RNSentry.podspec",
+          "podspecPath": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\@sentry\\react-native\\RNSentry.podspec",
           "version": "8.13.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\@sentry\\react-native\\android",
+          "sourceDir": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\@sentry\\react-native\\android",
           "packageImportPath": "import io.sentry.react.RNSentryPackage;",
           "packageInstance": "new RNSentryPackage()",
           "buildTypes": [],
@@ -129,7 +129,7 @@
             "RNSentryReplayMaskComponentDescriptor",
             "RNSentryReplayUnmaskComponentDescriptor"
           ],
-          "cmakeListsPath": "C:/Users/ADMIN/Herd/propos/mobile/node_modules/@sentry/react-native/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/Users/ADMIN/Herd/villacrm/mobile/node_modules/@sentry/react-native/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -138,22 +138,22 @@
       }
     },
     "@twilio/voice-react-native-sdk": {
-      "root": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\@twilio\\voice-react-native-sdk",
+      "root": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\@twilio\\voice-react-native-sdk",
       "name": "@twilio/voice-react-native-sdk",
       "platforms": {
         "ios": {
-          "podspecPath": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\@twilio\\voice-react-native-sdk\\twilio-voice-react-native.podspec",
+          "podspecPath": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\@twilio\\voice-react-native-sdk\\twilio-voice-react-native.podspec",
           "version": "1.7.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\@twilio\\voice-react-native-sdk\\android",
+          "sourceDir": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\@twilio\\voice-react-native-sdk\\android",
           "packageImportPath": "import com.twiliovoicereactnative.TwilioVoiceReactNativePackage;",
           "packageInstance": "new TwilioVoiceReactNativePackage()",
           "buildTypes": [],
           "componentDescriptors": [],
-          "cmakeListsPath": "C:/Users/ADMIN/Herd/propos/mobile/node_modules/@twilio/voice-react-native-sdk/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/Users/ADMIN/Herd/villacrm/mobile/node_modules/@twilio/voice-react-native-sdk/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -162,22 +162,22 @@
       }
     },
     "react-native-audio-recorder-player": {
-      "root": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-audio-recorder-player",
+      "root": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-audio-recorder-player",
       "name": "react-native-audio-recorder-player",
       "platforms": {
         "ios": {
-          "podspecPath": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-audio-recorder-player\\NitroAudioRecorderPlayer.podspec",
+          "podspecPath": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-audio-recorder-player\\NitroAudioRecorderPlayer.podspec",
           "version": "4.5.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-audio-recorder-player\\android",
+          "sourceDir": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-audio-recorder-player\\android",
           "packageImportPath": "import com.margelo.nitro.audiorecorderplayer.AudioRecorderPlayerPackage;",
           "packageInstance": "new AudioRecorderPlayerPackage()",
           "buildTypes": [],
           "componentDescriptors": [],
-          "cmakeListsPath": "C:/Users/ADMIN/Herd/propos/mobile/node_modules/react-native-audio-recorder-player/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/Users/ADMIN/Herd/villacrm/mobile/node_modules/react-native-audio-recorder-player/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -186,22 +186,22 @@
       }
     },
     "react-native-biometrics": {
-      "root": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-biometrics",
+      "root": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-biometrics",
       "name": "react-native-biometrics",
       "platforms": {
         "ios": {
-          "podspecPath": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-biometrics\\react-native-biometrics.podspec",
+          "podspecPath": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-biometrics\\react-native-biometrics.podspec",
           "version": "3.0.1",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-biometrics\\android",
+          "sourceDir": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-biometrics\\android",
           "packageImportPath": "import com.rnbiometrics.ReactNativeBiometricsPackage;",
           "packageInstance": "new ReactNativeBiometricsPackage()",
           "buildTypes": [],
           "componentDescriptors": [],
-          "cmakeListsPath": "C:/Users/ADMIN/Herd/propos/mobile/node_modules/react-native-biometrics/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/Users/ADMIN/Herd/villacrm/mobile/node_modules/react-native-biometrics/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -210,22 +210,22 @@
       }
     },
     "react-native-callkeep": {
-      "root": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-callkeep",
+      "root": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-callkeep",
       "name": "react-native-callkeep",
       "platforms": {
         "ios": {
-          "podspecPath": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-callkeep\\RNCallKeep.podspec",
+          "podspecPath": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-callkeep\\RNCallKeep.podspec",
           "version": "4.3.16",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-callkeep\\android",
+          "sourceDir": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-callkeep\\android",
           "packageImportPath": "import io.wazo.callkeep.RNCallKeepPackage;",
           "packageInstance": "new RNCallKeepPackage()",
           "buildTypes": [],
           "componentDescriptors": [],
-          "cmakeListsPath": "C:/Users/ADMIN/Herd/propos/mobile/node_modules/react-native-callkeep/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/Users/ADMIN/Herd/villacrm/mobile/node_modules/react-native-callkeep/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -234,23 +234,23 @@
       }
     },
     "react-native-keychain": {
-      "root": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-keychain",
+      "root": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-keychain",
       "name": "react-native-keychain",
       "platforms": {
         "ios": {
-          "podspecPath": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-keychain\\RNKeychain.podspec",
+          "podspecPath": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-keychain\\RNKeychain.podspec",
           "version": "10.0.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-keychain\\android",
+          "sourceDir": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-keychain\\android",
           "packageImportPath": "import com.oblador.keychain.KeychainPackage;",
           "packageInstance": "new KeychainPackage()",
           "buildTypes": [],
           "libraryName": "RNKeychainSpec",
           "componentDescriptors": [],
-          "cmakeListsPath": "C:/Users/ADMIN/Herd/propos/mobile/node_modules/react-native-keychain/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/Users/ADMIN/Herd/villacrm/mobile/node_modules/react-native-keychain/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -259,23 +259,23 @@
       }
     },
     "react-native-localize": {
-      "root": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-localize",
+      "root": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-localize",
       "name": "react-native-localize",
       "platforms": {
         "ios": {
-          "podspecPath": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-localize\\RNLocalize.podspec",
+          "podspecPath": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-localize\\RNLocalize.podspec",
           "version": "3.7.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-localize\\android",
+          "sourceDir": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-localize\\android",
           "packageImportPath": "import com.zoontek.rnlocalize.RNLocalizePackage;",
           "packageInstance": "new RNLocalizePackage()",
           "buildTypes": [],
           "libraryName": "RNLocalizeSpec",
           "componentDescriptors": [],
-          "cmakeListsPath": "C:/Users/ADMIN/Herd/propos/mobile/node_modules/react-native-localize/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/Users/ADMIN/Herd/villacrm/mobile/node_modules/react-native-localize/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -284,22 +284,22 @@
       }
     },
     "react-native-mmkv": {
-      "root": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-mmkv",
+      "root": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-mmkv",
       "name": "react-native-mmkv",
       "platforms": {
         "ios": {
-          "podspecPath": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-mmkv\\NitroMmkv.podspec",
+          "podspecPath": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-mmkv\\NitroMmkv.podspec",
           "version": "4.3.1",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-mmkv\\android",
+          "sourceDir": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-mmkv\\android",
           "packageImportPath": "import com.margelo.nitro.mmkv.NitroMmkvPackage;",
           "packageInstance": "new NitroMmkvPackage()",
           "buildTypes": [],
           "componentDescriptors": [],
-          "cmakeListsPath": "C:/Users/ADMIN/Herd/propos/mobile/node_modules/react-native-mmkv/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/Users/ADMIN/Herd/villacrm/mobile/node_modules/react-native-mmkv/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -308,23 +308,23 @@
       }
     },
     "react-native-nitro-modules": {
-      "root": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-nitro-modules",
+      "root": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-nitro-modules",
       "name": "react-native-nitro-modules",
       "platforms": {
         "ios": {
-          "podspecPath": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-nitro-modules\\NitroModules.podspec",
+          "podspecPath": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-nitro-modules\\NitroModules.podspec",
           "version": "0.35.9",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-nitro-modules\\android",
+          "sourceDir": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-nitro-modules\\android",
           "packageImportPath": "import com.margelo.nitro.NitroModulesPackage;",
           "packageInstance": "new NitroModulesPackage()",
           "buildTypes": [],
           "libraryName": "NitroModulesSpec",
           "componentDescriptors": [],
-          "cmakeListsPath": "C:/Users/ADMIN/Herd/propos/mobile/node_modules/react-native-nitro-modules/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/Users/ADMIN/Herd/villacrm/mobile/node_modules/react-native-nitro-modules/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -333,17 +333,17 @@
       }
     },
     "react-native-safe-area-context": {
-      "root": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-safe-area-context",
+      "root": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-safe-area-context",
       "name": "react-native-safe-area-context",
       "platforms": {
         "ios": {
-          "podspecPath": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-safe-area-context\\react-native-safe-area-context.podspec",
+          "podspecPath": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-safe-area-context\\react-native-safe-area-context.podspec",
           "version": "5.8.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-safe-area-context\\android",
+          "sourceDir": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-safe-area-context\\android",
           "packageImportPath": "import com.th3rdwave.safeareacontext.SafeAreaContextPackage;",
           "packageInstance": "new SafeAreaContextPackage()",
           "buildTypes": [],
@@ -352,7 +352,7 @@
             "RNCSafeAreaProviderComponentDescriptor",
             "RNCSafeAreaViewComponentDescriptor"
           ],
-          "cmakeListsPath": "C:/Users/ADMIN/Herd/propos/mobile/node_modules/react-native-safe-area-context/android/src/main/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/Users/ADMIN/Herd/villacrm/mobile/node_modules/react-native-safe-area-context/android/src/main/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -361,17 +361,17 @@
       }
     },
     "react-native-screens": {
-      "root": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-screens",
+      "root": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-screens",
       "name": "react-native-screens",
       "platforms": {
         "ios": {
-          "podspecPath": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-screens\\RNScreens.podspec",
+          "podspecPath": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-screens\\RNScreens.podspec",
           "version": "4.25.2",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-screens\\android",
+          "sourceDir": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-screens\\android",
           "packageImportPath": "import com.swmansion.rnscreens.RNScreensPackage;",
           "packageInstance": "new RNScreensPackage()",
           "buildTypes": [],
@@ -394,7 +394,7 @@
             "RNSStackHeaderConfigComponentDescriptor",
             "RNSStackHeaderSubviewComponentDescriptor"
           ],
-          "cmakeListsPath": "C:/Users/ADMIN/Herd/propos/mobile/node_modules/react-native-screens/android/src/main/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/Users/ADMIN/Herd/villacrm/mobile/node_modules/react-native-screens/android/src/main/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -403,23 +403,23 @@
       }
     },
     "react-native-vector-icons": {
-      "root": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-vector-icons",
+      "root": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-vector-icons",
       "name": "react-native-vector-icons",
       "platforms": {
         "ios": {
-          "podspecPath": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-vector-icons\\RNVectorIcons.podspec",
+          "podspecPath": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-vector-icons\\RNVectorIcons.podspec",
           "version": "10.3.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-vector-icons\\android",
+          "sourceDir": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-vector-icons\\android",
           "packageImportPath": "import com.oblador.vectoricons.VectorIconsPackage;",
           "packageInstance": "new VectorIconsPackage()",
           "buildTypes": [],
           "libraryName": "RNVectorIconsSpec",
           "componentDescriptors": [],
-          "cmakeListsPath": "C:/Users/ADMIN/Herd/propos/mobile/node_modules/react-native-vector-icons/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/Users/ADMIN/Herd/villacrm/mobile/node_modules/react-native-vector-icons/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -428,11 +428,11 @@
       }
     },
     "react-native-watch-connectivity": {
-      "root": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-watch-connectivity",
+      "root": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-watch-connectivity",
       "name": "react-native-watch-connectivity",
       "platforms": {
         "ios": {
-          "podspecPath": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\node_modules\\react-native-watch-connectivity\\RNWatch.podspec",
+          "podspecPath": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\node_modules\\react-native-watch-connectivity\\RNWatch.podspec",
           "version": "1.1.0",
           "configurations": [],
           "scriptPhases": []
@@ -603,7 +603,7 @@
         {
           "name": "--path <path>",
           "description": "Path to the React Native project root.",
-          "default": "C:\\Users\\ADMIN\\Herd\\propos\\mobile"
+          "default": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile"
         },
         {
           "name": "--platform <string>",
@@ -903,19 +903,19 @@
   "assets": [],
   "project": {
     "ios": {
-      "sourceDir": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\ios",
+      "sourceDir": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\ios",
       "xcodeProject": {
-        "name": "ProposMobile.xcodeproj",
+        "name": "VillaCRMMobile.xcodeproj",
         "path": ".",
         "isWorkspace": false
       },
       "assets": []
     },
     "android": {
-      "sourceDir": "C:\\Users\\ADMIN\\Herd\\propos\\mobile\\android",
+      "sourceDir": "C:\\Users\\ADMIN\\Herd\\villacrm\\mobile\\android",
       "appName": "app",
-      "packageName": "com.proposmobile",
-      "applicationId": "com.proposmobile",
+      "packageName": "com.villacrmmobile",
+      "applicationId": "com.villacrmmobile",
       "mainActivity": ".MainActivity",
       "assets": []
     }

@@ -1,6 +1,6 @@
 # Plan 09 — API Integrations & External Services
 
-> Part of the [Master Plan](file:///C:/Users/ADMIN/Herd/propos/implementation_plan.md)
+> Part of the [Master Plan](file:///C:/Users/ADMIN/Herd/villacrm/implementation_plan.md)
 
 ---
 
@@ -99,12 +99,12 @@ Infrastructure/ExternalServices/Portals/
 ├── Property24Adapter.php              # Property24 (SA + Africa)
 ├── LamudiAdapter.php                  # Lamudi (NG, KE, GH)
 ├── BuyRentKenyaAdapter.php
-├── PortalFieldMapper.php              # Maps PropOS fields → portal-specific codes
+├── PortalFieldMapper.php              # Maps VillaCRM fields → portal-specific codes
 └── PortalMetricsFetcher.php           # Scheduled job to pull views/inquiries
 ```
 
 ### Field Mapping Strategy
-Each adapter has a `fieldMap` array translating PropOS property types, amenities, and fields to portal-specific codes. Example:
+Each adapter has a `fieldMap` array translating VillaCRM property types, amenities, and fields to portal-specific codes. Example:
 ```php
 protected array $propertyTypeMap = [
     'house' => 'RES_HOUSE',

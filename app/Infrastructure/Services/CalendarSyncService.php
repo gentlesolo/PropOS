@@ -54,7 +54,7 @@ class CalendarSyncService
         $lines = [
             'BEGIN:VCALENDAR',
             'VERSION:2.0',
-            'PRODID:-//PropOS//Real Estate CRM//EN',
+            'PRODID:-//VillaCRM//Real Estate CRM//EN',
         ];
 
         foreach ($events as $event) {

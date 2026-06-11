@@ -130,15 +130,15 @@
                     : null;
             @endphp
             <div>
-                <label class="block text-xs font-medium text-text-secondary mb-1">{{ $rentLabel }} (₦) *</label>
+                <label class="block text-xs font-medium text-text-secondary mb-1">{{ $rentLabel }} ({{ $currencySymbol }}) *</label>
                 <div class="relative">
-                    <span class="absolute left-3 top-2 text-sm text-text-tertiary">₦</span>
+                    <span class="absolute left-3 top-2 text-sm text-text-tertiary">{{ $currencySymbol }}</span>
                     <input wire:model.live="rent_input" type="number" min="1"
                         placeholder="{{ $payment_frequency === 'yearly' ? 'e.g. 6000000' : '' }}"
                         class="w-full rounded-xl border border-border-default bg-surface-input pl-6 pr-3 py-2 text-sm text-text-primary focus:outline-none focus:border-brand-primary/50">
                 </div>
                 @if($rentMonthlyEq)
-                <p class="text-xs text-text-tertiary mt-1">≈ ₦{{ number_format($rentMonthlyEq) }}/month equivalent</p>
+                <p class="text-xs text-text-tertiary mt-1">≈ {{ $currencySymbol }}{{ number_format($rentMonthlyEq) }}/month equivalent</p>
                 @endif
                 @error('rent_input') <p class="text-xs text-danger-600 mt-1">{{ $message }}</p> @enderror
             </div>
@@ -147,7 +147,7 @@
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Caution Deposit</label>
                 <div class="relative">
-                    <span class="absolute left-3 top-2 text-sm text-text-tertiary">₦</span>
+                    <span class="absolute left-3 top-2 text-sm text-text-tertiary">{{ $currencySymbol }}</span>
                     <input wire:model="deposit_amount" type="number" min="0" class="w-full rounded-xl border border-border-default bg-surface-input pl-6 pr-3 py-2 text-sm text-text-primary focus:outline-none focus:border-brand-primary/50">
                 </div>
             </div>
@@ -156,7 +156,7 @@
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Agency Fee</label>
                 <div class="relative">
-                    <span class="absolute left-3 top-2 text-sm text-text-tertiary">₦</span>
+                    <span class="absolute left-3 top-2 text-sm text-text-tertiary">{{ $currencySymbol }}</span>
                     <input wire:model="agency_fee" type="number" min="0" placeholder="e.g. 10% of annual rent"
                         class="w-full rounded-xl border border-border-default bg-surface-input pl-6 pr-3 py-2 text-sm text-text-primary focus:outline-none focus:border-brand-primary/50">
                 </div>
@@ -164,7 +164,7 @@
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Legal / Agreement Fee</label>
                 <div class="relative">
-                    <span class="absolute left-3 top-2 text-sm text-text-tertiary">₦</span>
+                    <span class="absolute left-3 top-2 text-sm text-text-tertiary">{{ $currencySymbol }}</span>
                     <input wire:model="legal_fee" type="number" min="0" placeholder="e.g. 5% of annual rent"
                         class="w-full rounded-xl border border-border-default bg-surface-input pl-6 pr-3 py-2 text-sm text-text-primary focus:outline-none focus:border-brand-primary/50">
                 </div>
@@ -174,7 +174,7 @@
             <div>
                 <label class="block text-xs font-medium text-text-secondary mb-1">Annual Service Charge</label>
                 <div class="relative">
-                    <span class="absolute left-3 top-2 text-sm text-text-tertiary">₦</span>
+                    <span class="absolute left-3 top-2 text-sm text-text-tertiary">{{ $currencySymbol }}</span>
                     <input wire:model="service_charge" type="number" min="0" placeholder="Estate / facility charge"
                         class="w-full rounded-xl border border-border-default bg-surface-input pl-6 pr-3 py-2 text-sm text-text-primary focus:outline-none focus:border-brand-primary/50">
                 </div>
@@ -363,11 +363,11 @@
                     </td>
                     <td class="px-5 py-3.5">
                         <div class="font-bold text-text-primary">
-                            ₦{{ number_format($lease->periodRent) }}
+                            {{ $currencySymbol }}{{ number_format($lease->periodRent) }}
                             <span class="text-xs font-normal text-text-tertiary">{{ $lease->rentSuffix }}</span>
                         </div>
                         @if($lease->payment_frequency !== 'monthly')
-                        <div class="text-xs text-text-tertiary">₦{{ number_format($lease->monthly_rent) }}/mo</div>
+                        <div class="text-xs text-text-tertiary">{{ $currencySymbol }}{{ number_format($lease->monthly_rent) }}/mo</div>
                         @endif
                     </td>
                     <td class="px-5 py-3.5">
@@ -473,26 +473,26 @@
             <div class="grid grid-cols-2 gap-3 mb-5">
                 <div class="bg-surface-raised/40 rounded-xl p-3 border border-border-default">
                     <p class="text-xs text-text-secondary">{{ $selectedLease->paymentFrequencyLabel }} Rent</p>
-                    <p class="text-base font-bold text-text-primary mt-0.5">₦{{ number_format($selectedLease->periodRent) }}</p>
+                    <p class="text-base font-bold text-text-primary mt-0.5">{{ $currencySymbol }}{{ number_format($selectedLease->periodRent) }}</p>
                     @if($selectedLease->payment_frequency !== 'monthly')
-                    <p class="text-xs text-text-tertiary mt-0.5">₦{{ number_format($selectedLease->monthly_rent) }}/mo</p>
+                    <p class="text-xs text-text-tertiary mt-0.5">{{ $currencySymbol }}{{ number_format($selectedLease->monthly_rent) }}/mo</p>
                     @endif
                 </div>
                 <div class="bg-surface-raised/40 rounded-xl p-3 border border-border-default">
                     <p class="text-xs text-text-secondary">Outstanding</p>
                     <p class="text-base font-bold mt-0.5 {{ $selectedLease->outstandingBalance > 0 ? 'text-danger-600' : 'text-success-600' }}">
-                        ₦{{ number_format($selectedLease->outstandingBalance) }}
+                        {{ $currencySymbol }}{{ number_format($selectedLease->outstandingBalance) }}
                     </p>
                 </div>
                 <div class="bg-surface-raised/40 rounded-xl p-3 border border-border-default">
                     <p class="text-xs text-text-secondary">Caution Deposit</p>
                     <p class="text-base font-bold text-text-primary mt-0.5">
-                        {{ $selectedLease->deposit_amount ? '₦'.number_format($selectedLease->deposit_amount) : '—' }}
+                        {{ $selectedLease->deposit_amount ? $currencySymbol.number_format($selectedLease->deposit_amount) : '—' }}
                     </p>
                 </div>
                 <div class="bg-surface-raised/40 rounded-xl p-3 border border-border-default">
                     <p class="text-xs text-text-secondary">Annual Rent</p>
-                    <p class="text-base font-bold text-text-primary mt-0.5">₦{{ number_format($selectedLease->annualRent) }}</p>
+                    <p class="text-base font-bold text-text-primary mt-0.5">{{ $currencySymbol }}{{ number_format($selectedLease->annualRent) }}</p>
                 </div>
             </div>
 
@@ -523,19 +523,19 @@
                 @if($selectedLease->agency_fee)
                 <div class="flex justify-between">
                     <dt class="text-text-secondary">Agency Fee</dt>
-                    <dd class="font-medium text-text-primary">₦{{ number_format($selectedLease->agency_fee) }}</dd>
+                    <dd class="font-medium text-text-primary">{{ $currencySymbol }}{{ number_format($selectedLease->agency_fee) }}</dd>
                 </div>
                 @endif
                 @if($selectedLease->legal_fee)
                 <div class="flex justify-between">
                     <dt class="text-text-secondary">Legal / Agreement Fee</dt>
-                    <dd class="font-medium text-text-primary">₦{{ number_format($selectedLease->legal_fee) }}</dd>
+                    <dd class="font-medium text-text-primary">{{ $currencySymbol }}{{ number_format($selectedLease->legal_fee) }}</dd>
                 </div>
                 @endif
                 @if($selectedLease->service_charge)
                 <div class="flex justify-between">
                     <dt class="text-text-secondary">Annual Service Charge</dt>
-                    <dd class="font-medium text-text-primary">₦{{ number_format($selectedLease->service_charge) }}</dd>
+                    <dd class="font-medium text-text-primary">{{ $currencySymbol }}{{ number_format($selectedLease->service_charge) }}</dd>
                 </div>
                 @endif
                 @php $dl = $selectedLease->daysUntilExpiry; $thresh = ($selectedLease->payment_frequency ?? 'monthly') === 'yearly' ? 90 : 60; @endphp

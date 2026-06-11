@@ -19,8 +19,8 @@ class TenantLeaseSeeder extends Seeder
     public function run(): void
     {
         $agency    = Agency::where('slug', 'demo')->firstOrFail();
-        $agent     = User::where('email', 'agent@propos.app')->firstOrFail();
-        $principal = User::where('email', 'principal@propos.app')->firstOrFail();
+        $agent     = User::where('email', 'agent@villacrm.app')->firstOrFail();
+        $principal = User::where('email', 'principal@villacrm.app')->firstOrFail();
 
         // ── Ensure we have 6 rental listings ──────────────────────────────────
         $rentalData = [

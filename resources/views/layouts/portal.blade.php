@@ -18,7 +18,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/>
                     </svg>
                 </div>
-                <span class="text-sm font-bold text-text-primary">{{ config('app.name', 'PropOS') }}</span>
+                <span class="text-sm font-bold text-text-primary">{{ config('app.name', 'VillaCRM') }}</span>
             </div>
             <span class="text-xs font-medium text-text-tertiary px-2.5 py-1 bg-surface-hover rounded-full">Tenant Portal</span>
         </div>
@@ -31,7 +31,7 @@
 
     <!-- Footer -->
     <footer class="border-t border-border-default mt-12 py-6 text-center text-xs text-text-tertiary">
-        Secure Tenant Portal &mdash; {{ config('app.name', 'PropOS') }}
+        Secure Tenant Portal &mdash; {{ config('app.name', 'VillaCRM') }}
     </footer>
 
     <!-- Toast Notifications -->

@@ -38,7 +38,7 @@
                     <div class="h-8 w-8 rounded-md bg-[#10B981]/10 flex items-center justify-center border border-[#10B981]/25">
                         <span class="font-bold text-base text-[#10B981]">P</span>
                     </div>
-                    <span class="text-lg font-bold tracking-tight text-[#FAFAFA]">PropOS</span>
+                    <span class="text-lg font-bold tracking-tight text-[#FAFAFA]">VillaCRM</span>
                 </div>
 
                 <h2 class="text-2xl font-semibold tracking-tight text-[#FAFAFA] font-sans">Welcome back</h2>
@@ -102,7 +102,7 @@
 
                 <div>
                     <button type="submit" class="cta-shimmer w-full h-[44px] bg-[#10B981] text-white text-sm font-semibold rounded-md shadow-[0_2px_8px_rgba(16,185,129,0.16)] hover:bg-[#10B981]/90 active:scale-[0.98] transition-all duration-150 flex items-center justify-center cursor-pointer">
-                        Sign in to PropOS
+                        Sign in to VillaCRM
                     </button>
                 </div>
             </form>

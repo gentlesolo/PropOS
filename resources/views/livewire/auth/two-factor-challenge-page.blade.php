@@ -15,7 +15,7 @@
             <div class="h-8 w-8 rounded-md bg-[#10B981]/10 flex items-center justify-center border border-[#10B981]/25">
                 <span class="font-bold text-base text-[#10B981]">P</span>
             </div>
-            <span class="text-lg font-bold tracking-tight text-[#FAFAFA]">PropOS</span>
+            <span class="text-lg font-bold tracking-tight text-[#FAFAFA]">VillaCRM</span>
         </div>
 
         <div class="h-12 w-12 bg-[#10B981]/10 rounded-md flex items-center justify-center mb-4 border border-[#10B981]/25">

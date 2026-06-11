@@ -17,7 +17,7 @@ class DemoAgencySeeder extends Seeder
             [
                 'id'                  => 1,
                 'name'                => 'Demo Agency',
-                'email'               => 'demo@propos.app',
+                'email'               => 'demo@villacrm.app',
                 'timezone'            => 'Africa/Lagos',
                 'currency'            => 'NGN',
                 'country_code'        => 'NG',
@@ -39,7 +39,7 @@ class DemoAgencySeeder extends Seeder
 
         // 2. Create Principal user
         $principalUser = User::firstOrCreate(
-            ['email' => 'principal@propos.app'],
+            ['email' => 'principal@villacrm.app'],
             [
                 'agency_id' => $agency->id,
                 'first_name' => 'Demo',
@@ -57,7 +57,7 @@ class DemoAgencySeeder extends Seeder
 
         // 3. Create Agent user
         $agentUser = User::firstOrCreate(
-            ['email' => 'agent@propos.app'],
+            ['email' => 'agent@villacrm.app'],
             [
                 'agency_id' => $agency->id,
                 'first_name' => 'Demo',
@@ -275,7 +275,7 @@ class DemoAgencySeeder extends Seeder
                 ['sequence_id' => $seq->id, 'step_number' => 1],
                 [
                     'type' => 'email',
-                    'subject' => 'Welcome to PropOS Exclusive Portal!',
+                    'subject' => 'Welcome to VillaCRM Exclusive Portal!',
                     'message_template' => 'Hi {buyer_name}, thank you for registering with us. We have matching listings in Ikoyi.',
                     'delay_days' => 1,
                     'status' => 'pending',

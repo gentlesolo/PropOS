@@ -16,13 +16,13 @@
 <body>
     <div class="wrapper">
         <div class="header">
-            <h1>PropOS</h1>
+            <h1>VillaCRM</h1>
         </div>
         <div class="body">
             {!! $bodyHtml !!}
         </div>
         <div class="footer">
-            &copy; {{ date('Y') }} PropOS &mdash; Real Estate CRM. All rights reserved.<br>
+            &copy; {{ date('Y') }} VillaCRM &mdash; Real Estate CRM. All rights reserved.<br>
             You are receiving this email because you are a contact of our agency.
         </div>
     </div>

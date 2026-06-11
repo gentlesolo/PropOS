@@ -190,10 +190,10 @@
 
 <div class="footer">
     <div class="footer-text">
-        Generated {{ $report->created_at->format('F j, Y') }} &middot; Powered by PropOS &middot; Confidential
+        Generated {{ $report->created_at->format('F j, Y') }} &middot; Powered by VillaCRM &middot; Confidential
     </div>
     <div class="prep-block">
-        <div class="prep-name">{{ $report->createdBy->name ?? 'PropOS Agent' }}</div>
+        <div class="prep-name">{{ $report->createdBy->name ?? 'VillaCRM Agent' }}</div>
         @if($report->createdBy?->email)
         <div class="prep-detail">{{ $report->createdBy->email }}</div>
         @endif

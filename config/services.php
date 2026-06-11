@@ -38,7 +38,7 @@ return [
     'whatsapp' => [
         'phone_number_id'      => env('WHATSAPP_PHONE_NUMBER_ID'),
         'access_token'         => env('WHATSAPP_ACCESS_TOKEN'),
-        'verify_token'         => env('WHATSAPP_VERIFY_TOKEN', 'propos-whatsapp-verify'),
+        'verify_token'         => env('WHATSAPP_VERIFY_TOKEN', 'villacrm-whatsapp-verify'),
         'api_version'          => env('WHATSAPP_API_VERSION', 'v19.0'),
         'default_country_code' => env('WHATSAPP_DEFAULT_COUNTRY_CODE', '234'),
     ],

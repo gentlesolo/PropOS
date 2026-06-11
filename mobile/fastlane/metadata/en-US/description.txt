@@ -1,6 +1,6 @@
-PropOS Agent — Your Real Estate Field Command Centre
+VillaCRM Agent — Your Real Estate Field Command Centre
 
-PropOS Agent puts your entire CRM, call management, and AI coaching in your pocket. Built exclusively for real estate agents and marketers who spend their day in the field.
+VillaCRM Agent puts your entire CRM, call management, and AI coaching in your pocket. Built exclusively for real estate agents and marketers who spend their day in the field.
 
 CALLS WITH AI INTELLIGENCE
 • Make and receive VoIP calls from your dedicated business number — never use your personal number again
@@ -32,4 +32,4 @@ TEAM INTELLIGENCE (Managers)
 • Flag calls for coaching review — with notes
 • Benchmark your performance against team percentiles
 
-PropOS Agent works seamlessly alongside the PropOS web platform. All data stays in sync in real time.
+VillaCRM Agent works seamlessly alongside the VillaCRM web platform. All data stays in sync in real time.

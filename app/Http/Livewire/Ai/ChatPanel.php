@@ -48,7 +48,7 @@ class ChatPanel extends Component
         ChatMessage::create([
             'chat_session_id' => $this->sessionId,
             'role' => 'assistant',
-            'content' => 'Hello! I am your PropOS Copilot. How can I help you manage your agency today?',
+            'content' => 'Hello! I am your VillaCRM Copilot. How can I help you manage your agency today?',
         ]);
     }
 
@@ -83,7 +83,7 @@ class ChatPanel extends Component
         // Ensure system prompt is first
         array_unshift($history, [
             'role' => 'system',
-            'content' => 'You are PropOS Copilot, an AI assistant for a real estate agency. You are helpful, concise, and knowledgeable about property management, CRM, and real estate pipelines.'
+            'content' => 'You are VillaCRM Copilot, an AI assistant for a real estate agency. You are helpful, concise, and knowledgeable about property management, CRM, and real estate pipelines.'
         ]);
 
         // Call the AI Service

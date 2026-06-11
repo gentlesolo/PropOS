@@ -22,8 +22,8 @@ class TaskSeeder extends Seeder
         }
 
         $agencyId  = $agency->id;
-        $principal = User::withoutGlobalScopes()->where('email', 'principal@propos.app')->first();
-        $agent     = User::withoutGlobalScopes()->where('email', 'agent@propos.app')->first();
+        $principal = User::withoutGlobalScopes()->where('email', 'principal@villacrm.app')->first();
+        $agent     = User::withoutGlobalScopes()->where('email', 'agent@villacrm.app')->first();
 
         if (! $principal || ! $agent) {
             $this->command->warn('TaskSeeder: demo users not found. Skipping.');

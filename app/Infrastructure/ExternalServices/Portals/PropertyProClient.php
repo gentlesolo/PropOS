@@ -22,7 +22,7 @@ class PropertyProClient
         $property = $listing->property;
 
         $payload = [
-            'source_ref'     => "PROPOS-{$listing->id}",
+            'source_ref'     => "VILLACRM-{$listing->id}",
             'offer_type'     => $listing->listing_type === 'sale' ? 'sale' : 'rent',
             'price'          => (float) $listing->listing_price,
             'title'          => $listing->headline ?? "Property in {$property->city}",

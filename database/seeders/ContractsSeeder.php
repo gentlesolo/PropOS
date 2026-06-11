@@ -19,8 +19,8 @@ class ContractsSeeder extends Seeder
     public function run(): void
     {
         $agency    = Agency::where('slug', 'demo')->firstOrFail();
-        $agent     = User::where('email', 'agent@propos.app')->firstOrFail();
-        $principal = User::where('email', 'principal@propos.app')->firstOrFail();
+        $agent     = User::where('email', 'agent@villacrm.app')->firstOrFail();
+        $principal = User::where('email', 'principal@villacrm.app')->firstOrFail();
 
         $deals    = Deal::with(['contact', 'listing.property'])->where('agency_id', $agency->id)->get();
         $listings = Listing::with('property')->where('agency_id', $agency->id)->get();
@@ -62,7 +62,7 @@ class ContractsSeeder extends Seeder
 
             $signatories = [
                 ['name' => $buyer, 'role' => 'buyer', 'email' => $deal->contact?->email],
-                ['name' => 'Demo Agency', 'role' => 'seller_agent', 'email' => 'demo@propos.app'],
+                ['name' => 'Demo Agency', 'role' => 'seller_agent', 'email' => 'demo@villacrm.app'],
             ];
 
             $signedAt = null;
@@ -123,7 +123,7 @@ class ContractsSeeder extends Seeder
 
             $signatories = [
                 ['name' => 'Property Owner', 'role' => 'seller', 'email' => null],
-                ['name' => 'Demo Agency',    'role' => 'agent',  'email' => 'demo@propos.app'],
+                ['name' => 'Demo Agency',    'role' => 'agent',  'email' => 'demo@villacrm.app'],
             ];
 
             $signedAt = null;
@@ -215,7 +215,7 @@ class ContractsSeeder extends Seeder
                 'valid_until' => Carbon::parse($lease->end_date)->toDateString(),
                 'signatories' => [
                     ['name' => $tenantName,   'role' => 'tenant',         'email' => $tenant?->email],
-                    ['name' => 'Demo Agency', 'role' => 'landlord_agent', 'email' => 'demo@propos.app'],
+                    ['name' => 'Demo Agency', 'role' => 'landlord_agent', 'email' => 'demo@villacrm.app'],
                 ],
                 'signed_at'   => $signedAt,
             ]);

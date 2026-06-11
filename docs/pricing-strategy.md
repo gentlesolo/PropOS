@@ -1,4 +1,4 @@
-# PropOS Pricing Strategy
+# VillaCRM Pricing Strategy
 
 > AI-powered property operating system for real estate agents, teams, and agencies.
 
@@ -6,7 +6,7 @@
 
 ## The Core Principle
 
-PropOS pricing is not set by cost or by what competitors charge. It is set by the value it creates.  
+VillaCRM pricing is not set by cost or by what competitors charge. It is set by the value it creates.  
 A listing closed faster, a lead scored before a competitor calls, a week of manual marketing work automated in minutes — that is the value. Price should always be a fraction of that outcome.
 
 ---
@@ -15,7 +15,7 @@ A listing closed faster, a lead scored before a competitor calls, a week of manu
 
 **The value metric is the agent seat.**
 
-When an agency adds agents, they get more value from PropOS. AI briefings multiply across more agents. Listings managed, leads scored, campaigns generated — all of it scales with headcount. The seat is the unit that grows when the customer wins.
+When an agency adds agents, they get more value from VillaCRM. AI briefings multiply across more agents. Listings managed, leads scored, campaigns generated — all of it scales with headcount. The seat is the unit that grows when the customer wins.
 
 Secondary usage-based layer: **AI Credits**. High-volume AI usage (mass content generation, bulk lead scoring, call intelligence transcriptions) is metered on top of seat pricing. This protects margin on heavy users while keeping headline pricing predictable for the majority.
 
@@ -33,17 +33,17 @@ Secondary usage-based layer: **AI Credits**. High-volume AI usage (mass content 
 | AI Credit top-up | Metered on high-volume consumption | Captures upside on power users without penalising typical use |
 | Annual discount | 2 months free on annual commit | Improves cash flow; moves customers from monthly churn risk to annual lock-in |
 
-Flat-rate pricing is explicitly avoided. A 1-agent solo and a 50-agent franchise get radically different value from PropOS — they should pay accordingly.
+Flat-rate pricing is explicitly avoided. A 1-agent solo and a 50-agent franchise get radically different value from VillaCRM — they should pay accordingly.
 
 ---
 
 ## Step 3 — Positioning Signal
 
-PropOS is not a generic CRM with a property label. It is the only platform built ground-up for AI-native real estate operations — daily briefings, automated portal syndication, AI-written listing descriptions, compliance-aware deal workflows, and multi-channel campaign generation in one system.
+VillaCRM is not a generic CRM with a property label. It is the only platform built ground-up for AI-native real estate operations — daily briefings, automated portal syndication, AI-written listing descriptions, compliance-aware deal workflows, and multi-channel campaign generation in one system.
 
 **The price must say: we work with serious agencies.**
 
-Pricing below R500/month per agent signals a utility tool. PropOS competes with the cost of a part-time marketing coordinator, a separate CRM licence, a portal management tool, and a compliance consultant. That combined spend routinely exceeds R8,000–R15,000/month for a mid-size agency. PropOS replaces most of it.
+Pricing below R500/month per agent signals a utility tool. VillaCRM competes with the cost of a part-time marketing coordinator, a separate CRM licence, a portal management tool, and a compliance consultant. That combined spend routinely exceeds R8,000–R15,000/month for a mid-size agency. VillaCRM replaces most of it.
 
 **Always present the Enterprise tier first.** When a prospect sees Enterprise at R9,995/month and then looks at Agency Pro at R2,999/month, Pro feels like the obvious, affordable choice. The anchor is everything.
 
@@ -195,10 +195,10 @@ Before finalising numbers, run Van Westendorp surveys with 20+ active users and 
 3. Mid-size agencies (10–50 agents)
 
 Key questions:
-- *"At what monthly price would PropOS feel so cheap you'd question the quality?"*
-- *"At what price would PropOS feel like a bargain?"*
-- *"At what price would PropOS start to feel expensive?"*
-- *"At what price would PropOS be too expensive to consider?"*
+- *"At what monthly price would VillaCRM feel so cheap you'd question the quality?"*
+- *"At what price would VillaCRM feel like a bargain?"*
+- *"At what price would VillaCRM start to feel expensive?"*
+- *"At what price would VillaCRM be too expensive to consider?"*
 
 The intersections of those four curves define the acceptable pricing range. Aim to land the Pro tier in the upper half of the acceptable range — not the midpoint. Founders consistently undercharge. The data usually confirms a price 20–40% higher than initial instinct.
 

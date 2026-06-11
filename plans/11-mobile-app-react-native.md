@@ -1,4 +1,4 @@
-# Plan 11 — PropOS Mobile App (React Native)
+# Plan 11 — VillaCRM Mobile App (React Native)
 
 > **Purpose:** Companion mobile app for real estate agents to manage their field workday — calls, CRM, tasks, messaging, and viewings — with AI-powered call recording and summarization as the flagship feature.
 
@@ -7,17 +7,17 @@
 ## 1. Overview
 
 ### Problem
-Agents spend the majority of their working day away from a desk — showing properties, meeting clients, driving between viewings. The PropOS web platform is desktop-first and inaccessible in the field. Agents lose context, miss follow-ups, and communicate inconsistently because they cannot access their CRM or communication history on the go.
+Agents spend the majority of their working day away from a desk — showing properties, meeting clients, driving between viewings. The VillaCRM web platform is desktop-first and inaccessible in the field. Agents lose context, miss follow-ups, and communicate inconsistently because they cannot access their CRM or communication history on the go.
 
 ### Solution
-A native React Native app that serves as the agent's field command centre. The app connects to the existing PropOS backend via a REST/API layer and provides mobile-optimised access to the most time-critical features. Call recording with AI transcription and summarisation is the launch hook — the feature that earns the app a place on the agent's home screen.
+A native React Native app that serves as the agent's field command centre. The app connects to the existing VillaCRM backend via a REST/API layer and provides mobile-optimised access to the most time-critical features. Call recording with AI transcription and summarisation is the launch hook — the feature that earns the app a place on the agent's home screen.
 
 ### Goals
 - Enable agents to make and receive VoIP calls through a dedicated business number
 - Automatically record, transcribe, and summarise every call with AI
-- Push post-call action items directly into the PropOS Tasks module
+- Push post-call action items directly into the VillaCRM Tasks module
 - Give agents real-time access to contacts, tasks, messaging, and viewings
-- Maintain full data sync with the PropOS web platform
+- Maintain full data sync with the VillaCRM web platform
 
 ---
 
@@ -44,9 +44,9 @@ A native React Native app that serves as the agent's field command centre. The a
 
 ---
 
-## 3. Backend Requirements (PropOS API)
+## 3. Backend Requirements (VillaCRM API)
 
-The mobile app consumes the existing PropOS backend. New API endpoints and services are required.
+The mobile app consumes the existing VillaCRM backend. New API endpoints and services are required.
 
 ### 3.1 New API Endpoints
 
@@ -182,7 +182,7 @@ id, user_id, twilio_number, twilio_sid, active, created_at
 ### 4.1 Folder Structure
 
 ```
-propos-mobile/
+villacrm-mobile/
 ├── src/
 │   ├── api/                    # Axios instances, endpoint functions
 │   │   ├── auth.ts
@@ -333,7 +333,7 @@ Appears automatically ~60 seconds after call ends (push notification triggers it
 └─────────────────────────────────────────┘
 ```
 
-- Confirming creates tasks in the PropOS Tasks module (syncs to web)
+- Confirming creates tasks in the VillaCRM Tasks module (syncs to web)
 - Agent can edit summary text before saving
 - "View Full Transcript" opens a scrollable speaker-labelled transcript with timestamps
 
@@ -348,7 +348,7 @@ Appears automatically ~60 seconds after call ends (push notification triggers it
 
 ### 5.4 Contacts (CRM)
 
-- Searchable, paginated list from PropOS CRM
+- Searchable, paginated list from VillaCRM CRM
 - Each contact shows: name, photo, pipeline stage, last contact date, sentiment badge from last call
 - **Contact Detail Screen:**
   - Key info (phone, email, deal stage, assigned agent)
@@ -398,7 +398,7 @@ Types the app handles:
 |---|---|---|
 | Call summary ready | AI processing complete | Open PostCallSummaryScreen |
 | Incoming VoIP call | Inbound call to Twilio number | Native call UI |
-| New lead assigned | Lead routing in PropOS | Open Contact Detail |
+| New lead assigned | Lead routing in VillaCRM | Open Contact Detail |
 | Unread message | WhatsApp / SMS received | Open Conversation |
 | Task due | Task due time | Open Tasks screen |
 | Viewing in 30 min | Viewing scheduler | Open Viewing Detail |
@@ -416,7 +416,7 @@ Types the app handles:
 - All audio stored server-side only; never on the device
 - Recordings served via signed time-limited URLs (expires after 1 hour)
 - App requires biometric authentication after 5 minutes background
-- Remote device wipe: admin can invalidate agent's push token + Sanctum tokens from PropOS web
+- Remote device wipe: admin can invalidate agent's push token + Sanctum tokens from VillaCRM web
 
 ### Compliance Controls (per tenant)
 - Recording retention period: configurable (30 / 60 / 90 / 180 days, then auto-delete)
@@ -440,7 +440,7 @@ Types the app handles:
 - **Offline grace** — show cached data clearly; queue actions and sync when back online
 
 ### Design Tokens
-Inherit from the existing PropOS Tailwind configuration to maintain visual consistency between web and mobile.
+Inherit from the existing VillaCRM Tailwind configuration to maintain visual consistency between web and mobile.
 
 ---
 
@@ -461,7 +461,7 @@ Inherit from the existing PropOS Tailwind configuration to maintain visual consi
 - [ ] Push notifications (call summary ready)
 - [ ] API: auth, calls, contacts (read-only), tasks (create only)
 
-**Deliverable:** Agent can make VoIP calls, recordings are transcribed and summarised, action items become tasks. Core value proposition validated.
+**Deliverable:** Agent can make VoIP calls, recordings are transcribed and summarised, action items become tasks. Core value villacrmition validated.
 
 ---
 
@@ -509,9 +509,9 @@ Inherit from the existing PropOS Tailwind configuration to maintain visual consi
 
 ---
 
-## 9. API Integration Points (Existing PropOS Services)
+## 9. API Integration Points (Existing VillaCRM Services)
 
-| PropOS Service | Mobile Usage |
+| VillaCRM Service | Mobile Usage |
 |---|---|
 | `AiServiceManager` / OpenAI | Whisper transcription, GPT summarisation |
 | `SmsService` (Twilio) | Extend to `TwilioVoiceService` for calls |
@@ -570,9 +570,9 @@ Fastlane: promote to production
 ```
 
 ### Environment Configuration
-- `.env.development` — local PropOS backend, Twilio test credentials
-- `.env.staging` — staging PropOS backend, Twilio test credentials
-- `.env.production` — production PropOS backend, Twilio live credentials
+- `.env.development` — local VillaCRM backend, Twilio test credentials
+- `.env.staging` — staging VillaCRM backend, Twilio test credentials
+- `.env.production` — production VillaCRM backend, Twilio live credentials
 
 ---
 

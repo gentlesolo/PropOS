@@ -22,7 +22,7 @@
                     P
                 </div>
                 <div class="flex flex-col min-w-0" x-show="!sidebarCollapsed" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95">
-                    <span class="text-sm font-black tracking-tight text-text-primary truncate">{{ $agency->name ?? 'PropOS' }}</span>
+                    <span class="text-sm font-black tracking-tight text-text-primary truncate">{{ $agency->name ?? 'VillaCRM' }}</span>
                     <span class="text-[9px] font-black uppercase tracking-[0.2em] text-brand-primary leading-none mt-0.5">Control Room</span>
                 </div>
             </div>

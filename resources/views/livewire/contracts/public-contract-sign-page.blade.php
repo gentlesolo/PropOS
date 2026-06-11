@@ -17,7 +17,7 @@
             <div class="inline-flex h-12 w-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 items-center justify-center font-black text-white text-lg shadow-lg shadow-blue-500/20 border border-white/10 mb-3">
                 P
             </div>
-            <h2 class="text-xl font-bold tracking-tight text-white">PropOS Secure Sign</h2>
+            <h2 class="text-xl font-bold tracking-tight text-white">VillaCRM Secure Sign</h2>
             <p class="text-xs text-slate-400 mt-1">eSignature Audit ID: {{ $contract->reference }}</p>
         </div>
 

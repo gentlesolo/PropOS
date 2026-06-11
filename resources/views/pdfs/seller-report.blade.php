@@ -39,7 +39,7 @@
 <div class="header">
     <h1>Seller Progress Report</h1>
     <p>{{ $property->address_line_1 }}, {{ $property->city }} &mdash; {{ now()->format('F Y') }}</p>
-    <p class="agency-name">{{ $listing->agency->name ?? 'PropOS Agency' }}</p>
+    <p class="agency-name">{{ $listing->agency->name ?? 'VillaCRM Agency' }}</p>
 </div>
 
 <div class="content">
@@ -142,7 +142,7 @@
 
 <div class="footer">
     <div class="footer-text">
-        Generated {{ $generatedAt }} &middot; Powered by PropOS
+        Generated {{ $generatedAt }} &middot; Powered by VillaCRM
     </div>
     <div class="agent-block">
         <div class="agent-name">{{ $listing->agent?->name ?? 'Your Agent' }}</div>

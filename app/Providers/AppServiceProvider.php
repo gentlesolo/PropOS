@@ -89,9 +89,9 @@ class AppServiceProvider extends ServiceProvider
         );
 
         View::composer('*', function ($view) {
-            $symbol = '&#8358;';
+            $symbol = '₦';
             if (auth()->check()) {
-                $symbol = auth()->user()->agency?->currency_symbol ?? '&#8358;';
+                $symbol = auth()->user()->agency?->currency_symbol ?? '₦';
             }
             $view->with('currencySymbol', $symbol);
         });

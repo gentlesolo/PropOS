@@ -397,7 +397,7 @@ Risk Level: [Low/Medium/High] ([Percentage]%)
 
         $prompt = "We have a real estate pipeline type '{$this->pipelineType}' with $totalDeals deals totaling ₦" . number_format($totalValue) . ". The average deal momentum score is " . round($averageMomentum) . "%. There are $staleCount stale deals with no activity in 14+ days.";
         
-        $systemPrompt = "You are PropOS AI, an expert real estate sales coach and director of sales operations. Analyze this property pipeline summary. Output exactly 3 clear, high-impact bulleted points outlining: 1. A summary of current pipeline health. 2. The most critical risk detected. 3. Exactly one immediate, actionable next step for the principal to increase velocity. Keep the tone premium, direct, and Bloomberg-level professional. 3 bullet points, concise.";
+        $systemPrompt = "You are VillaCRM AI, an expert real estate sales coach and director of sales operations. Analyze this property pipeline summary. Output exactly 3 clear, high-impact bulleted points outlining: 1. A summary of current pipeline health. 2. The most critical risk detected. 3. Exactly one immediate, actionable next step for the principal to increase velocity. Keep the tone premium, direct, and Bloomberg-level professional. 3 bullet points, concise.";
 
         $text = app(\App\Domain\AI\Contracts\AiCompletionServiceInterface::class)->generate($systemPrompt, $prompt, [
             'feature' => 'pipeline_health_insights',

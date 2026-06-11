@@ -1,5 +1,5 @@
 {
-  "name": "ProposMobile",
+  "name": "VillaCRMMobile",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -79,8 +79,8 @@
     "apps": {
       "ios.debug": {
         "type": "ios.app",
-        "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/ProposMobile.app",
-        "build": "xcodebuild -workspace ios/ProposMobile.xcworkspace -scheme ProposMobile -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build"
+        "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/VillaCRMMobile.app",
+        "build": "xcodebuild -workspace ios/VillaCRMMobile.xcworkspace -scheme VillaCRMMobile -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build"
       },
       "android.debug": {
         "type": "android.apk",

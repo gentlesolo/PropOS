@@ -1,6 +1,6 @@
 # Plan 07 — Module 5: Transactions & Compliance
 
-> Part of the [Master Plan](file:///C:/Users/ADMIN/Herd/propos/implementation_plan.md) · **Phase 3, Sprints 21–24**
+> Part of the [Master Plan](file:///C:/Users/ADMIN/Herd/villacrm/implementation_plan.md) · **Phase 3, Sprints 21–24**
 
 ---
 

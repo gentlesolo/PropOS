@@ -444,11 +444,11 @@ class ContactsPage extends Component
         $beds = $prefs['min_bedrooms'] ?? 4;
 
         if ($channel === 'whatsapp') {
-            $this->draftMessage = "Hi {$name}, this is Demo Agent from PropOS. ✦ I noticed you're looking for a {$beds}-bedroom property in {$location} within {$budget}. We just listed a gorgeous modern unit matching your criteria. Let me know if you would like to schedule a viewing this week?";
+            $this->draftMessage = "Hi {$name}, this is Demo Agent from VillaCRM. ✦ I noticed you're looking for a {$beds}-bedroom property in {$location} within {$budget}. We just listed a gorgeous modern unit matching your criteria. Let me know if you would like to schedule a viewing this week?";
         } elseif ($channel === 'sms') {
-            $this->draftMessage = "PropOS ✦: Hello {$name}, we found a stunning {$beds}-bed property in {$location} matching your requirements (budget {$budget}). Reply to schedule a viewing!";
+            $this->draftMessage = "VillaCRM ✦: Hello {$name}, we found a stunning {$beds}-bed property in {$location} matching your requirements (budget {$budget}). Reply to schedule a viewing!";
         } else {
-            $this->draftMessage = "Subject: Premium Property Match in {$location} - PropOS\n\nDear {$name},\n\nI hope this email finds you well.\n\nFollowing up on your property search criteria, I wanted to share a new listing that matches your preferences:\n- Location: {$location}\n- Size: {$beds} Bedrooms\n- Budget: Within {$budget}\n\nThis unit features high-end finishes, 24/7 power, and excellent security.\n\nLet me know if you would like me to send the full brochure or schedule a viewing.\n\nBest regards,\nDemo Agent\nPropOS Operating System";
+            $this->draftMessage = "Subject: Premium Property Match in {$location} - VillaCRM\n\nDear {$name},\n\nI hope this email finds you well.\n\nFollowing up on your property search criteria, I wanted to share a new listing that matches your preferences:\n- Location: {$location}\n- Size: {$beds} Bedrooms\n- Budget: Within {$budget}\n\nThis unit features high-end finishes, 24/7 power, and excellent security.\n\nLet me know if you would like me to send the full brochure or schedule a viewing.\n\nBest regards,\nDemo Agent\nVillaCRM Operating System";
         }
 
         $this->showDraftModal = true;

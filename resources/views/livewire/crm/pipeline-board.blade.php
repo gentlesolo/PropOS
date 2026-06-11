@@ -40,7 +40,7 @@
     <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between shrink-0 gap-4">
         <div>
             <h1 class="text-2xl font-black uppercase tracking-tight text-text-primary font-mono">Deal Operations Pipeline</h1>
-            <p class="text-xs text-text-secondary font-semibold uppercase tracking-widest mt-1">PropOS Capital Markets & Brokerage Platform</p>
+            <p class="text-xs text-text-secondary font-semibold uppercase tracking-widest mt-1">VillaCRM Capital Markets & Brokerage Platform</p>
         </div>
         
         <!-- View Toggle & New Deal -->
@@ -132,7 +132,7 @@
                     </svg>
                 </div>
                 <div>
-                    <h3 class="text-xs font-extrabold text-text-primary uppercase tracking-widest">PropOS AI Insights & Diagnostics</h3>
+                    <h3 class="text-xs font-extrabold text-text-primary uppercase tracking-widest">VillaCRM AI Insights & Diagnostics</h3>
                     <p class="text-[10px] text-text-tertiary mt-0.5">Scanned active ledger, pipeline health score matrix</p>
                 </div>
             </div>
@@ -200,7 +200,7 @@
                             </div>
                             <div class="flex justify-between items-center text-[10px] text-text-tertiary">
                                 <span class="font-bold">Cap. Total</span>
-                                <span class="font-mono font-bold text-brand-primary">₦{{ number_format($totalVal / 1000000, 1) }}M</span>
+                                <span class="font-mono font-bold text-brand-primary">{{ $currencySymbol }}{{ number_format($totalVal / 1000000, 1) }}M</span>
                             </div>
                         </div>
 
@@ -276,7 +276,7 @@
                                     </div>
 
                                     <div class="text-sm font-mono font-black text-brand-primary tracking-tight mb-3">
-                                        ₦{{ number_format($deal->value) }}
+                                        {{ $currencySymbol }}{{ number_format($deal->value) }}
                                     </div>
 
                                     <!-- Bottom Row: Agent & Next Action -->
@@ -320,7 +320,7 @@
                             </div>
                             <div class="flex justify-between items-center border-t border-border-default/20 pt-1.5 mt-1">
                                 <span class="text-[10px] text-text-secondary font-bold">Total Stage Cap</span>
-                                <span class="text-xs font-mono font-black text-brand-primary">₦{{ number_format($totalVal) }}</span>
+                                <span class="text-xs font-mono font-black text-brand-primary">{{ $currencySymbol }}{{ number_format($totalVal) }}</span>
                             </div>
                         </div>
                     </div>
@@ -398,7 +398,7 @@
                                 <div wire:click="openDealDetail({{ $deal->id }})" class="bloomberg-card border-l-4 {{ $borderAccent }} rounded p-4 relative">
                                     <div class="text-xs font-bold text-text-primary uppercase mb-1">{{ $deal->listing?->property?->address_line_1 ?? $deal->title }}</div>
                                     <div class="text-[10px] text-text-tertiary mb-3 font-mono">Stage Duration: {{ $daysInStage }}d</div>
-                                    <div class="text-sm font-mono font-black text-brand-primary">₦{{ number_format($deal->value) }}</div>
+                                    <div class="text-sm font-mono font-black text-brand-primary">{{ $currencySymbol }}{{ number_format($deal->value) }}</div>
                                 </div>
                             @empty
                                 <div class="text-center py-12 border border-dashed border-border-default/40 rounded p-6">
@@ -470,7 +470,7 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap font-mono text-xs font-black text-brand-primary">
-                                    ₦{{ number_format($deal->value) }}
+                                    {{ $currencySymbol }}{{ number_format($deal->value) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap font-mono text-xs text-text-secondary">
                                     <span class="{{ $days > 14 ? 'text-brand-accent font-bold' : '' }}">
@@ -513,10 +513,10 @@
                             <line x1="50" y1="140" x2="550" y2="140" stroke="rgba(255,255,255,0.02)" stroke-width="1"/>
                             <line x1="50" y1="200" x2="550" y2="200" stroke="rgba(255,255,255,0.06)" stroke-width="1.5"/>
 
-                            <text x="15" y="24" class="fill-text-tertiary text-[10px] font-mono">₦250M</text>
-                            <text x="15" y="84" class="fill-text-tertiary text-[10px] font-mono">₦150M</text>
-                            <text x="15" y="144" class="fill-text-tertiary text-[10px] font-mono">₦50M</text>
-                            <text x="15" y="204" class="fill-text-tertiary text-[10px] font-mono">₦0</text>
+                            <text x="15" y="24" class="fill-text-tertiary text-[10px] font-mono">{{ $currencySymbol }}250M</text>
+                            <text x="15" y="84" class="fill-text-tertiary text-[10px] font-mono">{{ $currencySymbol }}150M</text>
+                            <text x="15" y="144" class="fill-text-tertiary text-[10px] font-mono">{{ $currencySymbol }}50M</text>
+                            <text x="15" y="204" class="fill-text-tertiary text-[10px] font-mono">{{ $currencySymbol }}0</text>
 
                             <!-- Vertical lines for months -->
                             <line x1="150" y1="20" x2="150" y2="200" stroke="rgba(255,255,255,0.03)" stroke-dasharray="4"/>
@@ -600,7 +600,7 @@
                     </div>
 
                     <div class="text-[10px] text-text-tertiary leading-relaxed mt-4 border-t border-border-default/30 pt-4">
-                        💡 PropOS Neural Engine processes checklists status, response latency, and offer levels to compute closing probabilities in real-time.
+                        💡 VillaCRM Neural Engine processes checklists status, response latency, and offer levels to compute closing probabilities in real-time.
                     </div>
                 </div>
             </div>
@@ -651,7 +651,7 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap font-mono text-xs font-black text-brand-primary">
-                                    ₦{{ number_format($deal->value) }}
+                                    {{ $currencySymbol }}{{ number_format($deal->value) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center space-x-3 w-48">
@@ -721,7 +721,7 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-[10px] font-bold text-text-secondary uppercase mb-1.5">Deal Capital Value (₦) *</label>
+                    <label class="block text-[10px] font-bold text-text-secondary uppercase mb-1.5">Deal Capital Value ({{ $currencySymbol }}) *</label>
                     <input wire:model.defer="value" type="number" min="0" placeholder="0" class="w-full rounded border border-border-default bg-surface-page px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary text-xs font-mono font-bold">
                     @error('value') <span class="text-[10px] text-danger-500 mt-1 block">{{ $message }}</span> @enderror
                 </div>
@@ -904,7 +904,7 @@
                             </div>
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label class="block text-[9px] font-bold text-text-secondary uppercase mb-1">Capital Value (₦)</label>
+                                    <label class="block text-[9px] font-bold text-text-secondary uppercase mb-1">Capital Value ({{ $currencySymbol }})</label>
                                     <input wire:model="editValue" type="number" class="w-full bg-surface-page border border-border-default text-text-primary rounded px-3 py-1.5 text-xs focus:ring-brand-primary focus:border-brand-primary font-mono font-bold">
                                 </div>
                                 <div>
@@ -972,7 +972,7 @@
                         <div class="space-y-2">
                             <div class="flex justify-between py-1 border-b border-border-default/20 text-xs">
                                 <span class="text-text-secondary font-medium">Projected Gross Ledger</span>
-                                <span class="font-mono font-black text-brand-primary">₦{{ number_format($modalDeal->value) }}</span>
+                                <span class="font-mono font-black text-brand-primary">{{ $currencySymbol }}{{ number_format($modalDeal->value) }}</span>
                             </div>
                             <div class="flex justify-between py-1 border-b border-border-default/20 text-xs">
                                 <span class="text-text-secondary font-medium">Agency Yield Rate</span>
@@ -980,15 +980,15 @@
                             </div>
                             <div class="flex justify-between py-1 border-b border-border-default/20 text-xs">
                                 <span class="text-text-secondary font-medium">Yield Yield Pool</span>
-                                <span class="font-mono text-brand-primary font-bold">₦{{ number_format($grossComm) }}</span>
+                                <span class="font-mono text-brand-primary font-bold">{{ $currencySymbol }}{{ number_format($grossComm) }}</span>
                             </div>
                             <div class="flex justify-between py-1 border-b border-border-default/20 text-xs">
                                 <span class="text-text-secondary font-medium">Agent Brokerage Split (60%)</span>
-                                <span class="font-mono text-success-500 font-bold">₦{{ number_format($agentSplit) }}</span>
+                                <span class="font-mono text-success-500 font-bold">{{ $currencySymbol }}{{ number_format($agentSplit) }}</span>
                             </div>
                             <div class="flex justify-between py-1 text-xs">
                                 <span class="text-text-secondary font-medium">Agency Pool Split (40%)</span>
-                                <span class="font-mono text-text-secondary font-bold">₦{{ number_format($agencySplit) }}</span>
+                                <span class="font-mono text-text-secondary font-bold">{{ $currencySymbol }}{{ number_format($agencySplit) }}</span>
                             </div>
                         </div>
                     </div>

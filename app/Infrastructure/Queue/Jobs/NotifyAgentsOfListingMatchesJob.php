@@ -85,7 +85,7 @@ class NotifyAgentsOfListingMatchesJob implements ShouldQueue
         }
 
         $lines[] = "";
-        $lines[] = "Log in to PropOS to view these contacts and send them the listing.";
+        $lines[] = "Log in to VillaCRM to view these contacts and send them the listing.";
 
         $body = implode("\n", $lines);
 

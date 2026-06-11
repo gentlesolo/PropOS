@@ -180,7 +180,7 @@
             <div class="rounded-xl border border-brand-primary/20 bg-brand-primary/5 px-4 py-3 flex items-start gap-3">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 mt-0.5 text-brand-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></svg>
                 <div>
-                    <p class="text-xs font-medium text-text-primary mb-1">Using PropOS platform defaults</p>
+                    <p class="text-xs font-medium text-text-primary mb-1">Using VillaCRM platform defaults</p>
                     <p class="text-xs text-text-secondary leading-relaxed">
                         Colors: <span class="font-mono text-text-primary">#10B981</span> &middot; <span class="font-mono text-text-primary">#18181B</span> &middot; <span class="font-mono text-text-primary">#F59E0B</span>
                         &nbsp;&nbsp;Font: <span class="font-medium text-text-primary">Geist</span>

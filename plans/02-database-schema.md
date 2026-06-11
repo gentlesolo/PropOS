@@ -1,6 +1,6 @@
 # Plan 02 — Database Schema & Migrations
 
-> Part of the [Master Plan](file:///C:/Users/ADMIN/Herd/propos/implementation_plan.md)
+> Part of the [Master Plan](file:///C:/Users/ADMIN/Herd/villacrm/implementation_plan.md)
 
 ---
 

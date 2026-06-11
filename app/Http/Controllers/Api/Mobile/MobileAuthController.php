@@ -50,7 +50,7 @@ class MobileAuthController extends Controller
     {
         $user        = $request->user();
         $currentToken = $user->currentAccessToken();
-        $deviceName  = str_replace('mobile:', '', $currentToken->name ?? 'ProposMobile');
+        $deviceName  = str_replace('mobile:', '', $currentToken->name ?? 'VillaCRMMobile');
 
         $currentToken->delete();
 

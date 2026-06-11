@@ -23,8 +23,8 @@ class FinancialAccountingSeeder extends Seeder
     public function run(): void
     {
         $agency    = Agency::where('slug', 'demo')->firstOrFail();
-        $agent     = User::where('email', 'agent@propos.app')->firstOrFail();
-        $principal = User::where('email', 'principal@propos.app')->firstOrFail();
+        $agent     = User::where('email', 'agent@villacrm.app')->firstOrFail();
+        $principal = User::where('email', 'principal@villacrm.app')->firstOrFail();
 
         // ── 1. Tax Configurations ──────────────────────────────────────────────
         $this->seedTaxConfigs($agency->id);

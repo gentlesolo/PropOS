@@ -43,7 +43,7 @@
             <h1>You've been invited!</h1>
             <p>
                 You have been invited to join <strong>{{ $agency->name }}</strong> on
-                {{ config('app.name', 'PropOS') }} as a
+                {{ config('app.name', 'VillaCRM') }} as a
                 <span class="badge">{{ ucfirst($invitation->role) }}</span>.
             </p>
             <p>
@@ -69,7 +69,7 @@
             @if($agency->tagline)
                 <p style="font-weight:500; color:#6b7280; margin-bottom:6px;">{{ $agency->tagline }}</p>
             @endif
-            <p>{{ $agency->name }} &bull; Powered by {{ config('app.name', 'PropOS') }}</p>
+            <p>{{ $agency->name }} &bull; Powered by {{ config('app.name', 'VillaCRM') }}</p>
         </div>
     </div>
 </div>

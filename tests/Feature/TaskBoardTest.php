@@ -30,11 +30,11 @@ class TaskBoardTest extends TestCase
         $this->agency = Agency::factory()->create(['id' => 1, 'slug' => 'demo']);
         $this->user = User::factory()->create([
             'agency_id' => $this->agency->id,
-            'email' => 'principal@propos.app',
+            'email' => 'principal@villacrm.app',
         ]);
         $this->otherAgent = User::factory()->create([
             'agency_id' => $this->agency->id,
-            'email' => 'agent@propos.app',
+            'email' => 'agent@villacrm.app',
         ]);
 
         setPermissionsTeamId($this->agency->id);

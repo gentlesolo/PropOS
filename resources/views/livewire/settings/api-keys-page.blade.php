@@ -117,14 +117,14 @@
     <div class="bg-gray-50 border border-gray-200 rounded-xl p-5 space-y-3">
         <h3 class="text-sm font-semibold text-gray-800">Quick Start — Embed Listings on Your Website</h3>
         <p class="text-xs text-gray-500">Replace <code class="bg-gray-200 px-1 rounded">YOUR_API_KEY</code> with a Public Read key above.</p>
-        <pre class="text-xs bg-gray-900 text-green-300 rounded-lg p-4 overflow-x-auto leading-relaxed"><code>&lt;script src="https://cdn.propos.app/widgets.js" defer&gt;&lt;/script&gt;
+        <pre class="text-xs bg-gray-900 text-green-300 rounded-lg p-4 overflow-x-auto leading-relaxed"><code>&lt;script src="https://cdn.villacrm.app/widgets.js" defer&gt;&lt;/script&gt;
 
-&lt;propos-listings-grid
+&lt;villacrm-listings-grid
     agency-key="YOUR_API_KEY"
     primary-color="{{ auth()->user()->agency?->primary_color ?? '#1E40AF' }}"
     items-per-page="9"
     view-type="grid"&gt;
-&lt;/propos-listings-grid&gt;</code></pre>
+&lt;/villacrm-listings-grid&gt;</code></pre>
     </div>
 
 </div>

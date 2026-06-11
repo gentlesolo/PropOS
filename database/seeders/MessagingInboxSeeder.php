@@ -16,8 +16,8 @@ class MessagingInboxSeeder extends Seeder
     public function run(): void
     {
         $agency    = Agency::where('slug', 'demo')->firstOrFail();
-        $agent     = User::where('email', 'agent@propos.app')->firstOrFail();
-        $principal = User::where('email', 'principal@propos.app')->firstOrFail();
+        $agent     = User::where('email', 'agent@villacrm.app')->firstOrFail();
+        $principal = User::where('email', 'principal@villacrm.app')->firstOrFail();
         $contacts  = Contact::where('agency_id', $agency->id)->get();
 
         if ($contacts->isEmpty()) {
@@ -208,7 +208,7 @@ class MessagingInboxSeeder extends Seeder
             [
                 'contact_idx' => 2,
                 'messages'    => [
-                    ['direction' => 'outbound', 'status' => 'delivered', 'days_ago' => 14, 'body' => "Hello Tunde, we have a new 5-bed in Lekki Phase 1 matching your criteria at ₦185M. Interested? Call 0800-PROPOS or reply YES."],
+                    ['direction' => 'outbound', 'status' => 'delivered', 'days_ago' => 14, 'body' => "Hello Tunde, we have a new 5-bed in Lekki Phase 1 matching your criteria at ₦185M. Interested? Call 0800-VILLACRM or reply YES."],
                     ['direction' => 'inbound',  'status' => 'delivered', 'days_ago' => 14, 'body' => "YES please send details"],
                     ['direction' => 'outbound', 'status' => 'delivered', 'days_ago' => 11, 'body' => "Viewing confirmed: 22 Admiralty Way, Lekki Phase 1 tomorrow 11am. Address pin sent to your WhatsApp."],
                 ],
@@ -261,10 +261,10 @@ class MessagingInboxSeeder extends Seeder
                     'sent_by'             => $msg['direction'] === 'outbound' ? $agent->id : null,
                     'to_number'           => $msg['direction'] === 'outbound'
                         ? ($contact->phone ?? '+23480' . rand(10000000, 99999999))
-                        : '+23480PROPOS01',
+                        : '+23480VILLACRM01',
                     'from_number'         => $msg['direction'] === 'inbound'
                         ? ($contact->phone ?? '+23480' . rand(10000000, 99999999))
-                        : '+23480PROPOS01',
+                        : '+23480VILLACRM01',
                     'body'                => $msg['body'],
                     'direction'           => $msg['direction'],
                     'status'              => $msg['status'],

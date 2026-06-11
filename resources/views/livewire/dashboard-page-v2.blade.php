@@ -2,7 +2,7 @@
     <!-- Header -->
     <div class="mb-10 flex items-end justify-between">
         <div>
-            <p class="text-sm font-bold tracking-widest uppercase text-brand-primary mb-1">PropOS Command Center</p>
+            <p class="text-sm font-bold tracking-widest uppercase text-brand-primary mb-1">VillaCRM Command Center</p>
             <h1 class="text-4xl font-black tracking-tight text-text-primary">Good Morning, {{ $user->first_name }}.</h1>
         </div>
         <div class="hidden sm:flex space-x-3">

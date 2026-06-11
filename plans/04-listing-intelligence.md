@@ -1,6 +1,6 @@
 # Plan 04 — Module 2: Listing Intelligence
 
-> Part of the [Master Plan](file:///C:/Users/ADMIN/Herd/propos/implementation_plan.md) · **Phase 1, Sprints 5–8**
+> Part of the [Master Plan](file:///C:/Users/ADMIN/Herd/villacrm/implementation_plan.md) · **Phase 1, Sprints 5–8**
 
 ---
 

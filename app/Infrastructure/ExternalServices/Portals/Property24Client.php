@@ -22,7 +22,7 @@ class Property24Client
         $property = $listing->property;
 
         $payload = [
-            'reference'       => "PROPOS-{$listing->id}",
+            'reference'       => "VILLACRM-{$listing->id}",
             'listing_type'    => $listing->listing_type === 'sale' ? 'ForSale' : 'ToLet',
             'price'           => (float) $listing->listing_price,
             'property_type'   => $this->mapPropertyType($property->property_type),

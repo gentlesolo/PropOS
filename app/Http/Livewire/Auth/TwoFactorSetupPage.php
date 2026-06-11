@@ -28,7 +28,7 @@ class TwoFactorSetupPage extends Component
     {
         $totp = TOTP::generate();
         $totp->setLabel(auth()->user()->email);
-        $totp->setIssuer(config('app.name', 'PropOS'));
+        $totp->setIssuer(config('app.name', 'VillaCRM'));
 
         $this->secret = $totp->getSecret();
         $this->qrCodeUrl = $totp->getProvisioningUri();

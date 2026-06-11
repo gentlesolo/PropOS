@@ -1,7 +1,7 @@
 <?php
 
 /**
- * PropOS Updater Script for Self-Hosted Deployments.
+ * VillaCRM Updater Script for Self-Hosted Deployments.
  */
 
 define('LARAVEL_START', microtime(true));
@@ -12,7 +12,7 @@ $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 $kernel->bootstrap();
 
 echo "========================================\n";
-echo "       PropOS Updater Starting           \n";
+echo "       VillaCRM Updater Starting           \n";
 echo "========================================\n\n";
 
 try {

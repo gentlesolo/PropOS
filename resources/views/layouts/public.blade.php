@@ -10,13 +10,13 @@
 <body class="bg-gray-50 antialiased">
     <div class="min-h-screen flex flex-col">
         <header class="bg-white border-b border-gray-200 py-4 px-6">
-            <p class="text-lg font-bold text-blue-700">{{ config('app.name', 'PropOS') }}</p>
+            <p class="text-lg font-bold text-blue-700">{{ config('app.name', 'VillaCRM') }}</p>
         </header>
         <main class="flex-1 py-10 px-4">
             {{ $slot }}
         </main>
         <footer class="py-6 text-center text-xs text-gray-400">
-            Powered by PropOS &mdash; AI-powered real estate platform
+            Powered by VillaCRM &mdash; AI-powered real estate platform
         </footer>
     </div>
     @livewireScripts

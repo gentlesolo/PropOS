@@ -1,6 +1,6 @@
 # Plan 05 — Module 3: Marketing Hub
 
-> Part of the [Master Plan](file:///C:/Users/ADMIN/Herd/propos/implementation_plan.md) · **Phase 2, Sprints 13–14**
+> Part of the [Master Plan](file:///C:/Users/ADMIN/Herd/villacrm/implementation_plan.md) · **Phase 2, Sprints 13–14**
 
 ---
 

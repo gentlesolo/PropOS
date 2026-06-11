@@ -1,6 +1,6 @@
 # Plan 06 — Module 4: CRM & Pipeline Manager
 
-> Part of the [Master Plan](file:///C:/Users/ADMIN/Herd/propos/implementation_plan.md) · **Phase 1 Sprints 3–4 (CRM Core) + Phase 2 Sprints 11–12 (Pipeline & AI)**
+> Part of the [Master Plan](file:///C:/Users/ADMIN/Herd/villacrm/implementation_plan.md) · **Phase 1 Sprints 3–4 (CRM Core) + Phase 2 Sprints 11–12 (Pipeline & AI)**
 
 ---
 

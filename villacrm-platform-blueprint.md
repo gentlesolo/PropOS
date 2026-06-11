@@ -1,4 +1,4 @@
-# PropOS — Property Operating System
+# VillaCRM — Property Operating System
 ## AI-Powered Platform Blueprint for Real Estate Agencies
 
 > **Version 1.0 | May 2026**
@@ -30,9 +30,9 @@
 
 Real estate agencies — especially in fast-growing African and emerging markets — operate in a highly fragmented environment. Agents manage leads across WhatsApp, email, and spreadsheets. Marketers run campaigns without visibility into which listings are converting. Principals have little real-time insight into team performance.
 
-**PropOS** is a single, intelligent operating platform that unifies every function of a real estate agency. It combines CRM, listings management, marketing automation, transaction tracking, training, and business intelligence — all powered by AI — into one cohesive system.
+**VillaCRM** is a single, intelligent operating platform that unifies every function of a real estate agency. It combines CRM, listings management, marketing automation, transaction tracking, training, and business intelligence — all powered by AI — into one cohesive system.
 
-### Core Value Propositions
+### Core Value VillaCRMitions
 
 - **For Agents:** Spend less time on admin and more time closing deals. AI handles follow-ups, generates reports, and tells you exactly what to do next.
 - **For Marketers:** Create and distribute multi-channel campaigns in minutes, not days, with content that's already optimised for each platform.
@@ -45,18 +45,18 @@ Real estate agencies — especially in fast-growing African and emerging markets
 
 ### Design Philosophy
 
-PropOS is built on three principles:
+VillaCRM is built on three principles:
 
 **1. AI-Native, Not AI-Added**
 AI is not a bolt-on feature. Every module is designed around AI capabilities from the ground up — from how leads are captured to how reports are generated.
 
 **2. Mobile & WhatsApp First**
-In markets like Nigeria, Ghana, Kenya, and South Africa, most real estate communication happens on mobile and WhatsApp. PropOS is designed for this reality, with a responsive mobile interface and deep WhatsApp integration.
+In markets like Nigeria, Ghana, Kenya, and South Africa, most real estate communication happens on mobile and WhatsApp. VillaCRM is designed for this reality, with a responsive mobile interface and deep WhatsApp integration.
 
 **3. Unified, Not Siloed**
 Every module shares data. A lead captured by the marketing team becomes a contact in the CRM. A property listed by an agent flows directly into the marketing hub. A signed mandate triggers the compliance checklist automatically.
 
-### Who Uses PropOS
+### Who Uses VillaCRM
 
 | Role | Primary Modules |
 |---|---|
@@ -195,14 +195,14 @@ Accurate pricing is one of the most valuable services an agent provides. The Val
 ### 2.5 Portal Syndication
 
 - **One-Click Publishing:** Completed listings are formatted and published to connected property portals (PropertyPro, Private Property, Property24, Lamudi, etc.) simultaneously.
-- **Format Adaptation:** Each portal has different character limits, photo requirements, and field mappings. PropOS handles all formatting differences automatically.
+- **Format Adaptation:** Each portal has different character limits, photo requirements, and field mappings. VillaCRM handles all formatting differences automatically.
 - **Listing Performance Tracking:** Views, saves, inquiries, and click-through rates from each portal are pulled into the platform and displayed per listing.
 - **Auto-Price Reduction Alerts:** If a listing has been active for more than a set number of days (configurable) with low inquiry volume, the agent is alerted and prompted to review the pricing.
-- **Listing Refresh Scheduling:** Portals often rank recently updated listings higher. PropOS can schedule periodic listing refreshes (minor content updates) to maintain search visibility.
+- **Listing Refresh Scheduling:** Portals often rank recently updated listings higher. VillaCRM can schedule periodic listing refreshes (minor content updates) to maintain search visibility.
 
 ### 2.6 Seller Communication & Reporting
 
-Sellers want to know what's happening with their property. PropOS makes this effortless:
+Sellers want to know what's happening with their property. VillaCRM makes this effortless:
 
 - **Automated Seller Reports:** Weekly or bi-weekly branded reports sent directly to the seller, summarising portal views, inquiries received, viewings conducted, and market context. Fully generated and sent automatically.
 - **Feedback Relay:** Post-viewing feedback collected from buyers is automatically summarised and included in the seller report or sent as a standalone update.
@@ -259,7 +259,7 @@ The Marketing Hub enforces brand consistency across all generated content:
 
 ### 3.4 Paid Advertising Management
 
-- **Meta Ads Integration:** Create and manage Facebook and Instagram ad campaigns directly from PropOS. The AI suggests campaign objectives, audience targeting parameters, budget allocation, and bidding strategy based on the listing type.
+- **Meta Ads Integration:** Create and manage Facebook and Instagram ad campaigns directly from VillaCRM. The AI suggests campaign objectives, audience targeting parameters, budget allocation, and bidding strategy based on the listing type.
 - **Audience Builder:** Define and save custom audiences (e.g., "Lagos professionals aged 28–45 interested in homeownership") that can be applied to any future campaign.
 - **A/B Testing:** Automatically run two variations of an ad with different headlines or images and let the system identify the better performer after a set period.
 - **Budget Pacing Alerts:** Notifies the marketer if a campaign is over- or under-pacing against its daily budget target.
@@ -296,7 +296,7 @@ Given the dominance of WhatsApp in African markets, this module receives dedicat
 
 ### Overview
 
-The CRM is the memory of the agency. Every client, every interaction, every deal lives here. PropOS goes beyond a traditional CRM by making it intelligent — predicting what will happen next, surfacing what needs attention, and connecting every piece of data across the platform.
+The CRM is the memory of the agency. Every client, every interaction, every deal lives here. VillaCRM goes beyond a traditional CRM by making it intelligent — predicting what will happen next, surfacing what needs attention, and connecting every piece of data across the platform.
 
 ### 4.1 Contact Management
 
@@ -670,7 +670,7 @@ The AI monitors all written communications passing through the platform (emails,
 
 ### Platform Delivery
 
-PropOS is delivered as:
+VillaCRM is delivered as:
 
 - **Web Application:** Responsive, browser-based interface accessible on any device.
 - **Mobile App (iOS & Android):** Full-featured native mobile app optimised for field use by agents — including offline mode for areas with poor connectivity.
@@ -770,6 +770,6 @@ Full training hub, AI role-play simulator, multi-country compliance rule sets, a
 
 ---
 
-*PropOS — Built for the real estate agencies that move markets.*
+*VillaCRM — Built for the real estate agencies that move markets.*
 
 *Document prepared May 2026. All module specifications subject to refinement through product discovery and user research.*

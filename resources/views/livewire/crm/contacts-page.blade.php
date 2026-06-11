@@ -130,7 +130,7 @@
                 <button @click="active = false" class="text-text-tertiary hover:text-text-secondary text-xs">&times; Close</button>
             </div>
             <div class="flex gap-2">
-                <input wire:model.debounce.300ms="smartQuery" type="text" placeholder="e.g. Show me buyers in Lekki with budget over ₦80M not contacted this week"
+                <input wire:model.debounce.300ms="smartQuery" type="text" placeholder="e.g. Show me buyers in Lekki with budget over {{ $currencySymbol }}80M not contacted this week"
                     class="flex-1 px-3 py-2 bg-surface-page border border-border-strong focus:border-brand-accent rounded-md text-text-primary placeholder-zinc-600 text-xs focus:ring-1 focus:ring-brand-accent/20 focus:outline-none font-mono-geist">
                 <button wire:click="applySmartFilter" class="px-4 py-2 bg-brand-accent hover:bg-amber-600 text-black text-xs font-bold rounded-md transition-colors">
                     Apply
@@ -612,7 +612,7 @@
                                             <span class="text-[9px] font-bold text-text-tertiary uppercase block tracking-wider">Budget Range</span>
                                             <span class="text-xs font-black text-brand-primary font-mono-geist">
                                                 @if($budgetMax > 0)
-                                                    ₦{{ number_format($budgetMin / 1000000, 0) }}M – ₦{{ number_format($budgetMax / 1000000, 0) }}M
+                                                    {{ $currencySymbol }}{{ number_format($budgetMin / 1000000, 0) }}M – {{ $currencySymbol }}{{ number_format($budgetMax / 1000000, 0) }}M
                                                 @else
                                                     Not Specified
                                                 @endif
@@ -649,7 +649,7 @@
                                         </div>
                                         <p class="text-xs text-zinc-350 leading-relaxed font-sans">
                                             @if($selectedContact->type === 'buyer')
-                                                {{ $selectedContact->first_name }} is a motivated buyer looking for a {{ $bedrooms }}-bed in {{ !empty($areas) ? $areas[0] : 'Lekki' }}. Budget {{ $budgetMax > 0 ? '₦' . number_format($budgetMin / 1000000, 0) . 'M–₦' . number_format($budgetMax / 1000000, 0) . 'M' : 'unspecified' }}. Viewed {{ rand(3, 8) }} listings. Last contacted {{ $selectedContact->last_contacted_at ? $selectedContact->last_contacted_at->diffForHumans() : 'never' }}. Intent score: {{ $selectedContact->intent_score }}.
+                                                {{ $selectedContact->first_name }} is a motivated buyer looking for a {{ $bedrooms }}-bed in {{ !empty($areas) ? $areas[0] : 'Lekki' }}. Budget {{ $budgetMax > 0 ? $currencySymbol . number_format($budgetMin / 1000000, 0) . 'M–' . $currencySymbol . number_format($budgetMax / 1000000, 0) . 'M' : 'unspecified' }}. Viewed {{ rand(3, 8) }} listings. Last contacted {{ $selectedContact->last_contacted_at ? $selectedContact->last_contacted_at->diffForHumans() : 'never' }}. Intent score: {{ $selectedContact->intent_score }}.
                                             @elseif($selectedContact->type === 'tenant')
                                                 {{ $selectedContact->first_name }} is actively renting, looking for high-end properties in {{ !empty($areas) ? $areas[0] : 'Lekki' }}. Verified income history. Last active {{ $selectedContact->last_contacted_at ? $selectedContact->last_contacted_at->diffForHumans() : 'never' }}. Match accuracy high.
                                             @else
@@ -770,7 +770,7 @@
                                                 📍 {{ $prop->city }} · 🛏 {{ $prop->bedrooms }} beds · 🚿 {{ $prop->bathrooms }} baths
                                             </p>
                                             <p class="text-xs font-black text-brand-primary font-mono-geist">
-                                                ₦{{ number_format($listing->listing_price / 1000000, 0) }}M
+                                                {{ $currencySymbol }}{{ number_format($listing->listing_price / 1000000, 0) }}M
                                             </p>
                                             
                                             <!-- Match Reasons -->

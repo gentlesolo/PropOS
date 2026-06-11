@@ -694,7 +694,7 @@
 
                             <div class="md:col-span-2">
                                 <label class="block text-[10px] font-bold uppercase tracking-wider text-text-secondary mb-1.5">Message / Adjustments to conditions</label>
-                                <textarea wire:model="counter_notes" rows="2" placeholder="e.g. We propose to sell at ₦195M but can offer immediate occupation if preferred."
+                                <textarea wire:model="counter_notes" rows="2" placeholder="e.g. We propose to sell at {{ $currencySymbol }}195M but can offer immediate occupation if preferred."
                                     class="w-full bg-surface-raised border border-border-strong rounded-md text-xs text-text-primary p-3 focus:outline-none focus:border-[#F59E0B] resize-none"></textarea>
                             </div>
 
@@ -745,7 +745,7 @@
                                     <span class="text-[9px] text-text-tertiary font-mono">{{ $detailOffer->created_at->format('d M Y H:i') }}</span>
                                 </div>
                                 <p class="text-xs text-text-primary">
-                                    {{ $detailOffer->contact?->full_name }} submitted a formal proposal for <span class="font-mono font-semibold text-text-primary">{{ $currencySymbol }}{{ number_format($detailOffer->amount) }}</span>.
+                                    {{ $detailOffer->contact?->full_name }} submitted a formal villacrmal for <span class="font-mono font-semibold text-text-primary">{{ $currencySymbol }}{{ number_format($detailOffer->amount) }}</span>.
                                 </p>
                                 @if($detailOffer->notes)
                                     <p class="text-[11px] text-text-secondary italic leading-relaxed bg-surface-raised/40 border border-border-default p-2 rounded">

@@ -26,7 +26,7 @@
         $radiusVars = $usePlatform ? '' : implode('', $radiusMap[$agency->border_radius ?? 'default'] ?? []);
     @endphp
 
-    <title>{{ $agency->name ?? config('app.name', 'PropOS') }}</title>
+    <title>{{ $agency->name ?? config('app.name', 'VillaCRM') }}</title>
 
     @if($agency->favicon_path)
     <link rel="icon" type="image/x-icon" href="{{ asset('storage/'.$agency->favicon_path) }}">
@@ -44,13 +44,13 @@
     <!-- Theme Initialization script to prevent FOUC -->
     <script>
         (function() {
-            var theme = localStorage.getItem('propos-theme') || 'system';
+            var theme = localStorage.getItem('villacrm-theme') || 'system';
             var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             var resolved = theme === 'system' ? (prefersDark ? 'dark' : 'light') : theme;
             document.documentElement.classList.add(resolved);
         })();
         document.addEventListener('livewire:navigated', function() {
-            var theme = localStorage.getItem('propos-theme') || 'system';
+            var theme = localStorage.getItem('villacrm-theme') || 'system';
             var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             var resolved = theme === 'system' ? (prefersDark ? 'dark' : 'light') : theme;
             document.documentElement.classList.remove('light', 'dark');
@@ -180,7 +180,7 @@
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.store('theme', {
-                mode: localStorage.getItem('propos-theme') || 'system',
+                mode: localStorage.getItem('villacrm-theme') || 'system',
                 init() {
                     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
                         if (this.mode === 'system') {
@@ -190,7 +190,7 @@
                 },
                 setTheme(theme) {
                     this.mode = theme;
-                    localStorage.setItem('propos-theme', theme);
+                    localStorage.setItem('villacrm-theme', theme);
                     this.applyTheme(theme, true);
                 },
                 applyTheme(theme, animate) {

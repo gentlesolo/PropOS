@@ -17,7 +17,7 @@
     @if($revealedSecret)
     <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 space-y-2">
         <p class="text-sm font-semibold text-amber-800">Webhook secret — copy it now. It will not be shown again.</p>
-        <p class="text-xs text-amber-700">Use this to verify the <code>X-PropOS-Signature-256</code> header on incoming payloads.</p>
+        <p class="text-xs text-amber-700">Use this to verify the <code>X-VillaCRM-Signature-256</code> header on incoming payloads.</p>
         <div class="flex items-center gap-3">
             <code class="flex-1 bg-white border border-amber-200 rounded-lg px-3 py-2 text-sm font-mono text-gray-800 break-all select-all">{{ $revealedSecret }}</code>
             <button onclick="navigator.clipboard.writeText('{{ $revealedSecret }}').then(() => alert('Copied!'))"
@@ -35,7 +35,7 @@
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Endpoint URL *</label>
-                <input type="url" wire:model="url" placeholder="https://yoursite.com/webhooks/propos"
+                <input type="url" wire:model="url" placeholder="https://yoursite.com/webhooks/villacrm"
                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
                 @error('url') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
@@ -56,7 +56,7 @@
             </div>
 
             <div class="text-xs text-gray-500 bg-gray-50 rounded-lg p-3">
-                PropOS will POST a JSON payload to your URL with an <code>X-PropOS-Signature-256</code> HMAC-SHA256 header for verification.
+                VillaCRM will POST a JSON payload to your URL with an <code>X-VillaCRM-Signature-256</code> HMAC-SHA256 header for verification.
             </div>
 
             <div class="flex gap-3 justify-end pt-2">
@@ -144,12 +144,12 @@
     {{-- Signature verification guide --}}
     <div class="bg-gray-50 border border-gray-200 rounded-xl p-5 space-y-3">
         <h3 class="text-sm font-semibold text-gray-800">Verifying Webhook Signatures</h3>
-        <p class="text-xs text-gray-500">Every request includes an <code class="bg-gray-200 px-1 rounded">X-PropOS-Signature-256</code> header. Verify it server-side:</p>
+        <p class="text-xs text-gray-500">Every request includes an <code class="bg-gray-200 px-1 rounded">X-VillaCRM-Signature-256</code> header. Verify it server-side:</p>
         <pre class="text-xs bg-gray-900 text-green-300 rounded-lg p-4 overflow-x-auto leading-relaxed"><code>// PHP example
 $secret    = 'your-webhook-secret';
 $body      = file_get_contents('php://input');
 $expected  = 'sha256=' . hash_hmac('sha256', $body, $secret);
-$received  = $_SERVER['HTTP_X_PROPOS_SIGNATURE_256'] ?? '';
+$received  = $_SERVER['HTTP_X_VILLACRM_SIGNATURE_256'] ?? '';
 
 if (!hash_equals($expected, $received)) {
     http_response_code(401);

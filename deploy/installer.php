@@ -1,6 +1,6 @@
 <?php
 /**
- * PropOS — Browser-Based Installer
+ * VillaCRM — Browser-Based Installer
  *
  * HOW TO USE (no SSH required):
  *   1. Edit APP_ROOT below to match your server's Laravel root path
@@ -473,7 +473,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Step 3: save App + Mail config
     if ($action === 'save_app') {
-        $_SESSION['cfg']['app_name'] = trim($_POST['app_name'] ?? 'PropOS Platform');
+        $_SESSION['cfg']['app_name'] = trim($_POST['app_name'] ?? 'VillaCRM Platform');
         $_SESSION['cfg']['app_url'] = rtrim(trim($_POST['app_url'] ?? ''), '/');
         $_SESSION['cfg']['app_env'] = $_POST['app_env'] ?? 'production';
         $_SESSION['cfg']['app_debug'] = isset($_POST['app_debug']) ? 'true' : 'false';
@@ -485,7 +485,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['cfg']['mail_user'] = trim($_POST['mail_user'] ?? '');
         $_SESSION['cfg']['mail_pass'] = $_POST['mail_pass'] ?? '';
         $_SESSION['cfg']['mail_from'] = trim($_POST['mail_from'] ?? '');
-        $_SESSION['cfg']['mail_name'] = trim($_POST['mail_name'] ?? 'PropOS Platform');
+        $_SESSION['cfg']['mail_name'] = trim($_POST['mail_name'] ?? 'VillaCRM Platform');
         $_SESSION['cfg']['resend_key'] = trim($_POST['resend_key'] ?? '');
         advance(4);
         header('Location: ' . $_SERVER['PHP_SELF']);
@@ -707,7 +707,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $root = app_root();
 
         $envValues = [
-            'APP_NAME' => $cfg['app_name'] ?? 'PropOS Platform',
+            'APP_NAME' => $cfg['app_name'] ?? 'VillaCRM Platform',
             'APP_ENV' => $cfg['app_env'] ?? 'production',
             'APP_KEY' => $appKey,
             'APP_DEBUG' => $cfg['app_debug'] ?? 'false',
@@ -747,7 +747,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'MAIL_USERNAME' => $cfg['mail_user'] ?? '',
             'MAIL_PASSWORD' => $cfg['mail_pass'] ?? '',
             'MAIL_FROM_ADDRESS' => $cfg['mail_from'] ?? '',
-            'MAIL_FROM_NAME' => $cfg['mail_name'] ?? 'PropOS Platform',
+            'MAIL_FROM_NAME' => $cfg['mail_name'] ?? 'VillaCRM Platform',
             'RESEND_API_KEY' => $cfg['resend_key'] ?? '',
             'AI_PROVIDER' => $cfg['ai_provider'] ?? 'claude',
             'ANTHROPIC_API_KEY' => $cfg['anthropic_key'] ?? '',
@@ -765,7 +765,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'PAYSTACK_PUBLIC_KEY' => $cfg['paystack_pk'] ?? '',
             'PAYSTACK_SECRET_KEY' => $cfg['paystack_sk'] ?? '',
             'PAYSTACK_CURRENCY' => $cfg['paystack_cur'] ?? 'NGN',
-            'VITE_APP_NAME' => $cfg['app_name'] ?? 'PropOS Platform',
+            'VITE_APP_NAME' => $cfg['app_name'] ?? 'VillaCRM Platform',
         ];
 
         $log = [];
@@ -1016,7 +1016,7 @@ function page(string $title, string $body, int $currentStep = 0): void
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width,initial-scale=1">
         <title><?= htmlspecialchars($title) ?> —
-            <?= htmlspecialchars($_SESSION['cfg']['app_name'] ?? 'PropOS Platform') ?> Installer
+            <?= htmlspecialchars($_SESSION['cfg']['app_name'] ?? 'VillaCRM Platform') ?> Installer
         </title>
         <style>
             *,
@@ -1309,7 +1309,7 @@ function page(string $title, string $body, int $currentStep = 0): void
 
     <body>
         <div class="wrap">
-            <div class="brand"><?= htmlspecialchars($_SESSION['cfg']['app_name'] ?? 'PropOS Platform') ?></div>
+            <div class="brand"><?= htmlspecialchars($_SESSION['cfg']['app_name'] ?? 'VillaCRM Platform') ?></div>
             <?php if ($currentStep > 0): ?>
                 <div class="steps">
                     <?php foreach ($steps as $i => $s): ?>
@@ -1328,7 +1328,7 @@ function page(string $title, string $body, int $currentStep = 0): void
                 <?= $body ?>
             </div>
             <p style="text-align:center;font-size:.75rem;color:#3f3f50;margin-top:1.5rem">
-                <?= htmlspecialchars($_SESSION['cfg']['app_name'] ?? 'PropOS Platform') ?> Installer
+                <?= htmlspecialchars($_SESSION['cfg']['app_name'] ?? 'VillaCRM Platform') ?> Installer
                 v<?= INSTALLER_VERSION ?> &mdash; Delete this file after setup
             </p>
         </div>
@@ -1450,7 +1450,7 @@ function render_step3(): void
         <input type="hidden" name="action" value="save_app">
         <div class="section-label">Application</div>
         <div class="field"><label>Site Name</label><input type="text" name="app_name"
-                value="<?= htmlspecialchars($cfg['app_name'] ?? 'PropOS Platform') ?>"></div>
+                value="<?= htmlspecialchars($cfg['app_name'] ?? 'VillaCRM Platform') ?>"></div>
         <div class="field"><label>Site URL (with https://)</label><input type="text" name="app_url"
                 value="<?= htmlspecialchars($cfg['app_url'] ?? 'https://') ?>" placeholder="https://yourdomain.com"></div>
         <div class="row">
@@ -1502,7 +1502,7 @@ function render_step3(): void
             <div class="field"><label>From Address</label><input type="email" name="mail_from"
                     value="<?= htmlspecialchars($cfg['mail_from'] ?? '') ?>" placeholder="noreply@yourdomain.com"></div>
             <div class="field"><label>From Name</label><input type="text" name="mail_name"
-                    value="<?= htmlspecialchars($cfg['mail_name'] ?? 'PropOS Platform') ?>"></div>
+                    value="<?= htmlspecialchars($cfg['mail_name'] ?? 'VillaCRM Platform') ?>"></div>
         </div>
         <button type="submit" class="btn btn-primary">Save & Continue →</button>
     </form>

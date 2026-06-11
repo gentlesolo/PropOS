@@ -2,7 +2,7 @@
 
     <div>
         <h1 class="text-2xl font-bold text-gray-900">Website Integration</h1>
-        <p class="text-sm text-gray-500 mt-1">Connect your public website to PropOS — widgets, analytics, and WordPress plugin.</p>
+        <p class="text-sm text-gray-500 mt-1">Connect your public website to VillaCRM — widgets, analytics, and WordPress plugin.</p>
     </div>
 
     {{-- ── Tabs nav ─────────────────────────────────────────────────────────── --}}
@@ -71,23 +71,23 @@
 
                 <div>
                     <label class="block text-xs font-semibold text-gray-600 mb-2">Generated Snippet</label>
-                    <pre class="text-xs bg-gray-900 text-green-300 rounded-lg p-4 overflow-x-auto leading-relaxed select-all"><code>&lt;script src="https://cdn.propos.app/widgets.js" defer&gt;&lt;/script&gt;
+                    <pre class="text-xs bg-gray-900 text-green-300 rounded-lg p-4 overflow-x-auto leading-relaxed select-all"><code>&lt;script src="https://cdn.villacrm.app/widgets.js" defer&gt;&lt;/script&gt;
 
-&lt;propos-listings-grid
+&lt;villacrm-listings-grid
     agency-key="YOUR_PUBLIC_READ_KEY"
     primary-color="{{ $agency->primary_color ?? '#1E40AF' }}"
     items-per-page="{{ $snippet_per_page }}"
     view-type="{{ $snippet_view_type }}"{{ $snippet_city ? "\n    city=\"{$snippet_city}\"" : '' }}{{ $snippet_mandate_type ? "\n    mandate-type=\"{$snippet_mandate_type}\"" : '' }}&gt;
-&lt;/propos-listings-grid&gt;</code></pre>
+&lt;/villacrm-listings-grid&gt;</code></pre>
                 </div>
             </div>
 
             {{-- Other widget snippets --}}
             <div class="grid grid-cols-1 gap-4">
                 @foreach([
-                    ['title' => 'Listing Detail', 'desc' => 'Embed a full listing detail view on any page.', 'code' => '<propos-listing-details agency-key="YOUR_KEY" listing-id="123" primary-color="' . ($agency->primary_color ?? '#1E40AF') . '"></propos-listing-details>'],
-                    ['title' => 'Inquiry Form', 'desc' => 'Contact form that sends leads directly to your CRM.', 'code' => '<propos-inquiry-form agency-key="YOUR_KEY" listing-id="123" primary-color="' . ($agency->primary_color ?? '#1E40AF') . '"></propos-inquiry-form>'],
-                    ['title' => 'Booking Scheduler', 'desc' => 'Let buyers book viewings from your website.', 'code' => '<propos-booking-scheduler agency-key="YOUR_KEY" agent-id="1" listing-id="123" primary-color="' . ($agency->primary_color ?? '#1E40AF') . '"></propos-booking-scheduler>'],
+                    ['title' => 'Listing Detail', 'desc' => 'Embed a full listing detail view on any page.', 'code' => '<villacrm-listing-details agency-key="YOUR_KEY" listing-id="123" primary-color="' . ($agency->primary_color ?? '#1E40AF') . '"></villacrm-listing-details>'],
+                    ['title' => 'Inquiry Form', 'desc' => 'Contact form that sends leads directly to your CRM.', 'code' => '<villacrm-inquiry-form agency-key="YOUR_KEY" listing-id="123" primary-color="' . ($agency->primary_color ?? '#1E40AF') . '"></villacrm-inquiry-form>'],
+                    ['title' => 'Booking Scheduler', 'desc' => 'Let buyers book viewings from your website.', 'code' => '<villacrm-booking-scheduler agency-key="YOUR_KEY" agent-id="1" listing-id="123" primary-color="' . ($agency->primary_color ?? '#1E40AF') . '"></villacrm-booking-scheduler>'],
                 ] as $widget)
                 <div class="bg-white border border-gray-200 rounded-xl p-5 space-y-2">
                     <h3 class="text-sm font-semibold text-gray-800">{{ $widget['title'] }}</h3>
@@ -103,32 +103,32 @@
         {{-- ── WordPress Plugin tab ─────────────────────────────────────────── --}}
         <div x-show="tab === 'wordpress'" class="space-y-6">
             <div class="bg-white border border-gray-200 rounded-xl p-6 space-y-4">
-                <h2 class="text-base font-semibold text-gray-900">PropOS Sync — WordPress Plugin</h2>
-                <p class="text-sm text-gray-600">Syncs listings from PropOS into WordPress as a native Custom Post Type with full SEO support.</p>
+                <h2 class="text-base font-semibold text-gray-900">VillaCRM Sync — WordPress Plugin</h2>
+                <p class="text-sm text-gray-600">Syncs listings from VillaCRM into WordPress as a native Custom Post Type with full SEO support.</p>
 
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div class="bg-gray-50 rounded-lg p-4 space-y-1">
                         <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Step 1</p>
                         <p class="text-sm font-medium text-gray-900">Install the Plugin</p>
-                        <p class="text-xs text-gray-500">Upload the <code class="bg-gray-200 px-1 rounded">propos-sync</code> folder to <code>/wp-content/plugins/</code> and activate it.</p>
+                        <p class="text-xs text-gray-500">Upload the <code class="bg-gray-200 px-1 rounded">villacrm-sync</code> folder to <code>/wp-content/plugins/</code> and activate it.</p>
                     </div>
                     <div class="bg-gray-50 rounded-lg p-4 space-y-1">
                         <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Step 2</p>
                         <p class="text-sm font-medium text-gray-900">Add Your API Key</p>
-                        <p class="text-xs text-gray-500">In WordPress go to <strong>Listings (PropOS) → Settings</strong> and paste a Public Read key from <a href="{{ route('settings.api-keys') }}" class="text-blue-600 underline">API Keys</a>.</p>
+                        <p class="text-xs text-gray-500">In WordPress go to <strong>Listings (VillaCRM) → Settings</strong> and paste a Public Read key from <a href="{{ route('settings.api-keys') }}" class="text-blue-600 underline">API Keys</a>.</p>
                     </div>
                     <div class="bg-gray-50 rounded-lg p-4 space-y-1">
                         <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Step 3 (optional)</p>
                         <p class="text-sm font-medium text-gray-900">Enable Instant Webhooks</p>
-                        <p class="text-xs text-gray-500">Copy the webhook secret from the plugin settings into <a href="{{ route('settings.webhooks') }}" class="text-blue-600 underline">Webhooks</a> here, then register <code>https://yoursite.com/wp-json/propos-sync/v1/webhook</code> as an endpoint.</p>
+                        <p class="text-xs text-gray-500">Copy the webhook secret from the plugin settings into <a href="{{ route('settings.webhooks') }}" class="text-blue-600 underline">Webhooks</a> here, then register <code>https://yoursite.com/wp-json/villacrm-sync/v1/webhook</code> as an endpoint.</p>
                     </div>
                     <div class="bg-gray-50 rounded-lg p-4 space-y-1">
                         <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Shortcodes</p>
                         <p class="text-sm font-medium text-gray-900">Drop listings anywhere</p>
                         <div class="text-xs text-gray-500 space-y-1 font-mono">
-                            <p>[propos_listings limit="6" city="Lagos"]</p>
-                            <p>[propos_listing id="42"]</p>
-                            <p>[propos_inquiry listing_id="42"]</p>
+                            <p>[villacrm_listings limit="6" city="Lagos"]</p>
+                            <p>[villacrm_listing id="42"]</p>
+                            <p>[villacrm_inquiry listing_id="42"]</p>
                         </div>
                     </div>
                 </div>
@@ -139,7 +139,7 @@
         <div x-show="tab === 'analytics'" class="space-y-6">
             <div class="bg-white border border-gray-200 rounded-xl p-6 space-y-5">
                 <h2 class="text-base font-semibold text-gray-900">Analytics &amp; Tracking Scripts</h2>
-                <p class="text-sm text-gray-500">These settings apply to your PropOS-hosted pages and widgets. For third-party sites, add scripts directly to your site.</p>
+                <p class="text-sm text-gray-500">These settings apply to your VillaCRM-hosted pages and widgets. For third-party sites, add scripts directly to your site.</p>
 
                 <div class="space-y-4">
                     <div>
@@ -161,7 +161,7 @@
                         <textarea wire:model="custom_header_scripts" rows="5"
                                   placeholder="<!-- e.g. TikTok Pixel, Hotjar, custom conversion code -->"
                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 font-mono"></textarea>
-                        <p class="text-xs text-gray-400 mt-1">Injected into the <code>&lt;head&gt;</code> of PropOS-hosted pages. Max 5,000 characters.</p>
+                        <p class="text-xs text-gray-400 mt-1">Injected into the <code>&lt;head&gt;</code> of VillaCRM-hosted pages. Max 5,000 characters.</p>
                         @error('custom_header_scripts') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
@@ -183,7 +183,7 @@
             <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
                 <div class="px-5 py-4 border-b border-gray-100">
                     <h2 class="text-base font-semibold text-gray-900">Public REST API — v1</h2>
-                    <p class="text-xs text-gray-500 mt-1">Base URL: <code class="bg-gray-100 px-1 rounded">https://propos.app/api/v1/public</code> &nbsp;|&nbsp; Auth: <code class="bg-gray-100 px-1 rounded">Authorization: Bearer YOUR_KEY</code></p>
+                    <p class="text-xs text-gray-500 mt-1">Base URL: <code class="bg-gray-100 px-1 rounded">https://villacrm.app/api/v1/public</code> &nbsp;|&nbsp; Auth: <code class="bg-gray-100 px-1 rounded">Authorization: Bearer YOUR_KEY</code></p>
                 </div>
                 <table class="min-w-full divide-y divide-gray-100 text-sm">
                     <thead class="bg-gray-50">

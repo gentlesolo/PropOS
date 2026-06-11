@@ -37,7 +37,7 @@
             <div class="h-8 w-8 rounded-md bg-[#10B981]/10 flex items-center justify-center border border-[#10B981]/25">
                 <span class="font-bold text-base text-[#10B981]">P</span>
             </div>
-            <span class="text-lg font-bold tracking-tight text-[#FAFAFA]">PropOS</span>
+            <span class="text-lg font-bold tracking-tight text-[#FAFAFA]">VillaCRM</span>
         </div>
 
         @if($invitationToken)
@@ -110,7 +110,7 @@
                         class="w-full h-11 bg-[#111827] border @error('agency_name') border-[#F43F5E] @else border-white/10 @enderror text-sm text-[#FAFAFA] placeholder-[#52525B] px-3.5 rounded-md focus:outline-none focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] focus:shadow-[0_0_12px_rgba(16,185,129,0.16)] transition-all duration-200">
                     @if($slug)
                         <div class="text-[11px] font-mono text-[#52525B] mt-1.5">
-                            Workspace: <span class="text-[#10B981]">{{ $slug }}.propos.app</span>
+                            Workspace: <span class="text-[#10B981]">{{ $slug }}.villacrm.app</span>
                         </div>
                     @endif
                     @error('agency_name') 
@@ -377,7 +377,7 @@
                     <input wire:model="agree_to_terms" id="agree_to_terms" type="checkbox"
                         class="h-4 w-4 mt-0.5 bg-[#111827] border border-white/10 rounded text-[#10B981] focus:ring-offset-0 focus:ring-[#10B981]">
                     <span class="ml-2.5 text-xs text-[#A1A1AA] leading-relaxed">
-                        I agree to the <a href="#" class="text-[#F59E0B] hover:underline font-semibold">Terms of Service</a> and <a href="#" class="text-[#F59E0B] hover:underline font-semibold">Privacy Policy</a> of PropOS.
+                        I agree to the <a href="#" class="text-[#F59E0B] hover:underline font-semibold">Terms of Service</a> and <a href="#" class="text-[#F59E0B] hover:underline font-semibold">Privacy Policy</a> of VillaCRM.
                     </span>
                 </label>
                 @error('agree_to_terms') 

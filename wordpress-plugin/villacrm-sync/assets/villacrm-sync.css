@@ -1,12 +1,12 @@
-/* PropOS Sync — base frontend styles for listing archive/single pages.
+/* VillaCRM Sync — base frontend styles for listing archive/single pages.
    Override freely in your theme's style.css. */
 
-.propos-price {
+.villacrm-price {
     font-weight: 700;
     color: #1e40af;
 }
 
-.propos-listing-meta {
+.villacrm-listing-meta {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
@@ -15,7 +15,7 @@
     margin: 8px 0 16px;
 }
 
-.propos-badge {
+.villacrm-badge {
     display: inline-block;
     padding: 2px 10px;
     border-radius: 999px;
@@ -23,5 +23,5 @@
     font-weight: 600;
 }
 
-.propos-badge-sale   { background: #dcfce7; color: #166534; }
-.propos-badge-rental { background: #eff6ff; color: #1e40af; }
+.villacrm-badge-sale   { background: #dcfce7; color: #166534; }
+.villacrm-badge-rental { background: #eff6ff; color: #1e40af; }

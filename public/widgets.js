@@ -1,18 +1,18 @@
 /**
- * PropOS Embeddable Widgets — Web Components
- * Usage: <script src="https://cdn.propos.app/widgets.js" defer></script>
+ * VillaCRM Embeddable Widgets — Web Components
+ * Usage: <script src="https://cdn.villacrm.app/widgets.js" defer></script>
  *
  * Available components:
- *   <propos-listings-grid agency-key="..." primary-color="#1E40AF" items-per-page="9" view-type="grid">
- *   <propos-listing-details agency-key="..." listing-id="123">
- *   <propos-inquiry-form agency-key="..." listing-id="123">
- *   <propos-booking-scheduler agency-key="..." agent-id="1">
+ *   <villacrm-listings-grid agency-key="..." primary-color="#1E40AF" items-per-page="9" view-type="grid">
+ *   <villacrm-listing-details agency-key="..." listing-id="123">
+ *   <villacrm-inquiry-form agency-key="..." listing-id="123">
+ *   <villacrm-booking-scheduler agency-key="..." agent-id="1">
  */
 
 (function () {
   'use strict';
 
-  const API_BASE = 'https://propos.app/api/v1/public';
+  const API_BASE = 'https://villacrm.app/api/v1/public';
 
   // ─── Shared helpers ──────────────────────────────────────────────────────
 
@@ -25,7 +25,7 @@
         ...(options.headers || {}),
       },
     });
-    if (!res.ok) throw new Error(`PropOS API error: ${res.status}`);
+    if (!res.ok) throw new Error(`VillaCRM API error: ${res.status}`);
     return res.json();
   }
 
@@ -38,20 +38,20 @@
     return `
       :host { display: block; font-family: system-ui, -apple-system, sans-serif; color: #111; }
       * { box-sizing: border-box; }
-      .propos-btn {
+      .villacrm-btn {
         display: inline-block; padding: 10px 20px; background: ${primary}; color: #fff;
         border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600;
         text-decoration: none; transition: opacity .2s;
       }
-      .propos-btn:hover { opacity: .85; }
-      .propos-spinner {
+      .villacrm-btn:hover { opacity: .85; }
+      .villacrm-spinner {
         width: 36px; height: 36px; border: 3px solid #e5e7eb;
         border-top-color: ${primary}; border-radius: 50%;
         animation: spin .7s linear infinite; margin: 40px auto; display: block;
       }
       @keyframes spin { to { transform: rotate(360deg); } }
-      .propos-error { padding: 16px; color: #b91c1c; background: #fef2f2; border-radius: 8px; font-size: 14px; }
-      .propos-badge {
+      .villacrm-error { padding: 16px; color: #b91c1c; background: #fef2f2; border-radius: 8px; font-size: 14px; }
+      .villacrm-badge {
         display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600;
       }
       .badge-active { background: #dcfce7; color: #166534; }
@@ -59,9 +59,9 @@
     `;
   }
 
-  // ─── <propos-listings-grid> ───────────────────────────────────────────────
+  // ─── <villacrm-listings-grid> ───────────────────────────────────────────────
 
-  class PropOSListingsGrid extends HTMLElement {
+  class VillaCRMListingsGrid extends HTMLElement {
     static get observedAttributes() {
       return ['agency-key', 'primary-color', 'items-per-page', 'view-type', 'city', 'mandate-type'];
     }
@@ -82,11 +82,11 @@
 
     async _render() {
       if (!this._key) {
-        this.shadowRoot.innerHTML = `<p class="propos-error">agency-key attribute is required.</p>`;
+        this.shadowRoot.innerHTML = `<p class="villacrm-error">agency-key attribute is required.</p>`;
         return;
       }
 
-      this.shadowRoot.innerHTML = `<style>${baseStyles(this._primary)}</style><span class="propos-spinner"></span>`;
+      this.shadowRoot.innerHTML = `<style>${baseStyles(this._primary)}</style><span class="villacrm-spinner"></span>`;
 
       try {
         const params = new URLSearchParams({
@@ -100,7 +100,7 @@
         this._renderGrid(data);
       } catch (e) {
         this.shadowRoot.innerHTML = `<style>${baseStyles(this._primary)}</style>
-          <p class="propos-error">Could not load listings. ${e.message}</p>`;
+          <p class="villacrm-error">Could not load listings. ${e.message}</p>`;
       }
     }
 
@@ -110,15 +110,15 @@
 
       const cards = listings.map(l => {
         const badge = l.mandate_type === 'rental'
-          ? `<span class="propos-badge badge-rental">For Rent</span>`
-          : `<span class="propos-badge badge-active">For Sale</span>`;
+          ? `<span class="villacrm-badge badge-rental">For Rent</span>`
+          : `<span class="villacrm-badge badge-active">For Sale</span>`;
 
         const img = l.cover_photo
           ? `<img src="${l.cover_photo}" alt="${l.headline || ''}" style="width:100%;height:190px;object-fit:cover;">`
           : `<div style="width:100%;height:190px;background:#e5e7eb;display:flex;align-items:center;justify-content:center;color:#9ca3af;font-size:13px;">No Photo</div>`;
 
         return `
-          <div class="propos-card" style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;cursor:pointer;"
+          <div class="villacrm-card" style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;cursor:pointer;"
                data-id="${l.id}">
             <div style="position:relative;">${img}
               <div style="position:absolute;top:10px;left:10px;">${badge}</div>
@@ -142,41 +142,41 @@
       const pager = `
         <div style="display:flex;justify-content:center;align-items:center;gap:12px;margin-top:24px;font-size:14px;">
           ${meta.current_page > 1
-            ? `<button class="propos-btn propos-prev" style="padding:8px 16px;background:${this._primary};">← Prev</button>` : ''}
+            ? `<button class="villacrm-btn villacrm-prev" style="padding:8px 16px;background:${this._primary};">← Prev</button>` : ''}
           <span style="color:#6b7280;">Page ${meta.current_page || 1} of ${meta.last_page || 1}</span>
           ${meta.current_page < meta.last_page
-            ? `<button class="propos-btn propos-next" style="padding:8px 16px;background:${this._primary};">Next →</button>` : ''}
+            ? `<button class="villacrm-btn villacrm-next" style="padding:8px 16px;background:${this._primary};">Next →</button>` : ''}
         </div>`;
 
       this.shadowRoot.innerHTML = `
         <style>
           ${baseStyles(this._primary)}
-          .propos-grid { display: grid; gap: 20px;
+          .villacrm-grid { display: grid; gap: 20px;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
         </style>
-        <div class="propos-grid">${cards}</div>
+        <div class="villacrm-grid">${cards}</div>
         ${pager}`;
 
-      this.shadowRoot.querySelectorAll('.propos-card').forEach(card => {
+      this.shadowRoot.querySelectorAll('.villacrm-card').forEach(card => {
         card.addEventListener('click', () => {
-          this.dispatchEvent(new CustomEvent('propos-listing-selected', {
+          this.dispatchEvent(new CustomEvent('villacrm-listing-selected', {
             bubbles: true, composed: true, detail: { id: card.dataset.id }
           }));
         });
       });
 
-      this.shadowRoot.querySelector('.propos-prev')?.addEventListener('click', () => {
+      this.shadowRoot.querySelector('.villacrm-prev')?.addEventListener('click', () => {
         this._page--; this._render();
       });
-      this.shadowRoot.querySelector('.propos-next')?.addEventListener('click', () => {
+      this.shadowRoot.querySelector('.villacrm-next')?.addEventListener('click', () => {
         this._page++; this._render();
       });
     }
   }
 
-  // ─── <propos-listing-details> ─────────────────────────────────────────────
+  // ─── <villacrm-listing-details> ─────────────────────────────────────────────
 
-  class PropOSListingDetails extends HTMLElement {
+  class VillaCRMListingDetails extends HTMLElement {
     static get observedAttributes() { return ['agency-key', 'listing-id', 'primary-color']; }
 
     constructor() { super(); this.attachShadow({ mode: 'open' }); }
@@ -190,10 +190,10 @@
 
     async _render() {
       if (!this._key || !this._id) {
-        this.shadowRoot.innerHTML = `<p class="propos-error">agency-key and listing-id are required.</p>`;
+        this.shadowRoot.innerHTML = `<p class="villacrm-error">agency-key and listing-id are required.</p>`;
         return;
       }
-      this.shadowRoot.innerHTML = `<style>${baseStyles(this._primary)}</style><span class="propos-spinner"></span>`;
+      this.shadowRoot.innerHTML = `<style>${baseStyles(this._primary)}</style><span class="villacrm-spinner"></span>`;
 
       try {
         const l = await apiFetch(`/listings/${this._id}`, this._key);
@@ -255,14 +255,14 @@
           </div>`;
       } catch (e) {
         this.shadowRoot.innerHTML = `<style>${baseStyles(this._primary)}</style>
-          <p class="propos-error">Could not load listing. ${e.message}</p>`;
+          <p class="villacrm-error">Could not load listing. ${e.message}</p>`;
       }
     }
   }
 
-  // ─── <propos-inquiry-form> ────────────────────────────────────────────────
+  // ─── <villacrm-inquiry-form> ────────────────────────────────────────────────
 
-  class PropOSInquiryForm extends HTMLElement {
+  class VillaCRMInquiryForm extends HTMLElement {
     static get observedAttributes() { return ['agency-key', 'listing-id', 'primary-color']; }
 
     constructor() { super(); this.attachShadow({ mode: 'open' }); }
@@ -278,40 +278,40 @@
       this.shadowRoot.innerHTML = `
         <style>
           ${baseStyles(this._primary)}
-          .propos-form { display: flex; flex-direction: column; gap: 12px; }
-          .propos-field label { display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px; }
-          .propos-field input,
-          .propos-field textarea {
+          .villacrm-form { display: flex; flex-direction: column; gap: 12px; }
+          .villacrm-field label { display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px; }
+          .villacrm-field input,
+          .villacrm-field textarea {
             width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px;
             font-size: 14px; outline: none; transition: border-color .15s; font-family: inherit;
           }
-          .propos-field input:focus,
-          .propos-field textarea:focus { border-color: ${this._primary}; }
-          .propos-success { padding: 16px; background: #f0fdf4; color: #166534; border-radius: 8px; font-size: 14px; font-weight: 600; }
+          .villacrm-field input:focus,
+          .villacrm-field textarea:focus { border-color: ${this._primary}; }
+          .villacrm-success { padding: 16px; background: #f0fdf4; color: #166534; border-radius: 8px; font-size: 14px; font-weight: 600; }
         </style>
-        <form class="propos-form" id="pf">
-          <div class="propos-field">
+        <form class="villacrm-form" id="pf">
+          <div class="villacrm-field">
             <label>First Name *</label>
             <input type="text" name="first_name" required placeholder="Jane">
           </div>
-          <div class="propos-field">
+          <div class="villacrm-field">
             <label>Last Name *</label>
             <input type="text" name="last_name" required placeholder="Smith">
           </div>
-          <div class="propos-field">
+          <div class="villacrm-field">
             <label>Email</label>
             <input type="email" name="email" placeholder="jane@example.com">
           </div>
-          <div class="propos-field">
+          <div class="villacrm-field">
             <label>Phone</label>
             <input type="tel" name="phone" placeholder="+27 82 000 0000">
           </div>
-          <div class="propos-field">
+          <div class="villacrm-field">
             <label>Message</label>
             <textarea name="message" rows="4" placeholder="I'd like to know more about this property…"></textarea>
           </div>
-          <div id="pf-error" style="display:none;" class="propos-error"></div>
-          <button type="submit" class="propos-btn" id="pf-btn">Send Inquiry</button>
+          <div id="pf-error" style="display:none;" class="villacrm-error"></div>
+          <button type="submit" class="villacrm-btn" id="pf-btn">Send Inquiry</button>
         </form>`;
 
       const form   = this.shadowRoot.getElementById('pf');
@@ -336,7 +336,7 @@
 
         try {
           await apiFetch('/leads', this._key, { method: 'POST', body: JSON.stringify(body) });
-          form.innerHTML = `<div class="propos-success">✓ Thank you! An agent will be in touch shortly.</div>`;
+          form.innerHTML = `<div class="villacrm-success">✓ Thank you! An agent will be in touch shortly.</div>`;
         } catch (err) {
           errBox.textContent = 'Something went wrong. Please try again.';
           errBox.style.display = 'block';
@@ -347,9 +347,9 @@
     }
   }
 
-  // ─── <propos-booking-scheduler> ───────────────────────────────────────────
+  // ─── <villacrm-booking-scheduler> ───────────────────────────────────────────
 
-  class PropOSBookingScheduler extends HTMLElement {
+  class VillaCRMBookingScheduler extends HTMLElement {
     static get observedAttributes() { return ['agency-key', 'agent-id', 'primary-color', 'listing-id']; }
 
     constructor() {
@@ -368,10 +368,10 @@
 
     async _render() {
       if (!this._key || !this._agentId) {
-        this.shadowRoot.innerHTML = `<p class="propos-error">agency-key and agent-id are required.</p>`;
+        this.shadowRoot.innerHTML = `<p class="villacrm-error">agency-key and agent-id are required.</p>`;
         return;
       }
-      this.shadowRoot.innerHTML = `<style>${baseStyles(this._primary)}</style><span class="propos-spinner"></span>`;
+      this.shadowRoot.innerHTML = `<style>${baseStyles(this._primary)}</style><span class="villacrm-spinner"></span>`;
 
       try {
         const tz     = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -383,7 +383,7 @@
         this._renderScheduler();
       } catch (e) {
         this.shadowRoot.innerHTML = `<style>${baseStyles(this._primary)}</style>
-          <p class="propos-error">Could not load availability. ${e.message}</p>`;
+          <p class="villacrm-error">Could not load availability. ${e.message}</p>`;
       }
     }
 
@@ -398,7 +398,7 @@
       const dateBtns = dates.map(d => {
         const dt = new Date(d + 'T00:00:00');
         const label = dt.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
-        return `<button class="propos-date-btn propos-btn" data-date="${d}"
+        return `<button class="villacrm-date-btn villacrm-btn" data-date="${d}"
                   style="background:transparent;color:${this._primary};border:1.5px solid ${this._primary};padding:8px 14px;font-size:12px;">
                   ${label}
                 </button>`;
@@ -408,14 +408,14 @@
         <style>
           ${baseStyles(this._primary)}
           .date-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-          .propos-date-btn.selected { background: ${this._primary} !important; color: #fff !important; }
+          .villacrm-date-btn.selected { background: ${this._primary} !important; color: #fff !important; }
           .time-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-          .propos-time-btn { padding: 8px 14px; border: 1.5px solid #e5e7eb; border-radius: 8px;
+          .villacrm-time-btn { padding: 8px 14px; border: 1.5px solid #e5e7eb; border-radius: 8px;
             background: #fff; font-size: 13px; cursor: pointer; transition: all .15s; }
-          .propos-time-btn:hover, .propos-time-btn.selected {
+          .villacrm-time-btn:hover, .villacrm-time-btn.selected {
             border-color: ${this._primary}; color: ${this._primary}; font-weight: 700; }
           .confirm-btn { margin-top: 16px; }
-          .propos-success { padding: 16px; background: #f0fdf4; color: #166534; border-radius: 8px; font-size: 14px; font-weight: 600; }
+          .villacrm-success { padding: 16px; background: #f0fdf4; color: #166534; border-radius: 8px; font-size: 14px; font-weight: 600; }
         </style>
 
         ${this._agent.name ? `<p style="font-size:13px;color:#6b7280;margin:0 0 12px;">Book a viewing with <strong>${this._agent.name}</strong></p>` : ''}
@@ -425,9 +425,9 @@
         <div id="confirm-area"></div>`;
 
       // Wire date buttons
-      this.shadowRoot.querySelectorAll('.propos-date-btn').forEach(btn => {
+      this.shadowRoot.querySelectorAll('.villacrm-date-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-          this.shadowRoot.querySelectorAll('.propos-date-btn').forEach(b => b.classList.remove('selected'));
+          this.shadowRoot.querySelectorAll('.villacrm-date-btn').forEach(b => b.classList.remove('selected'));
           btn.classList.add('selected');
           this._selectedSlot = null;
           this._renderTimes(byDate[btn.dataset.date] || []);
@@ -441,12 +441,12 @@
       confirm.innerHTML = '';
 
       container.innerHTML = slots.map(s =>
-        `<button class="propos-time-btn" data-slot='${JSON.stringify(s)}'>${s.time}</button>`
+        `<button class="villacrm-time-btn" data-slot='${JSON.stringify(s)}'>${s.time}</button>`
       ).join('');
 
-      container.querySelectorAll('.propos-time-btn').forEach(btn => {
+      container.querySelectorAll('.villacrm-time-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-          container.querySelectorAll('.propos-time-btn').forEach(b => b.classList.remove('selected'));
+          container.querySelectorAll('.villacrm-time-btn').forEach(b => b.classList.remove('selected'));
           btn.classList.add('selected');
           this._selectedSlot = JSON.parse(btn.dataset.slot);
           this._renderConfirm();
@@ -470,8 +470,8 @@
             <input id="bs-email" type="email" placeholder="Email address"
               style="padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;font-family:inherit;">
           </div>
-          <div id="bs-error" style="display:none;margin-top:8px;" class="propos-error"></div>
-          <button id="bs-confirm" class="propos-btn confirm-btn">Confirm Booking</button>
+          <div id="bs-error" style="display:none;margin-top:8px;" class="villacrm-error"></div>
+          <button id="bs-confirm" class="villacrm-btn confirm-btn">Confirm Booking</button>
         </div>`;
 
       confirm.querySelector('#bs-confirm').addEventListener('click', async () => {
@@ -503,12 +503,12 @@
 
           const result = await apiFetch('/bookings', this._key, { method: 'POST', body: JSON.stringify(body) });
 
-          this.dispatchEvent(new CustomEvent('propos-booking-confirmed', {
+          this.dispatchEvent(new CustomEvent('villacrm-booking-confirmed', {
             bubbles: true, composed: true,
             detail: { slot, viewing_id: result.viewing_id, name, phone, email },
           }));
 
-          confirm.innerHTML = `<div class="propos-success" style="margin-top:16px;">
+          confirm.innerHTML = `<div class="villacrm-success" style="margin-top:16px;">
             ✓ Viewing booked for <strong>${new Date(slot.datetime).toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'})}</strong> at <strong>${slot.time}</strong>.<br>
             <span style="font-weight:400;font-size:13px;">${result.agent?.name ?? ''} will confirm shortly.</span>
           </div>`;
@@ -523,17 +523,17 @@
 
   // ─── Register all custom elements ─────────────────────────────────────────
 
-  if (!customElements.get('propos-listings-grid')) {
-    customElements.define('propos-listings-grid',       PropOSListingsGrid);
+  if (!customElements.get('villacrm-listings-grid')) {
+    customElements.define('villacrm-listings-grid',       VillaCRMListingsGrid);
   }
-  if (!customElements.get('propos-listing-details')) {
-    customElements.define('propos-listing-details',     PropOSListingDetails);
+  if (!customElements.get('villacrm-listing-details')) {
+    customElements.define('villacrm-listing-details',     VillaCRMListingDetails);
   }
-  if (!customElements.get('propos-inquiry-form')) {
-    customElements.define('propos-inquiry-form',        PropOSInquiryForm);
+  if (!customElements.get('villacrm-inquiry-form')) {
+    customElements.define('villacrm-inquiry-form',        VillaCRMInquiryForm);
   }
-  if (!customElements.get('propos-booking-scheduler')) {
-    customElements.define('propos-booking-scheduler',   PropOSBookingScheduler);
+  if (!customElements.get('villacrm-booking-scheduler')) {
+    customElements.define('villacrm-booking-scheduler',   VillaCRMBookingScheduler);
   }
 
 })();

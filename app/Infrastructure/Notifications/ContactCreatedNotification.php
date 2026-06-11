@@ -30,7 +30,7 @@ class ContactCreatedNotification extends Notification implements ShouldQueue
             ->when($this->contact->email, fn($m) => $m->line('**Email:** ' . $this->contact->email))
             ->when($this->contact->phone, fn($m) => $m->line('**Phone:** ' . $this->contact->phone))
             ->action('View Contact', url('/contacts/' . $this->contact->id))
-            ->line('Log activities and track this contact in your PropOS CRM.');
+            ->line('Log activities and track this contact in your VillaCRM CRM.');
     }
 
     public function toDatabase(object $notifiable): array

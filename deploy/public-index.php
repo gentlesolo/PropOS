@@ -1,21 +1,21 @@
 <?php
 /**
- * PropOS Platform — Bridge index.php for Shared Hosting
+ * VillaCRM Platform — Bridge index.php for Shared Hosting
  *
  * Place this file in your public_html/ (web root) when your Laravel app
- * lives outside the web root (e.g. ~/PropOS/).
+ * lives outside the web root (e.g. ~/VillaCRM/).
  *
  * The installer will automatically rewrite APP_PATH to the correct absolute path.
  *
  * Layout assumed:
- *   /home/username/PropOS/   â† Laravel root (APP_PATH)
+ *   /home/username/VillaCRM/   â† Laravel root (APP_PATH)
  *   /home/username/public_html/    â† Web root (this file lives here)
  */
 
 // â”€â”€ Configure this path â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Absolute path to your Laravel root directory (NOT the public/ folder inside it).
 // The installer rewrites this line automatically — do not change the string format.
-define('APP_PATH', is_dir(dirname(__DIR__) . '/PropOS/vendor') ? dirname(__DIR__) . '/PropOS' : (is_dir(dirname(__DIR__) . '/propos/vendor') ? dirname(__DIR__) . '/propos' : dirname(__DIR__) . '/PropOS'));
+define('APP_PATH', is_dir(dirname(__DIR__) . '/VillaCRM/vendor') ? dirname(__DIR__) . '/VillaCRM' : (is_dir(dirname(__DIR__) . '/villacrm/vendor') ? dirname(__DIR__) . '/villacrm' : dirname(__DIR__) . '/VillaCRM'));
 
 // â”€â”€ Sanity check â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 if (! is_dir(APP_PATH . '/vendor')) {

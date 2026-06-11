@@ -64,7 +64,7 @@ class FollowUpSequencesPage extends Component
             $this->steps = [
                 [
                     'type' => 'email',
-                    'subject' => 'Welcome to PropOS Agency',
+                    'subject' => 'Welcome to VillaCRM Agency',
                     'message_template' => 'Hi {first_name}, thank you for contacting us. How can we assist you with your property search?',
                     'delay_days' => 0,
                 ],

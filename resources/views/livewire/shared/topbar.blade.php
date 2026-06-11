@@ -19,8 +19,8 @@
             </svg>
         </button>
 
-        <!-- PropOS Mark -->
-        <span class="text-xs font-black uppercase tracking-wider text-text-secondary hidden md:block">PropOS Terminal</span>
+        <!-- VillaCRM Mark -->
+        <span class="text-xs font-black uppercase tracking-wider text-text-secondary hidden md:block">VillaCRM Terminal</span>
     </div>
 
     <!-- Center: Universal Search -->

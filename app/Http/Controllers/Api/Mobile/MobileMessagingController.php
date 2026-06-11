@@ -153,7 +153,7 @@ class MobileMessagingController extends Controller
     {
         return $this->email->sendRaw(
             toEmail: $contact->email,
-            subject: 'Message from PropOS',
+            subject: 'Message from VillaCRM',
             bodyHtml: nl2br(e($body)),
             contact: $contact,
         );

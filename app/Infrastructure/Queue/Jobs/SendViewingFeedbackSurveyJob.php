@@ -50,7 +50,7 @@ class SendViewingFeedbackSurveyJob implements ShouldQueue
             "We'd love to hear your thoughts — it takes less than 2 minutes:",
             $feedbackUrl,
             "Your feedback helps us improve and keeps the seller informed.",
-            "Thank you,\nThe PropOS Team",
+            "Thank you,\nThe VillaCRM Team",
         ]);
 
         try {

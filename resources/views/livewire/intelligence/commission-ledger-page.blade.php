@@ -158,7 +158,7 @@
                     <p class="text-xs text-text-secondary mt-1">Transaction Ref: TXN-{{ str_pad($activeCommission->transaction_id, 6, '0', STR_PAD_LEFT) }}</p>
                 </div>
                 <div class="text-right">
-                    <span class="text-xs font-bold text-brand-primary print:text-black uppercase tracking-wider">{{ $activeCommission->agency->name ?? 'PropOS Agency' }}</span>
+                    <span class="text-xs font-bold text-brand-primary print:text-black uppercase tracking-wider">{{ $activeCommission->agency->name ?? 'VillaCRM Agency' }}</span>
                     <p class="text-[10px] text-text-tertiary mt-0.5">{{ now()->format('d M Y') }}</p>
                 </div>
             </div>

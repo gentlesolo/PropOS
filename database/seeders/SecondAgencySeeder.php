@@ -47,7 +47,7 @@ class SecondAgencySeeder extends Seeder
         setPermissionsTeamId($agency->id);
 
         $principal = User::firstOrCreate(
-            ['email' => 'principal@apex.propos.app'],
+            ['email' => 'principal@apex.villacrm.app'],
             [
                 'agency_id'          => $agency->id,
                 'first_name'         => 'Thandi',
@@ -61,7 +61,7 @@ class SecondAgencySeeder extends Seeder
         $principal->assignRole('principal');
 
         $agent1 = User::firstOrCreate(
-            ['email' => 'agent1@apex.propos.app'],
+            ['email' => 'agent1@apex.villacrm.app'],
             [
                 'agency_id'          => $agency->id,
                 'first_name'         => 'Ruan',
@@ -75,7 +75,7 @@ class SecondAgencySeeder extends Seeder
         $agent1->assignRole('agent');
 
         $agent2 = User::firstOrCreate(
-            ['email' => 'agent2@apex.propos.app'],
+            ['email' => 'agent2@apex.villacrm.app'],
             [
                 'agency_id'          => $agency->id,
                 'first_name'         => 'Lerato',

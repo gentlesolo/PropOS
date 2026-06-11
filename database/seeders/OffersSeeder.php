@@ -18,8 +18,8 @@ class OffersSeeder extends Seeder
     public function run(): void
     {
         $agency    = Agency::where('slug', 'demo')->firstOrFail();
-        $agent     = User::where('email', 'agent@propos.app')->firstOrFail();
-        $principal = User::where('email', 'principal@propos.app')->firstOrFail();
+        $agent     = User::where('email', 'agent@villacrm.app')->firstOrFail();
+        $principal = User::where('email', 'principal@villacrm.app')->firstOrFail();
 
         $deals    = Deal::with(['listing.property', 'contact'])
             ->where('agency_id', $agency->id)
@@ -248,7 +248,7 @@ class OffersSeeder extends Seeder
             'valid_until'    => now()->addDays(350)->toDateString(),
             'signatories'    => [
                 ['name' => $buyer,       'role' => $isSale ? 'buyer'    : 'tenant', 'email' => $offer->contact?->email],
-                ['name' => 'Demo Agency','role' => $isSale ? 'seller_agent' : 'landlord_agent', 'email' => 'demo@propos.app'],
+                ['name' => 'Demo Agency','role' => $isSale ? 'seller_agent' : 'landlord_agent', 'email' => 'demo@villacrm.app'],
             ],
             'signed_at'      => [
                 ['name' => $buyer,        'signed_at' => now()->subDays(13)->toDateTimeString(), 'ip_address' => '105.112.'.rand(1,254).'.'.rand(1,254)],
