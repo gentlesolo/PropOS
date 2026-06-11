@@ -137,6 +137,8 @@ class TenantPortalPage extends Component
             ->latest()
             ->get();
 
+        $currencySymbol = $tenant->agency?->currency_symbol ?? '₦';
+
         return view('livewire.tenant-portal.tenant-portal-page', compact(
             'tenant',
             'lease',
@@ -144,6 +146,7 @@ class TenantPortalPage extends Component
             'nextPayment',
             'openMaintenanceCount',
             'maintenanceRequests',
+            'currencySymbol',
         ))->layout('layouts.portal');
     }
 }

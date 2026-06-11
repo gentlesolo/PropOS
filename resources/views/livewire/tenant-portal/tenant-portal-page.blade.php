@@ -24,7 +24,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
         </svg>
         <div>
-            <p class="text-sm font-semibold text-danger-800">Outstanding balance: R{{ number_format($outstandingBalance, 2) }}</p>
+            <p class="text-sm font-semibold text-danger-800">Outstanding balance: {{ $currencySymbol }}{{ number_format($outstandingBalance, 2) }}</p>
             <p class="text-xs text-danger-700 mt-0.5">Please make payment as soon as possible to avoid penalties. See payment instructions on the Lease tab.</p>
         </div>
     </div>
@@ -47,7 +47,7 @@
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
         <div class="bg-surface-card rounded-2xl border border-border-default p-4">
             <p class="text-xs text-text-secondary mb-1">Monthly Rent</p>
-            <p class="text-lg font-bold text-text-primary">{{ $lease ? 'R'.number_format($lease->monthly_rent) : '—' }}</p>
+            <p class="text-lg font-bold text-text-primary">{{ $lease ? $currencySymbol.number_format($lease->monthly_rent) : '—' }}</p>
         </div>
         <div class="bg-surface-card rounded-2xl border border-border-default p-4">
             <p class="text-xs text-text-secondary mb-1">Next Due</p>
@@ -58,7 +58,7 @@
         <div class="bg-surface-card rounded-2xl border border-border-default p-4">
             <p class="text-xs text-text-secondary mb-1">Outstanding</p>
             <p class="text-lg font-bold {{ $outstandingBalance > 0 ? 'text-danger-600' : 'text-success-600' }}">
-                {{ $outstandingBalance > 0 ? 'R'.number_format($outstandingBalance) : 'R0' }}
+                {{ $outstandingBalance > 0 ? $currencySymbol.number_format($outstandingBalance) : $currencySymbol.'0' }}
             </p>
         </div>
         <div class="bg-surface-card rounded-2xl border border-border-default p-4">
@@ -98,7 +98,7 @@
                     </div>
                     <div class="p-3 bg-surface-hover/30 rounded-xl">
                         <dt class="text-xs text-text-secondary mb-1">Monthly Rent</dt>
-                        <dd class="text-xl font-bold text-text-primary">R{{ number_format($lease->monthly_rent, 2) }}</dd>
+                        <dd class="text-xl font-bold text-text-primary">{{ $currencySymbol }}{{ number_format($lease->monthly_rent, 2) }}</dd>
                     </div>
                     <div class="p-3 bg-surface-hover/30 rounded-xl">
                         <dt class="text-xs text-text-secondary mb-1">Payment Due</dt>
@@ -108,7 +108,7 @@
                     </div>
                     <div class="p-3 bg-surface-hover/30 rounded-xl">
                         <dt class="text-xs text-text-secondary mb-1">Security Deposit</dt>
-                        <dd class="font-medium text-text-primary">{{ $lease->deposit_amount ? 'R'.number_format($lease->deposit_amount, 2) : '—' }}</dd>
+                        <dd class="font-medium text-text-primary">{{ $lease->deposit_amount ? $currencySymbol.number_format($lease->deposit_amount, 2) : '—' }}</dd>
                     </div>
                     <div class="p-3 bg-surface-hover/30 rounded-xl">
                         <dt class="text-xs text-text-secondary mb-1">Lease Start</dt>
@@ -232,11 +232,11 @@
             <div class="grid grid-cols-3 gap-3">
                 <div class="bg-surface-card rounded-2xl border border-border-default p-4 text-center">
                     <p class="text-xs text-text-secondary mb-1">Total Paid</p>
-                    <p class="text-base font-bold text-success-600">R{{ number_format($totalPaid) }}</p>
+                    <p class="text-base font-bold text-success-600">{{ $currencySymbol }}{{ number_format($totalPaid) }}</p>
                 </div>
                 <div class="bg-surface-card rounded-2xl border border-border-default p-4 text-center">
                     <p class="text-xs text-text-secondary mb-1">Outstanding</p>
-                    <p class="text-base font-bold {{ $outstandingBalance > 0 ? 'text-danger-600' : 'text-success-600' }}">R{{ number_format($outstandingBalance) }}</p>
+                    <p class="text-base font-bold {{ $outstandingBalance > 0 ? 'text-danger-600' : 'text-success-600' }}">{{ $currencySymbol }}{{ number_format($outstandingBalance) }}</p>
                 </div>
                 <div class="bg-surface-card rounded-2xl border border-border-default p-4 text-center">
                     <p class="text-xs text-text-secondary mb-1">Overdue</p>
@@ -272,9 +272,9 @@
                             </div>
                             {{-- Amounts --}}
                             <div class="text-right flex-shrink-0">
-                                <p class="text-sm font-bold text-text-primary">R{{ number_format($payment->amount_due, 2) }}</p>
+                                <p class="text-sm font-bold text-text-primary">{{ $currencySymbol }}{{ number_format($payment->amount_due, 2) }}</p>
                                 @if($payment->amount_paid)
-                                <p class="text-xs text-text-secondary">Paid: R{{ number_format($payment->amount_paid, 2) }}</p>
+                                <p class="text-xs text-text-secondary">Paid: {{ $currencySymbol }}{{ number_format($payment->amount_paid, 2) }}</p>
                                 @endif
                             </div>
                             {{-- Receipt button for paid / partial --}}
@@ -336,11 +336,11 @@
                                         </div>
                                         <div>
                                             <dt class="text-text-tertiary">Amount Due</dt>
-                                            <dd class="font-medium text-text-primary mt-0.5">R{{ number_format($payment->amount_due, 2) }}</dd>
+                                            <dd class="font-medium text-text-primary mt-0.5">{{ $currencySymbol }}{{ number_format($payment->amount_due, 2) }}</dd>
                                         </div>
                                         <div>
                                             <dt class="text-text-tertiary">Amount Paid</dt>
-                                            <dd class="font-bold text-success-700 mt-0.5">R{{ number_format($payment->amount_paid, 2) }}</dd>
+                                            <dd class="font-bold text-success-700 mt-0.5">{{ $currencySymbol }}{{ number_format($payment->amount_paid, 2) }}</dd>
                                         </div>
                                         @if($payment->payment_method)
                                         <div>
@@ -351,7 +351,7 @@
                                         @if($payment->status === 'partial' && $balance > 0)
                                         <div>
                                             <dt class="text-text-tertiary">Balance Due</dt>
-                                            <dd class="font-bold text-warning-700 mt-0.5">R{{ number_format($balance, 2) }}</dd>
+                                            <dd class="font-bold text-warning-700 mt-0.5">{{ $currencySymbol }}{{ number_format($balance, 2) }}</dd>
                                         </div>
                                         @endif
                                     </dl>
