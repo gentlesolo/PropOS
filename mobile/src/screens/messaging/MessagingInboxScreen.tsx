@@ -6,6 +6,7 @@ import {
   Text,
   TextInput,
   View,
+  SafeAreaView,
 } from 'react-native';
 import {useQuery} from '@tanstack/react-query';
 import {useNavigation} from '@react-navigation/native';
@@ -23,9 +24,9 @@ const CHANNEL_ICON: Record<string, string> = {
 };
 
 const CHANNEL_COLOR: Record<string, string> = {
-  whatsapp: 'bg-green-600',
-  sms:      'bg-blue-600',
-  email:    'bg-purple-600',
+  whatsapp: 'bg-green-100 border-green-500',
+  sms:      'bg-blue-100 border-blue-500',
+  email:    'bg-purple-100 border-purple-500',
 };
 
 function formatTime(iso: string): string {
@@ -43,15 +44,15 @@ function ThreadRow({thread, onPress}: {thread: InboxThread; onPress: () => void}
 
   return (
     <Pressable
-      className="flex-row items-center px-4 py-3.5 border-b border-slate-800"
+      className="flex-row items-center bg-white shadow-sm border border-slate-100 rounded-3xl mx-5 mb-3 p-4"
       onPress={onPress}>
       {/* Avatar */}
-      <View className="relative mr-3">
-        <View className="w-12 h-12 rounded-full bg-brand-700 items-center justify-center">
-          <Text className="text-white font-semibold text-base">{initials}</Text>
+      <View className="relative mr-4">
+        <View className="w-14 h-14 rounded-full bg-brand-50 border border-brand-100 items-center justify-center">
+          <Text className="text-brand-600 font-extrabold text-lg">{initials}</Text>
         </View>
         <View
-          className={`absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full items-center justify-center ${
+          className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-2 border-white items-center justify-center ${
             CHANNEL_COLOR[last_message.channel]
           }`}>
           <Text style={{fontSize: 10}}>{CHANNEL_ICON[last_message.channel]}</Text>
@@ -60,16 +61,16 @@ function ThreadRow({thread, onPress}: {thread: InboxThread; onPress: () => void}
 
       {/* Content */}
       <View className="flex-1">
-        <View className="flex-row items-center justify-between">
-          <Text className="text-white font-semibold text-sm">
+        <View className="flex-row items-center justify-between mb-1">
+          <Text className="text-slate-900 font-bold text-base">
             {contact.first_name} {contact.last_name}
           </Text>
-          <Text className="text-slate-500 text-xs">
+          <Text className="text-slate-400 font-bold text-xs">
             {formatTime(last_message.sent_at)}
           </Text>
         </View>
-        <Text className="text-slate-400 text-sm mt-0.5" numberOfLines={1}>
-          {last_message.direction === 'outbound' ? 'You: ' : ''}
+        <Text className="text-slate-500 text-sm font-medium leading-tight" numberOfLines={2}>
+          {last_message.direction === 'outbound' ? <Text className="font-bold text-slate-400">You: </Text> : ''}
           {last_message.body}
         </Text>
       </View>
@@ -88,25 +89,30 @@ export function MessagingInboxScreen() {
   });
 
   return (
-    <View className="flex-1 bg-surface">
-      <View className="pt-14 px-4 pb-3">
-        <Text className="text-white text-2xl font-bold mb-3">Messages</Text>
-        <TextInput
-          className="bg-surface-input text-white rounded-xl px-4 py-2.5 text-sm"
-          placeholder="Search conversations…"
-          placeholderTextColor="#64748b"
-          value={search}
-          onChangeText={setSearch}
-          clearButtonMode="while-editing"
-        />
+    <SafeAreaView className="flex-1 bg-slate-50">
+      <View className="px-5 pt-6 pb-4 bg-white border-b border-slate-100 shadow-sm z-10">
+        <Text className="text-slate-900 text-3xl font-extrabold tracking-tight mb-4">Messages</Text>
+        <View className="flex-row items-center bg-slate-50 rounded-2xl px-4 py-3 border border-slate-200">
+          <Text className="text-slate-400 mr-2">🔍</Text>
+          <TextInput
+            className="flex-1 text-slate-900 text-base"
+            placeholder="Search conversations…"
+            placeholderTextColor="#94a3b8"
+            value={search}
+            onChangeText={setSearch}
+            clearButtonMode="while-editing"
+          />
+        </View>
       </View>
 
       {isLoading ? (
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator color="#3b82f6" />
+          <ActivityIndicator color="#10b981" size="large" />
         </View>
       ) : (
         <FlatList
+          className="flex-1 pt-4"
+          contentContainerStyle={{ paddingBottom: 40 }}
           data={threads ?? []}
           keyExtractor={t => String(t.contact_id)}
           renderItem={({item}) => (
@@ -123,12 +129,16 @@ export function MessagingInboxScreen() {
           onRefresh={refetch}
           refreshing={isLoading}
           ListEmptyComponent={
-            <View className="py-16 items-center">
-              <Text className="text-slate-500">No conversations yet</Text>
+            <View className="py-20 px-10 items-center">
+              <View className="w-24 h-24 bg-brand-50 rounded-full items-center justify-center mb-6">
+                <Text className="text-4xl">💬</Text>
+              </View>
+              <Text className="text-slate-800 text-xl font-bold mb-2 text-center">No messages yet</Text>
+              <Text className="text-slate-500 text-center font-medium">Your active conversations will appear here.</Text>
             </View>
           }
         />
       )}
-    </View>
+    </SafeAreaView>
   );
 }

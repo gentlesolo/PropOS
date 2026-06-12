@@ -6,7 +6,6 @@ import {RootNavigator} from './src/navigation/RootNavigator';
 import {useAuthStore} from './src/store/authStore';
 import {notificationService} from './src/services/notificationService';
 import {twilioService} from './src/services/twilioService';
-import {inboundCallService} from './src/services/inboundCallService';
 import {sentryService} from './src/services/sentryService';
 import {ErrorBoundary} from './src/components/ErrorBoundary';
 
@@ -28,6 +27,9 @@ function AppInner() {
 
     // Register FCM/APNs token
     notificationService.registerDeviceToken().catch(console.warn);
+
+    // Require inboundCallService lazily to avoid circular dependencies
+    const {inboundCallService} = require('./src/services/inboundCallService');
 
     // Initialise Twilio Voice SDK and CallKeep for inbound calls
     twilioService.init().then(voice => {

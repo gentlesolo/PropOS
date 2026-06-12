@@ -8,6 +8,7 @@ import {
   SectionList,
   Text,
   View,
+  SafeAreaView,
 } from 'react-native';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {useNavigation} from '@react-navigation/native';
@@ -26,28 +27,33 @@ function formatDuration(secs: number): string {
 }
 
 const SENTIMENT_COLORS: Record<string, string> = {
-  hot: 'text-red-400', warm: 'text-amber-400', cold: 'text-blue-400', neutral: 'text-slate-400',
+  hot: 'bg-red-50 text-red-700 border-red-200',
+  warm: 'bg-amber-50 text-amber-700 border-amber-200',
+  cold: 'bg-blue-50 text-blue-700 border-blue-200',
+  neutral: 'bg-slate-50 text-slate-600 border-slate-200',
 };
 
-function AgentRow({stat}: {stat: TeamAnalytics['agent_stats'][0]}) {
+function AgentRow({stat, index}: {stat: TeamAnalytics['agent_stats'][0], index: number}) {
   const agent = stat.agent;
   const initials = agent.first_name.charAt(0) + agent.last_name.charAt(0);
   return (
-    <View className="flex-row items-center py-3 border-b border-slate-800">
-      <View className="w-9 h-9 rounded-full bg-brand-700 items-center justify-center mr-3">
-        <Text className="text-white text-sm font-semibold">{initials}</Text>
+    <View className={`flex-row items-center py-4 px-5 ${index > 0 ? 'border-t border-slate-50' : ''}`}>
+      <View className="w-12 h-12 rounded-full bg-brand-50 border border-brand-100 items-center justify-center mr-4 shadow-sm">
+        <Text className="text-brand-600 text-sm font-extrabold">{initials}</Text>
       </View>
       <View className="flex-1">
-        <Text className="text-white text-sm font-medium">
+        <Text className="text-slate-900 text-base font-bold">
           {agent.first_name} {agent.last_name}
         </Text>
-        <Text className="text-slate-500 text-xs">
-          Avg {formatDuration(stat.avg_duration)} per call
+        <Text className="text-slate-500 text-xs font-medium mt-0.5">
+          Avg <Text className="font-bold text-slate-600">{formatDuration(stat.avg_duration)}</Text> per call
         </Text>
       </View>
-      <View className="items-end">
-        <Text className="text-white font-bold text-base">{stat.call_count}</Text>
-        <Text className="text-slate-500 text-xs">{formatDuration(stat.total_duration)}</Text>
+      <View className="items-end gap-1">
+        <View className="bg-slate-50 px-2 py-0.5 rounded-md border border-slate-200">
+           <Text className="text-slate-700 font-extrabold text-sm">{stat.call_count} <Text className="text-[10px] text-slate-500 font-medium">calls</Text></Text>
+        </View>
+        <Text className="text-slate-400 text-xs font-bold uppercase tracking-widest">{formatDuration(stat.total_duration)}</Text>
       </View>
     </View>
   );
@@ -61,51 +67,55 @@ function FlaggedCallRow({
   onUnflag: () => void;
 }) {
   const [expanded, setExpanded] = useState(false);
+  const sentimentStyles = call.summary ? SENTIMENT_COLORS[call.summary.sentiment] : SENTIMENT_COLORS.neutral;
+  
   return (
-    <View className="bg-surface-card rounded-xl p-4 mb-3">
-      <Pressable onPress={() => setExpanded(v => !v)}>
+    <View className="bg-white shadow-sm border border-slate-100 rounded-2xl mx-5 mb-4 overflow-hidden">
+      <Pressable onPress={() => setExpanded(v => !v)} className="p-4">
         <View className="flex-row items-start justify-between">
-          <View className="flex-1">
-            <Text className="text-white font-medium text-sm">
+          <View className="flex-1 pr-4">
+            <Text className="text-slate-900 font-bold text-base mb-0.5">
               {call.agent?.first_name} {call.agent?.last_name}
             </Text>
             {call.contact && (
-              <Text className="text-slate-400 text-xs mt-0.5">
-                with {call.contact.first_name} {call.contact.last_name}
+              <Text className="text-slate-600 text-xs font-medium">
+                With: <Text className="font-bold">{call.contact.first_name} {call.contact.last_name}</Text>
               </Text>
             )}
             {call.started_at && (
-              <Text className="text-slate-500 text-xs mt-0.5">
+              <Text className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mt-2">
                 {format(new Date(call.started_at), 'PPp')}
               </Text>
             )}
           </View>
           {call.summary && (
-            <Text className={`text-xs font-semibold capitalize ${SENTIMENT_COLORS[call.summary.sentiment]}`}>
-              {call.summary.sentiment}
-            </Text>
+            <View className={`px-2 py-1 rounded-md border ${sentimentStyles}`}>
+              <Text className={`text-[10px] font-bold uppercase tracking-wider ${sentimentStyles.split(' ')[1]}`}>
+                {call.summary.sentiment}
+              </Text>
+            </View>
           )}
         </View>
 
         {expanded && (
-          <>
+          <View className="mt-4 pt-4 border-t border-slate-100">
             {call.summary?.summary_text && (
-              <Text className="text-slate-300 text-xs mt-2 leading-4">
+              <Text className="text-slate-600 text-sm font-medium leading-relaxed mb-4">
                 {call.summary.summary_text}
               </Text>
             )}
             {call.coaching_notes && (
-              <View className="mt-2 bg-amber-900/30 border border-amber-700 rounded-lg p-2">
-                <Text className="text-amber-400 text-xs font-semibold mb-0.5">Coaching note:</Text>
-                <Text className="text-slate-300 text-xs">{call.coaching_notes}</Text>
+              <View className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4">
+                <Text className="text-amber-700 text-xs font-extrabold uppercase tracking-widest mb-1.5">Coaching Note</Text>
+                <Text className="text-amber-900 text-sm font-medium">{call.coaching_notes}</Text>
               </View>
             )}
             <Pressable
-              className="mt-3 bg-slate-700 rounded-lg py-2 items-center"
+              className="bg-brand-50 border border-brand-200 rounded-xl py-3 items-center active:bg-brand-100"
               onPress={onUnflag}>
-              <Text className="text-slate-300 text-xs font-semibold">Mark as reviewed</Text>
+              <Text className="text-brand-700 text-sm font-extrabold uppercase tracking-wide">Mark as Reviewed</Text>
             </Pressable>
-          </>
+          </View>
         )}
       </Pressable>
     </View>
@@ -129,85 +139,93 @@ export function ManagerDashboardScreen() {
 
   if (isLoading || !data) {
     return (
-      <View className="flex-1 bg-surface items-center justify-center">
-        <ActivityIndicator color="#3b82f6" />
+      <View className="flex-1 bg-slate-50 items-center justify-center">
+        <ActivityIndicator color="#10b981" size="large" />
       </View>
     );
   }
 
   return (
-    <ScrollView className="flex-1 bg-surface" contentContainerClassName="pb-10">
+    <SafeAreaView className="flex-1 bg-slate-50">
       {/* Header */}
-      <View className="pt-14 px-4 pb-4">
-        <Text className="text-white text-2xl font-bold">Team Dashboard</Text>
+      <View className="px-5 pt-6 pb-4 bg-white border-b border-slate-100 shadow-sm z-10">
+        <Text className="text-slate-900 text-3xl font-extrabold tracking-tight mb-4">Team Dashboard</Text>
 
         {/* Period toggle */}
-        <View className="flex-row gap-2 mt-3">
+        <View className="flex-row gap-2">
           {[7, 14, 30].map(d => (
             <Pressable
               key={d}
-              className={`px-4 py-1.5 rounded-full ${days === d ? 'bg-brand-600' : 'bg-surface-card'}`}
+              className={`px-4 py-2 rounded-full border ${days === d ? 'bg-brand-600 border-brand-600 shadow-sm' : 'bg-slate-50 border-slate-200'}`}
               onPress={() => setDays(d)}>
-              <Text className={`text-xs font-medium ${days === d ? 'text-white' : 'text-slate-400'}`}>
-                {d}d
+              <Text className={`text-xs font-bold tracking-wide ${days === d ? 'text-white' : 'text-slate-600'}`}>
+                {d} Days
               </Text>
             </Pressable>
           ))}
         </View>
       </View>
 
-      {/* Team totals */}
-      <View className="flex-row gap-3 px-4 mb-5">
-        <View className="flex-1 bg-surface-card rounded-xl p-4">
-          <Text className="text-slate-400 text-xs mb-1">Total calls</Text>
-          <Text className="text-white text-2xl font-bold">{data.team_totals.calls}</Text>
-        </View>
-        <View className="flex-1 bg-surface-card rounded-xl p-4">
-          <Text className="text-slate-400 text-xs mb-1">Total talk time</Text>
-          <Text className="text-white text-2xl font-bold">
-            {formatDuration(data.team_totals.total_duration)}
-          </Text>
-        </View>
-      </View>
-
-      {/* Agent leaderboard */}
-      <View className="px-4 mb-6">
-        <Text className="text-slate-400 text-xs font-semibold uppercase tracking-wide mb-2">
-          Agent Leaderboard
-        </Text>
-        <View className="bg-surface-card rounded-xl px-4">
-          {data.agent_stats.length === 0 ? (
-            <View className="py-6 items-center">
-              <Text className="text-slate-500 text-sm">No call activity yet</Text>
+      <ScrollView className="flex-1" contentContainerClassName="pt-5 pb-10">
+        {/* Team totals */}
+        <View className="flex-row gap-4 px-5 mb-8">
+          <View className="flex-1 bg-white shadow-sm border border-slate-100 rounded-3xl p-5">
+            <View className="w-10 h-10 rounded-full bg-brand-50 items-center justify-center mb-3">
+               <Text className="text-xl">📞</Text>
             </View>
-          ) : (
-            data.agent_stats.map((stat, i) => (
-              <AgentRow key={stat.agent.id} stat={stat} />
-            ))
-          )}
-        </View>
-      </View>
-
-      {/* Flagged calls */}
-      {data.flagged_calls.length > 0 && (
-        <View className="px-4">
-          <View className="flex-row items-center gap-2 mb-2">
-            <Text className="text-slate-400 text-xs font-semibold uppercase tracking-wide">
-              Flagged for Coaching
-            </Text>
-            <View className="bg-red-500 rounded-full w-5 h-5 items-center justify-center">
-              <Text className="text-white text-xs font-bold">{data.flagged_calls.length}</Text>
-            </View>
+            <Text className="text-slate-400 text-xs font-extrabold uppercase tracking-widest mb-1">Total calls</Text>
+            <Text className="text-slate-900 text-3xl font-extrabold tracking-tight">{data.team_totals.calls}</Text>
           </View>
-          {data.flagged_calls.map(call => (
-            <FlaggedCallRow
-              key={call.id}
-              call={call}
-              onUnflag={() => unflag.mutate(call.id)}
-            />
-          ))}
+          <View className="flex-1 bg-white shadow-sm border border-slate-100 rounded-3xl p-5">
+            <View className="w-10 h-10 rounded-full bg-blue-50 items-center justify-center mb-3">
+               <Text className="text-xl">⏱️</Text>
+            </View>
+            <Text className="text-slate-400 text-xs font-extrabold uppercase tracking-widest mb-1">Talk time</Text>
+            <Text className="text-slate-900 text-2xl font-extrabold tracking-tight">
+              {formatDuration(data.team_totals.total_duration)}
+            </Text>
+          </View>
         </View>
-      )}
-    </ScrollView>
+
+        {/* Agent leaderboard */}
+        <View className="mb-8">
+          <Text className="text-slate-400 text-xs font-extrabold uppercase tracking-widest mb-3 px-7">
+            Agent Leaderboard
+          </Text>
+          <View className="bg-white shadow-sm border border-slate-100 rounded-3xl mx-5 overflow-hidden">
+            {data.agent_stats.length === 0 ? (
+              <View className="py-10 items-center">
+                <Text className="text-slate-500 font-medium">No call activity yet</Text>
+              </View>
+            ) : (
+              data.agent_stats.map((stat, i) => (
+                <AgentRow key={stat.agent.id} stat={stat} index={i} />
+              ))
+            )}
+          </View>
+        </View>
+
+        {/* Flagged calls */}
+        {data.flagged_calls.length > 0 && (
+          <View className="mb-4">
+            <View className="flex-row items-center gap-3 mb-3 px-7">
+              <Text className="text-slate-400 text-xs font-extrabold uppercase tracking-widest">
+                Flagged for Coaching
+              </Text>
+              <View className="bg-red-50 border border-red-200 rounded-full px-2 py-0.5 items-center justify-center">
+                <Text className="text-red-600 text-[10px] font-extrabold">{data.flagged_calls.length}</Text>
+              </View>
+            </View>
+            {data.flagged_calls.map(call => (
+              <FlaggedCallRow
+                key={call.id}
+                call={call}
+                onUnflag={() => unflag.mutate(call.id)}
+              />
+            ))}
+          </View>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import {ActivityIndicator, FlatList, Pressable, Text, View} from 'react-native';
+import {ActivityIndicator, FlatList, Pressable, Text, View, SafeAreaView} from 'react-native';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {tasksApi} from '../../api/tasks';
 import {Task} from '../../types';
@@ -13,27 +13,32 @@ function TaskItem({task, onComplete, onSnooze}: {
   const overdue = task.due_at && isPast(new Date(task.due_at)) && task.status !== 'completed';
 
   return (
-    <View className={`flex-row items-center px-4 py-3.5 border-b border-slate-800 ${
-      task.status === 'completed' ? 'opacity-40' : ''
+    <View className={`flex-row items-center bg-white shadow-sm border border-slate-100 rounded-3xl mx-5 mb-3 p-4 ${
+      task.status === 'completed' ? 'opacity-50' : ''
     }`}>
+      {/* Dynamic left edge indicator */}
+      <View className={`absolute left-0 top-0 bottom-0 w-1.5 rounded-l-3xl ${
+        task.status === 'completed' ? 'bg-slate-300' : (overdue ? 'bg-red-500' : 'bg-brand-500')
+      }`} />
+
       <Pressable
-        className={`w-6 h-6 rounded-full border-2 mr-3 items-center justify-center ${
-          task.status === 'completed' ? 'bg-green-500 border-green-500' : 'border-slate-500'
+        className={`w-7 h-7 rounded-full border-2 mr-4 ml-1 items-center justify-center transition-colors ${
+          task.status === 'completed' ? 'bg-brand-500 border-brand-500' : 'bg-slate-50 border-slate-300'
         }`}
         onPress={onComplete}>
-        {task.status === 'completed' && <Text className="text-white text-xs">✓</Text>}
+        {task.status === 'completed' && <Text className="text-white text-sm font-bold">✓</Text>}
       </Pressable>
 
       <View className="flex-1">
         <Text
-          className={`text-sm font-medium ${
-            task.status === 'completed' ? 'line-through text-slate-500' : 'text-white'
+          className={`text-base font-bold ${
+            task.status === 'completed' ? 'line-through text-slate-400' : 'text-slate-800'
           }`}
           numberOfLines={2}>
           {task.title}
         </Text>
         {task.contact && (
-          <Text className="text-slate-500 text-xs mt-0.5">
+          <Text className="text-slate-500 text-xs font-medium mt-1">
             {task.contact.first_name} {task.contact.last_name}
           </Text>
         )}
@@ -41,14 +46,18 @@ function TaskItem({task, onComplete, onSnooze}: {
 
       <View className="items-end ml-3">
         {task.due_at && (
-          <Text className={`text-xs ${overdue ? 'text-red-400' : 'text-slate-400'}`}>
-            {isToday(new Date(task.due_at))
-              ? format(new Date(task.due_at), 'h:mm a')
-              : format(new Date(task.due_at), 'd MMM')}
-          </Text>
+          <View className={`px-2 py-1 rounded-md ${overdue ? 'bg-red-50' : 'bg-slate-50'}`}>
+            <Text className={`text-xs font-bold ${overdue ? 'text-red-600' : 'text-slate-500'}`}>
+              {isToday(new Date(task.due_at))
+                ? format(new Date(task.due_at), 'h:mm a')
+                : format(new Date(task.due_at), 'd MMM')}
+            </Text>
+          </View>
         )}
         {task.source === 'call_summary' && (
-          <Text className="text-xs text-brand-400 mt-0.5">📞</Text>
+          <View className="bg-brand-50 rounded-full px-2 py-0.5 mt-1">
+            <Text className="text-[10px] text-brand-600 font-bold uppercase tracking-wider">AI Call</Text>
+          </View>
         )}
       </View>
     </View>
@@ -87,19 +96,24 @@ export function TasksScreen() {
 
   if (isLoading) {
     return (
-      <View className="flex-1 bg-surface items-center justify-center">
-        <ActivityIndicator color="#3b82f6" />
+      <View className="flex-1 bg-slate-50 items-center justify-center">
+        <ActivityIndicator color="#10b981" size="large" />
       </View>
     );
   }
 
   return (
-    <View className="flex-1 bg-surface">
-      <View className="pt-14 px-4 pb-3">
-        <Text className="text-white text-2xl font-bold">Tasks</Text>
+    <SafeAreaView className="flex-1 bg-slate-50">
+      <View className="px-5 pt-6 pb-4 bg-white border-b border-slate-100 shadow-sm z-10 flex-row justify-between items-center">
+        <Text className="text-slate-900 text-3xl font-extrabold tracking-tight">Tasks</Text>
+        <View className="w-10 h-10 bg-brand-50 rounded-full items-center justify-center">
+          <Text className="text-brand-600 font-bold text-lg">{tasks?.filter(t => t.status !== 'completed').length || 0}</Text>
+        </View>
       </View>
 
       <FlatList
+        className="flex-1 pt-4"
+        contentContainerStyle={{ paddingBottom: 40 }}
         data={sections.flatMap(s => [
           {type: 'header' as const, title: s.title, danger: s.danger, id: s.title},
           ...s.data.map(t => ({type: 'item' as const, task: t, id: String(t.id)})),
@@ -110,9 +124,9 @@ export function TasksScreen() {
         renderItem={({item}) => {
           if (item.type === 'header') {
             return (
-              <View className="px-4 pt-4 pb-1">
-                <Text className={`text-xs font-semibold uppercase tracking-wide ${
-                  item.danger ? 'text-red-400' : 'text-slate-400'
+              <View className="px-6 pt-4 pb-2">
+                <Text className={`text-xs font-extrabold uppercase tracking-widest ${
+                  item.danger ? 'text-red-500' : 'text-slate-400'
                 }`}>
                   {item.title}
                 </Text>
@@ -133,11 +147,15 @@ export function TasksScreen() {
           );
         }}
         ListEmptyComponent={
-          <View className="py-16 items-center">
-            <Text className="text-slate-500">No tasks today — you're all caught up!</Text>
+          <View className="py-20 px-10 items-center">
+            <View className="w-24 h-24 bg-brand-50 rounded-full items-center justify-center mb-6">
+              <Text className="text-4xl">☕</Text>
+            </View>
+            <Text className="text-slate-800 text-xl font-bold mb-2 text-center">All caught up!</Text>
+            <Text className="text-slate-500 text-center font-medium">You have completed all your tasks. Take a break or find a new lead.</Text>
           </View>
         }
       />
-    </View>
+    </SafeAreaView>
   );
 }

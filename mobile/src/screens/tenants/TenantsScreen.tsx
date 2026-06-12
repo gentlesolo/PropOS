@@ -6,6 +6,7 @@ import {
   Text,
   TextInput,
   View,
+  SafeAreaView,
 } from 'react-native';
 import {useQuery} from '@tanstack/react-query';
 import {useNavigation} from '@react-navigation/native';
@@ -17,11 +18,11 @@ import {useTranslation} from '../../i18n';
 type NavProp = NativeStackNavigationProp<TenantsStackParamList>;
 
 const STATUS_COLORS: Record<string, string> = {
-  active:      'bg-green-600',
-  prospect:    'bg-blue-600',
-  vacating:    'bg-amber-600',
-  vacated:     'bg-slate-600',
-  blacklisted: 'bg-red-700',
+  active:      'bg-green-50 text-green-700 border-green-200',
+  prospect:    'bg-blue-50 text-blue-700 border-blue-200',
+  vacating:    'bg-amber-50 text-amber-700 border-amber-200',
+  vacated:     'bg-slate-100 text-slate-700 border-slate-200',
+  blacklisted: 'bg-red-50 text-red-700 border-red-200',
 };
 
 function TenantRow({tenant, onPress}: {tenant: TenantListItem; onPress: () => void}) {
@@ -35,28 +36,32 @@ function TenantRow({tenant, onPress}: {tenant: TenantListItem; onPress: () => vo
 
   return (
     <Pressable
-      className="flex-row items-center px-4 py-3 border-b border-slate-800"
+      className="bg-white shadow-sm border border-slate-100 rounded-3xl p-5 mb-4 mx-5 flex-row items-center"
       onPress={onPress}>
-      <View className="w-11 h-11 rounded-full bg-brand-700 items-center justify-center mr-3">
-        <Text className="text-white font-semibold text-sm">{initials}</Text>
+      <View className="w-14 h-14 rounded-full bg-brand-50 border border-brand-100 items-center justify-center mr-4">
+        <Text className="text-brand-600 font-extrabold text-lg">{initials}</Text>
       </View>
-      <View className="flex-1">
-        <Text className="text-white font-medium">{tenant.full_name ?? t('tenants.noTenant')}</Text>
-        <Text className="text-slate-400 text-xs mt-0.5" numberOfLines={1}>
-          {tenant.property ?? t('tenants.noProperty')}
+      <View className="flex-1 pr-2">
+        <Text className="text-slate-900 font-bold text-base mb-0.5">{tenant.full_name ?? t('tenants.noTenant')}</Text>
+        <Text className="text-slate-500 font-medium text-sm" numberOfLines={1}>
+          📍 {tenant.property ?? t('tenants.noProperty')}
         </Text>
         {tenant.monthly_rent != null && (
-          <Text className="text-slate-500 text-xs mt-0.5">
-            R{tenant.monthly_rent.toLocaleString()}/mo
+          <Text className="text-slate-500 font-bold text-xs mt-1 uppercase tracking-wide">
+            R{tenant.monthly_rent.toLocaleString()} {t('tenants.perMonth', '/ mo')}
           </Text>
         )}
       </View>
-      <View className="items-end gap-1">
-        <View className={`px-2 py-0.5 rounded-full ${STATUS_COLORS[tenant.status] ?? 'bg-slate-600'}`}>
-          <Text className="text-white text-xs capitalize">{tenant.status}</Text>
+      <View className="items-end gap-2">
+        <View className={`px-2.5 py-1 rounded-md border ${STATUS_COLORS[tenant.status] ?? 'bg-slate-50 text-slate-600 border-slate-200'}`}>
+          <Text className={`text-[10px] font-bold uppercase tracking-widest ${STATUS_COLORS[tenant.status]?.split(' ')[1] || 'text-slate-600'}`}>
+            {tenant.status}
+          </Text>
         </View>
         {tenant.fica_count === 0 && (
-          <Text className="text-amber-500 text-xs">{t('tenants.ficaPending')}</Text>
+          <View className="bg-amber-50 px-2 py-0.5 rounded border border-amber-100">
+             <Text className="text-amber-600 font-bold text-[10px] uppercase">{t('tenants.ficaPending')}</Text>
+          </View>
         )}
       </View>
     </Pressable>
@@ -84,25 +89,34 @@ export function TenantsScreen() {
   const tenants = data?.data?.data ?? [];
 
   return (
-    <View className="flex-1 bg-surface-base">
+    <SafeAreaView className="flex-1 bg-slate-50">
       {/* Header */}
-      <View className="pt-14 pb-4 px-4 bg-surface-card border-b border-slate-800">
-        <Text className="text-2xl font-bold text-white mb-3">{t('tenants.title')}</Text>
-        <TextInput
-          value={search}
-          onChangeText={setSearch}
-          placeholder={t('tenants.searchPlaceholder')}
-          placeholderTextColor="#64748b"
-          className="bg-slate-800 text-white rounded-xl px-4 py-2.5 text-sm"
-        />
+      <View className="px-5 pt-6 pb-4 bg-white border-b border-slate-100 shadow-sm z-10">
+        <View className="flex-row justify-between items-center mb-4">
+          <Text className="text-slate-900 text-3xl font-extrabold tracking-tight">{t('tenants.title')}</Text>
+          <View className="w-10 h-10 bg-brand-50 rounded-full items-center justify-center">
+            <Text className="text-brand-600 font-bold text-lg">{tenants.length || 0}</Text>
+          </View>
+        </View>
+        <View className="flex-row items-center bg-slate-50 rounded-2xl px-4 py-3 border border-slate-200 mb-4">
+          <Text className="text-slate-400 mr-2">🔍</Text>
+          <TextInput
+            value={search}
+            onChangeText={setSearch}
+            placeholder={t('tenants.searchPlaceholder')}
+            placeholderTextColor="#94a3b8"
+            className="flex-1 text-slate-900 text-base"
+            clearButtonMode="while-editing"
+          />
+        </View>
         {/* Filter pills */}
-        <View className="flex-row gap-2 mt-3">
+        <View className="flex-row gap-2">
           {filters.map(f => (
             <Pressable
               key={f.value}
               onPress={() => setStatus(f.value)}
-              className={`px-3 py-1.5 rounded-full ${status === f.value ? 'bg-brand-600' : 'bg-slate-700'}`}>
-              <Text className={`text-xs font-medium ${status === f.value ? 'text-white' : 'text-slate-400'}`}>
+              className={`px-4 py-2 rounded-full border ${status === f.value ? 'bg-brand-600 border-brand-600 shadow-sm' : 'bg-slate-50 border-slate-200'}`}>
+              <Text className={`text-xs font-bold tracking-wide ${status === f.value ? 'text-white' : 'text-slate-600'}`}>
                 {f.label}
               </Text>
             </Pressable>
@@ -112,10 +126,12 @@ export function TenantsScreen() {
 
       {isLoading ? (
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator color="#3b82f6" />
+          <ActivityIndicator color="#10b981" size="large" />
         </View>
       ) : (
         <FlatList
+          className="flex-1 pt-4"
+          contentContainerStyle={{ paddingBottom: 40 }}
           data={tenants}
           keyExtractor={item => String(item.id)}
           renderItem={({item}) => (
@@ -127,12 +143,16 @@ export function TenantsScreen() {
           onRefresh={refetch}
           refreshing={isRefetching}
           ListEmptyComponent={
-            <View className="flex-1 items-center justify-center py-16">
-              <Text className="text-slate-500 text-sm">{t('tenants.noTenants')}</Text>
+            <View className="flex-1 items-center justify-center py-20 px-10">
+              <View className="w-24 h-24 bg-brand-50 rounded-full items-center justify-center mb-6">
+                <Text className="text-4xl">🔑</Text>
+              </View>
+              <Text className="text-slate-800 text-xl font-bold mb-2 text-center">{t('tenants.noTenants')}</Text>
+              <Text className="text-slate-500 text-center font-medium">Add a tenant or try a different filter.</Text>
             </View>
           }
         />
       )}
-    </View>
+    </SafeAreaView>
   );
 }
