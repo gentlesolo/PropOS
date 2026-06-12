@@ -1,0 +1,494 @@
+diff --git a/node_modules/react-native-audio-recorder-player/android/.classpath b/node_modules/react-native-audio-recorder-player/android/.classpath
+new file mode 100644
+index 0000000..bbe97e5
+--- /dev/null
++++ b/node_modules/react-native-audio-recorder-player/android/.classpath
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<classpath>
++	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17/"/>
++	<classpathentry kind="con" path="org.eclipse.buildship.core.gradleclasspathcontainer"/>
++	<classpathentry kind="output" path="bin/default"/>
++</classpath>
+diff --git a/node_modules/react-native-audio-recorder-player/android/.gradle/8.9/checksums/checksums.lock b/node_modules/react-native-audio-recorder-player/android/.gradle/8.9/checksums/checksums.lock
+new file mode 100644
+index 0000000..a1b7b00
+Binary files /dev/null and b/node_modules/react-native-audio-recorder-player/android/.gradle/8.9/checksums/checksums.lock differ
+diff --git a/node_modules/react-native-audio-recorder-player/android/.gradle/8.9/checksums/md5-checksums.bin b/node_modules/react-native-audio-recorder-player/android/.gradle/8.9/checksums/md5-checksums.bin
+new file mode 100644
+index 0000000..7082f75
+Binary files /dev/null and b/node_modules/react-native-audio-recorder-player/android/.gradle/8.9/checksums/md5-checksums.bin differ
+diff --git a/node_modules/react-native-audio-recorder-player/android/.gradle/8.9/checksums/sha1-checksums.bin b/node_modules/react-native-audio-recorder-player/android/.gradle/8.9/checksums/sha1-checksums.bin
+new file mode 100644
+index 0000000..900b145
+Binary files /dev/null and b/node_modules/react-native-audio-recorder-player/android/.gradle/8.9/checksums/sha1-checksums.bin differ
+diff --git a/node_modules/react-native-audio-recorder-player/android/.gradle/8.9/dependencies-accessors/gc.properties b/node_modules/react-native-audio-recorder-player/android/.gradle/8.9/dependencies-accessors/gc.properties
+new file mode 100644
+index 0000000..e69de29
+diff --git a/node_modules/react-native-audio-recorder-player/android/.gradle/8.9/fileChanges/last-build.bin b/node_modules/react-native-audio-recorder-player/android/.gradle/8.9/fileChanges/last-build.bin
+new file mode 100644
+index 0000000..f76dd23
+Binary files /dev/null and b/node_modules/react-native-audio-recorder-player/android/.gradle/8.9/fileChanges/last-build.bin differ
+diff --git a/node_modules/react-native-audio-recorder-player/android/.gradle/8.9/fileHashes/fileHashes.lock b/node_modules/react-native-audio-recorder-player/android/.gradle/8.9/fileHashes/fileHashes.lock
+new file mode 100644
+index 0000000..9528ab7
+Binary files /dev/null and b/node_modules/react-native-audio-recorder-player/android/.gradle/8.9/fileHashes/fileHashes.lock differ
+diff --git a/node_modules/react-native-audio-recorder-player/android/.gradle/8.9/gc.properties b/node_modules/react-native-audio-recorder-player/android/.gradle/8.9/gc.properties
+new file mode 100644
+index 0000000..e69de29
+diff --git a/node_modules/react-native-audio-recorder-player/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock b/node_modules/react-native-audio-recorder-player/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock
+new file mode 100644
+index 0000000..917bf76
+Binary files /dev/null and b/node_modules/react-native-audio-recorder-player/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock differ
+diff --git a/node_modules/react-native-audio-recorder-player/android/.gradle/buildOutputCleanup/cache.properties b/node_modules/react-native-audio-recorder-player/android/.gradle/buildOutputCleanup/cache.properties
+new file mode 100644
+index 0000000..23b4efc
+--- /dev/null
++++ b/node_modules/react-native-audio-recorder-player/android/.gradle/buildOutputCleanup/cache.properties
+@@ -0,0 +1,2 @@
++#Tue Jun 09 06:28:36 WAT 2026
++gradle.version=8.9
+diff --git a/node_modules/react-native-audio-recorder-player/android/.gradle/vcs-1/gc.properties b/node_modules/react-native-audio-recorder-player/android/.gradle/vcs-1/gc.properties
+new file mode 100644
+index 0000000..e69de29
+diff --git a/node_modules/react-native-audio-recorder-player/android/.project b/node_modules/react-native-audio-recorder-player/android/.project
+new file mode 100644
+index 0000000..09ba3c8
+--- /dev/null
++++ b/node_modules/react-native-audio-recorder-player/android/.project
+@@ -0,0 +1,34 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<projectDescription>
++	<name>react-native-audio-recorder-player</name>
++	<comment>Project react-native-audio-recorder-player created by Buildship.</comment>
++	<projects>
++	</projects>
++	<buildSpec>
++		<buildCommand>
++			<name>org.eclipse.jdt.core.javabuilder</name>
++			<arguments>
++			</arguments>
++		</buildCommand>
++		<buildCommand>
++			<name>org.eclipse.buildship.core.gradleprojectbuilder</name>
++			<arguments>
++			</arguments>
++		</buildCommand>
++	</buildSpec>
++	<natures>
++		<nature>org.eclipse.jdt.core.javanature</nature>
++		<nature>org.eclipse.buildship.core.gradleprojectnature</nature>
++	</natures>
++	<filteredResources>
++		<filter>
++			<id>1780981430958</id>
++			<name></name>
++			<type>30</type>
++			<matcher>
++				<id>org.eclipse.core.resources.regexFilterMatcher</id>
++				<arguments>node_modules|\.git|__CREATED_BY_JAVA_LANGUAGE_SERVER__</arguments>
++			</matcher>
++		</filter>
++	</filteredResources>
++</projectDescription>
+diff --git a/node_modules/react-native-audio-recorder-player/android/.settings/org.eclipse.buildship.core.prefs b/node_modules/react-native-audio-recorder-player/android/.settings/org.eclipse.buildship.core.prefs
+new file mode 100644
+index 0000000..1675490
+--- /dev/null
++++ b/node_modules/react-native-audio-recorder-player/android/.settings/org.eclipse.buildship.core.prefs
+@@ -0,0 +1,2 @@
++connection.project.dir=../../../android
++eclipse.preferences.version=1
+diff --git a/node_modules/react-native-audio-recorder-player/android/.settings/org.eclipse.jdt.core.prefs b/node_modules/react-native-audio-recorder-player/android/.settings/org.eclipse.jdt.core.prefs
+new file mode 100644
+index 0000000..626e0e1
+--- /dev/null
++++ b/node_modules/react-native-audio-recorder-player/android/.settings/org.eclipse.jdt.core.prefs
+@@ -0,0 +1,4 @@
++eclipse.preferences.version=1
++org.eclipse.jdt.core.compiler.codegen.targetPlatform=17
++org.eclipse.jdt.core.compiler.compliance=17
++org.eclipse.jdt.core.compiler.source=17
+diff --git a/node_modules/react-native-audio-recorder-player/android/build.gradle b/node_modules/react-native-audio-recorder-player/android/build.gradle
+index 96d14f6..fc7d3d5 100644
+--- a/node_modules/react-native-audio-recorder-player/android/build.gradle
++++ b/node_modules/react-native-audio-recorder-player/android/build.gradle
+@@ -30,10 +30,15 @@ def getExtOrIntegerDefault(name) {
+   return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties["AudioRecorderPlayer_" + name]).toInteger()
+ }
+ 
++def getExtOrStringDefault(name) {
++  return rootProject.ext.has(name) ? rootProject.ext.get(name).toString() : project.properties["AudioRecorderPlayer_" + name]
++}
++
+ android {
+   namespace "com.margelo.nitro.audiorecorderplayer"
+ 
+   compileSdkVersion getExtOrIntegerDefault("compileSdkVersion")
++  ndkVersion getExtOrStringDefault("ndkVersion")
+ 
+   defaultConfig {
+     minSdkVersion getExtOrIntegerDefault("minSdkVersion")
+@@ -42,7 +47,8 @@ android {
+     externalNativeBuild {
+       cmake {
+         cppFlags "-frtti -fexceptions -Wall -fstack-protector-all"
+-        arguments "-DANDROID_STL=c++_shared", "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON"
++        arguments "-DANDROID_STL=c++_shared", "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON",
++            "-DANDROID_PLATFORM=android-${getExtOrIntegerDefault('minSdkVersion')}"
+         abiFilters (*reactNativeArchitectures())
+ 
+         buildTypes {
+diff --git a/node_modules/react-native-audio-recorder-player/nitrogen/generated/android/NitroAudioRecorderPlayerOnLoad.cpp b/node_modules/react-native-audio-recorder-player/nitrogen/generated/android/NitroAudioRecorderPlayerOnLoad.cpp
+index 917be84..eee2371 100644
+--- a/node_modules/react-native-audio-recorder-player/nitrogen/generated/android/NitroAudioRecorderPlayerOnLoad.cpp
++++ b/node_modules/react-native-audio-recorder-player/nitrogen/generated/android/NitroAudioRecorderPlayerOnLoad.cpp
+@@ -19,10 +19,18 @@
+ #include "JFunc_void_RecordBackType.hpp"
+ #include "JFunc_void_PlayBackType.hpp"
+ #include "JFunc_void_PlaybackEndType.hpp"
+-#include <NitroModules/DefaultConstructableObject.hpp>
+ 
+ namespace margelo::nitro::audiorecorderplayer {
+ 
++struct JHybridAudioRecorderPlayerSpecImpl: public jni::JavaClass<JHybridAudioRecorderPlayerSpecImpl, JHybridAudioRecorderPlayerSpec::JavaPart> {
++  static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/audiorecorderplayer/HybridAudioRecorderPlayer;";
++  static std::shared_ptr<JHybridAudioRecorderPlayerSpec> create() {
++    static auto constructorFn = javaClassStatic()->getConstructor<JHybridAudioRecorderPlayerSpecImpl::javaobject()>();
++    jni::local_ref<JHybridAudioRecorderPlayerSpec::JavaPart> javaPart = javaClassStatic()->newObject(constructorFn);
++    return javaPart->getJHybridAudioRecorderPlayerSpec();
++  }
++};
++
+ int initialize(JavaVM* vm) {
+   using namespace margelo::nitro;
+   using namespace margelo::nitro::audiorecorderplayer;
+@@ -30,7 +38,7 @@ int initialize(JavaVM* vm) {
+ 
+   return facebook::jni::initialize(vm, [] {
+     // Register native JNI methods
+-    margelo::nitro::audiorecorderplayer::JHybridAudioRecorderPlayerSpec::registerNatives();
++    margelo::nitro::audiorecorderplayer::JHybridAudioRecorderPlayerSpec::CxxPart::registerNatives();
+     margelo::nitro::audiorecorderplayer::JFunc_void_RecordBackType_cxx::registerNatives();
+     margelo::nitro::audiorecorderplayer::JFunc_void_PlayBackType_cxx::registerNatives();
+     margelo::nitro::audiorecorderplayer::JFunc_void_PlaybackEndType_cxx::registerNatives();
+@@ -39,9 +47,7 @@ int initialize(JavaVM* vm) {
+     HybridObjectRegistry::registerHybridObjectConstructor(
+       "AudioRecorderPlayer",
+       []() -> std::shared_ptr<HybridObject> {
+-        static DefaultConstructableObject<JHybridAudioRecorderPlayerSpec::javaobject> object("com/margelo/nitro/audiorecorderplayer/HybridAudioRecorderPlayer");
+-        auto instance = object.create();
+-        return instance->cthis()->shared();
++        return JHybridAudioRecorderPlayerSpecImpl::create();
+       }
+     );
+   });
+diff --git a/node_modules/react-native-audio-recorder-player/nitrogen/generated/android/c++/JHybridAudioRecorderPlayerSpec.cpp b/node_modules/react-native-audio-recorder-player/nitrogen/generated/android/c++/JHybridAudioRecorderPlayerSpec.cpp
+index 443ec79..0ef26dd 100644
+--- a/node_modules/react-native-audio-recorder-player/nitrogen/generated/android/c++/JHybridAudioRecorderPlayerSpec.cpp
++++ b/node_modules/react-native-audio-recorder-player/nitrogen/generated/android/c++/JHybridAudioRecorderPlayerSpec.cpp
+@@ -68,24 +68,31 @@ namespace margelo::nitro::audiorecorderplayer { struct PlaybackEndType; }
+ 
+ namespace margelo::nitro::audiorecorderplayer {
+ 
+-  jni::local_ref<JHybridAudioRecorderPlayerSpec::jhybriddata> JHybridAudioRecorderPlayerSpec::initHybrid(jni::alias_ref<jhybridobject> jThis) {
+-    return makeCxxInstance(jThis);
++  std::shared_ptr<JHybridAudioRecorderPlayerSpec> JHybridAudioRecorderPlayerSpec::JavaPart::getJHybridAudioRecorderPlayerSpec() {
++    auto hybridObject = JHybridObject::JavaPart::getJHybridObject();
++    auto castHybridObject = std::dynamic_pointer_cast<JHybridAudioRecorderPlayerSpec>(hybridObject);
++    if (castHybridObject == nullptr) [[unlikely]] {
++      throw std::runtime_error("Failed to downcast JHybridObject to JHybridAudioRecorderPlayerSpec!");
++    }
++    return castHybridObject;
+   }
+ 
+-  void JHybridAudioRecorderPlayerSpec::registerNatives() {
+-    registerHybrid({
+-      makeNativeMethod("initHybrid", JHybridAudioRecorderPlayerSpec::initHybrid),
+-    });
++  jni::local_ref<JHybridAudioRecorderPlayerSpec::CxxPart::jhybriddata> JHybridAudioRecorderPlayerSpec::CxxPart::initHybrid(jni::alias_ref<jhybridobject> jThis) {
++    return makeCxxInstance(jThis);
+   }
+ 
+-  size_t JHybridAudioRecorderPlayerSpec::getExternalMemorySize() noexcept {
+-    static const auto method = javaClassStatic()->getMethod<jlong()>("getMemorySize");
+-    return method(_javaPart);
++  std::shared_ptr<JHybridObject> JHybridAudioRecorderPlayerSpec::CxxPart::createHybridObject(const jni::local_ref<JHybridObject::JavaPart>& javaPart) {
++    auto castJavaPart = jni::dynamic_ref_cast<JHybridAudioRecorderPlayerSpec::JavaPart>(javaPart);
++    if (castJavaPart == nullptr) [[unlikely]] {
++      throw std::runtime_error("Failed to cast JHybridObject::JavaPart to JHybridAudioRecorderPlayerSpec::JavaPart!");
++    }
++    return std::make_shared<JHybridAudioRecorderPlayerSpec>(castJavaPart);
+   }
+ 
+-  void JHybridAudioRecorderPlayerSpec::dispose() noexcept {
+-    static const auto method = javaClassStatic()->getMethod<void()>("dispose");
+-    method(_javaPart);
++  void JHybridAudioRecorderPlayerSpec::CxxPart::registerNatives() {
++    registerHybrid({
++      makeNativeMethod("initHybrid", JHybridAudioRecorderPlayerSpec::CxxPart::initHybrid),
++    });
+   }
+ 
+   // Properties
+@@ -93,7 +100,7 @@ namespace margelo::nitro::audiorecorderplayer {
+ 
+   // Methods
+   std::shared_ptr<Promise<std::string>> JHybridAudioRecorderPlayerSpec::startRecorder(const std::optional<std::string>& uri, const std::optional<AudioSet>& audioSets, std::optional<bool> meteringEnabled) {
+-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* uri */, jni::alias_ref<JAudioSet> /* audioSets */, jni::alias_ref<jni::JBoolean> /* meteringEnabled */)>("startRecorder");
++    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* uri */, jni::alias_ref<JAudioSet> /* audioSets */, jni::alias_ref<jni::JBoolean> /* meteringEnabled */)>("startRecorder");
+     auto __result = method(_javaPart, uri.has_value() ? jni::make_jstring(uri.value()) : nullptr, audioSets.has_value() ? JAudioSet::fromCpp(audioSets.value()) : nullptr, meteringEnabled.has_value() ? jni::JBoolean::valueOf(meteringEnabled.value()) : nullptr);
+     return [&]() {
+       auto __promise = Promise<std::string>::create();
+@@ -109,7 +116,7 @@ namespace margelo::nitro::audiorecorderplayer {
+     }();
+   }
+   std::shared_ptr<Promise<std::string>> JHybridAudioRecorderPlayerSpec::pauseRecorder() {
+-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("pauseRecorder");
++    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("pauseRecorder");
+     auto __result = method(_javaPart);
+     return [&]() {
+       auto __promise = Promise<std::string>::create();
+@@ -125,7 +132,7 @@ namespace margelo::nitro::audiorecorderplayer {
+     }();
+   }
+   std::shared_ptr<Promise<std::string>> JHybridAudioRecorderPlayerSpec::resumeRecorder() {
+-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("resumeRecorder");
++    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("resumeRecorder");
+     auto __result = method(_javaPart);
+     return [&]() {
+       auto __promise = Promise<std::string>::create();
+@@ -141,7 +148,7 @@ namespace margelo::nitro::audiorecorderplayer {
+     }();
+   }
+   std::shared_ptr<Promise<std::string>> JHybridAudioRecorderPlayerSpec::stopRecorder() {
+-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("stopRecorder");
++    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("stopRecorder");
+     auto __result = method(_javaPart);
+     return [&]() {
+       auto __promise = Promise<std::string>::create();
+@@ -157,7 +164,7 @@ namespace margelo::nitro::audiorecorderplayer {
+     }();
+   }
+   std::shared_ptr<Promise<std::string>> JHybridAudioRecorderPlayerSpec::startPlayer(const std::optional<std::string>& uri, const std::optional<std::unordered_map<std::string, std::string>>& httpHeaders) {
+-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* uri */, jni::alias_ref<jni::JMap<jni::JString, jni::JString>> /* httpHeaders */)>("startPlayer");
++    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* uri */, jni::alias_ref<jni::JMap<jni::JString, jni::JString>> /* httpHeaders */)>("startPlayer");
+     auto __result = method(_javaPart, uri.has_value() ? jni::make_jstring(uri.value()) : nullptr, httpHeaders.has_value() ? [&]() -> jni::local_ref<jni::JMap<jni::JString, jni::JString>> {
+       auto __map = jni::JHashMap<jni::JString, jni::JString>::create(httpHeaders.value().size());
+       for (const auto& __entry : httpHeaders.value()) {
+@@ -179,7 +186,7 @@ namespace margelo::nitro::audiorecorderplayer {
+     }();
+   }
+   std::shared_ptr<Promise<std::string>> JHybridAudioRecorderPlayerSpec::stopPlayer() {
+-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("stopPlayer");
++    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("stopPlayer");
+     auto __result = method(_javaPart);
+     return [&]() {
+       auto __promise = Promise<std::string>::create();
+@@ -195,7 +202,7 @@ namespace margelo::nitro::audiorecorderplayer {
+     }();
+   }
+   std::shared_ptr<Promise<std::string>> JHybridAudioRecorderPlayerSpec::pausePlayer() {
+-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("pausePlayer");
++    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("pausePlayer");
+     auto __result = method(_javaPart);
+     return [&]() {
+       auto __promise = Promise<std::string>::create();
+@@ -211,7 +218,7 @@ namespace margelo::nitro::audiorecorderplayer {
+     }();
+   }
+   std::shared_ptr<Promise<std::string>> JHybridAudioRecorderPlayerSpec::resumePlayer() {
+-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("resumePlayer");
++    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("resumePlayer");
+     auto __result = method(_javaPart);
+     return [&]() {
+       auto __promise = Promise<std::string>::create();
+@@ -227,7 +234,7 @@ namespace margelo::nitro::audiorecorderplayer {
+     }();
+   }
+   std::shared_ptr<Promise<std::string>> JHybridAudioRecorderPlayerSpec::seekToPlayer(double time) {
+-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(double /* time */)>("seekToPlayer");
++    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(double /* time */)>("seekToPlayer");
+     auto __result = method(_javaPart, time);
+     return [&]() {
+       auto __promise = Promise<std::string>::create();
+@@ -243,7 +250,7 @@ namespace margelo::nitro::audiorecorderplayer {
+     }();
+   }
+   std::shared_ptr<Promise<std::string>> JHybridAudioRecorderPlayerSpec::setVolume(double volume) {
+-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(double /* volume */)>("setVolume");
++    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(double /* volume */)>("setVolume");
+     auto __result = method(_javaPart, volume);
+     return [&]() {
+       auto __promise = Promise<std::string>::create();
+@@ -259,7 +266,7 @@ namespace margelo::nitro::audiorecorderplayer {
+     }();
+   }
+   std::shared_ptr<Promise<std::string>> JHybridAudioRecorderPlayerSpec::setPlaybackSpeed(double playbackSpeed) {
+-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(double /* playbackSpeed */)>("setPlaybackSpeed");
++    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(double /* playbackSpeed */)>("setPlaybackSpeed");
+     auto __result = method(_javaPart, playbackSpeed);
+     return [&]() {
+       auto __promise = Promise<std::string>::create();
+@@ -275,40 +282,40 @@ namespace margelo::nitro::audiorecorderplayer {
+     }();
+   }
+   void JHybridAudioRecorderPlayerSpec::setSubscriptionDuration(double sec) {
+-    static const auto method = javaClassStatic()->getMethod<void(double /* sec */)>("setSubscriptionDuration");
++    static const auto method = _javaPart->javaClassStatic()->getMethod<void(double /* sec */)>("setSubscriptionDuration");
+     method(_javaPart, sec);
+   }
+   void JHybridAudioRecorderPlayerSpec::addRecordBackListener(const std::function<void(const RecordBackType& /* recordingMeta */)>& callback) {
+-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_RecordBackType::javaobject> /* callback */)>("addRecordBackListener_cxx");
++    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_RecordBackType::javaobject> /* callback */)>("addRecordBackListener_cxx");
+     method(_javaPart, JFunc_void_RecordBackType_cxx::fromCpp(callback));
+   }
+   void JHybridAudioRecorderPlayerSpec::removeRecordBackListener() {
+-    static const auto method = javaClassStatic()->getMethod<void()>("removeRecordBackListener");
++    static const auto method = _javaPart->javaClassStatic()->getMethod<void()>("removeRecordBackListener");
+     method(_javaPart);
+   }
+   void JHybridAudioRecorderPlayerSpec::addPlayBackListener(const std::function<void(const PlayBackType& /* playbackMeta */)>& callback) {
+-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_PlayBackType::javaobject> /* callback */)>("addPlayBackListener_cxx");
++    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_PlayBackType::javaobject> /* callback */)>("addPlayBackListener_cxx");
+     method(_javaPart, JFunc_void_PlayBackType_cxx::fromCpp(callback));
+   }
+   void JHybridAudioRecorderPlayerSpec::removePlayBackListener() {
+-    static const auto method = javaClassStatic()->getMethod<void()>("removePlayBackListener");
++    static const auto method = _javaPart->javaClassStatic()->getMethod<void()>("removePlayBackListener");
+     method(_javaPart);
+   }
+   void JHybridAudioRecorderPlayerSpec::addPlaybackEndListener(const std::function<void(const PlaybackEndType& /* playbackEndMeta */)>& callback) {
+-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_PlaybackEndType::javaobject> /* callback */)>("addPlaybackEndListener_cxx");
++    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_PlaybackEndType::javaobject> /* callback */)>("addPlaybackEndListener_cxx");
+     method(_javaPart, JFunc_void_PlaybackEndType_cxx::fromCpp(callback));
+   }
+   void JHybridAudioRecorderPlayerSpec::removePlaybackEndListener() {
+-    static const auto method = javaClassStatic()->getMethod<void()>("removePlaybackEndListener");
++    static const auto method = _javaPart->javaClassStatic()->getMethod<void()>("removePlaybackEndListener");
+     method(_javaPart);
+   }
+   std::string JHybridAudioRecorderPlayerSpec::mmss(double secs) {
+-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<jni::JString>(double /* secs */)>("mmss");
++    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<jni::JString>(double /* secs */)>("mmss");
+     auto __result = method(_javaPart, secs);
+     return __result->toStdString();
+   }
+   std::string JHybridAudioRecorderPlayerSpec::mmssss(double milisecs) {
+-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<jni::JString>(double /* milisecs */)>("mmssss");
++    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<jni::JString>(double /* milisecs */)>("mmssss");
+     auto __result = method(_javaPart, milisecs);
+     return __result->toStdString();
+   }
+diff --git a/node_modules/react-native-audio-recorder-player/nitrogen/generated/android/c++/JHybridAudioRecorderPlayerSpec.hpp b/node_modules/react-native-audio-recorder-player/nitrogen/generated/android/c++/JHybridAudioRecorderPlayerSpec.hpp
+index 0f804e9..3beea77 100644
+--- a/node_modules/react-native-audio-recorder-player/nitrogen/generated/android/c++/JHybridAudioRecorderPlayerSpec.hpp
++++ b/node_modules/react-native-audio-recorder-player/nitrogen/generated/android/c++/JHybridAudioRecorderPlayerSpec.hpp
+@@ -18,32 +18,33 @@ namespace margelo::nitro::audiorecorderplayer {
+ 
+   using namespace facebook;
+ 
+-  class JHybridAudioRecorderPlayerSpec: public jni::HybridClass<JHybridAudioRecorderPlayerSpec, JHybridObject>,
+-                                        public virtual HybridAudioRecorderPlayerSpec {
++  class JHybridAudioRecorderPlayerSpec: public virtual HybridAudioRecorderPlayerSpec, public virtual JHybridObject {
+   public:
+-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/audiorecorderplayer/HybridAudioRecorderPlayerSpec;";
+-    static jni::local_ref<jhybriddata> initHybrid(jni::alias_ref<jhybridobject> jThis);
+-    static void registerNatives();
+-
+-  protected:
+-    // C++ constructor (called from Java via `initHybrid()`)
+-    explicit JHybridAudioRecorderPlayerSpec(jni::alias_ref<jhybridobject> jThis) :
+-      HybridObject(HybridAudioRecorderPlayerSpec::TAG),
+-      HybridBase(jThis),
+-      _javaPart(jni::make_global(jThis)) {}
++    struct JavaPart: public jni::JavaClass<JavaPart, JHybridObject::JavaPart> {
++      static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/audiorecorderplayer/HybridAudioRecorderPlayerSpec;";
++      std::shared_ptr<JHybridAudioRecorderPlayerSpec> getJHybridAudioRecorderPlayerSpec();
++    };
++    struct CxxPart: public jni::HybridClass<CxxPart, JHybridObject::CxxPart> {
++      static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/audiorecorderplayer/HybridAudioRecorderPlayerSpec$CxxPart;";
++      static jni::local_ref<jhybriddata> initHybrid(jni::alias_ref<jhybridobject> jThis);
++      static void registerNatives();
++      using HybridBase::HybridBase;
++    protected:
++      std::shared_ptr<JHybridObject> createHybridObject(const jni::local_ref<JHybridObject::JavaPart>& javaPart) override;
++    };
+ 
+   public:
++    explicit JHybridAudioRecorderPlayerSpec(const jni::local_ref<JHybridAudioRecorderPlayerSpec::JavaPart>& javaPart):
++      HybridObject(HybridAudioRecorderPlayerSpec::TAG),
++      JHybridObject(javaPart),
++      _javaPart(jni::make_global(javaPart)) {}
+     ~JHybridAudioRecorderPlayerSpec() override {
+       // Hermes GC can destroy JS objects on a non-JNI Thread.
+       jni::ThreadScope::WithClassLoader([&] { _javaPart.reset(); });
+     }
+ 
+   public:
+-    size_t getExternalMemorySize() noexcept override;
+-    void dispose() noexcept override;
+-
+-  public:
+-    inline const jni::global_ref<JHybridAudioRecorderPlayerSpec::javaobject>& getJavaPart() const noexcept {
++    inline const jni::global_ref<JHybridAudioRecorderPlayerSpec::JavaPart>& getJavaPart() const noexcept {
+       return _javaPart;
+     }
+ 
+@@ -75,9 +76,7 @@ namespace margelo::nitro::audiorecorderplayer {
+     std::string mmssss(double milisecs) override;
+ 
+   private:
+-    friend HybridBase;
+-    using HybridBase::HybridBase;
+-    jni::global_ref<JHybridAudioRecorderPlayerSpec::javaobject> _javaPart;
++    jni::global_ref<JHybridAudioRecorderPlayerSpec::JavaPart> _javaPart;
+   };
+ 
+ } // namespace margelo::nitro::audiorecorderplayer
+diff --git a/node_modules/react-native-audio-recorder-player/nitrogen/generated/android/kotlin/com/margelo/nitro/audiorecorderplayer/HybridAudioRecorderPlayerSpec.kt b/node_modules/react-native-audio-recorder-player/nitrogen/generated/android/kotlin/com/margelo/nitro/audiorecorderplayer/HybridAudioRecorderPlayerSpec.kt
+index 6a2bfb5..3eecdc6 100644
+--- a/node_modules/react-native-audio-recorder-player/nitrogen/generated/android/kotlin/com/margelo/nitro/audiorecorderplayer/HybridAudioRecorderPlayerSpec.kt
++++ b/node_modules/react-native-audio-recorder-player/nitrogen/generated/android/kotlin/com/margelo/nitro/audiorecorderplayer/HybridAudioRecorderPlayerSpec.kt
+@@ -8,7 +8,6 @@
+ package com.margelo.nitro.audiorecorderplayer
+ 
+ import androidx.annotation.Keep
+-import com.facebook.jni.HybridData
+ import com.facebook.proguard.annotations.DoNotStrip
+ import com.margelo.nitro.core.*
+ 
+@@ -24,18 +23,12 @@ import com.margelo.nitro.core.*
+   "LocalVariableName", "PropertyName", "PrivatePropertyName", "FunctionName"
+ )
+ abstract class HybridAudioRecorderPlayerSpec: HybridObject() {
+-  @DoNotStrip
+-  private var mHybridData: HybridData = initHybrid()
+-
+-  init {
+-    super.updateNative(mHybridData)
+-  }
+-
+-  override fun updateNative(hybridData: HybridData) {
+-    mHybridData = hybridData
+-    super.updateNative(hybridData)
+-  }
+-
++  @DoNotStrip
++  @Keep
++  protected open class CxxPart(hybridObject: HybridAudioRecorderPlayerSpec) : HybridObject.CxxPart(hybridObject)
++
++  override fun createCxxPart(): CxxPart = CxxPart(this)
++
+   // Properties
+   
+ 
+@@ -135,8 +122,6 @@ abstract class HybridAudioRecorderPlayerSpec: HybridObject() {
+   @Keep
+   abstract fun mmssss(milisecs: Double): String
+ 
+-  private external fun initHybrid(): HybridData
+-
+   companion object {
+     private const val TAG = "HybridAudioRecorderPlayerSpec"
+   }

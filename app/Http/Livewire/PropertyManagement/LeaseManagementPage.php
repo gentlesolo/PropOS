@@ -39,6 +39,11 @@ class LeaseManagementPage extends Component
     public string $legal_fee = '';
     public string $service_charge = '';
     public string $special_conditions = '';
+    public string $bank_account = '';
+
+    // Edit payment instructions on existing lease
+    public bool   $editingPaymentInstructions = false;
+    public string $edit_bank_account = '';
 
     // Record payment form
     public bool $showPaymentForm = false;
@@ -73,6 +78,7 @@ class LeaseManagementPage extends Component
             'agency_fee'         => 'nullable|numeric|min:0',
             'legal_fee'          => 'nullable|numeric|min:0',
             'service_charge'     => 'nullable|numeric|min:0',
+            'bank_account'       => 'nullable|string|max:2000',
         ]);
 
         // Convert the period-based input to the stored monthly equivalent
@@ -101,11 +107,12 @@ class LeaseManagementPage extends Component
             'legal_fee'          => $this->legal_fee ?: null,
             'service_charge'     => $this->service_charge ?: null,
             'special_conditions' => $this->special_conditions ?: null,
+            'bank_account'       => $this->bank_account ?: null,
         ]);
 
         $this->reset(['showCreateForm', 'tenant_id', 'listing_id', 'start_date', 'end_date',
             'rent_input', 'deposit_amount', 'escalation_percent', 'payment_frequency',
-            'payment_day', 'agency_fee', 'legal_fee', 'service_charge', 'special_conditions']);
+            'payment_day', 'agency_fee', 'legal_fee', 'service_charge', 'special_conditions', 'bank_account']);
         $this->dispatch('notify', message: 'Lease created with payment schedule.', type: 'success');
     }
 
@@ -171,8 +178,24 @@ class LeaseManagementPage extends Component
 
     public function selectLease(int $id): void
     {
-        $this->selectedLeaseId = $id;
-        $this->detailTab       = 'overview';
+        $this->selectedLeaseId             = $id;
+        $this->detailTab                   = 'overview';
+        $this->editingPaymentInstructions  = false;
+    }
+
+    public function openPaymentInstructionsEdit(): void
+    {
+        $lease = Lease::find($this->selectedLeaseId);
+        $this->edit_bank_account          = $lease?->bank_account ?? '';
+        $this->editingPaymentInstructions = true;
+    }
+
+    public function savePaymentInstructions(): void
+    {
+        $this->validate(['edit_bank_account' => 'nullable|string|max:2000']);
+        Lease::findOrFail($this->selectedLeaseId)->update(['bank_account' => $this->edit_bank_account ?: null]);
+        $this->editingPaymentInstructions = false;
+        $this->dispatch('notify', message: 'Payment instructions updated.', type: 'success');
     }
 
     public function render()

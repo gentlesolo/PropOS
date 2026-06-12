@@ -204,6 +204,13 @@
                     class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-brand-primary/50"></textarea>
             </div>
 
+            <div class="md:col-span-2">
+                <label class="block text-xs font-medium text-text-secondary mb-1">Payment Instructions</label>
+                <textarea wire:model="bank_account" rows="3" placeholder="e.g. Bank: FNB&#10;Account No: 1234567890&#10;Branch Code: 250655&#10;Reference: Use your lease reference"
+                    class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary font-mono focus:outline-none focus:border-brand-primary/50"></textarea>
+                <p class="text-xs text-text-tertiary mt-1">Bank account details shown to the tenant on their portal.</p>
+            </div>
+
             <div class="md:col-span-2 flex gap-3 pt-1">
                 <button type="submit" wire:loading.attr="disabled"
                     class="px-5 py-2 bg-brand-primary text-white rounded-xl text-sm font-semibold hover:bg-brand-secondary transition-colors disabled:opacity-60">
@@ -553,6 +560,42 @@
                 <p class="text-sm text-text-primary">{{ $selectedLease->special_conditions }}</p>
             </div>
             @endif
+
+            {{-- Payment Instructions --}}
+            <div class="mb-5">
+                <div class="flex items-center justify-between mb-2">
+                    <p class="text-xs font-semibold text-text-secondary uppercase tracking-wide">Payment Instructions</p>
+                    @if(!$editingPaymentInstructions)
+                    <button wire:click="openPaymentInstructionsEdit"
+                        class="text-[10px] font-semibold text-brand-primary hover:underline">
+                        {{ $selectedLease->bank_account ? 'Edit' : 'Add' }}
+                    </button>
+                    @endif
+                </div>
+                @if($editingPaymentInstructions)
+                <div>
+                    <textarea wire:model="edit_bank_account" rows="4"
+                        placeholder="e.g. Bank: FNB&#10;Account No: 1234567890&#10;Branch Code: 250655&#10;Reference: Use your lease reference"
+                        class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-xs text-text-primary font-mono focus:outline-none focus:border-brand-primary/50"></textarea>
+                    <div class="flex gap-2 mt-2">
+                        <button wire:click="savePaymentInstructions"
+                            class="px-3 py-1.5 bg-brand-primary text-white rounded-lg text-xs font-semibold hover:opacity-90 transition-opacity">
+                            Save
+                        </button>
+                        <button wire:click="$set('editingPaymentInstructions', false)"
+                            class="px-3 py-1.5 border border-border-default rounded-lg text-xs text-text-secondary hover:bg-surface-raised transition-colors">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+                @elseif($selectedLease->bank_account)
+                <div class="p-3 bg-surface-raised/40 rounded-xl border border-border-default">
+                    <p class="text-xs text-text-primary font-mono leading-relaxed whitespace-pre-wrap">{{ $selectedLease->bank_account }}</p>
+                </div>
+                @else
+                <p class="text-xs text-text-tertiary italic">No payment instructions set. Click Add to provide bank details for the tenant.</p>
+                @endif
+            </div>
 
             {{-- Quick actions --}}
             @if(in_array($selectedLease->status, ['active','renewed']))

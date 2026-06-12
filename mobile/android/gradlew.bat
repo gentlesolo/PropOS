@@ -31,6 +31,10 @@
 @rem Set local scope for the variables with windows NT shell
 if "%OS%"=="Windows_NT" setlocal
 
+@rem Clear JAVA_TOOL_OPTIONS to prevent '-Dstdout.encoding' from triggering
+@rem Gradle 9.x restricted-method errors in CMake configure tasks (CXX5101).
+set JAVA_TOOL_OPTIONS=
+
 set DIRNAME=%~dp0
 if "%DIRNAME%"=="" set DIRNAME=.
 @rem This is normally unused

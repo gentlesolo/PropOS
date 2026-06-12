@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "452596308117",
+    "project_id": "sowlorequisition",
+    "storage_bucket": "sowlorequisition.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:452596308117:android:38bc0de6c17a3f8df5a39c",
+        "android_client_info": {
+          "package_name": "com.proposmobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBc6XzKOxDe3TCESnkEKhI7d5ms8TIwipM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
