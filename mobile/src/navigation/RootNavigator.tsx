@@ -4,8 +4,10 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {useAuthStore} from '../store/authStore';
 import {TabNavigator} from './TabNavigator';
 import {LoginScreen} from '../screens/auth/LoginScreen';
+import {OnboardingScreen} from '../screens/auth/OnboardingScreen';
 
 export type RootStackParamList = {
+  Onboarding: undefined;
   Auth: undefined;
   Main: undefined;
   // Deep-link targets reachable from notifications
@@ -20,7 +22,7 @@ interface Props {
 }
 
 export function RootNavigator({navigationRef}: Props) {
-  const {isAuthenticated, hydrate} = useAuthStore();
+  const {isAuthenticated, hasSeenOnboarding, hydrate} = useAuthStore();
 
   useEffect(() => {
     hydrate();
@@ -31,6 +33,8 @@ export function RootNavigator({navigationRef}: Props) {
       <Stack.Navigator screenOptions={{headerShown: false}}>
         {isAuthenticated ? (
           <Stack.Screen name="Main" component={TabNavigator} />
+        ) : !hasSeenOnboarding ? (
+          <Stack.Screen name="Onboarding" component={OnboardingScreen} />
         ) : (
           <Stack.Screen name="Auth" component={LoginScreen} />
         )}

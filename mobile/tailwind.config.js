@@ -19,9 +19,29 @@ module.exports = {
           950: '#022c22',
         },
         surface: {
-          DEFAULT: '#0f172a',
-          card:    '#1e293b',
-          input:   '#334155',
+          DEFAULT: '#030712',
+          page:    '#030712',
+          card:    '#090d16',
+          raised:  '#111827',
+          input:   '#111827',
+        },
+        text: {
+          primary:   '#FAFAFA',
+          secondary: '#A1A1AA',
+          tertiary:  '#71717A',
+        },
+        accent: {
+          DEFAULT: '#F59E0B',
+          amber:   '#F59E0B',
+        },
+        danger: {
+          DEFAULT: '#F43F5E',
+        },
+        success: {
+          DEFAULT: '#22C55E',
+        },
+        info: {
+          DEFAULT: '#0EA5E9',
         },
       },
     },

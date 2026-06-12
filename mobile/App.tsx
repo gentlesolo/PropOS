@@ -8,6 +8,7 @@ import {notificationService} from './src/services/notificationService';
 import {twilioService} from './src/services/twilioService';
 import {sentryService} from './src/services/sentryService';
 import {ErrorBoundary} from './src/components/ErrorBoundary';
+import {BiometricUnlockScreen} from './src/screens/auth/BiometricUnlockScreen';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -19,8 +20,9 @@ const queryClient = new QueryClient({
 export const navigationRef = React.createRef<NavigationContainerRef<any>>();
 
 function AppInner() {
-  const {isAuthenticated} = useAuthStore();
+  const {isAuthenticated, isLocked} = useAuthStore();
   const appState = useRef(AppState.currentState);
+  const backgroundTimeRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -35,6 +37,8 @@ function AppInner() {
     twilioService.init().then(voice => {
       if (voice) inboundCallService.setup(voice);
     }).catch(console.warn);
+
+    appState.current = AppState.currentState;
 
     inboundCallService.setupAndroidInboundHandler();
 
@@ -63,20 +67,36 @@ function AppInner() {
     return () => unsub();
   }, [isAuthenticated]);
 
-  // Invalidate stale data when the app returns to foreground
+  // Invalidate stale data and trigger lock check when the app returns to foreground
   useEffect(() => {
     const sub = AppState.addEventListener('change', (next: AppStateStatus) => {
-      if (appState.current.match(/inactive|background/) && next === 'active') {
+      if (next.match(/inactive|background/)) {
+        backgroundTimeRef.current = Date.now();
+      } else if (appState.current.match(/inactive|background/) && next === 'active') {
         queryClient.invalidateQueries({queryKey: ['tasks', 'today']});
         queryClient.invalidateQueries({queryKey: ['viewings', 'today']});
         queryClient.invalidateQueries({queryKey: ['inbox']});
+
+        // Trigger lock if backgrounded for more than 5 minutes
+        if (backgroundTimeRef.current) {
+          const timeElapsed = Date.now() - backgroundTimeRef.current;
+          if (timeElapsed >= 5 * 60 * 1000) {
+            useAuthStore.getState().setLocked(true);
+          }
+          backgroundTimeRef.current = null;
+        }
       }
       appState.current = next;
     });
     return () => sub.remove();
   }, []);
 
-  return <RootNavigator navigationRef={navigationRef} />;
+  return (
+    <>
+      <RootNavigator navigationRef={navigationRef} />
+      {isAuthenticated && isLocked && <BiometricUnlockScreen />}
+    </>
+  );
 }
 
 export default function App() {

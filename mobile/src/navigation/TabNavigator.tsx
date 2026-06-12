@@ -1,6 +1,7 @@
 import React from 'react';
 import {Text, View} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import Icon from 'react-native-vector-icons/Feather';
 import {HomeScreen} from '../screens/home/HomeScreen';
 import {ContactsStack} from './stacks/ContactsStack';
 import {CallsStack} from './stacks/CallsStack';
@@ -30,11 +31,15 @@ export type TabParamList = {
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
-function TabIcon({emoji, focused}: {emoji: string; focused: boolean}) {
+function TabIcon({name, focused}: {name: string; focused: boolean}) {
   return (
-    <Text style={{fontSize: focused ? 22 : 20, opacity: focused ? 1 : 0.5}}>
-      {emoji}
-    </Text>
+    <View className="items-center justify-center pt-1">
+      <Icon 
+        name={name} 
+        size={22} 
+        color={focused ? '#10b981' : '#94a3b8'} 
+      />
+    </View>
   );
 }
 
@@ -54,21 +59,26 @@ export function TabNavigator() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: '#1e293b',
-          borderTopColor: '#334155',
+          backgroundColor: '#ffffff',
+          borderTopColor: '#f1f5f9',
           height: 60,
           paddingBottom: 8,
+          shadowColor: '#000',
+          shadowOffset: {width: 0, height: -2},
+          shadowOpacity: 0.05,
+          shadowRadius: 4,
+          elevation: 5,
         },
-        tabBarActiveTintColor: '#3b82f6',
-        tabBarInactiveTintColor: '#64748b',
-        tabBarLabelStyle: {fontSize: 10, fontWeight: '600'},
+        tabBarActiveTintColor: '#10b981',
+        tabBarInactiveTintColor: '#94a3b8',
+        tabBarLabelStyle: {fontSize: 10, fontWeight: '700', marginTop: 4},
       }}>
       <Tab.Screen
         name="Home"
         component={HomeScreen}
         options={{
           tabBarLabel: 'Home',
-          tabBarIcon: ({focused}) => <TabIcon emoji="🏠" focused={focused} />,
+          tabBarIcon: ({focused}) => <TabIcon name="home" focused={focused} />,
         }}
       />
       <Tab.Screen
@@ -76,7 +86,7 @@ export function TabNavigator() {
         component={ContactsStack}
         options={{
           tabBarLabel: 'Contacts',
-          tabBarIcon: ({focused}) => <TabIcon emoji="👥" focused={focused} />,
+          tabBarIcon: ({focused}) => <TabIcon name="users" focused={focused} />,
         }}
       />
       <Tab.Screen
@@ -84,7 +94,7 @@ export function TabNavigator() {
         component={MessagingStack}
         options={{
           tabBarLabel: 'Messages',
-          tabBarIcon: ({focused}) => <TabIcon emoji="💬" focused={focused} />,
+          tabBarIcon: ({focused}) => <TabIcon name="message-square" focused={focused} />,
         }}
       />
       <Tab.Screen
@@ -92,7 +102,7 @@ export function TabNavigator() {
         component={CallsStack}
         options={{
           tabBarLabel: 'Calls',
-          tabBarIcon: ({focused}) => <TabIcon emoji="📞" focused={focused} />,
+          tabBarIcon: ({focused}) => <TabIcon name="phone-call" focused={focused} />,
         }}
       />
       <Tab.Screen
@@ -100,7 +110,7 @@ export function TabNavigator() {
         component={TasksScreen}
         options={{
           tabBarLabel: 'Tasks',
-          tabBarIcon: ({focused}) => <TabIcon emoji="✅" focused={focused} />,
+          tabBarIcon: ({focused}) => <TabIcon name="check-square" focused={focused} />,
         }}
       />
       <Tab.Screen
@@ -108,7 +118,7 @@ export function TabNavigator() {
         component={ViewingsStack}
         options={{
           tabBarLabel: 'Viewings',
-          tabBarIcon: ({focused}) => <TabIcon emoji="🏡" focused={focused} />,
+          tabBarIcon: ({focused}) => <TabIcon name="calendar" focused={focused} />,
         }}
       />
       <Tab.Screen
@@ -116,7 +126,7 @@ export function TabNavigator() {
         component={TenantsStack}
         options={{
           tabBarLabel: 'Tenants',
-          tabBarIcon: ({focused}) => <TabIcon emoji="🏘️" focused={focused} />,
+          tabBarIcon: ({focused}) => <TabIcon name="key" focused={focused} />,
         }}
       />
       <Tab.Screen
@@ -124,7 +134,7 @@ export function TabNavigator() {
         component={FinanceStack}
         options={{
           tabBarLabel: 'Finance',
-          tabBarIcon: ({focused}) => <TabIcon emoji="💰" focused={focused} />,
+          tabBarIcon: ({focused}) => <TabIcon name="dollar-sign" focused={focused} />,
         }}
       />
       <Tab.Screen
@@ -132,9 +142,9 @@ export function TabNavigator() {
         component={IntelligenceStack}
         options={{
           tabBarLabel: 'Intel',
-          tabBarIcon: ({focused}) => <TabIcon emoji="📊" focused={focused} />,
+          tabBarIcon: ({focused}) => <TabIcon name="bar-chart-2" focused={focused} />,
           tabBarStyle: isManager
-            ? {backgroundColor: '#1e293b', borderTopColor: '#334155', height: 60, paddingBottom: 8}
+            ? {backgroundColor: '#ffffff', borderTopColor: '#f1f5f9', height: 60, paddingBottom: 8}
             : {display: 'none'},
         }}
       />
@@ -143,7 +153,7 @@ export function TabNavigator() {
         component={ProfileScreen}
         options={{
           tabBarLabel: 'Profile',
-          tabBarIcon: ({focused}) => <TabIcon emoji="👤" focused={focused} />,
+          tabBarIcon: ({focused}) => <TabIcon name="user" focused={focused} />,
         }}
       />
     </Tab.Navigator>

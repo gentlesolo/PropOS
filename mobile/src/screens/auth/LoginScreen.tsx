@@ -1,6 +1,5 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
-  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -9,128 +8,257 @@ import {
   View,
   ActivityIndicator,
   SafeAreaView,
+  Animated,
+  ScrollView,
 } from 'react-native';
 import {useMutation} from '@tanstack/react-query';
-import ReactNativeBiometrics from 'react-native-biometrics';
+import Icon from 'react-native-vector-icons/Feather';
 import * as Keychain from 'react-native-keychain';
 import {authApi} from '../../api/auth';
 import {useAuthStore} from '../../store/authStore';
-
-const rnb = new ReactNativeBiometrics();
+import {apiClient} from '../../api/client';
 
 export function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [emailFocused, setEmailFocused] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
+  const [localError, setLocalError] = useState('');
+
   const {setAuth} = useAuthStore();
+
+  // Animation values
+  const glowOpacity = useRef(new Animated.Value(0.12)).current;
+  const formShake = useRef(new Animated.Value(0)).current;
+
+  // Slowly pulse the background glow
+  useEffect(() => {
+    const pulse = Animated.loop(
+      Animated.sequence([
+        Animated.timing(glowOpacity, {
+          toValue: 0.28,
+          duration: 3500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(glowOpacity, {
+          toValue: 0.12,
+          duration: 3500,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    pulse.start();
+    return () => pulse.stop();
+  }, []);
+
+  const triggerFormShake = () => {
+    Animated.sequence([
+      Animated.timing(formShake, {toValue: -12, duration: 50, useNativeDriver: true}),
+      Animated.timing(formShake, {toValue: 12, duration: 100, useNativeDriver: true}),
+      Animated.timing(formShake, {toValue: -8, duration: 100, useNativeDriver: true}),
+      Animated.timing(formShake, {toValue: 8, duration: 100, useNativeDriver: true}),
+      Animated.timing(formShake, {toValue: 0, duration: 50, useNativeDriver: true}),
+    ]).start();
+  };
 
   const login = useMutation({
     mutationFn: () =>
       authApi.login({
         email: email.trim().toLowerCase(),
         password,
-        device_name: 'VillaCRMMobile',
+        device_name: 'PropOSMobile',
         platform: Platform.OS as 'ios' | 'android',
       }),
     onSuccess: async ({data}) => {
-      // Store credentials for biometric re-auth
-      await Keychain.setGenericPassword(email, password, {
+      // Store credentials securely for biometric unlock re-auth
+      await Keychain.setGenericPassword(email.trim().toLowerCase(), password, {
         service: 'villacrm_credentials',
       });
       setAuth(data.token, data.user);
     },
-    onError: () => {
-      Alert.alert('Login failed', 'Check your email and password and try again.');
+    onError: (err: any) => {
+      triggerFormShake();
+      const message = err.response?.data?.message || 'Login failed. Please verify your credentials.';
+      setLocalError(message);
     },
   });
 
-  const handleBiometricLogin = async () => {
-    const {available} = await rnb.isSensorAvailable();
-    if (!available) {
-      Alert.alert('Biometrics unavailable', 'Please log in with your email and password.');
+  const handleSignIn = () => {
+    setLocalError('');
+    if (!email.trim()) {
+      setLocalError('Email address is required.');
+      triggerFormShake();
       return;
     }
-
-    const credentials = await Keychain.getGenericPassword({service: 'villacrm_credentials'});
-    if (!credentials) {
-      Alert.alert('No saved credentials', 'Please log in with your email and password first.');
+    if (!password) {
+      setLocalError('Password is required.');
+      triggerFormShake();
       return;
     }
+    login.mutate();
+  };
 
-    const {success} = await rnb.simplePrompt({
-      promptMessage: 'Authenticate to access VillaCRM',
-    });
-
-    if (success) {
-      setEmail(credentials.username);
-      setPassword(credentials.password);
-      login.mutate();
+  // Get Tenant/Agency Name from Subdomain
+  const getAgencyName = () => {
+    const baseUrl = apiClient.defaults.baseURL || '';
+    if (baseUrl.includes('localhost') || baseUrl.includes('127.0.0.1') || baseUrl.match(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/)) {
+      return 'Dev Agency';
     }
+    const match = baseUrl.match(/https?:\/\/([^/:]+)/);
+    if (match && match[1]) {
+      const parts = match[1].split('.');
+      if (parts.length > 2) {
+        const sub = parts[0];
+        return sub.charAt(0).toUpperCase() + sub.slice(1);
+      }
+    }
+    return 'PropOS HQ';
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-brand-600">
+    <SafeAreaView className="flex-1 bg-surface-page">
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        className="flex-1 justify-center px-6">
-        
-        {/* Decorative Background Elements */}
-        <View className="absolute -top-32 -left-32 w-96 h-96 bg-brand-500 rounded-full opacity-50 blur-3xl" />
-        <View className="absolute -bottom-32 -right-32 w-96 h-96 bg-brand-700 rounded-full opacity-50 blur-3xl" />
-
-        <View className="mb-10 mt-8">
-          <Text className="text-white text-5xl font-extrabold tracking-tight">VillaCRM</Text>
-          <Text className="text-brand-100 text-lg mt-2 font-medium opacity-90">Agent Field App</Text>
-        </View>
-
-        <View className="bg-white rounded-3xl p-6 shadow-2xl shadow-brand-900/50 gap-5">
-          <View>
-            <Text className="text-slate-700 text-sm font-bold mb-2 ml-1">Email Address</Text>
-            <TextInput
-              className="bg-slate-50 text-slate-900 rounded-2xl px-5 py-4 text-base border border-slate-200 focus:border-brand-500 focus:bg-white"
-              placeholder="agent@villacrm.com"
-              placeholderTextColor="#94a3b8"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              value={email}
-              onChangeText={setEmail}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        className="flex-1"
+      >
+        <ScrollView
+          className="flex-1"
+          contentContainerClassName="flex-grow justify-between px-6 pt-10 pb-6"
+          keyboardShouldPersistTaps="handled"
+        >
+          {/* Top Third: Brand Wordmark with subtle Pulsing Glow */}
+          <View className="items-center justify-center pt-8 relative min-h-[160px]">
+            {/* Pulsing Emerald Glow */}
+            <Animated.View
+              style={{opacity: glowOpacity}}
+              className="absolute w-48 h-48 bg-brand-500 rounded-full blur-[48px]"
             />
+            <Text className="text-text-primary text-5xl font-black tracking-tight z-10 text-center">
+              PropOS
+            </Text>
+            <Text className="text-brand-500 font-mono text-xs uppercase tracking-widest font-bold mt-1 z-10">
+              Agent Field Companion
+            </Text>
           </View>
 
-          <View>
-            <Text className="text-slate-700 text-sm font-bold mb-2 ml-1">Password</Text>
-            <TextInput
-              className="bg-slate-50 text-slate-900 rounded-2xl px-5 py-4 text-base border border-slate-200 focus:border-brand-500 focus:bg-white"
-              placeholder="••••••••"
-              placeholderTextColor="#94a3b8"
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-            />
+          {/* Middle: Inputs Form Container with Shake Animation */}
+          <Animated.View
+            style={{transform: [{translateX: formShake}]}}
+            className="w-full gap-5 my-auto justify-center"
+          >
+            {/* Email Input */}
+            <View className="gap-2">
+              <Text className="text-text-secondary text-sm font-bold ml-1">Email Address</Text>
+              <TextInput
+                className="w-full bg-surface-input text-text-primary px-5 rounded-[10px] text-base border"
+                style={{
+                  height: 52,
+                  borderColor: emailFocused ? '#10B981' : '#27272a',
+                  shadowColor: emailFocused ? '#10B981' : 'transparent',
+                  shadowOpacity: emailFocused ? 0.15 : 0,
+                  shadowRadius: 8,
+                  shadowOffset: {width: 0, height: 0},
+                }}
+                placeholder="agent@propos.com"
+                placeholderTextColor="#71717A"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+                value={email}
+                onChangeText={setEmail}
+                onFocus={() => {
+                  setEmailFocused(true);
+                  setLocalError('');
+                }}
+                onBlur={() => setEmailFocused(false)}
+              />
+            </View>
+
+            {/* Password Input */}
+            <View className="gap-2">
+              <Text className="text-text-secondary text-sm font-bold ml-1">Password</Text>
+              <View className="relative justify-center">
+                <TextInput
+                  className="w-full bg-surface-input text-text-primary pl-5 pr-14 rounded-[10px] text-base border"
+                  style={{
+                    height: 52,
+                    borderColor: passwordFocused ? '#10B981' : '#27272a',
+                    shadowColor: passwordFocused ? '#10B981' : 'transparent',
+                    shadowOpacity: passwordFocused ? 0.15 : 0,
+                    shadowRadius: 8,
+                    shadowOffset: {width: 0, height: 0},
+                  }}
+                  placeholder="••••••••"
+                  placeholderTextColor="#71717A"
+                  secureTextEntry={!showPassword}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  value={password}
+                  onChangeText={setPassword}
+                  onFocus={() => {
+                    setPasswordFocused(true);
+                    setLocalError('');
+                  }}
+                  onBlur={() => setPasswordFocused(false)}
+                  onSubmitEditing={handleSignIn}
+                />
+                <Pressable
+                  onPress={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 h-full justify-center px-1 active:opacity-70"
+                  hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+                >
+                  <Icon
+                    name={showPassword ? 'eye-off' : 'eye'}
+                    size={20}
+                    color="#A1A1AA"
+                  />
+                </Pressable>
+              </View>
+            </View>
+
+            {/* Inline Error Message */}
+            {localError ? (
+              <View className="flex-row items-center gap-2 mt-1 px-1">
+                <Icon name="alert-circle" size={16} color="#F43F5E" />
+                <Text className="text-danger text-sm font-semibold flex-1">
+                  {localError}
+                </Text>
+              </View>
+            ) : null}
+          </Animated.View>
+
+          {/* Bottom third: CTA and Tenant details */}
+          <View className="w-full gap-5 mt-auto pt-8">
+            {/* Sign In Button */}
+            <Pressable
+              onPress={handleSignIn}
+              disabled={login.isPending}
+              className="w-full bg-brand-500 rounded-[10px] h-[52px] items-center justify-center shadow-lg shadow-brand-500/25 active:bg-brand-600"
+            >
+              {login.isPending ? (
+                <View className="flex-row items-center justify-center gap-2">
+                  <ActivityIndicator color="#FAFAFA" size="small" />
+                  <Text className="text-text-primary font-bold text-lg">Signing in...</Text>
+                </View>
+              ) : (
+                <Text className="text-text-primary font-bold text-lg">Sign In</Text>
+              )}
+            </Pressable>
+
+            {/* Forgot password */}
+            <Pressable className="items-center py-2 active:opacity-75">
+              <Text className="text-accent font-bold text-sm">Forgot password?</Text>
+            </Pressable>
+
+            {/* Agency tenant details */}
+            <View className="items-center mt-2">
+              <Text className="text-text-tertiary text-xs font-semibold">
+                Agency: <Text className="text-text-secondary">{getAgencyName()}</Text>
+              </Text>
+            </View>
           </View>
-
-          <Pressable
-            className="bg-brand-600 rounded-2xl py-4 items-center mt-4 shadow-lg shadow-brand-500/30 active:bg-brand-700"
-            onPress={() => login.mutate()}
-            disabled={login.isPending}>
-            {login.isPending ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text className="text-white font-bold text-lg tracking-wide">Sign In</Text>
-            )}
-          </Pressable>
-
-          <View className="flex-row items-center my-2">
-            <View className="flex-1 h-px bg-slate-200" />
-            <Text className="text-slate-400 px-4 text-sm font-bold">OR</Text>
-            <View className="flex-1 h-px bg-slate-200" />
-          </View>
-
-          <Pressable
-            className="rounded-2xl py-4 items-center bg-white border border-slate-200 active:bg-slate-50"
-            onPress={handleBiometricLogin}>
-            <Text className="text-brand-600 font-bold text-base">Use Face ID / Fingerprint</Text>
-          </Pressable>
-        </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
