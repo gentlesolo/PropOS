@@ -126,7 +126,7 @@ function TaskRowItem({
       </View>
 
       {/* Swipe left: snooze */}
-      <View style={{position: 'absolute', right: 0, top: 0, bottom: 0, width: 80, backgroundColor: '#F59E0B', alignItems: 'center', justifyContent: 'center', zIndex: 0, borderRadius: 16}}>
+      <View style={{position: 'absolute', right: 0, top: 0, bottom: 0, width: 80, backgroundColor: tokens.brandAccent, alignItems: 'center', justifyContent: 'center', zIndex: 0, borderRadius: 16}}>
         <Pressable
           onPress={() => { snap(0); onSnooze(); }}
           style={{width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}
@@ -460,7 +460,7 @@ export function TasksScreen() {
               <View style={{width: 64, height: 64, backgroundColor: `${tokens.brandPrimary}1A`, borderWidth: 1, borderColor: `${tokens.brandPrimary}33`, borderRadius: 32, alignItems: 'center', justifyContent: 'center', marginBottom: 16}}>
                 <Icon name="check-circle" size={24} color={tokens.brandPrimary} />
               </View>
-              <Text style={{color: tokens.textPrimary, fontSize: 16, fontWeight: '700', marginBottom: 6, textAlign: 'center'}}>Nothing left for today ✦</Text>
+              <Text style={{color: tokens.textPrimary, fontSize: 16, fontWeight: '700', marginBottom: 6, textAlign: 'center'}}>Nothing left for today</Text>
               <Text style={{color: tokens.textSecondary, fontSize: 12, textAlign: 'center', lineHeight: 16, maxWidth: 240}}>
                 You've completed all active tasks. Enjoy the clean slate!
               </Text>
@@ -533,7 +533,7 @@ export function TasksScreen() {
             )}
 
             <Text style={{color: tokens.textTertiary, fontSize: 10, marginTop: 8, fontWeight: '500'}}>
-              💡 Hint: Try typing "Call {contacts?.data?.[0]?.first_name || 'Sarah'} tomorrow 2pm"
+              Hint: Try typing "Call {contacts?.data?.[0]?.first_name || 'Sarah'} tomorrow 2pm"
             </Text>
 
             <View style={{flexDirection: 'row', gap: 12, marginTop: 24}}>
@@ -598,7 +598,7 @@ export function TasksScreen() {
                   )}
                   {selectedTask.source === 'call_summary' && (
                     <View style={{paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, borderWidth: 1, backgroundColor: tokens.surfaceRaised, borderColor: tokens.borderDefault, flexDirection: 'row', alignItems: 'center', gap: 4}}>
-                      <Icon name="home" size={12} color="#F59E0B" />
+                      <Icon name="home" size={12} color={tokens.brandAccent} />
                       <Text style={{fontSize: 12, color: tokens.textPrimary}}>Lekki Phase 1 Property</Text>
                     </View>
                   )}
@@ -658,7 +658,7 @@ export function TasksScreen() {
                   onPress={() => handleSnoozeCommit(opt.value)}
                   style={{flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16, borderRadius: 12, borderWidth: 1, backgroundColor: tokens.surfaceRaised, borderColor: tokens.borderDefault}}
                 >
-                  <Icon name={opt.icon} size={16} color="#F59E0B" />
+                  <Icon name={opt.icon} size={16} color={tokens.brandAccent} />
                   <Text style={{fontWeight: '700', fontSize: 14, color: tokens.textPrimary}}>{opt.label}</Text>
                 </Pressable>
               ))}

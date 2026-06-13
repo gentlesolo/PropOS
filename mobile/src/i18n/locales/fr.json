@@ -79,11 +79,11 @@
     "searchPlaceholder": "Rechercher des conversations…",
     "noConversations": "Aucune conversation",
     "typePlaceholder": "Écrire un message…",
-    "suggest": "✨ Suggérer",
-    "aiSuggestion": "✨ Suggestion IA",
+    "suggest": "Suggérer",
+    "aiSuggestion": "Suggestion IA",
     "useThis": "Utiliser cette réécriture",
     "useSuggestion": "Utiliser la suggestion",
-    "coach": "🎯 Coach Message",
+    "coach": "Coach Message",
     "sendFailed": "Échec de l'envoi. Veuillez réessayer."
   },
   "tasks": {
@@ -96,7 +96,7 @@
   },
   "viewings": {
     "title": "Visites",
-    "checkIn": "📍 Arrivée",
+    "checkIn": "Arrivée",
     "complete": "Terminer la visite",
     "howDidItGo": "Comment s'est passée la visite ?",
     "notesPlaceholder": "Notes (facultatif)…",

@@ -87,9 +87,9 @@ function ControlButton({icon, label, active, onPress}: ControlButtonProps) {
           transform: [{scale: pressed ? 0.95 : 1}],
         }]}
       >
-        <Icon name={icon} size={22} color={active ? '#FAFAFA' : tokens.textSecondary} />
+        <Icon name={icon} size={22} color={active ? tokens.brandPrimaryFg : tokens.textSecondary} />
       </Pressable>
-      <Text style={{color: '#A1A1AA', fontSize: 10, fontWeight: '700', letterSpacing: 1, marginTop: 6, textTransform: 'uppercase'}}>
+      <Text style={{color: tokens.textSecondary, fontSize: 10, fontWeight: '700', letterSpacing: 1, marginTop: 6, textTransform: 'uppercase'}}>
         {label}
       </Text>
     </View>
@@ -102,6 +102,7 @@ export function InCallScreen() {
   const insets = useSafeAreaInsets();
   const {phoneNumber, contactId, callSid: initialSid} = route.params;
 
+  const {tokens} = useTheme();
   const {activeCallState, isMuted, isSpeaker, startTime} = useCallStore();
 
   const [elapsed, setElapsed] = useState(0);
@@ -344,7 +345,7 @@ export function InCallScreen() {
     return (
       <View className="flex-1 bg-surface relative justify-center items-center px-8">
         <View className="w-20 h-20 rounded-full bg-danger/10 border border-danger/20 items-center justify-center mb-6">
-          <Icon name="phone-off" size={36} color="#F43F5E" />
+          <Icon name="phone-off" size={36} color={tokens.dangerText} />
         </View>
         <Text className="text-white text-2xl font-bold mb-2">Call Failed</Text>
         <Text className="text-text-secondary text-sm text-center mb-8">
@@ -459,7 +460,7 @@ export function InCallScreen() {
             <View className="flex-row justify-between items-center mb-3 border-b border-slate-800/50 pb-2">
               <Text className="text-text-secondary text-[10px] font-bold uppercase tracking-wider">Live Transcript</Text>
               <View className="bg-brand-500/10 border border-brand-500/20 px-2 py-0.5 rounded-full">
-                <Text className="text-brand-500 text-[8px] font-bold uppercase tracking-wide">✦ Live AI</Text>
+                <Text className="text-brand-500 text-[8px] font-bold uppercase tracking-wide">Live AI</Text>
               </View>
             </View>
             <ScrollView
@@ -493,7 +494,7 @@ export function InCallScreen() {
               </Text>
               {contextData.isAI && (
                 <View className="bg-brand-500/10 border border-brand-500/20 px-2 py-0.5 rounded-full">
-                  <Text className="text-brand-500 text-[8px] font-bold uppercase tracking-wide">✦ AI</Text>
+                  <Text className="text-brand-500 text-[8px] font-bold uppercase tracking-wide">AI</Text>
                 </View>
               )}
             </View>
@@ -529,7 +530,7 @@ export function InCallScreen() {
             ]}
             className="w-16 h-16 rounded-full bg-danger items-center justify-center shadow-lg"
           >
-            <Icon name="phone-off" size={24} color="#FAFAFA" style={{ transform: [{ rotate: '135deg' }] }} />
+            <Icon name="phone-off" size={24} color={tokens.brandPrimaryFg} style={{ transform: [{ rotate: '135deg' }] }} />
           </Pressable>
         </View>
       </View>
@@ -562,7 +563,7 @@ export function InCallScreen() {
                       onPress={stopVoiceRecording}
                       className="w-12 h-12 rounded-full bg-danger items-center justify-center"
                     >
-                      <Icon name="square" size={18} color="#FAFAFA" />
+                      <Icon name="square" size={18} color={tokens.brandPrimaryFg} />
                     </Pressable>
                   </Animated.View>
                   <Text className="text-danger font-mono text-sm mb-1">
@@ -577,7 +578,7 @@ export function InCallScreen() {
                     className="w-14 h-14 rounded-full bg-brand-500 items-center justify-center mb-3 shadow"
                     style={({pressed}) => [{transform: [{scale: pressed ? 0.95 : 1}]}]}
                   >
-                    <Icon name="mic" size={22} color="#FAFAFA" />
+                    <Icon name="mic" size={22} color={tokens.brandPrimaryFg} />
                   </Pressable>
                   <Text className="text-white text-xs font-semibold mb-1">Record Voice Note</Text>
                   <Text className="text-text-tertiary text-[9px] uppercase tracking-wider">

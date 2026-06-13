@@ -79,11 +79,11 @@
     "searchPlaceholder": "Search conversations…",
     "noConversations": "No conversations yet",
     "typePlaceholder": "Type a message…",
-    "suggest": "✨ Suggest",
-    "aiSuggestion": "✨ AI Suggestion",
+    "suggest": "Suggest",
+    "aiSuggestion": "AI Suggestion",
     "useThis": "Use this rewrite",
     "useSuggestion": "Use suggestion",
-    "coach": "🎯 Message Coach",
+    "coach": "Message Coach",
     "sendFailed": "Failed to send. Please try again."
   },
   "tasks": {
@@ -96,7 +96,7 @@
   },
   "viewings": {
     "title": "Viewings",
-    "checkIn": "📍 Check In",
+    "checkIn": "Check In",
     "complete": "Complete Viewing",
     "howDidItGo": "How did it go?",
     "notesPlaceholder": "Notes (optional)…",

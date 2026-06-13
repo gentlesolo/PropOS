@@ -1,237 +1,662 @@
-import React, {useState} from 'react';
-import {ActivityIndicator, FlatList, Pressable, ScrollView, Text, View} from 'react-native';
+import React, {useState, useEffect, useRef} from 'react';
+import {
+  ActivityIndicator,
+  Animated,
+  Dimensions,
+  Image,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+  Vibration,
+} from 'react-native';
 import {useQuery} from '@tanstack/react-query';
-import {benchmarkApi, BenchmarkData, LeaderboardEntry} from '../../api/benchmark';
+import Icon from 'react-native-vector-icons/Feather';
+import {useTheme} from '../../theme/ThemeProvider';
+import {useAuthStore} from '../../store/authStore';
+import {managerApi, BenchmarkAgent, TeamBenchmarkResponse} from '../../api/manager';
 
-function formatDuration(secs: number): string {
-  const m = Math.floor(secs / 60);
-  const s = secs % 60;
-  return m > 0 ? `${m}m ${s}s` : `${s}s`;
+const {width: SCREEN_WIDTH} = Dimensions.get('window');
+
+// Custom Sparkline bar component using small views
+function MiniSparkline({data, tokens}: {data: number[]; tokens: any}) {
+  if (!data || data.length === 0) return null;
+  const max = Math.max(...data, 1);
+  return (
+    <View style={{flexDirection: 'row', alignItems: 'flex-end', height: 26, gap: 4}}>
+      {data.map((val, i) => {
+        const heightPct = (val / max) * 100;
+        return (
+          <View
+            key={i}
+            style={{
+              width: 5,
+              height: `${Math.max(15, heightPct)}%`,
+              backgroundColor: tokens.brandPrimary,
+              borderRadius: 3,
+              opacity: 0.5 + (i / data.length) * 0.5,
+            }}
+          />
+        );
+      })}
+    </View>
+  );
 }
 
-// ── Percentile gauge ─────────────────────────────────────────────────────────
-function PercentileGauge({
-  label,
-  personal,
+// Sub-component for individual Agent bar rendering
+function AgentRankingRow({
+  agent,
+  maxVal,
   teamAvg,
-  percentile,
-  format: fmt,
+  index,
+  metric,
+  tokens,
+  expanded,
+  onToggle,
 }: {
-  label: string;
-  personal: number;
+  agent: BenchmarkAgent;
+  maxVal: number;
   teamAvg: number;
-  percentile: number;
-  format: (v: number) => string;
+  index: number;
+  metric: string;
+  tokens: any;
+  expanded: boolean;
+  onToggle: () => void;
 }) {
-  const barColor =
-    percentile >= 75 ? '#22c55e' :
-    percentile >= 50 ? '#3b82f6' :
-    percentile >= 25 ? '#f59e0b' : '#ef4444';
+  const animatedWidth = useRef(new Animated.Value(0)).current;
+
+  // Animate the bar when agent data or metric changes
+  useEffect(() => {
+    animatedWidth.setValue(0);
+    Animated.spring(animatedWidth, {
+      toValue: maxVal > 0 ? agent.value / maxVal : 0,
+      tension: 40,
+      friction: 8,
+      delay: index * 40,
+      useNativeDriver: false,
+    }).start();
+  }, [agent.value, maxVal]);
+
+  const isAboveAverage = agent.value >= teamAvg;
+  const barColor = isAboveAverage ? '#10B981' : tokens.borderStrong; // Emerald-500 vs Zinc-300 / Zinc-700 representation
+
+  // Formatter for values
+  const formatVal = (val: number) => {
+    if (metric === 'Pipeline Value') {
+      if (val >= 1000000) return `$${(val / 1000000).toFixed(2)}M`;
+      if (val >= 1000) return `$${(val / 1000).toFixed(0)}k`;
+      return `$${val}`;
+    }
+    if (metric === 'Sentiment') {
+      return `${val}%`;
+    }
+    return String(val);
+  };
+
+  const initials = agent.first_name[0] + agent.last_name[0];
+  const accessibilityLabelText = `${agent.first_name} ${agent.last_name}, ${formatVal(
+    agent.value
+  )} ${metric}, ${isAboveAverage ? 'at or above' : 'below'} team average of ${formatVal(teamAvg)}`;
 
   return (
-    <View className="bg-surface-card rounded-xl p-4 mb-3">
-      <View className="flex-row items-center justify-between mb-3">
-        <Text className="text-slate-400 text-xs font-semibold uppercase tracking-wide">{label}</Text>
-        <View className="flex-row items-center gap-2">
-          <Text className="text-white font-bold text-base">{fmt(personal)}</Text>
-          <Text className="text-slate-500 text-xs">vs {fmt(teamAvg)} avg</Text>
+    <View
+      style={{
+        borderBottomWidth: 1,
+        borderBottomColor: tokens.borderSubtle,
+        backgroundColor: expanded ? tokens.surfaceSunken : 'transparent',
+      }}
+    >
+      <Pressable
+        onPress={() => {
+          Vibration.vibrate(5);
+          onToggle();
+        }}
+        accessibilityLabel={accessibilityLabelText}
+        accessibilityRole="summary"
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingVertical: 14,
+          paddingHorizontal: 16,
+        }}
+      >
+        {/* Agent identifier info */}
+        <View style={{flexDirection: 'row', alignItems: 'center', width: 110, marginRight: 12}}>
+          <View
+            style={{
+              width: 28,
+              height: 28,
+              borderRadius: 14,
+              backgroundColor: `${tokens.brandPrimary}1D`,
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginRight: 8,
+              borderWidth: 1,
+              borderColor: tokens.borderDefault,
+            }}
+          >
+            <Text style={{color: tokens.brandPrimary, fontWeight: '800', fontSize: 10}}>
+              {initials}
+            </Text>
+          </View>
+          <Text
+            style={{color: tokens.textPrimary, fontSize: 12, fontWeight: '700'}}
+            numberOfLines={1}
+          >
+            {agent.first_name} {agent.last_name}
+          </Text>
         </View>
-      </View>
 
-      {/* Percentile bar */}
-      <View className="h-2 bg-slate-700 rounded-full overflow-hidden mb-1">
+        {/* Bar & value layout */}
+        <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', position: 'relative'}}>
+          {/* Animated Bar Track */}
+          <View
+            style={{
+              flex: 1,
+              height: 14,
+              backgroundColor: tokens.surfaceRaised,
+              borderRadius: 7,
+              marginRight: 10,
+              overflow: 'hidden',
+              borderWidth: 0.5,
+              borderColor: tokens.borderSubtle,
+            }}
+          >
+            <Animated.View
+              style={{
+                height: '100%',
+                backgroundColor: barColor,
+                borderRadius: 7,
+                width: animatedWidth.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: ['0%', '100%'],
+                }),
+              }}
+            />
+          </View>
+
+          {/* Value Display */}
+          <Text
+            style={{
+              color: tokens.textPrimary,
+              fontSize: 12,
+              fontFamily: 'monospace',
+              fontWeight: '700',
+              textAlign: 'right',
+              width: 58,
+            }}
+          >
+            {formatVal(agent.value)}
+          </Text>
+        </View>
+      </Pressable>
+
+      {/* Accordion inline metrics expansion */}
+      {expanded && (
         <View
           style={{
-            width: `${percentile}%`,
-            height: 8,
-            backgroundColor: barColor,
-            borderRadius: 4,
+            paddingHorizontal: 16,
+            paddingBottom: 16,
+            paddingTop: 4,
+            alignItems: 'center',
           }}
-        />
-      </View>
-
-      <View className="flex-row justify-between">
-        <Text className="text-slate-600 text-xs">0th</Text>
-        <Text style={{color: barColor}} className="text-xs font-semibold">
-          {percentile}th percentile
-        </Text>
-        <Text className="text-slate-600 text-xs">100th</Text>
-      </View>
-    </View>
-  );
-}
-
-// ── Leaderboard row ──────────────────────────────────────────────────────────
-function LeaderRow({
-  entry,
-  rank,
-  isMe,
-  metric,
-}: {
-  entry: LeaderboardEntry;
-  rank: number;
-  isMe: boolean;
-  metric: string;
-}) {
-  const initials =
-    entry.agent.first_name.charAt(0) + entry.agent.last_name.charAt(0);
-
-  const metricValue =
-    metric === 'duration'
-      ? formatDuration(entry.avg_duration)
-      : String(entry.call_count);
-
-  const rankEmoji = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
-
-  return (
-    <View className={`flex-row items-center py-3 border-b border-slate-800 ${isMe ? 'bg-brand-950/30' : ''}`}>
-      <Text className="text-slate-400 text-sm w-8">{rankEmoji}</Text>
-      <View className="w-9 h-9 rounded-full bg-brand-700 items-center justify-center mr-3">
-        <Text className="text-white text-sm font-semibold">{initials}</Text>
-      </View>
-      <Text className={`flex-1 text-sm font-medium ${isMe ? 'text-brand-400' : 'text-white'}`}>
-        {entry.agent.first_name} {entry.agent.last_name}
-        {isMe ? ' (you)' : ''}
-      </Text>
-      <Text className="text-white font-bold text-sm">{metricValue}</Text>
-    </View>
-  );
-}
-
-// ── Main screen ──────────────────────────────────────────────────────────────
-export function TeamBenchmarkScreen() {
-  const [days, setDays]         = useState(30);
-  const [metric, setMetric]     = useState<'calls' | 'duration'>('calls');
-
-  const {data: bench, isLoading: benchLoading} = useQuery({
-    queryKey: ['benchmark', days],
-    queryFn: () => benchmarkApi.compare(days).then(r => r.data),
-  });
-
-  const {data: lb, isLoading: lbLoading} = useQuery({
-    queryKey: ['leaderboard', metric, days],
-    queryFn: () => benchmarkApi.leaderboard(metric, days).then(r => r.data),
-  });
-
-  const isLoading = benchLoading || lbLoading;
-
-  return (
-    <ScrollView className="flex-1 bg-surface" contentContainerClassName="px-4 pt-14 pb-10">
-      {/* Header */}
-      <Text className="text-white text-2xl font-bold mb-1">My Benchmark</Text>
-
-      {/* Period selector */}
-      <View className="flex-row gap-2 mb-5 mt-2">
-        {[7, 14, 30].map(d => (
-          <Pressable
-            key={d}
-            className={`px-4 py-1.5 rounded-full ${days === d ? 'bg-brand-600' : 'bg-surface-card'}`}
-            onPress={() => setDays(d)}>
-            <Text className={`text-xs font-medium ${days === d ? 'text-white' : 'text-slate-400'}`}>
-              {d}d
-            </Text>
-          </Pressable>
-        ))}
-      </View>
-
-      {isLoading ? (
-        <View className="py-20 items-center">
-          <ActivityIndicator color="#3b82f6" />
-        </View>
-      ) : (
-        <>
-          {/* Rank badge */}
-          {bench?.rankings.my_rank && (
-            <View className="bg-brand-900 border border-brand-700 rounded-xl p-4 mb-5 flex-row items-center">
-              <Text className="text-4xl mr-4">
-                {bench.rankings.my_rank === 1 ? '🥇' :
-                 bench.rankings.my_rank === 2 ? '🥈' :
-                 bench.rankings.my_rank === 3 ? '🥉' : '📊'}
-              </Text>
-              <View>
-                <Text className="text-white text-xl font-bold">
-                  #{bench.rankings.my_rank} of {bench.rankings.out_of}
+        >
+          <View
+            style={{
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              backgroundColor: tokens.surfaceCard,
+              borderRadius: 12,
+              borderWidth: 1,
+              borderColor: tokens.borderDefault,
+              padding: 10,
+              width: '100%',
+              gap: 8,
+            }}
+          >
+            {agent.metrics_grid.map((m, idx) => (
+              <View
+                key={idx}
+                style={{
+                  width: '48%',
+                  padding: 8,
+                  justifyContent: 'center',
+                }}
+              >
+                <Text style={{color: tokens.textTertiary, fontSize: 10, fontWeight: '700'}}>
+                  {m.label}
                 </Text>
-                <Text className="text-slate-400 text-sm">
-                  agents in your agency
+                <Text
+                  style={{
+                    color: tokens.textPrimary,
+                    fontSize: 13,
+                    fontFamily: 'monospace',
+                    fontWeight: '700',
+                    marginTop: 2,
+                  }}
+                >
+                  {m.value}
                 </Text>
               </View>
-            </View>
-          )}
+            ))}
+          </View>
+        </View>
+      )}
+    </View>
+  );
+}
 
-          {/* No-peer message */}
-          {bench?.message && (
-            <View className="bg-surface-card rounded-xl p-4 mb-4">
-              <Text className="text-slate-400 text-sm">{bench.message}</Text>
-            </View>
-          )}
+export function TeamBenchmarkScreen() {
+  const {tokens} = useTheme();
+  const {user} = useAuthStore();
 
-          {/* Percentile gauges */}
-          {bench?.percentiles && bench.team_avg && (
-            <>
-              <PercentileGauge
-                label="Call Volume"
-                personal={bench.personal.total_calls}
-                teamAvg={bench.team_avg.calls_per_period}
-                percentile={bench.percentiles.calls}
-                format={v => String(Math.round(v))}
-              />
-              <PercentileGauge
-                label="Avg Call Duration"
-                personal={bench.personal.avg_duration_sec}
-                teamAvg={bench.team_avg.avg_duration_sec}
-                percentile={bench.percentiles.duration}
-                format={formatDuration}
-              />
-              <PercentileGauge
-                label="Lead Sentiment Score"
-                personal={bench.personal.avg_sentiment_score}
-                teamAvg={bench.team_avg.avg_sentiment_score}
-                percentile={bench.percentiles.sentiment}
-                format={v => `${Math.round(v)}/100`}
-              />
-            </>
-          )}
+  const [period, setPeriod] = useState<'This Week' | 'This Month' | 'This Quarter' | 'Custom'>(
+    'This Week'
+  );
+  const [metric, setMetric] = useState<
+    'Calls' | 'Pipeline Value' | 'Sentiment' | 'Tasks Completed' | 'Viewings'
+  >('Calls');
+  const [expandedAgentId, setExpandedAgentId] = useState<number | null>(null);
 
-          {/* Leaderboard */}
-          <View className="mt-4">
-            <View className="flex-row items-center justify-between mb-3">
-              <Text className="text-slate-400 text-xs font-semibold uppercase tracking-wide">
-                Leaderboard
+  // Debug Small Team Mode toggle
+  const [smallTeamMode, setSmallTeamMode] = useState(false);
+
+  const isManager =
+    (user as any)?.roles?.some((r: string) => r === 'admin' || r === 'manager') ?? false;
+
+  // Retrieve data using React Query
+  const {data, isPending, refetch} = useQuery<TeamBenchmarkResponse>({
+    queryKey: ['manager', 'benchmark', period, metric, smallTeamMode],
+    queryFn: () => managerApi.benchmark(period, metric, smallTeamMode).then((r) => r.data),
+  });
+
+  const periods = ['This Week', 'This Month', 'This Quarter', 'Custom'] as const;
+  const metrics = ['Calls', 'Pipeline Value', 'Sentiment', 'Tasks Completed', 'Viewings'] as const;
+
+  // Value formatting helpers
+  const formatVal = (val: number) => {
+    if (metric === 'Pipeline Value') {
+      if (val >= 1000000) return `$${(val / 1000000).toFixed(2)}M`;
+      if (val >= 1000) return `$${(val / 1000).toFixed(0)}k`;
+      return `$${val}`;
+    }
+    if (metric === 'Sentiment') {
+      return `${val}%`;
+    }
+    return String(val);
+  };
+
+  // Safe maximum value for bar width calculation
+  const maxAgentValue = data?.agents ? Math.max(...data.agents.map((a) => a.value), 1) : 1;
+
+  // Render original Agent View if user is NOT a manager
+  if (!isManager) {
+    return (
+      <View style={{flex: 1, backgroundColor: tokens.surfacePage, justifyContent: 'center', alignItems: 'center'}}>
+        <Text style={{color: tokens.textSecondary}}>Access restricted to managers & admins.</Text>
+      </View>
+    );
+  }
+
+  return (
+    <SafeAreaView style={{flex: 1, backgroundColor: tokens.surfacePage}} edges={['top', 'left', 'right']}>
+      {/* HEADER SECTION */}
+      <View
+        style={{
+          backgroundColor: tokens.surfaceCard,
+          borderBottomWidth: 1,
+          borderBottomColor: tokens.borderDefault,
+          paddingVertical: 12,
+          ...tokens.shadowSm,
+        }}
+      >
+        <View style={{paddingHorizontal: 20, marginBottom: 14}}>
+          <Text style={{color: tokens.textPrimary, fontSize: 22, fontWeight: '700', letterSpacing: -0.5}}>
+            Team Benchmark
+          </Text>
+        </View>
+
+        {/* Period Selector Scroll */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{paddingHorizontal: 20, gap: 8}}
+          style={{marginBottom: 12}}
+        >
+          {periods.map((p) => {
+            const isActive = period === p;
+            return (
+              <Pressable
+                key={p}
+                onPress={() => {
+                  Vibration.vibrate(5);
+                  setPeriod(p);
+                }}
+                style={{
+                  paddingHorizontal: 14,
+                  paddingVertical: 6,
+                  borderRadius: 999,
+                  backgroundColor: isActive ? tokens.brandPrimary : tokens.surfaceRaised,
+                  borderWidth: 1,
+                  borderColor: isActive ? tokens.brandPrimary : tokens.borderDefault,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 12,
+                    fontWeight: '700',
+                    color: isActive ? '#FFFFFF' : tokens.textSecondary,
+                  }}
+                >
+                  {p}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </ScrollView>
+
+        {/* Metric Selector Scroll */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{paddingHorizontal: 20, gap: 8}}
+        >
+          {metrics.map((m) => {
+            const isActive = metric === m;
+            return (
+              <Pressable
+                key={m}
+                onPress={() => {
+                  Vibration.vibrate(5);
+                  setMetric(m);
+                  setExpandedAgentId(null);
+                }}
+                style={{
+                  paddingHorizontal: 12,
+                  paddingVertical: 6,
+                  borderRadius: 999,
+                  backgroundColor: isActive ? tokens.brandPrimary : tokens.surfaceRaised,
+                  borderWidth: 1,
+                  borderColor: isActive ? tokens.brandPrimary : tokens.borderDefault,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 11,
+                    fontWeight: '700',
+                    color: isActive ? '#FFFFFF' : tokens.textTertiary,
+                  }}
+                >
+                  {m}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </ScrollView>
+      </View>
+
+      {/* SCROLL CONTAINER BODY */}
+      <ScrollView
+        style={{flex: 1}}
+        contentContainerStyle={{paddingBottom: 40, paddingTop: 16}}
+        showsVerticalScrollIndicator={false}
+      >
+        {isPending ? (
+          <View style={{paddingVertical: 60, alignItems: 'center'}}>
+            <ActivityIndicator color={tokens.brandPrimary} />
+          </View>
+        ) : data?.is_small_team ? (
+          /* SMALL TEAM FALLBACK STATE */
+          <View style={{paddingHorizontal: 20}}>
+            <View
+              style={{
+                backgroundColor: tokens.surfaceCard,
+                borderRadius: 16,
+                borderWidth: 1,
+                borderColor: tokens.borderDefault,
+                padding: 24,
+                marginBottom: 20,
+                alignItems: 'center',
+                ...tokens.shadowSm,
+              }}
+            >
+              <Icon name="info" size={24} color={tokens.brandPrimary} style={{marginBottom: 8}} />
+              <Text
+                style={{
+                  color: tokens.textPrimary,
+                  fontWeight: '700',
+                  textAlign: 'center',
+                  fontSize: 14,
+                  lineHeight: 20,
+                }}
+              >
+                Benchmarking works best with 3+ agents — here's how your team is trending instead
               </Text>
-              <View className="flex-row gap-2">
-                {(['calls', 'duration'] as const).map(m => (
-                  <Pressable
-                    key={m}
-                    className={`px-3 py-1 rounded-full ${metric === m ? 'bg-brand-600' : 'bg-surface-card'}`}
-                    onPress={() => setMetric(m)}>
-                    <Text className={`text-xs ${metric === m ? 'text-white' : 'text-slate-400'}`}>
-                      {m === 'calls' ? 'Volume' : 'Duration'}
+            </View>
+
+            {/* Flat Sparklines Trend List */}
+            <Text
+              style={{
+                color: tokens.textSecondary,
+                fontSize: 11,
+                fontWeight: '800',
+                textTransform: 'uppercase',
+                letterSpacing: 1,
+                marginBottom: 12,
+              }}
+            >
+              Team Trends
+            </Text>
+
+            <View style={{gap: 12}}>
+              {metrics.map((met) => (
+                <View
+                  key={met}
+                  style={{
+                    backgroundColor: tokens.surfaceCard,
+                    borderWidth: 1,
+                    borderColor: tokens.borderDefault,
+                    borderRadius: 16,
+                    padding: 16,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    ...tokens.shadowSm,
+                  }}
+                >
+                  <View>
+                    <Text style={{color: tokens.textPrimary, fontSize: 13, fontWeight: '700'}}>
+                      {met} Trend
                     </Text>
-                  </Pressable>
+                    <Text style={{color: tokens.textTertiary, fontSize: 11, marginTop: 2}}>
+                      Weekly aggregate trajectory
+                    </Text>
+                  </View>
+                  <MiniSparkline data={[10, 15, 12, 18, 22, 19, 23]} tokens={tokens} />
+                </View>
+              ))}
+            </View>
+          </View>
+        ) : (
+          /* CORE BENCHMARK LAYOUT */
+          <View>
+            {/* TEAM AVERAGE CARD */}
+            <View style={{paddingHorizontal: 20, marginBottom: 24}}>
+              <View
+                style={{
+                  backgroundColor: tokens.surfaceCard,
+                  borderWidth: 1,
+                  borderColor: tokens.borderDefault,
+                  borderRadius: 16,
+                  padding: 18,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  ...tokens.shadowSm,
+                }}
+              >
+                <View style={{flex: 1, marginRight: 12}}>
+                  <Text style={{color: tokens.textTertiary, fontSize: 11, fontWeight: '700'}}>
+                    TEAM AVERAGE
+                  </Text>
+                  <Text
+                    style={{
+                      color: tokens.textPrimary,
+                      fontSize: 14,
+                      fontWeight: '700',
+                      marginTop: 4,
+                    }}
+                  >
+                    {data?.team_average_label}
+                  </Text>
+                </View>
+
+                {/* Sparkline trend representation */}
+                <View style={{alignItems: 'flex-end'}}>
+                  <MiniSparkline data={data?.sparkline || []} tokens={tokens} />
+                </View>
+              </View>
+            </View>
+
+            {/* AGENT RANKING horizontal bar chart */}
+            <View style={{paddingHorizontal: 20, marginBottom: 28}}>
+              <Text
+                style={{
+                  color: tokens.textSecondary,
+                  fontSize: 11,
+                  fontWeight: '800',
+                  textTransform: 'uppercase',
+                  letterSpacing: 1,
+                  marginBottom: 12,
+                }}
+              >
+                Agent Comparison
+              </Text>
+
+              {/* Bar Chart Container */}
+              <View
+                style={{
+                  backgroundColor: tokens.surfaceCard,
+                  borderWidth: 1,
+                  borderColor: tokens.borderDefault,
+                  borderRadius: 16,
+                  overflow: 'hidden',
+                  position: 'relative',
+                  ...tokens.shadowSm,
+                }}
+              >
+                {/* Vertical Dashed Team Average Line */}
+                {data && maxAgentValue > 0 && (
+                  <View
+                    style={{
+                      position: 'absolute',
+                      // Shift to account for name label column offset width (110px label + 16px padding)
+                      left: 126 + (data.team_average / maxAgentValue) * (SCREEN_WIDTH - 248),
+                      top: 0,
+                      bottom: 0,
+                      width: 1,
+                      borderStyle: 'dashed',
+                      borderWidth: 1,
+                      borderColor: tokens.borderStrong,
+                      zIndex: 10,
+                    }}
+                  />
+                )}
+
+                {/* Rendered agent bars */}
+                {data?.agents.map((agent, index) => (
+                  <AgentRankingRow
+                    key={agent.id}
+                    agent={agent}
+                    maxVal={maxAgentValue}
+                    teamAvg={data.team_average}
+                    index={index}
+                    metric={metric}
+                    tokens={tokens}
+                    expanded={expandedAgentId === agent.id}
+                    onToggle={() =>
+                      setExpandedAgentId(expandedAgentId === agent.id ? null : agent.id)
+                    }
+                  />
                 ))}
               </View>
             </View>
 
-            <View className="bg-surface-card rounded-xl px-4">
-              {(lb?.leaderboard ?? []).map((entry, i) => (
-                <LeaderRow
-                  key={entry.agent.id}
-                  entry={entry}
-                  rank={i + 1}
-                  isMe={false}
-                  metric={metric}
-                />
-              ))}
-              {(lb?.leaderboard ?? []).length === 0 && (
-                <View className="py-6 items-center">
-                  <Text className="text-slate-500 text-sm">No data yet</Text>
+            {/* AI INSIGHT CARD */}
+            {data?.ai_insight && (
+              <View style={{paddingHorizontal: 20, marginBottom: 24}}>
+                <View
+                  style={{
+                    backgroundColor: tokens.surfaceCard,
+                    borderWidth: 1,
+                    borderColor: tokens.borderDefault,
+                    borderRadius: 16,
+                    padding: 16,
+                    position: 'relative',
+                    overflow: 'hidden',
+                    ...tokens.shadowSm,
+                  }}
+                >
+                  <View
+                    style={{
+                      position: 'absolute',
+                      left: 0,
+                      top: 0,
+                      bottom: 0,
+                      width: 4,
+                      backgroundColor: '#10B981', // Emerald-500 indicator
+                    }}
+                  />
+                  <View style={{paddingLeft: 6}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6}}>
+                      <Text style={{fontSize: 13, color: '#10B981'}}>✦</Text>
+                      <Text style={{color: tokens.textPrimary, fontSize: 13, fontWeight: '700'}}>
+                        AI Insight
+                      </Text>
+                    </View>
+                    <Text style={{color: tokens.textSecondary, fontSize: 12, lineHeight: 17}}>
+                      {data.ai_insight}
+                    </Text>
+                  </View>
                 </View>
-              )}
-            </View>
+              </View>
+            )}
           </View>
-        </>
-      )}
-    </ScrollView>
+        )}
+
+        {/* Small Team Mode Switcher (WOW Debug validation switcher) */}
+        <View style={{paddingHorizontal: 20, alignItems: 'center', marginTop: 12}}>
+          <Pressable
+            onPress={() => {
+              Vibration.vibrate(10);
+              setSmallTeamMode(!smallTeamMode);
+            }}
+            style={{
+              paddingVertical: 8,
+              paddingHorizontal: 14,
+              borderRadius: 999,
+              backgroundColor: tokens.surfaceRaised,
+              borderWidth: 1,
+              borderColor: tokens.borderDefault,
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 6,
+            }}
+          >
+            <Icon name="cpu" size={12} color={tokens.brandPrimary} />
+            <Text style={{color: tokens.textSecondary, fontSize: 10, fontWeight: '700'}}>
+              Simulate: {smallTeamMode ? 'Small Team (<3 Agents)' : 'Large Agency (7 Agents)'}
+            </Text>
+          </Pressable>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
+}
+
+// Inline fallback wrapper for SafeAreaView if not imported
+function SafeAreaView({children, style, edges}: {children: any; style: any; edges?: string[]}) {
+  const insets = require('react-native-safe-area-context').useSafeAreaInsets();
+  const paddingTop = edges?.includes('top') ? insets.top : 0;
+  return <View style={[{paddingTop}, style]}>{children}</View>;
 }

@@ -270,9 +270,9 @@ ${(summary.action_items ?? []).map(a => `- ${a}`).join('\n')}`;
         {hasUnconfirmedTasks && (
           <View
             style={{
-              backgroundColor: '#F59E0B1A',
+              backgroundColor: tokens.warningBg,
               borderWidth: 1,
-              borderColor: '#F59E0B33',
+              borderColor: tokens.warningBorder,
               borderRadius: 16,
               padding: 16,
               marginBottom: 24,
@@ -282,7 +282,7 @@ ${(summary.action_items ?? []).map(a => `- ${a}`).join('\n')}`;
             }}
           >
             <View style={{flex: 1, marginRight: 12}}>
-              <Text style={{color: '#F59E0B', fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4}}>
+              <Text style={{color: tokens.warningText, fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4}}>
                 Unsaved Tasks
               </Text>
               <Text style={{color: tokens.textSecondary, fontSize: 12, lineHeight: 16}}>
@@ -292,7 +292,7 @@ ${(summary.action_items ?? []).map(a => `- ${a}`).join('\n')}`;
             <Pressable
               onPress={() => { Vibration.vibrate(15); navigation.navigate('PostCallSummary', {callId}); }}
               style={({pressed}) => [{
-                backgroundColor: '#F59E0B',
+                backgroundColor: tokens.brandAccent,
                 borderRadius: 12,
                 paddingHorizontal: 16,
                 paddingVertical: 8,
@@ -330,7 +330,7 @@ ${(summary.action_items ?? []).map(a => `- ${a}`).join('\n')}`;
                 transform: [{scale: pressed ? 0.95 : 1}],
               }]}
             >
-              <Icon name={isPlaying ? 'pause' : 'play'} size={16} color="#FAFAFA" style={!isPlaying ? {marginLeft: 2} : {}} />
+              <Icon name={isPlaying ? 'pause' : 'play'} size={16} color={tokens.brandPrimaryFg} style={!isPlaying ? {marginLeft: 2} : {}} />
             </Pressable>
 
             {/* Waveform */}
@@ -393,7 +393,7 @@ ${(summary.action_items ?? []).map(a => `- ${a}`).join('\n')}`;
             }}
           >
             <Text style={{color: tokens.brandPrimary, fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 8}}>
-              ✦ AI Summary
+              AI Summary
             </Text>
             <Text style={{color: tokens.textPrimary, fontSize: 12, lineHeight: 20}}>
               {summary.summary_text}
@@ -451,7 +451,7 @@ ${(summary.action_items ?? []).map(a => `- ${a}`).join('\n')}`;
                       borderColor: hasLinkedTasks ? tokens.brandPrimary : tokens.borderDefault,
                     }}
                   >
-                    {hasLinkedTasks && <Icon name="check" size={12} color="#FAFAFA" />}
+                    {hasLinkedTasks && <Icon name="check" size={12} color={tokens.brandPrimaryFg} />}
                   </View>
                   <Text style={{fontSize: 12, lineHeight: 16, flex: 1, color: hasLinkedTasks ? tokens.textPrimary : tokens.textTertiary}}>
                     {item}

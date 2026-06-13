@@ -26,6 +26,7 @@ import {storage} from '../../api/client';
 import {Task, Call} from '../../types';
 import {useTheme} from '../../theme/ThemeProvider';
 import {ThemeTokens} from '../../theme/tokens';
+import {TeamOverviewScreen} from './TeamOverviewScreen';
 
 const {width: SCREEN_WIDTH} = Dimensions.get('window');
 
@@ -247,6 +248,23 @@ export function HomeScreen() {
   const {unreadCount} = useNotificationStore();
   const navigation = useNavigation<any>();
   const queryClient = useQueryClient();
+
+  // Role gating & tab choice state
+  const isManager = (user as any)?.roles?.some?.((r: string) => r === 'admin' || r === 'manager') ?? false;
+  const isAgent = (user as any)?.roles?.includes?.('agent') ?? true;
+  const showToggle = isManager && isAgent;
+
+  const [currentTab, setCurrentTab] = useState<'My Day' | 'Team'>(() => {
+    if (!isManager) return 'My Day';
+    if (!isAgent) return 'Team'; // Admin-only: Team is Home
+    const persisted = storage.getString('home_tab_choice');
+    return (persisted === 'My Day' || persisted === 'Team') ? persisted : 'My Day';
+  });
+
+  const handleToggleTab = (tab: 'My Day' | 'Team') => {
+    setCurrentTab(tab);
+    storage.set('home_tab_choice', tab);
+  };
 
   const [cachedData] = useState(() => {
     const raw = storage.getString('home_cached_data');
@@ -509,13 +527,68 @@ export function HomeScreen() {
           paddingBottom: 12,
         }}
       >
+        {/* Toggle Pill at Top */}
+        {showToggle && (
+          <View style={{alignItems: 'center', marginBottom: 12}}>
+            <View
+              style={{
+                flexDirection: 'row',
+                backgroundColor: tokens.surfaceSunken,
+                borderRadius: 999,
+                padding: 3,
+                borderWidth: 1,
+                borderColor: tokens.borderDefault,
+              }}
+            >
+              <Pressable
+                onPress={() => handleToggleTab('My Day')}
+                style={{
+                  paddingHorizontal: 16,
+                  paddingVertical: 6,
+                  borderRadius: 999,
+                  backgroundColor: currentTab === 'My Day' ? tokens.brandPrimary : 'transparent',
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 12,
+                    fontWeight: '700',
+                    color: currentTab === 'My Day' ? '#FFFFFF' : tokens.textSecondary,
+                  }}
+                >
+                  My Day
+                </Text>
+              </Pressable>
+              <Pressable
+                onPress={() => handleToggleTab('Team')}
+                style={{
+                  paddingHorizontal: 16,
+                  paddingVertical: 6,
+                  borderRadius: 999,
+                  backgroundColor: currentTab === 'Team' ? tokens.brandPrimary : 'transparent',
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 12,
+                    fontWeight: '700',
+                    color: currentTab === 'Team' ? '#FFFFFF' : tokens.textSecondary,
+                  }}
+                >
+                  Team
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        )}
+
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
           <View style={{flex: 1, marginRight: 12}}>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Text style={{color: tokens.textPrimary, fontSize: 22, fontWeight: '700', letterSpacing: -0.5}} numberOfLines={1}>
-                Good {getTimeOfDay()}, {user?.first_name || 'Agent'}
+                {currentTab === 'Team' ? 'Team Overview' : `Good ${getTimeOfDay()}, ${user?.first_name || 'Agent'}`}
               </Text>
-              {isAnyFetching && <RotatingSyncIcon color={tokens.brandPrimary} />}
+              {currentTab === 'My Day' && isAnyFetching && <RotatingSyncIcon color={tokens.brandPrimary} />}
             </View>
             <Text style={{color: tokens.textTertiary, fontSize: 13, fontWeight: '500', marginTop: 2}}>
               {format(new Date(), 'EEEE, d MMMM')}
@@ -583,273 +656,281 @@ export function HomeScreen() {
       </View>
 
       {/* Scroll content */}
-      <ScrollView
-        style={{flex: 1}}
-        contentContainerStyle={{paddingBottom: 40, paddingTop: 8}}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-        onScrollEndDrag={handleScrollEnd}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Pull to refresh indicator */}
-        <Animated.View style={{height: refreshHeaderHeight, width: '100%', alignItems: 'center', justifyContent: 'center', overflow: 'hidden'}}>
-          <View
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 20,
-              backgroundColor: tokens.surfaceCard,
-              borderWidth: 1,
-              borderColor: tokens.borderDefault,
-              alignItems: 'center',
-              justifyContent: 'center',
-              ...tokens.shadowSm,
-            }}
-          >
-            {showCheckmark ? (
-              <Icon name="check" size={20} color={tokens.brandPrimary} />
-            ) : (
-              <ActivityIndicator size="small" color={tokens.brandPrimary} />
-            )}
-          </View>
-        </Animated.View>
-
-        {/* Stat chips */}
+      {currentTab === 'Team' ? (
+        <TeamOverviewScreen
+          onToggleTab={handleToggleTab}
+          currentTab={currentTab}
+          showToggle={showToggle}
+        />
+      ) : (
         <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{paddingHorizontal: 20, paddingVertical: 12}}
-          style={{marginBottom: 24}}
+          style={{flex: 1}}
+          contentContainerStyle={{paddingBottom: 40, paddingTop: 8}}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
+          onScrollEndDrag={handleScrollEnd}
+          showsVerticalScrollIndicator={false}
         >
-          {pendingCallsCount > 0 && (
-            <StatChip icon="phone-call" count={pendingCallsCount} label="call summary ready" pulse tokens={tokens} onPress={() => navigation.navigate('Calls')} />
-          )}
-          <StatChip icon="calendar" count={viewingsCount} label="viewings today" tokens={tokens} onPress={() => navigation.navigate('Viewings')} />
-          <StatChip icon="check-square" count={overdueTasksCount} label="overdue tasks" tokens={tokens} onPress={() => navigation.navigate('Tasks')} />
-          <StatChip icon="message-square" count={unreadMessagesCount} label="unread messages" tokens={tokens} onPress={() => navigation.navigate('Inbox')} />
-        </ScrollView>
-
-        {/* Priorities */}
-        <View style={{paddingHorizontal: 20, marginBottom: 32}}>
-          <View style={{flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 16}}>
-            <Icon name="zap" size={16} color={tokens.brandPrimary} />
-            <Text style={{color: tokens.textPrimary, fontSize: 17, fontWeight: '700', letterSpacing: -0.3}}>
-              Today's priorities
-            </Text>
-          </View>
-
-          {isFirstLoad ? (
-            // Skeleton
-            <View>
-              {[0, 1].map((i) => (
-                <Animated.View
-                  key={i}
-                  style={{
-                    opacity: skeletonOpacity,
-                    backgroundColor: tokens.surfaceCard,
-                    borderWidth: 1,
-                    borderColor: tokens.borderDefault,
-                    borderRadius: 16,
-                    padding: 16,
-                    marginBottom: 12,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    height: 82,
-                  }}
-                >
-                  <View style={{flexDirection: 'row', alignItems: 'center', flex: 1, marginRight: 16}}>
-                    <View style={{width: 40, height: 40, borderRadius: 20, backgroundColor: tokens.surfaceRaised, marginRight: 12}} />
-                    <View style={{flex: 1, gap: 8}}>
-                      <View style={{height: 16, backgroundColor: tokens.surfaceRaised, borderRadius: 8, width: i === 0 ? '83%' : '67%'}} />
-                      <View style={{height: 12, backgroundColor: tokens.surfaceRaised, borderRadius: 8, width: i === 0 ? '50%' : '33%'}} />
-                    </View>
-                  </View>
-                  <View style={{width: 40, height: 40, borderRadius: 20, backgroundColor: tokens.surfaceRaised}} />
-                </Animated.View>
-              ))}
-            </View>
-          ) : priorities.length === 0 ? (
+          {/* Pull to refresh indicator */}
+          <Animated.View style={{height: refreshHeaderHeight, width: '100%', alignItems: 'center', justifyContent: 'center', overflow: 'hidden'}}>
             <View
               style={{
+                width: 40,
+                height: 40,
+                borderRadius: 20,
                 backgroundColor: tokens.surfaceCard,
                 borderWidth: 1,
                 borderColor: tokens.borderDefault,
-                borderRadius: 16,
-                paddingVertical: 32,
-                paddingHorizontal: 24,
                 alignItems: 'center',
                 justifyContent: 'center',
                 ...tokens.shadowSm,
               }}
             >
-              <View
-                style={{
-                  width: 56,
-                  height: 56,
-                  backgroundColor: `${tokens.brandPrimary}1A`,
-                  borderWidth: 2,
-                  borderColor: tokens.brandPrimary,
-                  borderRadius: 28,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginBottom: 12,
-                }}
-              >
-                <Icon name="check" size={28} color={tokens.brandPrimary} />
-              </View>
-              <Text style={{color: tokens.textPrimary, fontWeight: '700', fontSize: 16, marginBottom: 4}}>
-                You're all caught up
-              </Text>
-              <Text style={{color: tokens.textTertiary, fontSize: 12, textAlign: 'center'}}>
-                Nothing urgent right now.
-              </Text>
+              {showCheckmark ? (
+                <Icon name="check" size={20} color={tokens.brandPrimary} />
+              ) : (
+                <ActivityIndicator size="small" color={tokens.brandPrimary} />
+              )}
             </View>
-          ) : (
-            priorities.map((item) => (
-              <PriorityCard
-                key={item.id}
-                item={item}
-                tokens={tokens}
-                onDismiss={handleDismissPriority}
-                onPressAction={() => handleActionClick(item)}
-                onPressCard={() => handleCardClick(item)}
-              />
-            ))
-          )}
-        </View>
+          </Animated.View>
 
-        {/* Recent call summaries */}
-        {pendingCalls && pendingCalls.length > 0 && (
-          <View style={{marginBottom: 32}}>
-            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, marginBottom: 16}}>
+          {/* Stat chips */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{paddingHorizontal: 20, paddingVertical: 12}}
+            style={{marginBottom: 24}}
+          >
+            {pendingCallsCount > 0 && (
+              <StatChip icon="phone-call" count={pendingCallsCount} label="call summary ready" pulse tokens={tokens} onPress={() => navigation.navigate('Calls')} />
+            )}
+            <StatChip icon="calendar" count={viewingsCount} label="viewings today" tokens={tokens} onPress={() => navigation.navigate('Viewings')} />
+            <StatChip icon="check-square" count={overdueTasksCount} label="overdue tasks" tokens={tokens} onPress={() => navigation.navigate('Tasks')} />
+            <StatChip icon="message-square" count={unreadMessagesCount} label="unread messages" tokens={tokens} onPress={() => navigation.navigate('Inbox')} />
+          </ScrollView>
+
+          {/* Priorities */}
+          <View style={{paddingHorizontal: 20, marginBottom: 32}}>
+            <View style={{flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 16}}>
+              <Icon name="zap" size={16} color={tokens.brandPrimary} />
               <Text style={{color: tokens.textPrimary, fontSize: 17, fontWeight: '700', letterSpacing: -0.3}}>
-                Recent call summaries
+                Today's priorities
               </Text>
             </View>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{paddingHorizontal: 20}}>
-              {pendingCalls.map((call: Call) => {
-                const name = call.contact
-                  ? `${call.contact.first_name} ${call.contact.last_name}`
-                  : call.remote_number || 'Unknown';
-                const sentimentColor =
-                  call.summary?.sentiment === 'hot' ? '#F43F5E'
-                  : call.summary?.sentiment === 'warm' ? '#F59E0B'
-                  : call.summary?.sentiment === 'cold' ? '#38BDF8'
-                  : tokens.textTertiary;
 
-                return (
-                  <View
-                    key={call.id}
+            {isFirstLoad ? (
+              // Skeleton
+              <View>
+                {[0, 1].map((i) => (
+                  <Animated.View
+                    key={i}
                     style={{
-                      width: 288,
+                      opacity: skeletonOpacity,
                       backgroundColor: tokens.surfaceCard,
                       borderWidth: 1,
                       borderColor: tokens.borderDefault,
                       borderRadius: 16,
                       padding: 16,
-                      marginRight: 16,
-                      justifyContent: 'space-between',
-                      height: 132,
-                      ...tokens.shadowSm,
-                    }}
-                  >
-                    <View>
-                      <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 8, gap: 8}}>
-                        <View style={{width: 8, height: 8, borderRadius: 4, backgroundColor: sentimentColor}} />
-                        <Text style={{color: tokens.textPrimary, fontSize: 14, fontWeight: '700', flex: 1}} numberOfLines={1}>
-                          {name}
-                        </Text>
-                      </View>
-                      <Text style={{color: tokens.textSecondary, fontSize: 12, lineHeight: 16}} numberOfLines={2}>
-                        {call.summary?.summary_text || 'AI Summary pending review...'}
-                      </Text>
-                    </View>
-                    <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
-                      <Pressable
-                        onPress={() => navigation.navigate('Calls', {screen: 'PostCallSummary', params: {callId: call.id}})}
-                        style={{
-                          backgroundColor: '#F59E0B1A',
-                          borderWidth: 1,
-                          borderColor: '#F59E0B4D',
-                          borderRadius: 999,
-                          paddingHorizontal: 16,
-                          paddingVertical: 6,
-                        }}
-                      >
-                        <Text style={{color: '#F59E0B', fontSize: 12, fontWeight: '700'}}>Review</Text>
-                      </Pressable>
-                    </View>
-                  </View>
-                );
-              })}
-            </ScrollView>
-          </View>
-        )}
-
-        {/* Upcoming viewings */}
-        {viewings && viewings.length > 0 && (
-          <View style={{paddingHorizontal: 20, marginBottom: 16}}>
-            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16}}>
-              <Text style={{color: tokens.textPrimary, fontSize: 17, fontWeight: '700', letterSpacing: -0.3}}>
-                Upcoming viewings
-              </Text>
-              {viewings.length > 3 && (
-                <Pressable onPress={() => navigation.navigate('Viewings')}>
-                  <Text style={{color: tokens.brandPrimary, fontSize: 12, fontWeight: '700'}}>View all →</Text>
-                </Pressable>
-              )}
-            </View>
-
-            <View
-              style={{
-                backgroundColor: tokens.surfaceCard,
-                borderWidth: 1,
-                borderColor: tokens.borderDefault,
-                borderRadius: 16,
-                overflow: 'hidden',
-                padding: 8,
-                gap: 6,
-                ...tokens.shadowSm,
-              }}
-            >
-              {upcomingToday.map((v: Viewing, idx: number) => {
-                const timeStr = v.scheduled_at ? format(new Date(v.scheduled_at), 'HH:mm') : '12:00';
-                const statusDot =
-                  v.status === 'confirmed' ? '#22C55E' : v.status === 'scheduled' ? '#F59E0B' : tokens.textTertiary;
-
-                return (
-                  <Pressable
-                    key={v.id}
-                    onPress={() => navigation.navigate('Viewings', {screen: 'ViewingDetail', params: {viewingId: v.id}})}
-                    style={{
+                      marginBottom: 12,
                       flexDirection: 'row',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      padding: 12,
-                      borderBottomWidth: idx < upcomingToday.length - 1 ? 1 : 0,
-                      borderBottomColor: tokens.borderSubtle,
-                      borderRadius: 12,
+                      height: 82,
                     }}
                   >
-                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 12, flex: 1, marginRight: 16}}>
-                      <Text style={{color: tokens.brandPrimary, fontFamily: 'monospace', fontWeight: '700', fontSize: 14, width: 48}}>
-                        {timeStr}
-                      </Text>
-                      <Text style={{color: tokens.textPrimary, fontSize: 14, fontWeight: '600', flex: 1}} numberOfLines={1}>
-                        {v.listing?.address || 'Listing Address'}
-                      </Text>
+                    <View style={{flexDirection: 'row', alignItems: 'center', flex: 1, marginRight: 16}}>
+                      <View style={{width: 40, height: 40, borderRadius: 20, backgroundColor: tokens.surfaceRaised, marginRight: 12}} />
+                      <View style={{flex: 1, gap: 8}}>
+                        <View style={{height: 16, backgroundColor: tokens.surfaceRaised, borderRadius: 8, width: i === 0 ? '83%' : '67%'}} />
+                        <View style={{height: 12, backgroundColor: tokens.surfaceRaised, borderRadius: 8, width: i === 0 ? '50%' : '33%'}} />
+                      </View>
                     </View>
-                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
-                      <View style={{width: 10, height: 10, borderRadius: 5, backgroundColor: statusDot}} />
-                    </View>
-                  </Pressable>
-                );
-              })}
-            </View>
+                    <View style={{width: 40, height: 40, borderRadius: 20, backgroundColor: tokens.surfaceRaised}} />
+                  </Animated.View>
+                ))}
+              </View>
+            ) : priorities.length === 0 ? (
+              <View
+                style={{
+                  backgroundColor: tokens.surfaceCard,
+                  borderWidth: 1,
+                  borderColor: tokens.borderDefault,
+                  borderRadius: 16,
+                  paddingVertical: 32,
+                  paddingHorizontal: 24,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  ...tokens.shadowSm,
+                }}
+              >
+                <View
+                  style={{
+                    width: 56,
+                    height: 56,
+                    backgroundColor: `${tokens.brandPrimary}1A`,
+                    borderWidth: 2,
+                    borderColor: tokens.brandPrimary,
+                    borderRadius: 28,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: 12,
+                  }}
+                >
+                  <Icon name="check" size={28} color={tokens.brandPrimary} />
+                </View>
+                <Text style={{color: tokens.textPrimary, fontWeight: '700', fontSize: 16, marginBottom: 4}}>
+                  You're all caught up
+                </Text>
+                <Text style={{color: tokens.textTertiary, fontSize: 12, textAlign: 'center'}}>
+                  Nothing urgent right now.
+                </Text>
+              </View>
+            ) : (
+              priorities.map((item) => (
+                <PriorityCard
+                  key={item.id}
+                  item={item}
+                  tokens={tokens}
+                  onDismiss={handleDismissPriority}
+                  onPressAction={() => handleActionClick(item)}
+                  onPressCard={() => handleCardClick(item)}
+                />
+              ))
+            )}
           </View>
-        )}
-      </ScrollView>
+
+          {/* Recent call summaries */}
+          {pendingCalls && pendingCalls.length > 0 && (
+            <View style={{marginBottom: 32}}>
+              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, marginBottom: 16}}>
+                <Text style={{color: tokens.textPrimary, fontSize: 17, fontWeight: '700', letterSpacing: -0.3}}>
+                  Recent call summaries
+                </Text>
+              </View>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{paddingHorizontal: 20}}>
+                {pendingCalls.map((call: Call) => {
+                  const name = call.contact
+                    ? `${call.contact.first_name} ${call.contact.last_name}`
+                    : call.remote_number || 'Unknown';
+                  const sentimentColor =
+                    call.summary?.sentiment === 'hot' ? '#F43F5E'
+                    : call.summary?.sentiment === 'warm' ? '#F59E0B'
+                    : call.summary?.sentiment === 'cold' ? '#38BDF8'
+                    : tokens.textTertiary;
+
+                  return (
+                    <View
+                      key={call.id}
+                      style={{
+                        width: 288,
+                        backgroundColor: tokens.surfaceCard,
+                        borderWidth: 1,
+                        borderColor: tokens.borderDefault,
+                        borderRadius: 16,
+                        padding: 16,
+                        marginRight: 16,
+                        justifyContent: 'space-between',
+                        height: 132,
+                        ...tokens.shadowSm,
+                      }}
+                    >
+                      <View>
+                        <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 8, gap: 8}}>
+                          <View style={{width: 8, height: 8, borderRadius: 4, backgroundColor: sentimentColor}} />
+                          <Text style={{color: tokens.textPrimary, fontSize: 14, fontWeight: '700', flex: 1}} numberOfLines={1}>
+                            {name}
+                          </Text>
+                        </View>
+                        <Text style={{color: tokens.textSecondary, fontSize: 12, lineHeight: 16}} numberOfLines={2}>
+                          {call.summary?.summary_text || 'AI Summary pending review...'}
+                        </Text>
+                      </View>
+                      <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
+                        <Pressable
+                          onPress={() => navigation.navigate('Calls', {screen: 'PostCallSummary', params: {callId: call.id}})}
+                          style={{
+                            backgroundColor: '#F59E0B1A',
+                            borderWidth: 1,
+                            borderColor: '#F59E0B4D',
+                            borderRadius: 999,
+                            paddingHorizontal: 16,
+                            paddingVertical: 6,
+                          }}
+                        >
+                          <Text style={{color: '#F59E0B', fontSize: 12, fontWeight: '700'}}>Review</Text>
+                        </Pressable>
+                      </View>
+                    </View>
+                  );
+                })}
+              </ScrollView>
+            </View>
+          )}
+
+          {/* Upcoming viewings */}
+          {viewings && viewings.length > 0 && (
+            <View style={{paddingHorizontal: 20, marginBottom: 16}}>
+              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16}}>
+                <Text style={{color: tokens.textPrimary, fontSize: 17, fontWeight: '700', letterSpacing: -0.3}}>
+                  Upcoming viewings
+                </Text>
+                {viewings.length > 3 && (
+                  <Pressable onPress={() => navigation.navigate('Viewings')}>
+                    <Text style={{color: tokens.brandPrimary, fontSize: 12, fontWeight: '700'}}>View all →</Text>
+                  </Pressable>
+                )}
+              </View>
+
+              <View
+                style={{
+                  backgroundColor: tokens.surfaceCard,
+                  borderWidth: 1,
+                  borderColor: tokens.borderDefault,
+                  borderRadius: 16,
+                  overflow: 'hidden',
+                  padding: 8,
+                  gap: 6,
+                  ...tokens.shadowSm,
+                }}
+              >
+                {upcomingToday.map((v: Viewing, idx: number) => {
+                  const timeStr = v.scheduled_at ? format(new Date(v.scheduled_at), 'HH:mm') : '12:00';
+                  const statusDot =
+                    v.status === 'confirmed' ? '#22C55E' : v.status === 'scheduled' ? '#F59E0B' : tokens.textTertiary;
+
+                  return (
+                    <Pressable
+                      key={v.id}
+                      onPress={() => navigation.navigate('Viewings', {screen: 'ViewingDetail', params: {viewingId: v.id}})}
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: 12,
+                        borderBottomWidth: idx < upcomingToday.length - 1 ? 1 : 0,
+                        borderBottomColor: tokens.borderSubtle,
+                        borderRadius: 12,
+                      }}
+                    >
+                      <View style={{flexDirection: 'row', alignItems: 'center', gap: 12, flex: 1, marginRight: 16}}>
+                        <Text style={{color: tokens.brandPrimary, fontFamily: 'monospace', fontWeight: '700', fontSize: 14, width: 48}}>
+                          {timeStr}
+                        </Text>
+                        <Text style={{color: tokens.textPrimary, fontSize: 14, fontWeight: '600', flex: 1}} numberOfLines={1}>
+                          {v.listing?.address || 'Listing Address'}
+                        </Text>
+                      </View>
+                      <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
+                        <View style={{width: 10, height: 10, borderRadius: 5, backgroundColor: statusDot}} />
+                      </View>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            </View>
+          )}
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 }

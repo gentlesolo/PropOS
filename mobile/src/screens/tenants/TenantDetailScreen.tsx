@@ -16,6 +16,7 @@ import {tenantsApi, leasesApi, PaymentItem} from '../../api/tenants';
 import type {TenantsStackParamList} from '../../navigation/stacks/TenantsStack';
 import {format} from 'date-fns';
 import {useTranslation} from '../../i18n';
+import Icon from 'react-native-vector-icons/Feather';
 
 type Route = RouteProp<TenantsStackParamList, 'TenantDetail'>;
 
@@ -128,13 +129,22 @@ export function TenantDetailScreen() {
             </Text>
             <View className="space-y-2">
               {tenant.contact.phone && (
-                <Text className="text-white text-sm">📞 {tenant.contact.phone}</Text>
+                <View className="flex-row items-center gap-2">
+                  <Icon name="phone" size={14} color="#A1A1AA" />
+                  <Text className="text-white text-sm">{tenant.contact.phone}</Text>
+                </View>
               )}
               {tenant.contact.email && (
-                <Text className="text-white text-sm">✉️ {tenant.contact.email}</Text>
+                <View className="flex-row items-center gap-2">
+                  <Icon name="mail" size={14} color="#A1A1AA" />
+                  <Text className="text-white text-sm">{tenant.contact.email}</Text>
+                </View>
               )}
               {tenant.contact.id_number && (
-                <Text className="text-white text-sm">🪪 {tenant.contact.id_number}</Text>
+                <View className="flex-row items-center gap-2">
+                  <Icon name="credit-card" size={14} color="#A1A1AA" />
+                  <Text className="text-white text-sm">{tenant.contact.id_number}</Text>
+                </View>
               )}
             </View>
           </View>

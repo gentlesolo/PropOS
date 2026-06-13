@@ -180,11 +180,11 @@ function MessageBubble({message, tokens, onLongPress}: {message: Message; tokens
             <Icon name="clock" size={10} color={tokens.textTertiary} />
           ) : isFailed ? (
             <View style={{flexDirection: 'row', alignItems: 'center', gap: 2}}>
-              <Icon name="alert-circle" size={10} color="#F43F5E" />
-              <Text style={{fontSize: 8, color: '#F43F5E', fontWeight: '700'}}>Failed</Text>
+              <Icon name="alert-circle" size={10} color={tokens.dangerText} />
+              <Text style={{fontSize: 8, color: tokens.dangerText, fontWeight: '700'}}>Failed</Text>
             </View>
           ) : (
-            <Icon name="check" size={11} color={message.status === 'read' ? '#10B981' : tokens.textTertiary} />
+            <Icon name="check" size={11} color={message.status === 'read' ? tokens.brandPrimary : tokens.textTertiary} />
           )}
         </View>
       )}
@@ -420,7 +420,7 @@ export function ConversationScreen() {
           <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4}}>
             <View style={{flexDirection: 'row', alignItems: 'center', gap: 4}}>
               <Icon name="zap" size={12} color={tokens.brandPrimary} />
-              <Text style={{color: tokens.brandPrimary, fontSize: 10, fontWeight: '900', textTransform: 'uppercase', letterSpacing: 1}}>✦ Suggested reply</Text>
+              <Text style={{color: tokens.brandPrimary, fontSize: 10, fontWeight: '900', textTransform: 'uppercase', letterSpacing: 1}}>Suggested reply</Text>
             </View>
             <Pressable onPress={() => setSuggestion(null)} style={{padding: 2}}>
               <Icon name="x" size={13} color={tokens.textTertiary} />

@@ -1,5 +1,6 @@
 import React, {Component, ErrorInfo, ReactNode} from 'react';
 import {Pressable, Text, View} from 'react-native';
+import Icon from 'react-native-vector-icons/Feather';
 
 interface Props {
   children: ReactNode;
@@ -31,7 +32,9 @@ export class ErrorBoundary extends Component<Props, State> {
 
       return (
         <View className="flex-1 bg-surface items-center justify-center px-8">
-          <Text className="text-4xl mb-4">⚠️</Text>
+          <View className="w-16 h-16 rounded-full bg-yellow-500/10 items-center justify-center mb-4">
+            <Icon name="alert-triangle" size={28} color="#F59E0B" />
+          </View>
           <Text className="text-white text-lg font-semibold text-center mb-2">
             Something went wrong
           </Text>

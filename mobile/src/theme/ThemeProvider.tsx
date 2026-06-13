@@ -20,18 +20,17 @@ const STORAGE_KEY = 'propos-theme-preference';
 export function ThemeProvider({children}: {children: React.ReactNode}) {
   const {setColorScheme} = useNWColorScheme();
 
-  // Default to 'dark' for PropOS — preserves current behavior for existing users
   const [preference, setPreferenceState] = useState<ThemePreference>(() => {
-    return (storage.getString(STORAGE_KEY) as ThemePreference) ?? 'dark';
+    return (storage.getString(STORAGE_KEY) as ThemePreference) ?? 'system';
   });
 
   const [systemScheme, setSystemScheme] = useState(
-    Appearance.getColorScheme() ?? 'dark',
+    Appearance.getColorScheme() ?? 'light',
   );
 
   useEffect(() => {
     const sub = Appearance.addChangeListener(({colorScheme}) => {
-      setSystemScheme(colorScheme ?? 'dark');
+      setSystemScheme(colorScheme ?? 'light');
     });
     return () => sub.remove();
   }, []);

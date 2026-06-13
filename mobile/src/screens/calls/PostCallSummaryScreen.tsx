@@ -224,15 +224,15 @@ export function PostCallSummaryScreen() {
                 width: 48,
                 height: 48,
                 borderRadius: 24,
-                backgroundColor: '#F59E0B1A',
+                backgroundColor: tokens.warningBg,
                 borderWidth: 1,
-                borderColor: '#F59E0B33',
+                borderColor: tokens.warningBorder,
                 alignItems: 'center',
                 justifyContent: 'center',
                 marginBottom: 16,
               }}
             >
-              <Icon name="alert-triangle" size={22} color="#F59E0B" />
+              <Icon name="alert-triangle" size={22} color={tokens.warningText} />
             </View>
             <Text style={{color: tokens.textPrimary, fontSize: 16, fontWeight: '700', textAlign: 'center', marginBottom: 8}}>
               Summary generation is slow
@@ -318,9 +318,9 @@ export function PostCallSummaryScreen() {
       {isOffline && (
         <View
           style={{
-            backgroundColor: '#F59E0B1A',
+            backgroundColor: tokens.warningBg,
             borderBottomWidth: 1,
-            borderBottomColor: '#F59E0B33',
+            borderBottomColor: tokens.warningBorder,
             paddingHorizontal: 16,
             paddingVertical: 12,
             flexDirection: 'row',
@@ -329,8 +329,8 @@ export function PostCallSummaryScreen() {
             zIndex: 30,
           }}
         >
-          <Icon name="wifi-off" size={14} color="#F59E0B" />
-          <Text style={{color: '#F59E0B', fontSize: 11, fontWeight: '600', letterSpacing: 1, textTransform: 'uppercase', marginLeft: 8}}>
+          <Icon name="wifi-off" size={14} color={tokens.warningText} />
+          <Text style={{color: tokens.warningText, fontSize: 11, fontWeight: '600', letterSpacing: 1, textTransform: 'uppercase', marginLeft: 8}}>
             Some details will sync when you're back online
           </Text>
         </View>
@@ -425,7 +425,7 @@ export function PostCallSummaryScreen() {
           <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10}}>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Text style={{color: tokens.brandPrimary, fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.8}}>
-                ✦ AI Summary
+                AI Summary
               </Text>
               {isEdited && (
                 <Text style={{color: tokens.textTertiary, fontSize: 10, textTransform: 'uppercase', letterSpacing: 2, marginLeft: 8, fontWeight: '500'}}>
@@ -540,7 +540,7 @@ export function PostCallSummaryScreen() {
                         borderColor: checked ? tokens.brandPrimary : tokens.borderDefault,
                       }}
                     >
-                      {checked && <Icon name="check" size={12} color="#FAFAFA" />}
+                      {checked && <Icon name="check" size={12} color={tokens.brandPrimaryFg} />}
                     </Pressable>
 
                     {editingItemIdx === idx ? (
@@ -579,8 +579,8 @@ export function PostCallSummaryScreen() {
                           {item}
                         </Text>
                         {hasDate && (
-                          <View style={{marginLeft: 8, backgroundColor: '#F59E0B1A', padding: 4, borderRadius: 6, borderWidth: 1, borderColor: '#F59E0B33'}}>
-                            <Icon name="calendar" size={11} color="#F59E0B" />
+                          <View style={{marginLeft: 8, backgroundColor: `${tokens.brandAccent}1A`, padding: 4, borderRadius: 6, borderWidth: 1, borderColor: `${tokens.brandAccent}33`}}>
+                            <Icon name="calendar" size={11} color={tokens.brandAccent} />
                           </View>
                         )}
                       </Pressable>
@@ -619,9 +619,9 @@ export function PostCallSummaryScreen() {
             <ActivityIndicator color="#fff" />
           ) : isConfirmed ? (
             <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
-              <Icon name="check-circle" size={18} color="#FAFAFA" />
+              <Icon name="check-circle" size={18} color={tokens.brandPrimaryFg} />
               <Text style={{color: tokens.textInverse, fontWeight: '700', fontSize: 12, textTransform: 'uppercase', letterSpacing: 2}}>
-                ✓ Confirmed &amp; Saved
+                Confirmed &amp; Saved
               </Text>
             </View>
           ) : (

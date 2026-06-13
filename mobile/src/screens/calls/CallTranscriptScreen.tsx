@@ -110,7 +110,7 @@ export function CallTranscriptScreen() {
       <Text style={{color: tokens.textPrimary, fontSize: 14, lineHeight: 24}}>
         {parts.map((part, i) =>
           part.toLowerCase() === cleanQuery.toLowerCase() ? (
-            <Text key={i} style={{backgroundColor: '#F59E0B66', color: '#F59E0B', fontWeight: '600', paddingHorizontal: 2, borderRadius: 2}}>
+            <Text key={i} style={{backgroundColor: `${tokens.brandAccent}66`, color: tokens.brandAccent, fontWeight: '600', paddingHorizontal: 2, borderRadius: 2}}>
               {part}
             </Text>
           ) : part
@@ -232,7 +232,7 @@ export function CallTranscriptScreen() {
             transform: [{scale: pressed ? 0.95 : 1}],
           }]}
         >
-          <Icon name={isPlaying ? 'pause' : 'play'} size={18} color="#FAFAFA" style={!isPlaying ? {marginLeft: 2} : {}} />
+          <Icon name={isPlaying ? 'pause' : 'play'} size={18} color={tokens.brandPrimaryFg} style={!isPlaying ? {marginLeft: 2} : {}} />
         </Pressable>
 
         {/* Waveform */}
@@ -343,7 +343,7 @@ export function CallTranscriptScreen() {
                       textAlign: isAgent ? 'right' : 'left',
                     }}
                   >
-                    ✦ Seeked to {formatTime((seg as any).time ?? 0)}
+                    Seeked to {formatTime((seg as any).time ?? 0)}
                   </Text>
                 )}
               </View>

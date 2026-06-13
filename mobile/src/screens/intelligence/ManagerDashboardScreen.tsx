@@ -16,6 +16,7 @@ import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {intelligenceApi, TeamAnalytics} from '../../api/intelligence';
 import {format} from 'date-fns';
 import type {IntelligenceStackParamList} from '../../navigation/stacks/IntelligenceStack';
+import Icon from 'react-native-vector-icons/Feather';
 
 type NavProp = NativeStackNavigationProp<IntelligenceStackParamList>;
 
@@ -171,14 +172,14 @@ export function ManagerDashboardScreen() {
         <View className="flex-row gap-4 px-5 mb-8">
           <View className="flex-1 bg-white shadow-sm border border-slate-100 rounded-3xl p-5">
             <View className="w-10 h-10 rounded-full bg-brand-50 items-center justify-center mb-3">
-               <Text className="text-xl">📞</Text>
+              <Icon name="phone" size={18} color="#10B981" />
             </View>
             <Text className="text-slate-400 text-xs font-extrabold uppercase tracking-widest mb-1">Total calls</Text>
             <Text className="text-slate-900 text-3xl font-extrabold tracking-tight">{data.team_totals.calls}</Text>
           </View>
           <View className="flex-1 bg-white shadow-sm border border-slate-100 rounded-3xl p-5">
             <View className="w-10 h-10 rounded-full bg-blue-50 items-center justify-center mb-3">
-               <Text className="text-xl">⏱️</Text>
+              <Icon name="clock" size={18} color="#0EA5E9" />
             </View>
             <Text className="text-slate-400 text-xs font-extrabold uppercase tracking-widest mb-1">Talk time</Text>
             <Text className="text-slate-900 text-2xl font-extrabold tracking-tight">

@@ -42,8 +42,8 @@ const STATUS_STYLE: Record<string, {bg: string; text: string; border: string}> =
 };
 
 const ACTIVITY_ICON: Record<string, string> = {
-  note: '📝', call: '📞', email: '✉️', sms: '📱',
-  meeting: '🤝', viewing: '🏠', status_change: '🔄', system: '⚙️',
+  note: 'file-text', call: 'phone', email: 'mail', sms: 'message-square',
+  meeting: 'users', viewing: 'home', status_change: 'refresh-cw', system: 'settings',
 };
 
 const formatNaira = (value?: number | string) => {
@@ -125,7 +125,7 @@ function HighlightedTimelineItem({activity, isNew, tokens}: {activity: TimelineA
   }, [isNew]);
 
   const bgStyle = bgAnim.interpolate({inputRange: [0, 1], outputRange: ['transparent', 'rgba(16, 185, 129, 0.25)']});
-  const icon = ACTIVITY_ICON[activity.type] ?? '•';
+  const icon = ACTIVITY_ICON[activity.type] ?? 'activity';
   const hasVoiceNote = activity.type === 'note' && activity.body?.startsWith('[Voice Note]');
   let voiceDuration = '', voiceText = '';
   if (hasVoiceNote) {
@@ -137,7 +137,7 @@ function HighlightedTimelineItem({activity, isNew, tokens}: {activity: TimelineA
     <Animated.View style={{backgroundColor: bgStyle, borderRadius: 12, padding: 10, marginBottom: 6}}>
       <View style={{flexDirection: 'row'}}>
         <View style={{width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center', marginRight: 12, marginTop: 2, backgroundColor: tokens.surfaceRaised}}>
-          <Text style={{fontSize: 14}}>{icon}</Text>
+          <Icon name={icon} size={14} color={tokens.textSecondary} />
         </View>
         <View style={{flex: 1}}>
           {activity.subject && (
@@ -417,7 +417,7 @@ export function ContactDetailScreen() {
           <View style={{borderLeftWidth: 4, borderLeftColor: tokens.brandPrimary, padding: 16, borderTopRightRadius: 12, borderBottomRightRadius: 12, borderWidth: 1, borderColor: tokens.borderDefault, backgroundColor: tokens.surfaceCard}}>
             <View style={{flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 8}}>
               <Icon name="zap" size={14} color={tokens.brandPrimary} />
-              <Text style={{color: tokens.brandPrimary, fontWeight: '800', fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5}}>✦ AI Insight</Text>
+              <Text style={{color: tokens.brandPrimary, fontWeight: '800', fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5}}>AI Insight</Text>
             </View>
             <Text style={{fontSize: 12, lineHeight: 20, fontWeight: '600', color: tokens.textPrimary}}>{aiInsight}</Text>
           </View>

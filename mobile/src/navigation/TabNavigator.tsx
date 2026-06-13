@@ -18,6 +18,7 @@ import {messagingApi} from '../api/messaging';
 import {isToday} from 'date-fns';
 import {Task} from '../types';
 import {useTheme} from '../theme/ThemeProvider';
+import {Icons} from '../theme/icons';
 
 export type TabParamList = {
   Home:     undefined;
@@ -33,17 +34,31 @@ function TabIcon({
   name,
   focused,
   badgeCount,
+  badgeVariant = 'brand',
   tokens,
 }: {
   name: string;
   focused: boolean;
   badgeCount?: number;
+  badgeVariant?: 'brand' | 'danger';
   tokens: ReturnType<typeof useTheme>['tokens'];
 }) {
+  const badgeBg = badgeVariant === 'danger' ? tokens.dangerText : tokens.brandPrimary;
+
   return (
-    <View className="items-center justify-center pt-2 relative w-12 h-10">
+    <View style={{alignItems: 'center', justifyContent: 'center', paddingTop: 8, width: 48, height: 40}}>
+      {/* Active indicator dot — 4px, positioned 2px above icon */}
       {focused && (
-        <View className="absolute top-0 w-1.5 h-1.5 bg-brand-500 rounded-full" />
+        <View
+          style={{
+            position: 'absolute',
+            top: 0,
+            width: 4,
+            height: 4,
+            borderRadius: 2,
+            backgroundColor: tokens.brandPrimary,
+          }}
+        />
       )}
       <Icon
         name={name}
@@ -51,9 +66,21 @@ function TabIcon({
         color={focused ? tokens.brandPrimary : tokens.textTertiary}
       />
       {badgeCount !== undefined && badgeCount > 0 && (
-        <View className="absolute top-0 right-0 bg-brand-500 rounded-full px-1.5 py-0.5 min-w-[16px] items-center justify-center">
-          <Text className="text-white text-[8px] font-black leading-3">
-            {badgeCount}
+        <View
+          style={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            backgroundColor: badgeBg,
+            borderRadius: 8,
+            paddingHorizontal: 4,
+            paddingVertical: 1,
+            minWidth: 16,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <Text style={{color: '#FFFFFF', fontSize: 8, fontWeight: '900', lineHeight: 12}}>
+            {badgeCount > 9 ? '9+' : badgeCount}
           </Text>
         </View>
       )}
@@ -99,6 +126,7 @@ export function TabNavigator() {
 
   const inboxBadge = inbox?.length ?? 0;
 
+  // Tasks badge is overdue count — shown in danger color, not brand
   const tasksBadge =
     tasks?.filter(
       (t: Task) => t.status !== 'completed' && t.due_at && new Date(t.due_at) < new Date()
@@ -121,16 +149,20 @@ export function TabNavigator() {
         },
         tabBarActiveTintColor: tokens.brandPrimary,
         tabBarInactiveTintColor: tokens.textTertiary,
-        tabBarLabelStyle: {fontSize: 10, fontWeight: '700', marginTop: 4},
+        tabBarLabelStyle: {fontSize: 11, marginTop: 2},
       }}>
       <Tab.Screen
         name="Home"
         component={HomeScreen}
         listeners={{tabPress: () => Vibration.vibrate(10)}}
         options={{
-          tabBarLabel: 'Home',
+          tabBarLabel: ({focused}) => (
+            <Text style={{fontSize: 11, fontWeight: focused ? '700' : '500', color: focused ? tokens.brandPrimary : tokens.textTertiary, marginTop: 2}}>
+              Home
+            </Text>
+          ),
           tabBarIcon: ({focused}) => (
-            <TabIcon name="home" focused={focused} tokens={tokens} />
+            <TabIcon name={Icons.navHome} focused={focused} tokens={tokens} />
           ),
         }}
       />
@@ -139,9 +171,13 @@ export function TabNavigator() {
         component={ContactsStack}
         listeners={{tabPress: () => Vibration.vibrate(10)}}
         options={{
-          tabBarLabel: 'Contacts',
+          tabBarLabel: ({focused}) => (
+            <Text style={{fontSize: 11, fontWeight: focused ? '700' : '500', color: focused ? tokens.brandPrimary : tokens.textTertiary, marginTop: 2}}>
+              Contacts
+            </Text>
+          ),
           tabBarIcon: ({focused}) => (
-            <TabIcon name="users" focused={focused} tokens={tokens} />
+            <TabIcon name={Icons.navContacts} focused={focused} tokens={tokens} />
           ),
         }}
       />
@@ -150,12 +186,17 @@ export function TabNavigator() {
         component={MessagingStack}
         listeners={{tabPress: () => Vibration.vibrate(10)}}
         options={{
-          tabBarLabel: 'Inbox',
+          tabBarLabel: ({focused}) => (
+            <Text style={{fontSize: 11, fontWeight: focused ? '700' : '500', color: focused ? tokens.brandPrimary : tokens.textTertiary, marginTop: 2}}>
+              Inbox
+            </Text>
+          ),
           tabBarIcon: ({focused}) => (
             <TabIcon
-              name="message-square"
+              name={Icons.navInbox}
               focused={focused}
               badgeCount={inboxBadge}
+              badgeVariant="brand"
               tokens={tokens}
             />
           ),
@@ -166,12 +207,17 @@ export function TabNavigator() {
         component={TasksScreen}
         listeners={{tabPress: () => Vibration.vibrate(10)}}
         options={{
-          tabBarLabel: 'Tasks',
+          tabBarLabel: ({focused}) => (
+            <Text style={{fontSize: 11, fontWeight: focused ? '700' : '500', color: focused ? tokens.brandPrimary : tokens.textTertiary, marginTop: 2}}>
+              Tasks
+            </Text>
+          ),
           tabBarIcon: ({focused}) => (
             <TabIcon
-              name="check-square"
+              name={Icons.navTasks}
               focused={focused}
               badgeCount={tasksBadge}
+              badgeVariant="danger"
               tokens={tokens}
             />
           ),
@@ -182,12 +228,17 @@ export function TabNavigator() {
         component={MoreScreen}
         listeners={{tabPress: () => Vibration.vibrate(10)}}
         options={{
-          tabBarLabel: 'More',
+          tabBarLabel: ({focused}) => (
+            <Text style={{fontSize: 11, fontWeight: focused ? '700' : '500', color: focused ? tokens.brandPrimary : tokens.textTertiary, marginTop: 2}}>
+              More
+            </Text>
+          ),
           tabBarIcon: ({focused}) => (
             <TabIcon
-              name="grid"
+              name={Icons.navMore}
               focused={focused}
               badgeCount={moreBadge}
+              badgeVariant="brand"
               tokens={tokens}
             />
           ),

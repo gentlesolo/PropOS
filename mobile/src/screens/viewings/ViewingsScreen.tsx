@@ -20,14 +20,15 @@ import {format, isToday, addDays, isSameDay} from 'date-fns';
 import type {ViewingsStackParamList} from '../../navigation/stacks/ViewingsStack';
 import Icon from 'react-native-vector-icons/Feather';
 import {useTheme} from '../../theme/ThemeProvider';
+import {AppIcon} from '../../components/AppIcon';
 
 type NavProp = NativeStackNavigationProp<ViewingsStackParamList>;
 
 // Outcome colors are semantic/fixed — not theme-dependent
 const OUTCOMES = [
-  {value: 'interested',     label: 'Interested',     emoji: '🔥', color: '#10B981', bg: '#10B9811A', border: '#10B981'},
-  {value: 'offer_expected', label: 'Offer Expected', emoji: '✍️', color: '#0EA5E9', bg: '#0EA5E91A', border: '#0EA5E9'},
-  {value: 'not_interested', label: 'Not Interested', emoji: '👎', color: '#71717A', bg: '#71717A1A', border: '#71717A'},
+  {value: 'interested',     label: 'Interested',     icon: 'check-circle', color: '#10B981', bg: '#10B9811A', border: '#10B981'},
+  {value: 'offer_expected', label: 'Offer Expected', icon: 'edit-2',       color: '#0EA5E9', bg: '#0EA5E91A', border: '#0EA5E9'},
+  {value: 'not_interested', label: 'Not Interested', icon: 'x-circle',     color: '#71717A', bg: '#71717A1A', border: '#71717A'},
 ];
 
 function getPropertyType(address?: string, title?: string): string {
@@ -529,7 +530,7 @@ export function ViewingsScreen() {
                     onPress={() => setSelectedOutcome(out.value)}
                     style={{flex: 1, alignItems: 'center', justifyContent: 'center', padding: 12, borderRadius: 12, borderWidth: 2, backgroundColor: isSel ? out.bg : tokens.surfaceRaised, borderColor: isSel ? out.border : tokens.borderDefault}}
                   >
-                    <Text style={{fontSize: 20, marginBottom: 4}}>{out.emoji}</Text>
+                    <AppIcon name={out.icon} size="lg" color={isSel ? out.color : '#71717A'} />
                     <Text style={{fontSize: 11, fontWeight: '800', color: isSel ? out.color : tokens.textSecondary}}>{out.label}</Text>
                   </Pressable>
                 );

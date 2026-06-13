@@ -44,7 +44,7 @@ function TenantRow({tenant, onPress}: {tenant: TenantListItem; onPress: () => vo
       <View className="flex-1 pr-2">
         <Text className="text-slate-900 font-bold text-base mb-0.5">{tenant.full_name ?? t('tenants.noTenant')}</Text>
         <Text className="text-slate-500 font-medium text-sm" numberOfLines={1}>
-          📍 {tenant.property ?? t('tenants.noProperty')}
+          {tenant.property ?? t('tenants.noProperty')}
         </Text>
         {tenant.monthly_rent != null && (
           <Text className="text-slate-500 font-bold text-xs mt-1 uppercase tracking-wide">

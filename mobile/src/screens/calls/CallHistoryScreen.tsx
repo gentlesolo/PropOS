@@ -91,7 +91,7 @@ function CallRow({call, onPress, searchQuery, tokens}: CallRowProps) {
       <Text style={{color: tokens.textSecondary, fontSize: 12, marginTop: 4, lineHeight: 20}} numberOfLines={2}>
         {parts.map((part, i) =>
           part.toLowerCase() === cleanQuery.toLowerCase() ? (
-            <Text key={i} style={{color: '#F59E0B', fontWeight: '600'}}>{part}</Text>
+            <Text key={i} style={{color: tokens.brandAccent, fontWeight: '600'}}>{part}</Text>
           ) : part
         )}
       </Text>
@@ -99,12 +99,12 @@ function CallRow({call, onPress, searchQuery, tokens}: CallRowProps) {
   };
 
   const directionBg =
-    isMissed ? '#F43F5E1A'
+    isMissed ? tokens.dangerBg
     : call.direction === 'inbound' ? `${tokens.brandPrimary}1A`
     : tokens.surfaceRaised;
 
   const directionColor =
-    isMissed ? '#F43F5E'
+    isMissed ? tokens.dangerText
     : call.direction === 'inbound' ? tokens.brandPrimary
     : tokens.textTertiary;
 
@@ -167,7 +167,7 @@ function CallRow({call, onPress, searchQuery, tokens}: CallRowProps) {
 
       {/* Content */}
       <View style={{flex: 1, paddingRight: 8}}>
-        <Text style={{fontWeight: '600', fontSize: 14, lineHeight: 20, color: isMissed ? '#F43F5E' : tokens.textPrimary}}>
+        <Text style={{fontWeight: '600', fontSize: 14, lineHeight: 20, color: isMissed ? tokens.dangerText : tokens.textPrimary}}>
           {name}
         </Text>
         {isMissed ? (
