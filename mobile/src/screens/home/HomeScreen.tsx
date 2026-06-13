@@ -552,10 +552,6 @@ export function HomeScreen() {
     }
   };
 
-  // Header dynamic colors
-  const gradientOverlay = isDarkMode
-    ? 'bg-brand-500/10' // subtle dark emerald tint
-    : 'bg-brand-50/70';  // faint light emerald wash
 
   // Counts for status strip chips
   const viewingsCount = viewings?.length ?? 0;
@@ -574,47 +570,114 @@ export function HomeScreen() {
   // Check if first-time loader (no cache and loading)
   const isFirstLoad = !cachedData && tasksPending;
 
+  // Contextual greeting based on time of day
+  const getTimeOfDay = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'morning';
+    if (hour < 17) return 'afternoon';
+    return 'evening';
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-surface-page">
-      {/* Notch aware gradient header wrapper */}
-      <View className="relative w-full z-20">
-        <View className={`absolute top-0 left-0 right-0 h-[140px] rounded-b-3xl ${gradientOverlay} blur-3xl`} />
-        
-        {/* Header Grid */}
-        <View className="flex-row items-center justify-between px-5 pt-4 pb-3">
-          <View>
-            <View className="flex-row items-center">
-              <Text className="text-text-primary text-[22px] font-semibold tracking-tight">
-                Good morning, {user?.first_name || 'Tunde'}
+      {/* ── Header ── */}
+      <View
+        style={{
+          backgroundColor: isDarkMode ? '#111827' : '#ffffff',
+          borderBottomWidth: 1,
+          borderBottomColor: isDarkMode ? '#1f2937' : '#e2e8f0',
+          paddingHorizontal: 20,
+          paddingTop: 12,
+          paddingBottom: 12,
+        }}
+      >
+        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+          {/* Left: Greeting + Date */}
+          <View style={{flex: 1, marginRight: 12}}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text
+                style={{
+                  color: isDarkMode ? '#FAFAFA' : '#0f172a',
+                  fontSize: 22,
+                  fontWeight: '700',
+                  letterSpacing: -0.5,
+                }}
+                numberOfLines={1}
+              >
+                Good {getTimeOfDay()}, {user?.first_name || 'Agent'}
               </Text>
               {isAnyFetching && <RotatingSyncIcon />}
             </View>
-            <Text className="text-text-secondary text-[13px] font-medium mt-0.5">
+            <Text
+              style={{
+                color: isDarkMode ? '#71717A' : '#64748b',
+                fontSize: 13,
+                fontWeight: '500',
+                marginTop: 2,
+              }}
+            >
               {format(new Date(), 'EEEE, d MMMM')}
             </Text>
           </View>
-          
-          {/* Notifications and Avatar */}
-          <View className="flex-row items-center gap-4">
-            <Pressable 
+
+          {/* Right: Bell + Avatar */}
+          <View style={{flexDirection: 'row', alignItems: 'center', gap: 12}}>
+            {/* Notification Bell */}
+            <Pressable
               onPress={() => navigation.navigate('Notifications')}
-              className="w-10 h-10 bg-surface-card border border-zinc-800 rounded-full items-center justify-center relative active:opacity-75"
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: 20,
+                backgroundColor: isDarkMode ? '#1f2937' : '#f1f5f9',
+                borderWidth: 1,
+                borderColor: isDarkMode ? '#374151' : '#e2e8f0',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
             >
-              <Icon name="bell" size={18} color="#FAFAFA" />
+              <Icon
+                name="bell"
+                size={18}
+                color={unreadCount > 0 ? '#10B981' : isDarkMode ? '#A1A1AA' : '#64748b'}
+              />
               {unreadCount > 0 && (
-                <View className="absolute top-2 right-2 w-2.5 h-2.5 bg-accent rounded-full border border-surface-card" />
+                <View
+                  style={{
+                    position: 'absolute',
+                    top: 7,
+                    right: 7,
+                    width: 8,
+                    height: 8,
+                    borderRadius: 4,
+                    backgroundColor: '#F59E0B',
+                    borderWidth: 1.5,
+                    borderColor: isDarkMode ? '#111827' : '#ffffff',
+                  }}
+                />
               )}
             </Pressable>
 
-            <Pressable 
+            {/* Avatar */}
+            <Pressable
               onPress={() => navigation.navigate('Profile')}
-              className="w-10 h-10 rounded-full border border-zinc-800 items-center justify-center bg-brand-500/10 overflow-hidden active:opacity-75"
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: 20,
+                backgroundColor: '#10B981' + '1a',
+                borderWidth: 1.5,
+                borderColor: '#10B981' + '40',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden',
+              }}
             >
               {user?.avatar_path ? (
-                <Image source={{uri: user.avatar_path}} className="w-full h-full" />
+                <Image source={{uri: user.avatar_path}} style={{width: 40, height: 40}} />
               ) : (
-                <Text className="text-brand-500 font-extrabold text-sm">
-                  {(user?.first_name?.[0] || 'T').toUpperCase()}
+                <Text style={{color: '#10B981', fontWeight: '800', fontSize: 14}}>
+                  {(user?.first_name?.[0] || 'A').toUpperCase()}
                 </Text>
               )}
             </Pressable>
