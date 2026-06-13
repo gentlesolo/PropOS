@@ -97,9 +97,13 @@ class MobileMessagingController extends Controller
             ->get();
 
         $email = EmailLog::where('contact_id', $contact->id)
-            ->select(['id', 'subject as body', 'direction', 'status', 'sent_at as created_at'])
+            ->select(['id', 'subject', 'body_text', 'direction', 'status', 'sent_at as created_at'])
             ->selectRaw("'email' as channel")
-            ->get();
+            ->get()
+            ->map(function ($e) {
+                $e->body = $e->subject ?: '(No Subject)';
+                return $e;
+            });
 
         $messages = collect()
             ->merge($whatsapp)

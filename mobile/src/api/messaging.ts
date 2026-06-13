@@ -21,6 +21,8 @@ export interface InboxThread {
 export interface Message {
   id: number;
   body: string;
+  subject?: string;
+  body_text?: string;
   channel: 'whatsapp' | 'sms' | 'email';
   direction: 'inbound' | 'outbound';
   status: string;
