@@ -101,9 +101,11 @@ class MobileAuthController extends Controller
 
     private function formatUser(User $user): array
     {
-        return $user->only([
+        $data = $user->only([
             'id', 'first_name', 'last_name', 'email', 'phone',
             'job_title', 'agency_id', 'avatar_path',
         ]);
+        $data['roles'] = $user->getRoleNames()->toArray();
+        return $data;
     }
 }

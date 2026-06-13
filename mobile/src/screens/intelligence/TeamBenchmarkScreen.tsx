@@ -15,6 +15,18 @@ import Icon from 'react-native-vector-icons/Feather';
 import {useTheme} from '../../theme/ThemeProvider';
 import {useAuthStore} from '../../store/authStore';
 import {managerApi, BenchmarkAgent, TeamBenchmarkResponse} from '../../api/manager';
+import {createMMKV} from 'react-native-mmkv';
+
+// Instantiate local storage safely
+let localStore: any;
+try {
+  localStore = createMMKV({id: 'invoices-local-store-v1'});
+} catch (e) {
+  const store: Record<string, string> = {};
+  localStore = {
+    getString: (key: string) => store[key] || null,
+  };
+}
 
 const {width: SCREEN_WIDTH} = Dimensions.get('window');
 
@@ -83,9 +95,10 @@ function AgentRankingRow({
   // Formatter for values
   const formatVal = (val: number) => {
     if (metric === 'Pipeline Value') {
-      if (val >= 1000000) return `$${(val / 1000000).toFixed(2)}M`;
-      if (val >= 1000) return `$${(val / 1000).toFixed(0)}k`;
-      return `$${val}`;
+      const symbol = localStore.getString('currency_symbol') || '₦';
+      if (val >= 1000000) return `${symbol}${(val / 1000000).toFixed(2)}M`;
+      if (val >= 1000) return `${symbol}${(val / 1000).toFixed(0)}k`;
+      return `${symbol}${val}`;
     }
     if (metric === 'Sentiment') {
       return `${val}%`;

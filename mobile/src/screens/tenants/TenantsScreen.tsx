@@ -24,15 +24,15 @@ import {useTranslation} from '../../i18n';
 
 type NavProp = NativeStackNavigationProp<TenantsStackParamList>;
 
-// Pulsing dot for overdue payments
+// Pulsing dot for overdue payments (1.2s loop, opacity 1.0 -> 0.4)
 function PulsingDot() {
   const opacity = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     Animated.loop(
       Animated.sequence([
-        Animated.timing(opacity, {toValue: 0.2, duration: 800, useNativeDriver: true}),
-        Animated.timing(opacity, {toValue: 1, duration: 800, useNativeDriver: true}),
+        Animated.timing(opacity, {toValue: 0.4, duration: 600, useNativeDriver: true}),
+        Animated.timing(opacity, {toValue: 1, duration: 600, useNativeDriver: true}),
       ])
     ).start();
   }, []);

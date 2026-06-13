@@ -24,6 +24,7 @@ import {FinanceStackParamList} from '../../navigation/stacks/FinanceStack';
 import {useTranslation} from '../../i18n';
 import {useTheme} from '../../theme/ThemeProvider';
 import {createMMKV} from 'react-native-mmkv';
+import {RecordPaymentModal} from '../../components/RecordPaymentModal';
 
 type RouteProps = RouteProp<FinanceStackParamList, 'InvoiceDetail'>;
 
@@ -42,18 +43,19 @@ try {
 
 // Helper to format currency
 const formatCurrency = (amount: number) => {
-  return `₦${amount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+  const currencySymbol = localStore.getString('currency_symbol') || '₦';
+  return `${currencySymbol}${amount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
 };
 
-// Pulsing dot for overdue items
+// Pulsing dot for overdue items (1.2s loop, opacity 1.0 -> 0.4)
 function PulsingDot() {
   const opacity = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     Animated.loop(
       Animated.sequence([
-        Animated.timing(opacity, {toValue: 0.2, duration: 800, useNativeDriver: true}),
-        Animated.timing(opacity, {toValue: 1, duration: 800, useNativeDriver: true}),
+        Animated.timing(opacity, {toValue: 0.4, duration: 600, useNativeDriver: true}),
+        Animated.timing(opacity, {toValue: 1, duration: 600, useNativeDriver: true}),
       ])
     ).start();
   }, []);
@@ -141,10 +143,6 @@ export function InvoiceDetailScreen() {
   const [showPayModal, setShowPayModal] = useState(false);
   const [showEditItemModal, setShowEditItemModal] = useState(false);
 
-  // Manual payment recording form fields
-  const [amountPaidInput, setAmountPaidInput] = useState('');
-  const [paidDateInput, setPaidDateInput] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState<'Bank Transfer' | 'Cash' | 'Card'>('Bank Transfer');
   const [isRecordingPayment, setIsRecordingPayment] = useState(false);
 
   // Line item editing states (for Draft mode)
@@ -301,21 +299,11 @@ export function InvoiceDetailScreen() {
 
   // Record Manual Payment (Bottom Sheet)
   const openRecordPayment = () => {
-    if (!invoice) return;
-    const remaining = invoice.balance ?? (invoice.total - invoice.amount_paid);
-    setAmountPaidInput(String(remaining));
-    setPaidDateInput(new Date().toISOString().split('T')[0]);
-    setPaymentMethod('Bank Transfer');
     setShowPayModal(true);
   };
 
-  const handleRecordPaymentSubmit = () => {
+  const handleRecordPaymentSubmit = (amt: number, date: string, method: 'Bank Transfer' | 'Cash' | 'Card') => {
     if (!invoice) return;
-    const amt = parseFloat(amountPaidInput);
-    if (isNaN(amt) || amt <= 0) {
-      Alert.alert('Validation Error', 'Please enter a valid amount.');
-      return;
-    }
 
     setIsRecordingPayment(true);
 
@@ -329,7 +317,7 @@ export function InvoiceDetailScreen() {
         amount_paid: newPaid,
         balance: newBalance,
         status: newStatus,
-        paid_at: newStatus === 'paid' ? paidDateInput + ' 00:00:00' : invoice.paid_at,
+        paid_at: newStatus === 'paid' ? date + ' 00:00:00' : invoice.paid_at,
         // Save manual payment transaction info inside property detail or meta
         recipient_name: getRecipientName(invoice),
       };
@@ -337,7 +325,7 @@ export function InvoiceDetailScreen() {
       saveInvoiceToStore(updated);
       setIsRecordingPayment(false);
       setShowPayModal(false);
-      Alert.alert('Payment Recorded', `Recorded payment of ${formatCurrency(amt)} via ${paymentMethod}.`);
+      Alert.alert('Payment Recorded', `Recorded payment of ${formatCurrency(amt)} via ${method}.`);
     }, 1000);
   };
 
@@ -1003,145 +991,14 @@ export function InvoiceDetailScreen() {
         )}
       </View>
 
-      {/* MODAL A: RECORD PAYMENT BOTTOM SHEET */}
-      <Modal
+      {/* MODAL A: RECORD PAYMENT BOTTOM SHEET (SHARED COMPONENT) */}
+      <RecordPaymentModal
         visible={showPayModal}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setShowPayModal(false)}
-      >
-        <View style={{flex: 1, justifyContent: 'flex-end', backgroundColor: tokens.surfaceOverlay}}>
-          <Pressable style={{flex: 1}} onPress={() => setShowPayModal(false)} />
-          <View
-            style={{
-              backgroundColor: tokens.surfaceCard,
-              borderTopLeftRadius: 24,
-              borderTopRightRadius: 24,
-              borderWidth: 1,
-              borderColor: tokens.borderStrong,
-              padding: 24,
-              paddingBottom: insets.bottom > 0 ? insets.bottom + 20 : 30,
-            }}
-          >
-            {/* Header */}
-            <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20}}>
-              <Text style={{color: tokens.textPrimary, fontSize: 16, fontWeight: '800'}}>
-                Record Rent Payment
-              </Text>
-              <Pressable
-                onPress={() => setShowPayModal(false)}
-                style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 16,
-                  backgroundColor: tokens.surfaceRaised,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <Icon name="x" size={16} color={tokens.textSecondary} />
-              </Pressable>
-            </View>
-
-            {/* Amount Paid field */}
-            <View style={{marginBottom: 16}}>
-              <Text style={{color: tokens.textSecondary, fontSize: 12, fontWeight: '700', marginBottom: 8}}>
-                Amount Paid (₦)
-              </Text>
-              <TextInput
-                value={amountPaidInput}
-                onChangeText={setAmountPaidInput}
-                keyboardType="decimal-pad"
-                style={{
-                  backgroundColor: tokens.surfaceSunken,
-                  color: tokens.textPrimary,
-                  fontSize: 16,
-                  fontWeight: '800',
-                  paddingVertical: 12,
-                  paddingHorizontal: 16,
-                  borderRadius: 12,
-                  borderWidth: 1,
-                  borderColor: tokens.borderDefault,
-                }}
-              />
-            </View>
-
-            {/* Date Paid field */}
-            <View style={{marginBottom: 16}}>
-              <Text style={{color: tokens.textSecondary, fontSize: 12, fontWeight: '700', marginBottom: 8}}>
-                Date Paid
-              </Text>
-              <TextInput
-                value={paidDateInput}
-                onChangeText={setPaidDateInput}
-                placeholder="YYYY-MM-DD"
-                placeholderTextColor={tokens.textTertiary}
-                style={{
-                  backgroundColor: tokens.surfaceSunken,
-                  color: tokens.textPrimary,
-                  fontSize: 13,
-                  paddingVertical: 12,
-                  paddingHorizontal: 16,
-                  borderRadius: 12,
-                  borderWidth: 1,
-                  borderColor: tokens.borderDefault,
-                }}
-              />
-            </View>
-
-            {/* Payment method selection row */}
-            <View style={{marginBottom: 24}}>
-              <Text style={{color: tokens.textSecondary, fontSize: 12, fontWeight: '700', marginBottom: 8}}>
-                Payment Method
-              </Text>
-              <View style={{flexDirection: 'row', gap: 8}}>
-                {(['Bank Transfer', 'Cash', 'Card'] as const).map((meth) => {
-                  const active = paymentMethod === meth;
-                  return (
-                    <Pressable
-                      key={meth}
-                      onPress={() => setPaymentMethod(meth)}
-                      style={{
-                        flex: 1,
-                        paddingVertical: 12,
-                        borderRadius: 8,
-                        backgroundColor: active ? tokens.brandPrimary : tokens.surfaceRaised,
-                        borderWidth: 1,
-                        borderColor: active ? tokens.brandPrimary : tokens.borderDefault,
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Text style={{color: active ? '#ffffff' : tokens.textSecondary, fontSize: 11, fontWeight: '700'}}>
-                        {meth}
-                      </Text>
-                    </Pressable>
-                  );
-                })}
-              </View>
-            </View>
-
-            {/* CTA Mark Paid */}
-            <Pressable
-              onPress={handleRecordPaymentSubmit}
-              disabled={!amountPaidInput || isRecordingPayment}
-              style={{
-                backgroundColor: tokens.brandPrimary,
-                borderRadius: 12,
-                paddingVertical: 14,
-                alignItems: 'center',
-              }}
-            >
-              {isRecordingPayment ? (
-                <ActivityIndicator color="#ffffff" size="small" />
-              ) : (
-                <Text style={{color: '#ffffff', fontSize: 14, fontWeight: '800'}}>
-                  Mark as Paid
-                </Text>
-              )}
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
+        onClose={() => setShowPayModal(false)}
+        prefilledAmount={invoice ? String(invoice.balance ?? (invoice.total - invoice.amount_paid)) : '0'}
+        onConfirm={handleRecordPaymentSubmit}
+        isSubmitting={isRecordingPayment}
+      />
 
       {/* MODAL B: EDIT/ADD LINE ITEM (DRAFT MODE) */}
       <Modal

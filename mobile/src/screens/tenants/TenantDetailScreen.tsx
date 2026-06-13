@@ -20,19 +20,20 @@ import {tenantsApi, leasesApi, TenantDetail, PaymentItem} from '../../api/tenant
 import type {TenantsStackParamList} from '../../navigation/stacks/TenantsStack';
 import {useTheme} from '../../theme/ThemeProvider';
 import {useTranslation} from '../../i18n';
+import {RecordPaymentModal} from '../../components/RecordPaymentModal';
 
 type Route = RouteProp<TenantsStackParamList, 'TenantDetail'>;
 type NavProp = NativeStackNavigationProp<TenantsStackParamList>;
 
-// Pulsing dot for overdue indicators
+// Pulsing dot for overdue indicators (1.2s loop, opacity 1.0 -> 0.4)
 function PulsingDot() {
   const opacity = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     Animated.loop(
       Animated.sequence([
-        Animated.timing(opacity, {toValue: 0.3, duration: 800, useNativeDriver: true}),
-        Animated.timing(opacity, {toValue: 1, duration: 800, useNativeDriver: true}),
+        Animated.timing(opacity, {toValue: 0.4, duration: 600, useNativeDriver: true}),
+        Animated.timing(opacity, {toValue: 1, duration: 600, useNativeDriver: true}),
       ])
     ).start();
   }, []);
@@ -64,10 +65,7 @@ export function TenantDetailScreen() {
   const [showPayModal, setShowPayModal] = useState(false);
   const [showRenewalBanner, setShowRenewalBanner] = useState(true);
 
-  // Form states for Record Payment Bottom Sheet
-  const [amountPaid, setAmountPaid] = useState('');
-  const [paidDate, setPaidDate] = useState('2026-06-13');
-  const [paymentMethod, setPaymentMethod] = useState<'Bank Transfer' | 'Cash' | 'Card'>('Bank Transfer');
+
 
   // AI Reminder Modal states
   const [showReminderModal, setShowReminderModal] = useState(false);
@@ -173,7 +171,6 @@ export function TenantDetailScreen() {
 
   // Pre-fill payment input on trigger
   const triggerRecordPayment = () => {
-    setAmountPaid(String(tenant.monthly_rent ?? ''));
     setShowPayModal(true);
   };
 
@@ -759,152 +756,14 @@ export function TenantDetailScreen() {
         </View>
       </ScrollView>
 
-      {/* RECORD PAYMENT BOTTOM SHEET / MODAL */}
-      <Modal
+      {/* RECORD PAYMENT BOTTOM SHEET / MODAL (SHARED COMPONENT) */}
+      <RecordPaymentModal
         visible={showPayModal}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setShowPayModal(false)}
-      >
-        <Pressable
-          style={{
-            flex: 1,
-            backgroundColor: tokens.surfaceOverlay,
-            justifyContent: 'flex-end',
-          }}
-          onPress={() => setShowPayModal(false)}
-        >
-          <Pressable
-            style={{
-              backgroundColor: tokens.surfaceCard,
-              borderTopLeftRadius: 24,
-              borderTopRightRadius: 24,
-              borderWidth: 1,
-              borderColor: tokens.borderStrong,
-              padding: 24,
-              paddingBottom: 40,
-            }}
-            onPress={(e) => e.stopPropagation()}
-          >
-            {/* Header */}
-            <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20}}>
-              <Text style={{color: tokens.textPrimary, fontSize: 16, fontWeight: '800'}}>
-                Record Rent Payment
-              </Text>
-              <Pressable
-                onPress={() => setShowPayModal(false)}
-                style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 16,
-                  backgroundColor: tokens.surfaceRaised,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <Icon name="x" size={16} color={tokens.textSecondary} />
-              </Pressable>
-            </View>
-
-            {/* Amount input */}
-            <View style={{marginBottom: 16}}>
-              <Text style={{color: tokens.textSecondary, fontSize: 12, fontWeight: '700', marginBottom: 8}}>
-                Amount Paid ({currencySymbol})
-              </Text>
-              <TextInput
-                value={amountPaid}
-                onChangeText={setAmountPaid}
-                keyboardType="decimal-pad"
-                style={{
-                  backgroundColor: tokens.surfaceSunken,
-                  color: tokens.textPrimary,
-                  fontSize: 16,
-                  fontWeight: '800',
-                  paddingVertical: 12,
-                  paddingHorizontal: 16,
-                  borderRadius: 12,
-                  borderWidth: 1,
-                  borderColor: tokens.borderDefault,
-                }}
-              />
-            </View>
-
-            {/* Date input */}
-            <View style={{marginBottom: 16}}>
-              <Text style={{color: tokens.textSecondary, fontSize: 12, fontWeight: '700', marginBottom: 8}}>
-                Date Paid
-              </Text>
-              <TextInput
-                value={paidDate}
-                onChangeText={setPaidDate}
-                placeholder="YYYY-MM-DD"
-                placeholderTextColor={tokens.textTertiary}
-                style={{
-                  backgroundColor: tokens.surfaceSunken,
-                  color: tokens.textPrimary,
-                  fontSize: 13,
-                  paddingVertical: 12,
-                  paddingHorizontal: 16,
-                  borderRadius: 12,
-                  borderWidth: 1,
-                  borderColor: tokens.borderDefault,
-                }}
-              />
-            </View>
-
-            {/* Payment Method selector */}
-            <View style={{marginBottom: 24}}>
-              <Text style={{color: tokens.textSecondary, fontSize: 12, fontWeight: '700', marginBottom: 8}}>
-                Payment Method
-              </Text>
-              <View style={{flexDirection: 'row', gap: 8}}>
-                {['Bank Transfer', 'Cash', 'Card'].map((meth) => {
-                  const active = paymentMethod === meth;
-                  return (
-                    <Pressable
-                      key={meth}
-                      onPress={() => setPaymentMethod(meth as any)}
-                      style={{
-                        flex: 1,
-                        paddingVertical: 10,
-                        borderRadius: 8,
-                        backgroundColor: active ? tokens.brandPrimary : tokens.surfaceRaised,
-                        borderWidth: 1,
-                        borderColor: active ? tokens.brandPrimary : tokens.borderDefault,
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Text style={{color: active ? '#ffffff' : tokens.textSecondary, fontSize: 11, fontWeight: '700'}}>
-                        {meth}
-                      </Text>
-                    </Pressable>
-                  );
-                })}
-              </View>
-            </View>
-
-            {/* CTA Mark Paid */}
-            <Pressable
-              onPress={() => payMutation.mutate({amount: parseFloat(amountPaid), date: paidDate, method: paymentMethod})}
-              disabled={!amountPaid || payMutation.isPending}
-              style={{
-                backgroundColor: tokens.brandPrimary,
-                borderRadius: 12,
-                paddingVertical: 14,
-                alignItems: 'center',
-              }}
-            >
-              {payMutation.isPending ? (
-                <ActivityIndicator color="#ffffff" size="small" />
-              ) : (
-                <Text style={{color: '#ffffff', fontSize: 14, fontWeight: '800'}}>
-                  Mark as Paid
-                </Text>
-              )}
-            </Pressable>
-          </Pressable>
-        </Pressable>
-      </Modal>
+        onClose={() => setShowPayModal(false)}
+        prefilledAmount={tenant?.monthly_rent ? String(tenant.monthly_rent) : ''}
+        onConfirm={(amount, date, method) => payMutation.mutate({amount, date, method})}
+        isSubmitting={payMutation.isPending}
+      />
 
       {/* AI REMINDER MODAL */}
       <Modal

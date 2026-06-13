@@ -62,103 +62,103 @@ function ThreadRow({
 
   return (
     <Pressable
-      style={({pressed}) => ({
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: tokens.surfaceCard,
-        borderWidth: 1,
-        borderColor: tokens.borderDefault,
-        borderLeftWidth: isUnread ? 3.5 : 1,
-        borderLeftColor: isUnread ? tokens.brandPrimary : tokens.borderDefault,
-        borderRadius: 16,
-        marginHorizontal: 16,
-        marginBottom: 12,
-        padding: isUnread ? 13.5 : 14,
-        opacity: pressed ? 0.85 : 1,
-      })}
+      style={({pressed}) => ({marginHorizontal: 16, marginBottom: 12, opacity: pressed ? 0.85 : 1})}
       onPress={onPress}
     >
-      {/* Avatar with channel badge */}
-      <View style={{position: 'relative', marginRight: 14}}>
-        <View
-          style={{
-            width: 44,
-            height: 44,
-            borderRadius: 22,
-            backgroundColor: `${tokens.brandPrimary}1A`,
-            borderWidth: 1,
-            borderColor: `${tokens.brandPrimary}26`,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Text style={{color: tokens.brandPrimary, fontWeight: '800', fontSize: 14}}>{initials}</Text>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          backgroundColor: tokens.surfaceCard,
+          borderWidth: 1,
+          borderColor: tokens.borderDefault,
+          borderLeftWidth: isUnread ? 3.5 : 1,
+          borderLeftColor: isUnread ? tokens.brandPrimary : tokens.borderDefault,
+          borderRadius: 16,
+          padding: isUnread ? 13.5 : 14,
+        }}
+      >
+        {/* Avatar with channel badge */}
+        <View style={{position: 'relative', marginRight: 14}}>
+          <View
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: 22,
+              backgroundColor: `${tokens.brandPrimary}1A`,
+              borderWidth: 1,
+              borderColor: `${tokens.brandPrimary}26`,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Text style={{color: tokens.brandPrimary, fontWeight: '800', fontSize: 14}}>{initials}</Text>
+          </View>
+          <View
+            style={{
+              position: 'absolute',
+              bottom: -1.5,
+              right: -1.5,
+              width: 18,
+              height: 18,
+              borderRadius: 9,
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderWidth: 1,
+              backgroundColor: tokens.surfaceCard,
+              borderColor: tokens.borderDefault,
+            }}
+          >
+            <Icon
+              name={CHANNEL_ICON[last_message.channel] || 'message-square'}
+              size={10}
+              color={CHANNEL_ICON_COLOR[last_message.channel] || tokens.textTertiary}
+            />
+          </View>
         </View>
-        <View
-          style={{
-            position: 'absolute',
-            bottom: -1.5,
-            right: -1.5,
-            width: 18,
-            height: 18,
-            borderRadius: 9,
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderWidth: 1,
-            backgroundColor: tokens.surfaceCard,
-            borderColor: tokens.borderDefault,
-          }}
-        >
-          <Icon
-            name={CHANNEL_ICON[last_message.channel] || 'message-square'}
-            size={10}
-            color={CHANNEL_ICON_COLOR[last_message.channel]}
-          />
-        </View>
-      </View>
 
-      {/* Content */}
-      <View style={{flex: 1}}>
-        <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4}}>
-          <Text style={{fontSize: 14, fontWeight: isUnread ? '900' : '700', color: tokens.textPrimary}}>
-            {contact.first_name} {contact.last_name}
-          </Text>
-          <Text style={{color: tokens.textSecondary, fontSize: 10, fontWeight: '700'}}>
-            {formatTime(last_message.sent_at)}
+        {/* Content */}
+        <View style={{flex: 1}}>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4}}>
+            <Text style={{fontSize: 14, fontWeight: isUnread ? '900' : '700', color: tokens.textPrimary}}>
+              {contact.first_name} {contact.last_name}
+            </Text>
+            <Text style={{color: tokens.textSecondary, fontSize: 10, fontWeight: '700'}}>
+              {formatTime(last_message.sent_at)}
+            </Text>
+          </View>
+          <Text
+            style={{
+              fontSize: 12,
+              lineHeight: 16,
+              fontWeight: isUnread ? '700' : '400',
+              color: isUnread ? tokens.textPrimary : tokens.textSecondary,
+            }}
+            numberOfLines={1}
+          >
+            {last_message.direction === 'outbound'
+              ? `You: ${last_message.body}`
+              : last_message.body}
           </Text>
         </View>
-        <Text
-          style={{
-            fontSize: 12,
-            lineHeight: 16,
-            fontWeight: isUnread ? '700' : '400',
-            color: isUnread ? tokens.textPrimary : tokens.textSecondary,
-          }}
-          numberOfLines={1}
-        >
-          {last_message.direction === 'outbound' && (
-            <Text style={{color: tokens.textTertiary, fontWeight: '600'}}>You: </Text>
-          )}
-          {last_message.body}
-        </Text>
-      </View>
 
-      {/* Unread badge */}
-      {isUnread && (
-        <View
-          style={{
-            width: 18,
-            height: 18,
-            borderRadius: 9,
-            backgroundColor: tokens.brandPrimary,
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginLeft: 10,
-          }}
-        >
-          <Text style={{color: '#FFFFFF', fontSize: 9, fontWeight: '900'}}>1</Text>
-        </View>
-      )}
+        {/* Unread badge */}
+        {isUnread && (
+          <View
+            style={{
+              width: 18,
+              height: 18,
+              borderRadius: 9,
+              backgroundColor: tokens.brandPrimary,
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginLeft: 10,
+            }}
+          >
+            <Text style={{color: '#FFFFFF', fontSize: 9, fontWeight: '900'}}>1</Text>
+          </View>
+        )}
+      </View>
     </Pressable>
   );
 }

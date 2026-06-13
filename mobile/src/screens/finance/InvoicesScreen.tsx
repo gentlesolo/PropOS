@@ -44,12 +44,13 @@ try {
 
 // Helper to format currency
 const formatCurrency = (amount: number) => {
-  return `₦${amount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+  const symbol = localStore.getString('currency_symbol') || '₦';
+  return `${symbol}${amount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
 };
 
 // Helper to format currency abbreviated (e.g. ₦4.2M)
 const formatCurrencyAbbreviated = (amount: number) => {
-  const symbol = '₦';
+  const symbol = localStore.getString('currency_symbol') || '₦';
   if (amount >= 1_000_000) {
     return `${symbol}${(amount / 1_000_000).toFixed(1)}M`;
   }
@@ -59,15 +60,15 @@ const formatCurrencyAbbreviated = (amount: number) => {
   return `${symbol}${amount.toLocaleString()}`;
 };
 
-// Pulsing dot for overdue items
+// Pulsing dot for overdue items (1.2s loop, opacity 1.0 -> 0.4)
 function PulsingDot() {
   const opacity = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     Animated.loop(
       Animated.sequence([
-        Animated.timing(opacity, {toValue: 0.2, duration: 800, useNativeDriver: true}),
-        Animated.timing(opacity, {toValue: 1, duration: 800, useNativeDriver: true}),
+        Animated.timing(opacity, {toValue: 0.4, duration: 600, useNativeDriver: true}),
+        Animated.timing(opacity, {toValue: 1, duration: 600, useNativeDriver: true}),
       ])
     ).start();
   }, []);
@@ -732,6 +733,7 @@ export function InvoicesScreen() {
                         fontSize: 11,
                         fontWeight: '700',
                         marginRight: 8,
+                        fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
                       }}
                     >
                       {section.outstandingBalance > 0
@@ -990,7 +992,7 @@ export function InvoicesScreen() {
             >
               <View style={{marginRight: 6}}>
                 <Text style={{color: tokens.textTertiary, fontSize: 10, fontWeight: '700'}}>OUTSTANDING</Text>
-                <Text style={{color: stats.outstanding > 0 ? '#EF4444' : tokens.textPrimary, fontSize: 13, fontWeight: '800', marginTop: 2}}>
+                <Text style={{color: stats.outstanding > 0 ? '#EF4444' : tokens.textPrimary, fontSize: 13, fontWeight: '800', marginTop: 2, fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace'}}>
                   {formatCurrencyAbbreviated(stats.outstanding)}
                 </Text>
               </View>
@@ -1015,7 +1017,7 @@ export function InvoicesScreen() {
             >
               <View style={{marginRight: 6}}>
                 <Text style={{color: tokens.textTertiary, fontSize: 10, fontWeight: '700'}}>DUE THIS WEEK</Text>
-                <Text style={{color: stats.dueThisWeek > 0 ? '#F59E0B' : tokens.textPrimary, fontSize: 13, fontWeight: '800', marginTop: 2}}>
+                <Text style={{color: stats.dueThisWeek > 0 ? '#F59E0B' : tokens.textPrimary, fontSize: 13, fontWeight: '800', marginTop: 2, fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace'}}>
                   {formatCurrencyAbbreviated(stats.dueThisWeek)}
                 </Text>
               </View>
@@ -1040,7 +1042,7 @@ export function InvoicesScreen() {
             >
               <View style={{marginRight: 6}}>
                 <Text style={{color: tokens.textTertiary, fontSize: 10, fontWeight: '700'}}>PAID THIS MONTH</Text>
-                <Text style={{color: '#10B981', fontSize: 13, fontWeight: '800', marginTop: 2}}>
+                <Text style={{color: '#10B981', fontSize: 13, fontWeight: '800', marginTop: 2, fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace'}}>
                   {formatCurrencyAbbreviated(stats.paidThisMonth)}
                 </Text>
               </View>
