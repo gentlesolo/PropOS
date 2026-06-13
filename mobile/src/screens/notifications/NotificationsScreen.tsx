@@ -266,7 +266,7 @@ export function NotificationsScreen() {
     } else if (type.includes('lead')) {
       navigation.navigate('ContactDetail', {contactId: resolvedId});
     } else if (type.includes('message') || type.includes('email')) {
-      navigation.navigate('Messages', {
+      navigation.navigate('Inbox', {
         screen: 'Thread',
         params: {contactId: resolvedId},
       });

@@ -256,7 +256,7 @@ export function ContactsScreen() {
   };
 
   const handleMessage = (contact: Contact) => {
-    (navigation as any).navigate('Messages', {
+    (navigation as any).navigate('Inbox', {
       screen: 'Conversation',
       params: {
         contactId: contact.id,
@@ -431,7 +431,7 @@ export function ContactsScreen() {
         animationType="slide"
         onRequestClose={() => setCreateModalVisible(false)}
       >
-        <View className="flex-1 justify-end bg-black/60">
+        <View className="flex-1 justify-end bg-[#020617]/60">
           <Pressable
             className="flex-1"
             onPress={() => setCreateModalVisible(false)}

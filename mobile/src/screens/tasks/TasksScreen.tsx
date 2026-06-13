@@ -588,7 +588,7 @@ export function TasksScreen() {
       {/* Floating Add Task FAB */}
       <Pressable
         onPress={() => setQuickAddVisible(true)}
-        className="absolute bottom-6 right-6 w-14 h-14 rounded-full bg-brand-500 shadow-xl items-center justify-center active:scale-95 z-20"
+        className="absolute bottom-[82px] right-4 w-14 h-14 rounded-full bg-brand-500 shadow-xl items-center justify-center active:scale-95 z-20"
       >
         <Icon name="plus" size={26} color="#ffffff" />
       </Pressable>
@@ -600,7 +600,7 @@ export function TasksScreen() {
         animationType="slide"
         onRequestClose={() => setQuickAddVisible(false)}
       >
-        <View className="flex-1 justify-end bg-black/60">
+        <View className="flex-1 justify-end bg-[#020617]/60">
           <Pressable className="flex-1" onPress={() => setQuickAddVisible(false)} />
           <View className={`${bgCard} rounded-t-3xl border-t ${borderHeader} p-5 pb-8`}>
             <View className={`w-12 h-1 ${isDark ? 'bg-zinc-800' : 'bg-slate-350'} rounded-full self-center mb-4`} />
@@ -692,7 +692,7 @@ export function TasksScreen() {
         animationType="slide"
         onRequestClose={() => setTaskDetailVisible(false)}
       >
-        <View className="flex-1 justify-end bg-black/60">
+        <View className="flex-1 justify-end bg-[#020617]/60">
           <Pressable className="flex-1" onPress={() => setTaskDetailVisible(false)} />
           <View className={`${bgCard} rounded-t-3xl border-t ${borderHeader} p-5 pb-8`}>
             <View className={`w-12 h-1 ${isDark ? 'bg-zinc-800' : 'bg-slate-350'} rounded-full self-center mb-4`} />

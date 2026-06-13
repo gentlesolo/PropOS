@@ -615,10 +615,10 @@ export function ViewingDetailScreen() {
       {toastMessage && (
         <Animated.View
           style={{ transform: [{ translateY: toastY }] }}
-          className="absolute bottom-6 left-5 right-5 z-50"
+          className="absolute bottom-6 left-5 right-5 items-center z-50"
         >
-          <View className="bg-brand-500 rounded-2xl px-4 py-3.5 flex-row items-center justify-center shadow-lg border border-brand-400">
-            <Icon name="check-circle" size={14} color="#fff" />
+          <View className="bg-[#111827] border border-zinc-800/80 rounded-full px-5 py-2.5 flex-row items-center shadow-xl">
+            <Icon name="check-circle" size={14} color="#10B981" />
             <Text className="text-white text-xs font-extrabold ml-2 text-center">
               {toastMessage}
             </Text>

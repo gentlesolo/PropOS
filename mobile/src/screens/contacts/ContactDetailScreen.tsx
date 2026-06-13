@@ -771,7 +771,7 @@ export function ContactDetailScreen() {
       {(tab === 'timeline' || tab === 'notes') && (
         <Pressable
           onPress={() => setNoteVisible(true)}
-          className="absolute bottom-6 right-6 w-14 h-14 bg-brand-500 rounded-full items-center justify-center shadow-lg shadow-brand-500/35 active:scale-95 z-30"
+          className="absolute bottom-6 right-4 w-14 h-14 bg-brand-500 rounded-full items-center justify-center shadow-lg shadow-brand-500/35 active:scale-95 z-30"
         >
           <Icon name="mic" size={24} color="#ffffff" />
         </Pressable>
@@ -784,7 +784,7 @@ export function ContactDetailScreen() {
         animationType="slide"
         onRequestClose={() => setNoteVisible(false)}
       >
-        <View className="flex-1 justify-end bg-black/60">
+        <View className="flex-1 justify-end bg-[#020617]/60">
           <Pressable className="flex-1" onPress={() => setNoteVisible(false)} />
           
           <View className={`${bgCard} rounded-t-3xl border-t ${borderCard} p-5 pb-8`}>
@@ -896,7 +896,7 @@ export function ContactDetailScreen() {
           animationType="slide"
           onRequestClose={() => setDealModalVisible(false)}
         >
-          <View className="flex-1 justify-end bg-black/60">
+          <View className="flex-1 justify-end bg-[#020617]/60">
             <Pressable className="flex-1" onPress={() => setDealModalVisible(false)} />
             <View className={`${bgCard} rounded-t-3xl border-t ${borderCard} p-5 pb-8`}>
               <View className={`w-12 h-1 ${isDark ? 'bg-zinc-800' : 'bg-slate-300'} rounded-full self-center mb-5`} />

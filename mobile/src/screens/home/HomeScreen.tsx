@@ -647,7 +647,7 @@ export function HomeScreen() {
             icon="message-square"
             count={unreadMessagesCount}
             label="unread messages"
-            onPress={() => navigation.navigate('Messages')}
+            onPress={() => navigation.navigate('Inbox')}
           />
         </ScrollView>
 
