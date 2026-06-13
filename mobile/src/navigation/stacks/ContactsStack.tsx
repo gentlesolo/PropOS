@@ -5,6 +5,7 @@ import {ContactDetailScreen} from '../../screens/contacts/ContactDetailScreen';
 import {InCallScreen} from '../../screens/calls/InCallScreen';
 import {PostCallSummaryScreen} from '../../screens/calls/PostCallSummaryScreen';
 import {CallDetailScreen} from '../../screens/calls/CallDetailScreen';
+import {CallTranscriptScreen} from '../../screens/calls/CallTranscriptScreen';
 
 export type ContactsStackParamList = {
   ContactsList: undefined;
@@ -12,6 +13,7 @@ export type ContactsStackParamList = {
   InCall: {contactId?: number; phoneNumber: string; callSid?: string};
   PostCallSummary: {callId: number};
   CallDetail: {callId: number};
+  CallTranscript: {callId: number};
 };
 
 const Stack = createNativeStackNavigator<ContactsStackParamList>();
@@ -32,6 +34,7 @@ export function ContactsStack() {
         component={PostCallSummaryScreen}
         options={{presentation: 'fullScreenModal'}}
       />
+      <Stack.Screen name="CallTranscript" component={CallTranscriptScreen} />
     </Stack.Navigator>
   );
 }
