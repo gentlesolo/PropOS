@@ -57,4 +57,39 @@ export const invoicesApi = {
 
   payNow: (id: number) =>
     apiClient.post<{url: string; payment_id: string}>(`/invoices/${id}/pay`, {}),
+
+  create: async (invoice: Partial<InvoiceDetail>): Promise<{data: InvoiceDetail}> => {
+    // Simulating API creation delay
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    const total = invoice.total || 0;
+    const amount_paid = invoice.amount_paid || 0;
+    return {
+      data: {
+        id: Math.floor(Math.random() * 10000) + 1000,
+        reference: invoice.reference || 'INV-' + Math.random().toString(36).substring(2, 10).toUpperCase(),
+        type: invoice.type || 'other',
+        status: invoice.status || 'draft',
+        subtotal: invoice.subtotal || total,
+        tax_amount: invoice.tax_amount || 0,
+        total: total,
+        amount_paid: amount_paid,
+        balance: total - amount_paid,
+        due_date: invoice.due_date || new Date().toISOString().split('T')[0],
+        period_month: invoice.period_month || new Date().getMonth() + 1,
+        period_year: invoice.period_year || new Date().getFullYear(),
+        property: invoice.property || null,
+        issued_at: new Date().toISOString(),
+        paid_at: null,
+        tenant: invoice.tenant || null,
+        property_detail: invoice.property_detail || null,
+        line_items: invoice.line_items || [],
+      }
+    };
+  },
+
+  sendBulkReminders: async (ids: number[]): Promise<{success: boolean; count: number}> => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    return { success: true, count: ids.length };
+  },
 };
+

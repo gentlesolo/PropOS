@@ -207,13 +207,21 @@ export function MessagingInboxScreen() {
           zIndex: 10,
         }}
       >
-        <View style={{flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12}}>
-          <Text style={{color: tokens.textPrimary, fontSize: 24, fontWeight: '900', letterSpacing: -0.5}}>Inbox</Text>
-          {unreadCount > 0 && (
-            <View style={{backgroundColor: tokens.brandPrimary, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 999}}>
-              <Text style={{color: '#FFFFFF', fontSize: 10, fontWeight: '900'}}>{unreadCount}</Text>
-            </View>
-          )}
+        <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12}}>
+          <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
+            <Text style={{color: tokens.textPrimary, fontSize: 24, fontWeight: '900', letterSpacing: -0.5}}>Inbox</Text>
+            {unreadCount > 0 && (
+              <View style={{paddingHorizontal: 10, paddingVertical: 4, backgroundColor: `${tokens.brandPrimary}1A`, borderRadius: 999, borderWidth: 1, borderColor: `${tokens.brandPrimary}33`}}>
+                <Text style={{color: tokens.brandPrimary, fontWeight: '800', fontSize: 12}}>{unreadCount}</Text>
+              </View>
+            )}
+          </View>
+          <Pressable
+            onPress={() => navigation.navigate('Conversation' as any, {contactId: 0, contactName: ''})}
+            style={{width: 32, height: 32, borderRadius: 16, backgroundColor: tokens.brandPrimary, alignItems: 'center', justifyContent: 'center'}}
+          >
+            <Icon name="edit" size={15} color="#FFFFFF" />
+          </Pressable>
         </View>
 
         {/* Search */}

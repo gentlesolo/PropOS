@@ -57,6 +57,7 @@ export function MoreScreen() {
       route: 'Viewings',
       badge: viewingsCount > 0 ? `${viewingsCount} today` : null,
       badgeBg: `${tokens.brandPrimary}1A`,
+      badgeBorder: `${tokens.brandPrimary}33`,
       badgeText: tokens.brandPrimary,
     },
     {
@@ -67,6 +68,7 @@ export function MoreScreen() {
       route: 'Calls',
       badge: pendingCallsCount > 0 ? `${pendingCallsCount} pending` : null,
       badgeBg: '#F59E0B1A',
+      badgeBorder: '#F59E0B33',
       badgeText: '#F59E0B',
     },
     {
@@ -76,8 +78,9 @@ export function MoreScreen() {
       icon: 'bell',
       route: 'Notifications',
       badge: notificationsUnread > 0 ? `${notificationsUnread} new` : null,
-      badgeBg: tokens.brandPrimary,
-      badgeText: '#FFFFFF',
+      badgeBg: `${tokens.brandPrimary}1A`,
+      badgeBorder: `${tokens.brandPrimary}33`,
+      badgeText: tokens.brandPrimary,
     },
     {
       id: 'tenants',
@@ -85,7 +88,7 @@ export function MoreScreen() {
       subtitle: 'Active leases, rent schedules, and tenant profiles',
       icon: 'key',
       route: 'Tenants',
-      badge: null, badgeBg: '', badgeText: '',
+      badge: null, badgeBg: '', badgeBorder: '', badgeText: '',
     },
     {
       id: 'finance',
@@ -93,7 +96,7 @@ export function MoreScreen() {
       subtitle: 'Rent collections, expense tracking, and invoicing',
       icon: 'dollar-sign',
       route: 'Finance',
-      badge: null, badgeBg: '', badgeText: '',
+      badge: null, badgeBg: '', badgeBorder: '', badgeText: '',
     },
     ...(isManager
       ? [{
@@ -102,7 +105,7 @@ export function MoreScreen() {
           subtitle: 'Manager analytics, agency performance, and insights',
           icon: 'bar-chart-2',
           route: 'Intelligence',
-          badge: null, badgeBg: '', badgeText: '',
+          badge: null, badgeBg: '', badgeBorder: '', badgeText: '',
         }]
       : []),
     {
@@ -111,7 +114,7 @@ export function MoreScreen() {
       subtitle: 'Account details, notifications preferences, and device auth',
       icon: 'user',
       route: 'Profile',
-      badge: null, badgeBg: '', badgeText: '',
+      badge: null, badgeBg: '', badgeBorder: '', badgeText: '',
     },
   ];
 
@@ -136,7 +139,7 @@ export function MoreScreen() {
           zIndex: 10,
         }}
       >
-        <Text style={{color: tokens.textPrimary, fontSize: 24, fontWeight: '800', letterSpacing: -0.5}}>More Options</Text>
+        <Text style={{color: tokens.textPrimary, fontSize: 24, fontWeight: '900', letterSpacing: -0.5}}>More</Text>
         <Pressable
           onPress={handleLogout}
           style={{backgroundColor: '#F43F5E1A', borderWidth: 1, borderColor: '#F43F5E33', paddingHorizontal: 14, paddingVertical: 6, borderRadius: 999}}
@@ -231,7 +234,7 @@ export function MoreScreen() {
                   justifyContent: 'center',
                   marginRight: 16,
                   borderWidth: 1,
-                  borderColor: `${tokens.brandPrimary}1A`,
+                  borderColor: `${tokens.brandPrimary}33`,
                 }}
               >
                 <Icon name={item.icon} size={18} color={tokens.brandPrimary} />
@@ -245,7 +248,7 @@ export function MoreScreen() {
 
               {/* Badge or chevron */}
               {item.badge ? (
-                <View style={{paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999, backgroundColor: item.badgeBg, marginRight: 4}}>
+                <View style={{paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999, backgroundColor: item.badgeBg, borderWidth: 1, borderColor: item.badgeBorder, marginRight: 4}}>
                   <Text style={{fontSize: 10, fontWeight: '900', color: item.badgeText}}>{item.badge}</Text>
                 </View>
               ) : (

@@ -246,6 +246,49 @@ export interface TeamBenchmarkResponse {
   is_small_team: boolean;
 }
 
+export interface CallAnalyticsMetric {
+  value: number;
+  delta: number;
+}
+
+export interface CallAnalyticsResponse {
+  headline_metrics: {
+    total_calls: CallAnalyticsMetric;
+    avg_duration: CallAnalyticsMetric;
+    answer_rate: CallAnalyticsMetric;
+    avg_sentiment: { value: number; delta: number; rating: 'hot' | 'warm' | 'cold' | 'neutral' };
+  };
+  chart_data: {
+    label: string;
+    total: number;
+    answered: number;
+    missed: number;
+    avg_duration_sec: number;
+  }[];
+  sentiment_breakdown: {
+    hot: number;
+    warm: number;
+    cold: number;
+    neutral: number;
+    delta_hot: number;
+  };
+  conversion: {
+    calls_made: number;
+    tasks_created: number;
+    viewings_booked: number;
+    rate_text: string;
+  };
+  top_performers: {
+    id: number;
+    first_name: string;
+    last_name: string;
+    avatar_path?: string;
+    sentiment_score: number;
+    trend: 'up' | 'down' | 'flat';
+  }[];
+  ai_insight: string;
+}
+
 export const managerApi = {
   snapshot: async (smallTeamMode = false): Promise<{data: TeamSnapshot}> => {
     try {
@@ -411,5 +454,150 @@ export const managerApi = {
       },
     };
   },
+
+  callAnalytics: async (
+    period: string,
+    agentId: string | null,
+    direction: string
+  ): Promise<{data: CallAnalyticsResponse}> => {
+    // Simulate delay
+    await new Promise((resolve) => setTimeout(resolve, 600));
+
+    // Dynamic Empty State Simulation: Inbound + Today has no calls
+    if (direction === 'Inbound' && period === 'Today') {
+      return {
+        data: {
+          headline_metrics: {
+            total_calls: { value: 0, delta: 0 },
+            avg_duration: { value: 0, delta: 0 },
+            answer_rate: { value: 0, delta: 0 },
+            avg_sentiment: { value: 0, delta: 0, rating: 'neutral' },
+          },
+          chart_data: [],
+          sentiment_breakdown: { hot: 0, warm: 0, cold: 0, neutral: 0, delta_hot: 0 },
+          conversion: { calls_made: 0, tasks_created: 0, viewings_booked: 0, rate_text: '0% of calls led to viewings' },
+          top_performers: [],
+          ai_insight: 'No calls registered for this period. Try expanding your filters or choosing a wider date range.',
+        },
+      };
+    }
+
+    // Dynamic period multipliers
+    let mult = 1;
+    let periodText = 'week';
+    if (period === 'Today') {
+      mult = 0.2;
+      periodText = 'day';
+    } else if (period === 'This Month') {
+      mult = 4.2;
+      periodText = 'month';
+    } else if (period === 'Custom') {
+      mult = 2.1;
+      periodText = 'range';
+    }
+
+    // Direction modifiers
+    let dirMult = 1.0;
+    if (direction === 'Inbound') dirMult = 0.4;
+    else if (direction === 'Outbound') dirMult = 0.6;
+
+    // Agent specific modifier
+    let agentMult = 1.0;
+    if (agentId && agentId !== 'All') agentMult = 0.25;
+
+    const finalMult = mult * dirMult * agentMult;
+
+    const baseCalls = Math.round(180 * finalMult);
+    const baseDuration = Math.round(145); // average call length in seconds
+    const baseAnswerRate = Math.round(direction === 'Inbound' ? 95 : 68);
+
+    // Dynamic chart bars depending on period
+    let chart_data: any[] = [];
+    if (period === 'Today') {
+      // Hourly view
+      const hours = ['9am', '12pm', '3pm', '6pm'];
+      chart_data = hours.map((h, i) => {
+        const total = Math.max(1, Math.round((5 + i * 2) * dirMult * agentMult));
+        const answered = Math.max(1, Math.round(total * (baseAnswerRate / 100)));
+        return {
+          label: h,
+          total,
+          answered,
+          missed: total - answered,
+          avg_duration_sec: Math.round(baseDuration + (i * 10)),
+        };
+      });
+    } else {
+      // Daily view
+      const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      chart_data = days.map((d, i) => {
+        const total = Math.max(1, Math.round((12 + (i % 3) * 5) * dirMult * agentMult));
+        const answered = Math.max(1, Math.round(total * (baseAnswerRate / 100)));
+        return {
+          label: d,
+          total,
+          answered,
+          missed: total - answered,
+          avg_duration_sec: Math.round(baseDuration - 20 + ((i % 4) * 15)),
+        };
+      });
+    }
+
+    // Headline metrics
+    const totalCallsMetric = { value: baseCalls, delta: 12 };
+    const avgDurationMetric = { value: baseDuration, delta: -4 };
+    const answerRateMetric = { value: baseAnswerRate, delta: 2 };
+    const avgSentimentMetric = { value: 76, delta: 5, rating: 'warm' as const };
+
+    // Sentiment breakdown ratios
+    const hotPct = Math.round(15 * dirMult);
+    const warmPct = Math.round(45 * (direction === 'Inbound' ? 1.2 : 0.9));
+    const coldPct = Math.max(5, 100 - (hotPct + warmPct + 20));
+    const neutralPct = 100 - (hotPct + warmPct + coldPct);
+
+    // Call Outcomes → Conversion Funnel
+    const callsMadeCount = baseCalls;
+    const tasksCreatedCount = Math.round(baseCalls * 0.45);
+    const viewingsBookedCount = Math.round(baseCalls * 0.18);
+    const conversionRate = Math.round((viewingsBookedCount / Math.max(1, callsMadeCount)) * 100);
+
+    // Top performers
+    const performers = [
+      { id: 104, first_name: 'Elena', last_name: 'Rostova', sentiment_score: 92, trend: 'up' as const },
+      { id: 101, first_name: 'Sarah', last_name: 'Jenkins', sentiment_score: 85, trend: 'up' as const },
+      { id: 105, first_name: 'Kenji', last_name: 'Sato', sentiment_score: 80, trend: 'flat' as const },
+      { id: 106, first_name: 'Chloe', last_name: 'Dupont', sentiment_score: 75, trend: 'down' as const },
+    ];
+
+    const ai_insight = 'Calls made between 10am-12pm have 31% higher answer rates than calls made after 4pm. Consider shifting follow-up call blocks to mornings.';
+
+    return {
+      data: {
+        headline_metrics: {
+          total_calls: totalCallsMetric,
+          avg_duration: avgDurationMetric,
+          answer_rate: answerRateMetric,
+          avg_sentiment: avgSentimentMetric,
+        },
+        chart_data,
+        sentiment_breakdown: {
+          hot: hotPct,
+          warm: warmPct,
+          cold: coldPct,
+          neutral: neutralPct,
+          delta_hot: 5,
+        },
+        conversion: {
+          calls_made: callsMadeCount,
+          tasks_created: tasksCreatedCount,
+          viewings_booked: viewingsBookedCount,
+          rate_text: `Conversion: ${conversionRate}% of calls led to a booked viewing this ${periodText}`,
+        },
+        top_performers: performers,
+        ai_insight,
+      },
+    };
+  },
 };
+
 
