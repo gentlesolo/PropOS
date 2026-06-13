@@ -156,6 +156,7 @@ Route::prefix('mobile')->name('api.mobile.')->group(function () {
         Route::get('/tasks', [MobileTaskController::class, 'index'])->name('tasks.index');
         Route::post('/tasks', [MobileTaskController::class, 'store'])->name('tasks.store');
         Route::patch('/tasks/{task}', [MobileTaskController::class, 'update'])->name('tasks.update');
+        Route::delete('/tasks/{task}', [MobileTaskController::class, 'destroy'])->name('tasks.destroy');
 
         // Messaging (Phase 2)
         Route::get('/messages', [MobileMessagingController::class, 'inbox'])->name('messages.inbox');

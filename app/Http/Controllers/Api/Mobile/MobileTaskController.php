@@ -14,10 +14,6 @@ class MobileTaskController extends Controller
         $user = $request->user();
 
         $tasks = Task::where('assigned_to', $user->id)
-            ->where(fn ($q) => $q
-                ->whereDate('due_at', today())
-                ->orWhere(fn ($q2) => $q2->where('due_at', '<', now())->where('status', '!=', 'completed'))
-            )
             ->with('contact:id,first_name,last_name')
             ->orderBy('due_at')
             ->get();
@@ -56,16 +52,24 @@ class MobileTaskController extends Controller
         abort_unless($task->assigned_to === $request->user()->id, 403);
 
         $request->validate([
-            'status' => 'sometimes|in:pending,in_progress,completed,snoozed',
+            'title'  => 'sometimes|string|max:255',
+            'status' => 'sometimes|in:pending,in_progress,completed,snoozed,cancelled',
             'due_at' => 'sometimes|nullable|date',
         ]);
 
-        $task->update($request->only(['status', 'due_at']));
+        $task->update($request->only(['title', 'status', 'due_at']));
 
         if ($request->status === 'completed') {
             $task->update(['completed_at' => now()]);
         }
 
         return response()->json($task->fresh());
+    }
+
+    public function destroy(Request $request, Task $task): JsonResponse
+    {
+        abort_unless($task->assigned_to === $request->user()->id, 403);
+        $task->delete();
+        return response()->json(['message' => 'Deleted.']);
     }
 }

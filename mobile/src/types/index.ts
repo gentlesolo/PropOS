@@ -91,10 +91,16 @@ export interface Call {
 export interface Task {
   id: number;
   title: string;
-  status: 'pending' | 'in_progress' | 'completed' | 'snoozed';
+  description?: string;
+  status: 'pending' | 'in_progress' | 'completed' | 'cancelled';
+  priority?: 'low' | 'medium' | 'high' | 'urgent';
+  type?: 'call' | 'email' | 'meeting' | 'document' | 'follow_up' | 'viewing' | 'other';
   due_at?: string;
+  completed_at?: string;
   contact_id?: number;
   contact?: Contact;
+  deal_id?: number;
+  listing_id?: number;
   source?: string;
 }
 
