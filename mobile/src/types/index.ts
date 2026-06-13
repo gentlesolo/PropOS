@@ -19,6 +19,20 @@ export interface Contact {
   avatar_path?: string;
   last_contacted_at?: string;
   assigned_agent_id?: number;
+  assigned_agent?: User;
+  deals?: Deal[];
+  type?: 'buyer' | 'seller' | 'landlord' | 'tenant' | 'investor' | 'referral_partner';
+  intent_score?: number;
+  latestCall?: Call;
+  preferences?: {
+    min_budget?: number;
+    max_budget?: number;
+    min_bedrooms?: number;
+    areas?: string[];
+    property_types?: string[];
+    must_have_features?: string[];
+    timeline?: string;
+  };
 }
 
 export type CallDirection = 'inbound' | 'outbound';
@@ -90,4 +104,21 @@ export interface PaginatedResponse<T> {
   last_page: number;
   per_page: number;
   total: number;
+}
+
+export interface PipelineStage {
+  id: number;
+  name: string;
+  color?: string;
+}
+
+export interface Deal {
+  id: number;
+  name: string;
+  value?: number;
+  status: 'open' | 'won' | 'lost';
+  pipeline_stage_id: number;
+  stage?: PipelineStage;
+  momentum_score?: number;
+  momentum_label?: string;
 }

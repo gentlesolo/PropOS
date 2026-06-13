@@ -70,6 +70,11 @@ class Contact extends Model
         return $this->hasMany(Call::class)->orderByDesc('started_at');
     }
 
+    public function latestCall()
+    {
+        return $this->hasOne(Call::class)->latestOfMany('started_at');
+    }
+
     public function deals()
     {
         return $this->hasMany(Deal::class)->orderByDesc('created_at');

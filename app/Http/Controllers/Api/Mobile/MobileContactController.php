@@ -15,6 +15,7 @@ class MobileContactController extends Controller
         $contacts = Contact::select([
                 'id', 'first_name', 'last_name', 'phone', 'email',
                 'status', 'avatar_path', 'last_contacted_at', 'assigned_agent_id',
+                'type', 'intent_score',
             ])
             ->when($request->search, fn ($q) => $q->where(function ($s) use ($request) {
                 $s->where('first_name', 'like', "%{$request->search}%")
@@ -22,8 +23,9 @@ class MobileContactController extends Controller
                   ->orWhere('phone', 'like', "%{$request->search}%");
             }))
             ->when($request->mine, fn ($q) => $q->where('assigned_agent_id', $request->user()->id))
+            ->with('latestCall.summary:id,call_id,sentiment')
             ->latest('last_contacted_at')
-            ->paginate($request->per_page ?? 25);
+            ->paginate($request->per_page ?? 100); // Increased default per_page to support long lists with A-Z index on mobile
 
         return response()->json($contacts);
     }
@@ -81,7 +83,8 @@ class MobileContactController extends Controller
             'contact_id'  => $contact->id,
             'user_id'     => $request->user()->id,
             'type'        => 'note',
-            'description' => $request->note,
+            'subject'     => 'Note',
+            'body'        => $request->note,
             'occurred_at' => now(),
         ]);
 
