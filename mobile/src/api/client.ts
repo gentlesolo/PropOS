@@ -4,7 +4,7 @@ import {createMMKV} from 'react-native-mmkv';
 export const storage = createMMKV();
 
 const BASE_URL = __DEV__
-  ? 'http://192.168.1.169:8000/api/mobile'  // Android device → host machine over Wi-Fi
+  ? 'http://localhost:8000/api/mobile'  // Android device → host via ADB reverse tunnel (adb reverse tcp:8000 tcp:8000)
   : 'https://your-propos-domain.com/api/mobile';
 
 export const apiClient = axios.create({
