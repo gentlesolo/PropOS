@@ -246,11 +246,7 @@ export function InCallScreen() {
 
   const sendDigit = (digit: string) => {
     Vibration.vibrate(10);
-    try {
-      (twilioService as any).sendDigits?.(digit);
-    } catch (e) {
-      console.warn('sendDigits error', e);
-    }
+    twilioService.sendDigits(digit);
   };
 
   const startVoiceRecording = () => {
@@ -343,12 +339,21 @@ export function InCallScreen() {
   // ── Call failed Screen State ──────────────────────────────────────────────
   if (callFailed) {
     return (
-      <View className="flex-1 bg-surface relative justify-center items-center px-8">
-        <View className="w-20 h-20 rounded-full bg-danger/10 border border-danger/20 items-center justify-center mb-6">
+      <View
+        style={{backgroundColor: tokens.surfacePage}}
+        className="flex-1 relative justify-center items-center px-8"
+      >
+        <View
+          style={{
+            backgroundColor: tokens.dangerBg,
+            borderColor: tokens.dangerBorder,
+          }}
+          className="w-20 h-20 rounded-full border items-center justify-center mb-6"
+        >
           <Icon name="phone-off" size={36} color={tokens.dangerText} />
         </View>
-        <Text className="text-white text-2xl font-bold mb-2">Call Failed</Text>
-        <Text className="text-text-secondary text-sm text-center mb-8">
+        <Text style={{color: tokens.textPrimary}} className="text-2xl font-bold mb-2">Call Failed</Text>
+        <Text style={{color: tokens.textSecondary}} className="text-sm text-center mb-8">
           {failReason || 'Could not connect. Please check your network connection and try again.'}
         </Text>
         <Pressable
@@ -364,13 +369,16 @@ export function InCallScreen() {
                 setFailReason(err.message || 'Connection failed.');
               });
           }}
-          className="bg-danger rounded-2xl py-4 items-center w-full max-w-[200px]"
-          style={({pressed}) => [{transform: [{scale: pressed ? 0.95 : 1}]}]}
+          style={({pressed}) => [{
+            transform: [{scale: pressed ? 0.95 : 1}],
+            backgroundColor: '#EF4444',
+          }]}
+          className="rounded-2xl py-4 items-center w-full max-w-[200px]"
         >
           <Text className="text-white font-bold text-sm uppercase tracking-wider">Tap to Retry</Text>
         </Pressable>
         <Pressable onPress={() => navigation.goBack()} className="mt-4 py-2">
-          <Text className="text-text-secondary text-sm">Cancel &amp; Go Back</Text>
+          <Text style={{color: tokens.textSecondary}} className="text-sm">Cancel &amp; Go Back</Text>
         </Pressable>
       </View>
     );
@@ -389,43 +397,68 @@ export function InCallScreen() {
       style={{
         paddingTop: Math.max(insets.top, 16),
         paddingBottom: Math.max(insets.bottom, 24),
+        backgroundColor: tokens.surfacePage,
       }}
-      className="flex-1 bg-surface relative justify-between px-6"
+      className="flex-1 relative justify-between px-6"
     >
       {/* Background radial glow */}
-      <View className="absolute top-[80px] w-[320px] h-[320px] rounded-full bg-brand-500/5 items-center justify-center self-center" />
-      <View className="absolute top-[120px] w-[240px] h-[240px] rounded-full bg-brand-500/10 items-center justify-center self-center" />
+      <View
+        style={{backgroundColor: `${tokens.brandPrimary}0D`}}
+        className="absolute top-[80px] w-[320px] h-[320px] rounded-full items-center justify-center self-center"
+      />
+      <View
+        style={{backgroundColor: `${tokens.brandPrimary}14`}}
+        className="absolute top-[120px] w-[240px] h-[240px] rounded-full items-center justify-center self-center"
+      />
 
       {/* ── Top Bar Compliance Recording Indicator ─────────────────── */}
       <View className="items-center z-10">
-        <View className="flex-row items-center bg-[#090d16]/80 px-3.5 py-1.5 rounded-full border border-slate-800/80">
+        <View
+          style={{
+            backgroundColor: tokens.surfaceSunken,
+            borderColor: tokens.borderStrong,
+          }}
+          className="flex-row items-center px-3.5 py-1.5 rounded-full border"
+        >
           <Animated.View style={{opacity: pulseOpacity}} className="w-2 h-2 rounded-full bg-danger mr-2" />
-          <Text className="text-white text-[10px] font-bold uppercase tracking-widest">Recording</Text>
+          <Text style={{color: tokens.textSecondary}} className="text-[10px] font-bold uppercase tracking-widest">Recording</Text>
         </View>
       </View>
 
       {/* ── TOP THIRD: Contact Context ─────────────────────────────────── */}
       <View className="items-center mt-6 z-10">
         {/* Circular Avatar */}
-        <View className="w-24 h-24 rounded-full bg-brand-500/20 border-2 border-brand-500 items-center justify-center mb-4 shadow-xl">
-          <Text className="text-brand-500 text-4xl font-black">{initials}</Text>
+        <View
+          style={{
+            backgroundColor: `${tokens.brandPrimary}1D`,
+            borderColor: tokens.brandPrimary,
+          }}
+          className="w-24 h-24 rounded-full border-2 items-center justify-center mb-4 shadow-xl"
+        >
+          <Text style={{color: tokens.brandPrimary}} className="text-4xl font-black">{initials}</Text>
         </View>
         
         {/* Name */}
-        <Text className="text-white text-2xl font-bold tracking-tight text-center">
+        <Text style={{color: tokens.textPrimary}} className="text-2xl font-bold tracking-tight text-center">
           {displayName}
         </Text>
 
         {/* Deal Stage Chip */}
-        <View className="bg-surface-raised border border-slate-800 px-3.5 py-1.5 rounded-full mt-2.5 flex-row items-center">
-          <View className="w-1.5 h-1.5 rounded-full bg-brand-500 mr-2" />
-          <Text className="text-brand-500 text-[10px] font-extrabold uppercase tracking-widest">
+        <View
+          style={{
+            backgroundColor: tokens.surfaceCard,
+            borderColor: tokens.borderDefault,
+          }}
+          className="border px-3.5 py-1.5 rounded-full mt-2.5 flex-row items-center"
+        >
+          <View style={{backgroundColor: tokens.brandPrimary}} className="w-1.5 h-1.5 rounded-full mr-2" />
+          <Text style={{color: tokens.brandPrimary}} className="text-[10px] font-extrabold uppercase tracking-widest">
             {dealStage}
           </Text>
         </View>
 
         {/* Geist Mono Large Timer */}
-        <Text className="text-white text-3xl font-semibold font-mono tracking-widest mt-5">
+        <Text style={{color: tokens.textPrimary}} className="text-3xl font-semibold font-mono tracking-widest mt-5">
           {activeCallState === 'active' ? formatElapsed(elapsed) : stateLabel[activeCallState] ?? '00:00'}
         </Text>
       </View>
@@ -434,11 +467,20 @@ export function InCallScreen() {
       <View className="flex-1 my-6 z-10 justify-center min-h-[160px] max-h-[200px]">
         {showKeypad ? (
           // Dialpad view
-          <View className="bg-[#090d16]/90 border border-slate-800/60 rounded-2xl p-4 flex-1 justify-center">
-            <View className="flex-row justify-between items-center mb-3 border-b border-slate-800/50 pb-2">
-              <Text className="text-text-secondary text-[10px] font-bold uppercase tracking-wider">Dialpad</Text>
+          <View
+            style={{
+              backgroundColor: tokens.surfaceCard,
+              borderColor: tokens.borderDefault,
+            }}
+            className="border rounded-2xl p-4 flex-1 justify-center"
+          >
+            <View
+              style={{borderBottomColor: tokens.borderSubtle}}
+              className="flex-row justify-between items-center mb-3 border-b pb-2"
+            >
+              <Text style={{color: tokens.textTertiary}} className="text-[10px] font-bold uppercase tracking-wider">Dialpad</Text>
               <Pressable onPress={() => setShowKeypad(false)} className="px-2 py-1">
-                <Text className="text-brand-500 text-xs font-bold">Close</Text>
+                <Text style={{color: tokens.brandPrimary}} className="text-xs font-bold">Close</Text>
               </Pressable>
             </View>
             <View className="flex-row flex-wrap justify-between gap-y-3 px-4">
@@ -446,21 +488,41 @@ export function InCallScreen() {
                 <Pressable
                   key={digit}
                   onPress={() => sendDigit(digit)}
-                  className="w-12 h-12 rounded-full bg-surface-input border border-slate-800/50 items-center justify-center"
-                  style={({pressed}) => [{transform: [{scale: pressed ? 0.92 : 1}]}]}
+                  style={({pressed}) => [{
+                    transform: [{scale: pressed ? 0.92 : 1}],
+                    backgroundColor: tokens.surfaceInput,
+                    borderColor: tokens.borderStrong,
+                    borderWidth: 1,
+                  }]}
+                  className="w-12 h-12 rounded-full items-center justify-center"
                 >
-                  <Text className="text-white text-base font-bold">{digit}</Text>
+                  <Text style={{color: tokens.textPrimary}} className="text-base font-bold">{digit}</Text>
                 </Pressable>
               ))}
             </View>
           </View>
         ) : segments.length > 0 ? (
           // Live scrolling transcript view (Phase 3)
-          <View className="bg-[#090d16]/60 border border-slate-800/40 rounded-2xl p-4 flex-1">
-            <View className="flex-row justify-between items-center mb-3 border-b border-slate-800/50 pb-2">
-              <Text className="text-text-secondary text-[10px] font-bold uppercase tracking-wider">Live Transcript</Text>
-              <View className="bg-brand-500/10 border border-brand-500/20 px-2 py-0.5 rounded-full">
-                <Text className="text-brand-500 text-[8px] font-bold uppercase tracking-wide">Live AI</Text>
+          <View
+            style={{
+              backgroundColor: tokens.surfaceCard,
+              borderColor: tokens.borderDefault,
+            }}
+            className="border rounded-2xl p-4 flex-1"
+          >
+            <View
+              style={{borderBottomColor: tokens.borderSubtle}}
+              className="flex-row justify-between items-center mb-3 border-b pb-2"
+            >
+              <Text style={{color: tokens.textTertiary}} className="text-[10px] font-bold uppercase tracking-wider">Live Transcript</Text>
+              <View
+                style={{
+                  backgroundColor: `${tokens.brandPrimary}1E`,
+                  borderColor: `${tokens.brandPrimary}40`,
+                }}
+                className="border px-2 py-0.5 rounded-full"
+              >
+                <Text style={{color: tokens.brandPrimary}} className="text-[8px] font-bold uppercase tracking-wide">Live AI</Text>
               </View>
             </View>
             <ScrollView
@@ -471,13 +533,19 @@ export function InCallScreen() {
               {segments.map((seg, idx) => {
                 const isLast = idx === segments.length - 1;
                 const isAgent = seg.speaker === 'Agent';
-                const speakerColor = isAgent ? 'text-brand-500' : 'text-text-secondary';
+                const speakerColor = isAgent ? tokens.brandPrimary : tokens.textSecondary;
                 return (
-                  <View key={idx} className={`flex-row mb-1.5 items-start ${isLast ? 'bg-brand-500/5 p-2 rounded-lg' : ''}`}>
-                    <Text className={`font-bold text-[10px] w-14 uppercase tracking-wide ${speakerColor}`}>
+                  <View
+                    key={idx}
+                    style={{
+                      backgroundColor: isLast ? `${tokens.brandPrimary}0A` : 'transparent',
+                    }}
+                    className={`flex-row mb-1.5 items-start ${isLast ? 'p-2 rounded-lg' : ''}`}
+                  >
+                    <Text style={{color: speakerColor}} className="font-bold text-[10px] w-14 uppercase tracking-wide">
                       {seg.speaker}
                     </Text>
-                    <Text className={`flex-1 text-xs leading-4 ${isLast ? 'text-white font-medium' : 'text-text-secondary opacity-60'}`}>
+                    <Text style={{color: isLast ? tokens.textPrimary : tokens.textSecondary}} className={`flex-1 text-xs leading-4 ${isLast ? 'font-medium' : 'opacity-80'}`}>
                       {seg.text}
                     </Text>
                   </View>
@@ -487,18 +555,33 @@ export function InCallScreen() {
           </View>
         ) : (
           // CRM Context Card view
-          <View className="bg-[#090d16]/60 border border-slate-800/40 rounded-2xl p-4 flex-1 justify-between">
-            <View className="flex-row justify-between items-center mb-2 border-b border-slate-800/40 pb-1.5">
-              <Text className="text-text-secondary text-[10px] font-bold uppercase tracking-wider">
+          <View
+            style={{
+              backgroundColor: tokens.surfaceCard,
+              borderColor: tokens.borderDefault,
+            }}
+            className="border rounded-2xl p-4 flex-1 justify-between"
+          >
+            <View
+              style={{borderBottomColor: tokens.borderSubtle}}
+              className="flex-row justify-between items-center mb-2 border-b pb-1.5"
+            >
+              <Text style={{color: tokens.textTertiary}} className="text-[10px] font-bold uppercase tracking-wider">
                 {contextData.title}
               </Text>
               {contextData.isAI && (
-                <View className="bg-brand-500/10 border border-brand-500/20 px-2 py-0.5 rounded-full">
-                  <Text className="text-brand-500 text-[8px] font-bold uppercase tracking-wide">AI</Text>
+                <View
+                  style={{
+                    backgroundColor: `${tokens.brandPrimary}1E`,
+                    borderColor: `${tokens.brandPrimary}40`,
+                  }}
+                  className="border px-2 py-0.5 rounded-full"
+                >
+                  <Text style={{color: tokens.brandPrimary}} className="text-[8px] font-bold uppercase tracking-wide">AI</Text>
                 </View>
               )}
             </View>
-            <Text className="text-text-primary text-xs leading-5 flex-1 mt-1">
+            <Text style={{color: tokens.textPrimary}} className="text-xs leading-5 flex-1 mt-1">
               {contextData.body}
             </Text>
           </View>
@@ -526,11 +609,14 @@ export function InCallScreen() {
           <Pressable
             onPress={handleHangup}
             style={({pressed}) => [
-              { transform: [{ scale: pressed ? 0.93 : 1 }] }
+              {
+                transform: [{ scale: pressed ? 0.93 : 1 }],
+                backgroundColor: '#EF4444',
+              }
             ]}
-            className="w-16 h-16 rounded-full bg-danger items-center justify-center shadow-lg"
+            className="w-16 h-16 rounded-full items-center justify-center shadow-lg"
           >
-            <Icon name="phone-off" size={24} color={tokens.brandPrimaryFg} style={{ transform: [{ rotate: '135deg' }] }} />
+            <Icon name="phone-off" size={24} color="#FFFFFF" style={{ transform: [{ rotate: '135deg' }] }} />
           </Pressable>
         </View>
       </View>
@@ -544,44 +630,67 @@ export function InCallScreen() {
       >
         <View className="flex-1 justify-end bg-black/60">
           <Pressable className="flex-1" onPress={() => setNoteVisible(false)} />
-          <View className="bg-[#090d16] rounded-t-[24px] border-t border-slate-800/80 p-6 pb-8">
-            <View className="w-12 h-1.5 bg-slate-800 rounded-full self-center mb-5" />
-            <Text className="text-white text-lg font-bold mb-1">Add Note</Text>
-            <Text className="text-text-secondary text-xs mb-5">
+          <View
+            style={{
+              backgroundColor: tokens.surfaceCard,
+              borderTopColor: tokens.borderDefault,
+            }}
+            className="rounded-t-[24px] border-t p-6 pb-8"
+          >
+            <View style={{backgroundColor: tokens.borderStrong}} className="w-12 h-1.5 rounded-full self-center mb-5" />
+            <Text style={{color: tokens.textPrimary}} className="text-lg font-bold mb-1">Add Note</Text>
+            <Text style={{color: tokens.textSecondary}} className="text-xs mb-5">
               Capture quick notes or record a voice note for CRM synchronization.
             </Text>
 
             {/* Voice note recorder widget */}
-            <View className="items-center justify-center py-6 bg-surface border border-slate-800/80 rounded-2xl mb-5">
+            <View
+              style={{
+                backgroundColor: tokens.surfaceSunken,
+                borderColor: tokens.borderDefault,
+              }}
+              className="items-center justify-center py-6 border rounded-2xl mb-5"
+            >
               {isRecording ? (
                 <View className="items-center">
                   <Animated.View
-                    style={{ opacity: pulseOpacity }}
-                    className="w-16 h-16 rounded-full bg-danger/10 border border-danger/30 items-center justify-center mb-3"
+                    style={{
+                      opacity: pulseOpacity,
+                      backgroundColor: tokens.dangerBg,
+                      borderColor: tokens.dangerBorder,
+                    }}
+                    className="w-16 h-16 rounded-full border items-center justify-center mb-3"
                   >
                     <Pressable
                       onPress={stopVoiceRecording}
-                      className="w-12 h-12 rounded-full bg-danger items-center justify-center"
+                      style={({pressed}) => [{
+                        transform: [{scale: pressed ? 0.95 : 1}],
+                        backgroundColor: '#EF4444',
+                      }]}
+                      className="w-12 h-12 rounded-full items-center justify-center"
                     >
-                      <Icon name="square" size={18} color={tokens.brandPrimaryFg} />
+                      <Icon name="square" size={18} color="#FFFFFF" />
                     </Pressable>
                   </Animated.View>
                   <Text className="text-danger font-mono text-sm mb-1">
                     Recording: {formatElapsed(recordingSeconds)}
                   </Text>
-                  <Text className="text-text-tertiary text-xs">Tap to stop recording</Text>
+                  <Text style={{color: tokens.textTertiary}} className="text-xs">Tap to stop recording</Text>
                 </View>
               ) : (
                 <View className="items-center">
                   <Pressable
                     onPress={startVoiceRecording}
-                    className="w-14 h-14 rounded-full bg-brand-500 items-center justify-center mb-3 shadow"
-                    style={({pressed}) => [{transform: [{scale: pressed ? 0.95 : 1}]}]}
+                    style={({pressed}) => [{
+                      transform: [{scale: pressed ? 0.95 : 1}],
+                      backgroundColor: tokens.brandPrimary,
+                    }]}
+                    className="w-14 h-14 rounded-full items-center justify-center mb-3 shadow"
                   >
                     <Icon name="mic" size={22} color={tokens.brandPrimaryFg} />
                   </Pressable>
-                  <Text className="text-white text-xs font-semibold mb-1">Record Voice Note</Text>
-                  <Text className="text-text-tertiary text-[9px] uppercase tracking-wider">
+                  <Text style={{color: tokens.textPrimary}} className="text-xs font-semibold mb-1">Record Voice Note</Text>
+                  <Text style={{color: tokens.textTertiary}} className="text-[9px] uppercase tracking-wider">
                     AI Auto-Transcription Active
                   </Text>
                 </View>
@@ -590,29 +699,45 @@ export function InCallScreen() {
 
             {/* Text Note area */}
             <TextInput
-              className="bg-surface text-white rounded-xl px-4 py-3 text-xs border border-slate-800/60"
+              style={{
+                minHeight: 80,
+                textAlignVertical: 'top',
+                backgroundColor: tokens.surfaceInput,
+                borderColor: tokens.borderDefault,
+                color: tokens.textPrimary,
+              }}
+              className="rounded-xl px-4 py-3 text-xs border"
               placeholder="Type call details or observations here…"
-              placeholderTextColor="#71717A"
+              placeholderTextColor={tokens.textTertiary}
               multiline
               numberOfLines={4}
               value={noteText}
               onChangeText={setNoteText}
-              style={{minHeight: 80, textAlignVertical: 'top'}}
             />
 
             {/* Done / Cancel CTA */}
             <View className="flex-row gap-3 mt-6">
               <Pressable
-                className="flex-1 bg-surface border border-slate-800 rounded-xl py-3.5 items-center"
+                style={({pressed}) => [{
+                  backgroundColor: tokens.surfaceInput,
+                  borderColor: tokens.borderStrong,
+                  borderWidth: 1,
+                  opacity: pressed ? 0.8 : 1,
+                }]}
+                className="flex-1 rounded-xl py-3.5 items-center"
                 onPress={() => setNoteVisible(false)}
               >
-                <Text className="text-slate-300 font-semibold text-xs">Cancel</Text>
+                <Text style={{color: tokens.textSecondary}} className="font-semibold text-xs">Cancel</Text>
               </Pressable>
               <Pressable
-                className="flex-1 bg-brand-500 rounded-xl py-3.5 items-center"
+                style={({pressed}) => [{
+                  backgroundColor: tokens.brandPrimary,
+                  opacity: pressed ? 0.8 : 1,
+                }]}
+                className="flex-1 rounded-xl py-3.5 items-center"
                 onPress={handleSaveNote}
               >
-                <Text className="text-white font-semibold text-xs">Done</Text>
+                <Text style={{color: tokens.brandPrimaryFg}} className="font-semibold text-xs">Done</Text>
               </Pressable>
             </View>
           </View>

@@ -1,4 +1,6 @@
 import {Voice, Call as TwilioCall, CallInvite} from '@twilio/voice-react-native-sdk';
+import {Platform} from 'react-native';
+import RNCallKeep from 'react-native-callkeep';
 import {callsApi} from '../api/calls';
 import {useCallStore} from '../store/callStore';
 
@@ -25,7 +27,11 @@ export const twilioService = {
 
   async makeCall(toNumber: string, contactId?: number): Promise<string> {
     if (!voice) {
-      throw new Error('Twilio Voice not initialised. Call twilioService.init() first.');
+      await twilioService.init();
+    }
+
+    if (!voice) {
+      throw new Error('Failed to initialise Twilio Voice SDK. Check your network and Twilio credentials.');
     }
 
     const {data: tokenData} = await callsApi.getToken();
@@ -49,14 +55,15 @@ export const twilioService = {
       provider_call_sid: sid,
     });
 
+    call.on(TwilioCall.Event.Ringing, () => {
+      useCallStore.getState().updateCallState('ringing');
+    });
+
     call.on(TwilioCall.Event.Connected, () => {
       useCallStore.getState().updateCallState('active');
     });
 
     call.on(TwilioCall.Event.Disconnected, () => {
-      const duration = useCallStore.getState().startTime
-        ? Math.round((Date.now() - useCallStore.getState().startTime!) / 1000)
-        : 0;
       useCallStore.getState().endCall();
       activeCall = null;
     });
@@ -76,7 +83,17 @@ export const twilioService = {
   },
 
   setSpeaker(on: boolean): void {
-    // Speaker toggled natively via CallKeep
+    const uuid = useCallStore.getState().activeCallSid || '';
+    if (Platform.OS === 'ios') {
+      RNCallKeep.setAudioRoute(uuid, on ? 'speaker' : 'earpiece');
+    } else {
+      // Android: InCallManager handles audio routing via CallKeep's underlying ConnectionService
+      RNCallKeep.setAudioRoute(uuid, on ? 'speaker' : 'earpiece');
+    }
     useCallStore.getState().toggleSpeaker();
+  },
+
+  sendDigits(digit: string): void {
+    activeCall?.sendDigits(digit);
   },
 };

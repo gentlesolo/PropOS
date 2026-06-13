@@ -3,7 +3,7 @@ import {Call, CallSummary, PaginatedResponse} from '../types';
 
 export const callsApi = {
   getToken: () =>
-    apiClient.get<{token: string; identity: string; agent_number: string | null}>(
+    apiClient.post<{token: string; identity: string; agent_number: string | null}>(
       '/calls/token',
     ),
 

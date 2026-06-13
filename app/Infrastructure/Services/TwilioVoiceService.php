@@ -21,12 +21,19 @@ class TwilioVoiceService
 
     public function __construct()
     {
-        $this->accountSid   = config('services.twilio.sid');
-        $this->authToken    = config('services.twilio.token');
-        $this->twimlAppSid  = config('services.twilio.twiml_app_sid');
-        $this->apiKeySid    = config('services.twilio.api_key_sid');
-        $this->apiKeySecret = config('services.twilio.api_key_secret');
-        $this->client       = new Client($this->accountSid, $this->authToken);
+        $this->accountSid   = config('services.twilio.sid') ?? '';
+        $this->authToken    = config('services.twilio.token') ?? '';
+        $this->twimlAppSid  = config('services.twilio.twiml_app_sid') ?? '';
+        $this->apiKeySid    = config('services.twilio.api_key_sid') ?? '';
+        $this->apiKeySecret = config('services.twilio.api_key_secret') ?? '';
+
+        abort_if(
+            empty($this->accountSid) || empty($this->apiKeySid) || empty($this->apiKeySecret),
+            503,
+            'Twilio is not configured. Set TWILIO_SID, TWILIO_API_KEY_SID, and TWILIO_API_KEY_SECRET in .env.',
+        );
+
+        $this->client = new Client($this->accountSid, $this->authToken);
     }
 
     /**
