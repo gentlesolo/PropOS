@@ -3,6 +3,7 @@ import RNCallKeep from 'react-native-callkeep';
 import messaging from '@react-native-firebase/messaging';
 import {Voice, Call, CallInvite} from '@twilio/voice-react-native-sdk';
 import {callsApi} from '../api/calls';
+import {contactsApi} from '../api/contacts';
 import {useCallStore} from '../store/callStore';
 
 let voice: Voice | null = null;
@@ -62,7 +63,7 @@ export const inboundCallService = {
     const callUUID = invite.getCallSid() ?? `inv-${Date.now()}`;
     const from = invite.getFrom() ?? 'Unknown';
 
-    // Show native incoming call UI (CallKit on iOS, ConnectionService on Android)
+    // Show native incoming call UI immediately (CallKit on iOS, ConnectionService on Android)
     RNCallKeep.displayIncomingCall(
       callUUID,
       from,
@@ -75,6 +76,33 @@ export const inboundCallService = {
       direction: 'inbound',
       remote_number: from,
     });
+
+    // Perform CRM lookup and update CallKeep display
+    contactsApi
+      .list({search: from})
+      .then(res => {
+        const contacts = res.data?.data ?? [];
+        const match = contacts.find(c => {
+          const p1 = c.phone?.replace(/\D/g, '') ?? '';
+          const p2 = from.replace(/\D/g, '') ?? '';
+          return p1.endsWith(p2) || p2.endsWith(p1);
+        });
+        if (match) {
+          const stage = match.status === 'qualified' ? 'Qualified Buyer' : match.status.charAt(0).toUpperCase() + match.status.slice(1);
+          const displayName = `${match.first_name} ${match.last_name} · ${stage}`;
+          RNCallKeep.updateDisplay(callUUID, displayName, from);
+          useCallStore.getState().setActiveCall(callUUID, {
+            direction: 'inbound',
+            remote_number: from,
+            contact_id: match.id,
+          });
+        } else {
+          RNCallKeep.updateDisplay(callUUID, `Unknown · ${from}`, from);
+        }
+      })
+      .catch(err => {
+        console.warn('CRM contact lookup failed on incoming call', err);
+      });
 
     // Store the invite so we can accept/reject it later
     pendingInvites.set(callUUID, invite);

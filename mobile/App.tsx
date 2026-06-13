@@ -4,6 +4,7 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {NavigationContainerRef} from '@react-navigation/native';
 import {RootNavigator} from './src/navigation/RootNavigator';
 import {useAuthStore} from './src/store/authStore';
+import {useCallStore} from './src/store/callStore';
 import {notificationService} from './src/services/notificationService';
 import {twilioService} from './src/services/twilioService';
 import {sentryService} from './src/services/sentryService';
@@ -64,7 +65,32 @@ function AppInner() {
       if (data.type === 'new_lead_assigned') queryClient.invalidateQueries({queryKey: ['contacts']});
     });
 
-    return () => unsub();
+    const unsubCall = useCallStore.subscribe(state => {
+      const activeCallState = state.activeCallState;
+      if (
+        (activeCallState === 'connecting' || activeCallState === 'ringing' || activeCallState === 'active') &&
+        navigationRef.current
+      ) {
+        const currentRoute = navigationRef.current.getCurrentRoute();
+        if (currentRoute && currentRoute.name !== 'InCall') {
+          const activeCall = state.activeCall;
+          const contactId = activeCall?.contact_id;
+          const phoneNumber = activeCall?.remote_number ?? '';
+          const callSid = state.activeCallSid ?? undefined;
+
+          navigationRef.current.navigate('InCall', {
+            contactId,
+            phoneNumber,
+            callSid,
+          });
+        }
+      }
+    });
+
+    return () => {
+      unsub();
+      unsubCall();
+    };
   }, [isAuthenticated]);
 
   // Invalidate stale data and trigger lock check when the app returns to foreground

@@ -146,6 +146,7 @@ Route::prefix('mobile')->name('api.mobile.')->group(function () {
 
         // Contacts
         Route::get('/contacts', [MobileContactController::class, 'index'])->name('contacts.index');
+        Route::post('/contacts', [MobileContactController::class, 'store'])->name('contacts.store');
         Route::get('/contacts/{contact}', [MobileContactController::class, 'show'])->name('contacts.show');
         Route::post('/contacts/{contact}/notes', [MobileContactController::class, 'addNote'])->name('contacts.notes');
         Route::get('/contacts/{contact}/calls', [MobileContactController::class, 'calls'])->name('contacts.calls');

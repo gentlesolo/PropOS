@@ -8,6 +8,9 @@ export const contactsApi = {
   get: (id: number) =>
     apiClient.get<{contact: Contact; recent_calls: Call[]}>(`/contacts/${id}`),
 
+  create: (contact: Partial<Contact>) =>
+    apiClient.post<Contact>('/contacts', contact),
+
   addNote: (id: number, note: string) =>
     apiClient.post(`/contacts/${id}/notes`, {note}),
 

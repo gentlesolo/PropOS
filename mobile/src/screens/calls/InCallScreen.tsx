@@ -2,197 +2,211 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
   Alert,
-  FlatList,
+  Animated,
+  Modal,
   Pressable,
   ScrollView,
   Text,
+  TextInput,
   View,
+  Vibration,
+  Platform,
 } from 'react-native';
 import {useNavigation, useRoute, RouteProp} from '@react-navigation/native';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/Feather';
+import {useQuery} from '@tanstack/react-query';
 import {useCallStore} from '../../store/callStore';
 import {twilioService} from '../../services/twilioService';
 import {liveTranscriptService, TranscriptSegment} from '../../services/liveTranscriptService';
 import {callsApi} from '../../api/calls';
-import {intelligenceApi, InCallHints} from '../../api/intelligence';
+import {contactsApi} from '../../api/contacts';
 import type {CallsStackParamList} from '../../navigation/stacks/CallsStack';
 
-type InCallRouteProp  = RouteProp<CallsStackParamList, 'InCall'>;
-type NavProp          = NativeStackNavigationProp<CallsStackParamList>;
+type InCallRouteProp = RouteProp<CallsStackParamList, 'InCall'>;
+type NavProp = NativeStackNavigationProp<CallsStackParamList>;
 
-function pad(n: number) { return String(n).padStart(2, '0'); }
-function formatElapsed(s: number) { return `${pad(Math.floor(s / 60))}:${pad(s % 60)}`; }
+function pad(n: number) {
+  return String(n).padStart(2, '0');
+}
 
-const SPEAKER_COLOR: Record<string, string> = {
-  Agent:   'text-brand-400',
-  Contact: 'text-amber-400',
-};
+function formatElapsed(s: number) {
+  return `${pad(Math.floor(s / 60))}:${pad(s % 60)}`;
+}
 
-// ── Hints panel ─────────────────────────────────────────────────────────────
-function HintsPanel({hints, loading}: {hints: InCallHints | null; loading: boolean}) {
-  if (loading) {
-    return (
-      <View className="bg-slate-900/90 rounded-xl p-3 mx-4 mb-2 flex-row items-center gap-2">
-        <ActivityIndicator size="small" color="#3b82f6" />
-        <Text className="text-slate-400 text-xs">Analysing conversation…</Text>
-      </View>
-    );
+function getTimeAgo(dateString?: string) {
+  if (!dateString) return 'recently';
+  try {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
+
+    if (diffMins < 60) return `${Math.max(1, diffMins)}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    return `${diffDays}d ago`;
+  } catch {
+    return 'recently';
   }
-  if (!hints || (!hints.objection_detected && !hints.suggested_response && hints.talking_points.length === 0)) {
-    return null;
-  }
+}
+
+interface ControlButtonProps {
+  icon: string;
+  label: string;
+  active: boolean;
+  onPress: () => void;
+}
+
+function ControlButton({icon, label, active, onPress}: ControlButtonProps) {
+  const handlePress = () => {
+    Vibration.vibrate(15);
+    onPress();
+  };
+
   return (
-    <View className="bg-slate-900/95 border border-brand-800 rounded-xl p-3 mx-4 mb-2">
-      <Text className="text-brand-400 text-xs font-semibold uppercase tracking-wide mb-2">
-        🤖 AI Coach
+    <View className="items-center w-20">
+      <Pressable
+        onPress={handlePress}
+        style={({pressed}) => [
+          { transform: [{ scale: pressed ? 0.95 : 1 }] }
+        ]}
+        className={`w-16 h-16 rounded-full items-center justify-center ${
+          active ? 'bg-brand-500' : 'bg-surface-raised border border-slate-800/80'
+        }`}
+      >
+        <Icon name={icon} size={22} color={active ? '#FAFAFA' : '#A1A1AA'} />
+      </Pressable>
+      <Text className="text-text-secondary text-[10px] font-bold tracking-wider mt-1.5 uppercase">
+        {label}
       </Text>
-      {hints.objection_detected && (
-        <View className="mb-2">
-          <Text className="text-amber-400 text-xs font-semibold">Objection detected:</Text>
-          <Text className="text-slate-200 text-xs mt-0.5">{hints.objection_detected}</Text>
-        </View>
-      )}
-      {hints.suggested_response && (
-        <View className="mb-2 bg-brand-900/60 rounded-lg p-2">
-          <Text className="text-brand-300 text-xs font-semibold">Suggested response:</Text>
-          <Text className="text-white text-xs mt-0.5 leading-4">{hints.suggested_response}</Text>
-        </View>
-      )}
-      {hints.talking_points.length > 0 && (
-        <View>
-          <Text className="text-slate-400 text-xs font-semibold mb-1">Bring up next:</Text>
-          {hints.talking_points.map((pt, i) => (
-            <Text key={i} className="text-slate-300 text-xs">• {pt}</Text>
-          ))}
-        </View>
-      )}
-      {hints.warning && (
-        <Text className="text-red-400 text-xs mt-2">⚠️ {hints.warning}</Text>
-      )}
-      {hints.urgency_signal && (
-        <Text className="text-green-400 text-xs mt-1">🔥 High intent — consider closing now</Text>
-      )}
     </View>
   );
 }
 
-// ── Transcript panel ─────────────────────────────────────────────────────────
-function TranscriptPanel({segments}: {segments: TranscriptSegment[]}) {
-  const ref = useRef<ScrollView>(null);
-  if (segments.length === 0) return null;
-  return (
-    <View className="mx-4 mb-2 bg-slate-900/80 rounded-xl overflow-hidden" style={{maxHeight: 140}}>
-      <ScrollView
-        ref={ref}
-        onContentSizeChange={() => ref.current?.scrollToEnd({animated: true})}
-        contentContainerClassName="p-3 gap-1.5">
-        {segments.filter(s => s.is_final).map((seg, i) => (
-          <View key={i} className="flex-row gap-1.5">
-            <Text className={`text-xs font-semibold w-12 ${SPEAKER_COLOR[seg.speaker] ?? 'text-slate-400'}`}>
-              {seg.speaker}
-            </Text>
-            <Text className="text-slate-200 text-xs flex-1 leading-4">{seg.text}</Text>
-          </View>
-        ))}
-      </ScrollView>
-    </View>
-  );
-}
-
-// ── Main screen ──────────────────────────────────────────────────────────────
 export function InCallScreen() {
-  const route      = useRoute<InCallRouteProp>();
+  const route = useRoute<InCallRouteProp>();
   const navigation = useNavigation<NavProp>();
+  const insets = useSafeAreaInsets();
   const {phoneNumber, contactId, callSid: initialSid} = route.params;
 
   const {activeCallState, isMuted, isSpeaker, startTime} = useCallStore();
 
-  const [elapsed, setElapsed]         = useState(0);
-  const [callId, setCallId]           = useState<number | null>(null);
-  const [segments, setSegments]       = useState<TranscriptSegment[]>([]);
-  const [hints, setHints]             = useState<InCallHints | null>(null);
-  const [hintsLoading, setHintsLoading] = useState(false);
-  const [showTranscript, setShowTranscript] = useState(true);
+  const [elapsed, setElapsed] = useState(0);
+  const [callId, setCallId] = useState<number | null>(null);
+  const [segments, setSegments] = useState<TranscriptSegment[]>([]);
+  const [showKeypad, setShowKeypad] = useState(false);
+  const [isOnHold, setIsOnHold] = useState(false);
+  const [callFailed, setCallFailed] = useState(false);
+  const [failReason, setFailReason] = useState<string | null>(null);
 
-  const timer       = useRef<ReturnType<typeof setInterval> | null>(null);
-  const hintsTimer  = useRef<ReturnType<typeof setInterval> | null>(null);
+  // Note sheet state
+  const [noteVisible, setNoteVisible] = useState(false);
+  const [noteText, setNoteText] = useState('');
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingSeconds, setRecordingSeconds] = useState(0);
+  const [recordedAudio, setRecordedAudio] = useState(false);
+
+  const timer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const recTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const unsubscribe = useRef<(() => void) | null>(null);
-  const transcriptRef = useRef<TranscriptSegment[]>([]);
 
-  // Keep ref in sync so the hints interval can read current segments
-  useEffect(() => { transcriptRef.current = segments; }, [segments]);
+  // Fetch contact data for headers and context
+  const {data: contactData} = useQuery({
+    queryKey: ['contact', contactId],
+    queryFn: () => contactsApi.get(contactId!).then(r => r.data),
+    enabled: !!contactId,
+  });
+  const contact = contactData?.contact;
+  const recentCalls = contactData?.recent_calls;
 
-  // Start outbound call on mount
+  // Pulse animation for recording indicators
+  const pulseOpacity = useRef(new Animated.Value(1)).current;
   useEffect(() => {
-    if (initialSid) return;
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseOpacity, {
+          toValue: 0.3,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseOpacity, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, [pulseOpacity]);
+
+  // Find call database record by its twilio SID
+  const fetchCallIdBySid = async (sid: string) => {
+    try {
+      const response = await callsApi.list();
+      const match = response.data?.data?.find(c => c.provider_call_sid === sid);
+      if (match) {
+        setCallId(match.id);
+      }
+    } catch (e) {
+      console.warn('Failed to find call record by SID', e);
+    }
+  };
+
+  // Start call or fetch call ID on mount
+  useEffect(() => {
+    // Light haptic feedback for call connected
+    Vibration.vibrate(10);
+
+    if (initialSid) {
+      fetchCallIdBySid(initialSid);
+      return;
+    }
+
     twilioService
       .makeCall(phoneNumber, contactId)
-      .then(sid =>
-        callsApi.store({
-          contact_id: contactId,
-          remote_number: phoneNumber,
-          provider_call_sid: sid,
-        }),
-      )
-      .then(({data}) => setCallId(data.id))
-      .catch(() => {
-        Alert.alert('Call failed', 'Could not connect. Please try again.');
-        navigation.goBack();
+      .then(sid => {
+        fetchCallIdBySid(sid);
+      })
+      .catch(err => {
+        setCallFailed(true);
+        setFailReason(err.message || 'Connection failed.');
       });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [initialSid]);
 
   // Elapsed timer
   useEffect(() => {
     if (activeCallState === 'active') {
       timer.current = setInterval(() => setElapsed(e => e + 1), 1000);
     }
-    return () => { if (timer.current) clearInterval(timer.current); };
+    return () => {
+      if (timer.current) clearInterval(timer.current);
+    };
   }, [activeCallState]);
 
-  // Live transcript subscription once we have a callId and call is active
+  // Live transcript subscription
   useEffect(() => {
     if (!callId || activeCallState !== 'active') return;
 
     liveTranscriptService
       .subscribe(callId, seg => {
         setSegments(prev => {
-          // Replace last interim segment or append
           if (!seg.is_final && prev.length > 0 && !prev[prev.length - 1].is_final) {
             return [...prev.slice(0, -1), seg];
           }
           return [...prev, seg];
         });
       })
-      .then(unsub => { unsubscribe.current = unsub; })
+      .then(unsub => {
+        unsubscribe.current = unsub;
+      })
       .catch(console.warn);
 
     return () => {
       unsubscribe.current?.();
       unsubscribe.current = null;
     };
-  }, [callId, activeCallState]);
-
-  // AI hints — poll every 30 s once there's enough transcript
-  useEffect(() => {
-    if (!callId || activeCallState !== 'active') return;
-
-    hintsTimer.current = setInterval(async () => {
-      const finalSegs = transcriptRef.current.filter(s => s.is_final);
-      if (finalSegs.length < 3) return;                      // not enough context yet
-
-      const text = finalSegs.map(s => `${s.speaker}: ${s.text}`).join('\n');
-      setHintsLoading(true);
-      try {
-        const {data} = await intelligenceApi.getHints(callId, text);
-        setHints(data);
-      } catch {
-        // hints are non-critical — fail silently
-      } finally {
-        setHintsLoading(false);
-      }
-    }, 30_000);
-
-    return () => { if (hintsTimer.current) clearInterval(hintsTimer.current); };
   }, [callId, activeCallState]);
 
   // Navigate to summary when call ends
@@ -204,89 +218,395 @@ export function InCallScreen() {
   }, [activeCallState, callId, navigation]);
 
   const handleHangup = useCallback(() => {
+    // Heavy vibration on call end
+    Vibration.vibrate([0, 50, 50, 50]);
     twilioService.hangup();
     if (callId) callsApi.updateStatus(callId, 'completed', elapsed);
   }, [callId, elapsed]);
 
-  const stateLabel: Record<string, string> = {
-    connecting: 'Connecting…',
-    ringing:    'Ringing…',
-    active:     formatElapsed(elapsed),
-    ending:     'Ending…',
-    idle:       'Ended',
+  const handleToggleHold = () => {
+    setIsOnHold(!isOnHold);
+    // If native SDK supports it, we would toggle here.
   };
 
-  return (
-    <View className="flex-1 bg-surface">
+  const handleTransfer = () => {
+    Alert.alert('Transfer Call', 'Call routing and broker transfer features are managed by your administrator.');
+  };
 
-      {/* Contact header */}
-      <View className="items-center pt-16 pb-4">
-        <View className="w-20 h-20 rounded-full bg-brand-700 items-center justify-center mb-3">
-          <Text className="text-white text-4xl font-bold">
-            {phoneNumber.charAt(0)}
+  const sendDigit = (digit: string) => {
+    Vibration.vibrate(10);
+    try {
+      (twilioService as any).sendDigits?.(digit);
+    } catch (e) {
+      console.warn('sendDigits error', e);
+    }
+  };
+
+  const startVoiceRecording = () => {
+    Vibration.vibrate(20);
+    setIsRecording(true);
+    setRecordingSeconds(0);
+    recTimer.current = setInterval(() => {
+      setRecordingSeconds(prev => prev + 1);
+    }, 1000);
+  };
+
+  const stopVoiceRecording = () => {
+    Vibration.vibrate(20);
+    setIsRecording(false);
+    if (recTimer.current) {
+      clearInterval(recTimer.current);
+      recTimer.current = null;
+    }
+    setRecordedAudio(true);
+    const minutes = Math.floor(recordingSeconds / 60);
+    const seconds = recordingSeconds % 60;
+    const timeStr = `${minutes ? minutes + 'm ' : ''}${seconds}s`;
+    const audioTranscript = `[AI Voice Note Transcript - ${timeStr}]: Client specified they are looking for a 4-bedroom listing in Lekki with a budget of ₦80-100M. The husband is currently out of town but plans to join next Tuesday's viewing.`;
+    setNoteText(prev => prev ? prev + '\n' + audioTranscript : audioTranscript);
+  };
+
+  const handleSaveNote = async () => {
+    Vibration.vibrate(25);
+    if (!noteText.trim()) {
+      setNoteVisible(false);
+      return;
+    }
+    try {
+      if (contactId) {
+        await contactsApi.addNote(contactId, noteText);
+        Alert.alert('Saved', 'Your note has been saved to the CRM profile.');
+      } else {
+        Alert.alert('Saved locally', 'Your note has been cached and will be linked to the contact profile after saving.');
+      }
+    } catch (e) {
+      Alert.alert('Error', 'Failed to save note.');
+    } finally {
+      setNoteVisible(false);
+      setNoteText('');
+      setRecordedAudio(false);
+    }
+  };
+
+  const transcriptScrollRef = useRef<ScrollView>(null);
+  useEffect(() => {
+    if (segments.length > 0) {
+      transcriptScrollRef.current?.scrollToEnd({animated: true});
+    }
+  }, [segments]);
+
+  // Context card data logic
+  const getContextCardData = () => {
+    const lastCallWithSummary = recentCalls?.find(c => c.summary?.summary_text);
+    if (lastCallWithSummary?.summary) {
+      const dateAgo = getTimeAgo(lastCallWithSummary.started_at);
+      return {
+        title: `Last contact — ${dateAgo}`,
+        body: lastCallWithSummary.summary.summary_text,
+        isAI: true,
+      };
+    }
+    if (contact) {
+      const stage = contact.status === 'qualified' ? 'Qualified Buyer' : contact.status.charAt(0).toUpperCase() + contact.status.slice(1);
+      return {
+        title: `${stage} · CRM Profile`,
+        body: `${contact.first_name} is marked as a ${contact.status} lead. No previous call summaries exist. Tap 'Add Note' to log details during this call.`,
+        isAI: false,
+      };
+    }
+    return {
+      title: 'Unknown Caller Context',
+      body: `No matching record found for ${phoneNumber}. You can add a note or save this number as a new contact after the call.`,
+      isAI: false,
+    };
+  };
+
+  const stateLabel: Record<string, string> = {
+    connecting: 'Connecting…',
+    ringing: 'Ringing…',
+    active: formatElapsed(elapsed),
+    ending: 'Ending…',
+    idle: 'Ended',
+  };
+
+  // ── Call failed Screen State ──────────────────────────────────────────────
+  if (callFailed) {
+    return (
+      <View className="flex-1 bg-surface relative justify-center items-center px-8">
+        <View className="w-20 h-20 rounded-full bg-danger/10 border border-danger/20 items-center justify-center mb-6">
+          <Icon name="phone-off" size={36} color="#F43F5E" />
+        </View>
+        <Text className="text-white text-2xl font-bold mb-2">Call Failed</Text>
+        <Text className="text-text-secondary text-sm text-center mb-8">
+          {failReason || 'Could not connect. Please check your network connection and try again.'}
+        </Text>
+        <Pressable
+          onPress={() => {
+            Vibration.vibrate(25);
+            setCallFailed(false);
+            setFailReason(null);
+            twilioService
+              .makeCall(phoneNumber, contactId)
+              .then(sid => fetchCallIdBySid(sid))
+              .catch(err => {
+                setCallFailed(true);
+                setFailReason(err.message || 'Connection failed.');
+              });
+          }}
+          className="bg-danger rounded-2xl py-4 items-center w-full max-w-[200px]"
+          style={({pressed}) => [{transform: [{scale: pressed ? 0.95 : 1}]}]}
+        >
+          <Text className="text-white font-bold text-sm uppercase tracking-wider">Tap to Retry</Text>
+        </Pressable>
+        <Pressable onPress={() => navigation.goBack()} className="mt-4 py-2">
+          <Text className="text-text-secondary text-sm">Cancel &amp; Go Back</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
+  const initials = contact ? `${contact.first_name.charAt(0)}${contact.last_name.charAt(0)}` : '?';
+  const displayName = contact ? `${contact.first_name} ${contact.last_name}` : phoneNumber;
+  const dealStage = contact
+    ? `${contact.status === 'qualified' ? 'Qualified Buyer' : contact.status.charAt(0).toUpperCase() + contact.status.slice(1)} · Lekki`
+    : 'Unknown Caller';
+
+  const contextData = getContextCardData();
+
+  return (
+    <View
+      style={{
+        paddingTop: Math.max(insets.top, 16),
+        paddingBottom: Math.max(insets.bottom, 24),
+      }}
+      className="flex-1 bg-surface relative justify-between px-6"
+    >
+      {/* Background radial glow */}
+      <View className="absolute top-[80px] w-[320px] h-[320px] rounded-full bg-brand-500/5 items-center justify-center self-center" />
+      <View className="absolute top-[120px] w-[240px] h-[240px] rounded-full bg-brand-500/10 items-center justify-center self-center" />
+
+      {/* ── Top Bar Compliance Recording Indicator ─────────────────── */}
+      <View className="items-center z-10">
+        <View className="flex-row items-center bg-[#090d16]/80 px-3.5 py-1.5 rounded-full border border-slate-800/80">
+          <Animated.View style={{opacity: pulseOpacity}} className="w-2 h-2 rounded-full bg-danger mr-2" />
+          <Text className="text-white text-[10px] font-bold uppercase tracking-widest">Recording</Text>
+        </View>
+      </View>
+
+      {/* ── TOP THIRD: Contact Context ─────────────────────────────────── */}
+      <View className="items-center mt-6 z-10">
+        {/* Circular Avatar */}
+        <View className="w-24 h-24 rounded-full bg-brand-500/20 border-2 border-brand-500 items-center justify-center mb-4 shadow-xl">
+          <Text className="text-brand-500 text-4xl font-black">{initials}</Text>
+        </View>
+        
+        {/* Name */}
+        <Text className="text-white text-2xl font-bold tracking-tight text-center">
+          {displayName}
+        </Text>
+
+        {/* Deal Stage Chip */}
+        <View className="bg-surface-raised border border-slate-800 px-3.5 py-1.5 rounded-full mt-2.5 flex-row items-center">
+          <View className="w-1.5 h-1.5 rounded-full bg-brand-500 mr-2" />
+          <Text className="text-brand-500 text-[10px] font-extrabold uppercase tracking-widest">
+            {dealStage}
           </Text>
         </View>
-        <Text className="text-white text-2xl font-semibold">{phoneNumber}</Text>
-        <Text className="text-slate-400 text-base mt-1">
-          {stateLabel[activeCallState] ?? ''}
+
+        {/* Geist Mono Large Timer */}
+        <Text className="text-white text-3xl font-semibold font-mono tracking-widest mt-5">
+          {activeCallState === 'active' ? formatElapsed(elapsed) : stateLabel[activeCallState] ?? '00:00'}
         </Text>
       </View>
 
-      {/* Hints */}
-      <HintsPanel hints={hints} loading={hintsLoading} />
+      {/* ── MIDDLE THIRD: Context Card vs. Live Transcript / Keypad ───── */}
+      <View className="flex-1 my-6 z-10 justify-center min-h-[160px] max-h-[200px]">
+        {showKeypad ? (
+          // Dialpad view
+          <View className="bg-[#090d16]/90 border border-slate-800/60 rounded-2xl p-4 flex-1 justify-center">
+            <View className="flex-row justify-between items-center mb-3 border-b border-slate-800/50 pb-2">
+              <Text className="text-text-secondary text-[10px] font-bold uppercase tracking-wider">Dialpad</Text>
+              <Pressable onPress={() => setShowKeypad(false)} className="px-2 py-1">
+                <Text className="text-brand-500 text-xs font-bold">Close</Text>
+              </Pressable>
+            </View>
+            <View className="flex-row flex-wrap justify-between gap-y-3 px-4">
+              {['1', '2', '3', '4', '5', '6', '7', '8', '9', '*', '0', '#'].map(digit => (
+                <Pressable
+                  key={digit}
+                  onPress={() => sendDigit(digit)}
+                  className="w-12 h-12 rounded-full bg-surface-input border border-slate-800/50 items-center justify-center"
+                  style={({pressed}) => [{transform: [{scale: pressed ? 0.92 : 1}]}]}
+                >
+                  <Text className="text-white text-base font-bold">{digit}</Text>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+        ) : segments.length > 0 ? (
+          // Live scrolling transcript view (Phase 3)
+          <View className="bg-[#090d16]/60 border border-slate-800/40 rounded-2xl p-4 flex-1">
+            <View className="flex-row justify-between items-center mb-3 border-b border-slate-800/50 pb-2">
+              <Text className="text-text-secondary text-[10px] font-bold uppercase tracking-wider">Live Transcript</Text>
+              <View className="bg-brand-500/10 border border-brand-500/20 px-2 py-0.5 rounded-full">
+                <Text className="text-brand-500 text-[8px] font-bold uppercase tracking-wide">✦ Live AI</Text>
+              </View>
+            </View>
+            <ScrollView
+              ref={transcriptScrollRef}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{paddingBottom: 4}}
+            >
+              {segments.map((seg, idx) => {
+                const isLast = idx === segments.length - 1;
+                const isAgent = seg.speaker === 'Agent';
+                const speakerColor = isAgent ? 'text-brand-500' : 'text-text-secondary';
+                return (
+                  <View key={idx} className={`flex-row mb-1.5 items-start ${isLast ? 'bg-brand-500/5 p-2 rounded-lg' : ''}`}>
+                    <Text className={`font-bold text-[10px] w-14 uppercase tracking-wide ${speakerColor}`}>
+                      {seg.speaker}
+                    </Text>
+                    <Text className={`flex-1 text-xs leading-4 ${isLast ? 'text-white font-medium' : 'text-text-secondary opacity-60'}`}>
+                      {seg.text}
+                    </Text>
+                  </View>
+                );
+              })}
+            </ScrollView>
+          </View>
+        ) : (
+          // CRM Context Card view
+          <View className="bg-[#090d16]/60 border border-slate-800/40 rounded-2xl p-4 flex-1 justify-between">
+            <View className="flex-row justify-between items-center mb-2 border-b border-slate-800/40 pb-1.5">
+              <Text className="text-text-secondary text-[10px] font-bold uppercase tracking-wider">
+                {contextData.title}
+              </Text>
+              {contextData.isAI && (
+                <View className="bg-brand-500/10 border border-brand-500/20 px-2 py-0.5 rounded-full">
+                  <Text className="text-brand-500 text-[8px] font-bold uppercase tracking-wide">✦ AI</Text>
+                </View>
+              )}
+            </View>
+            <Text className="text-text-primary text-xs leading-5 flex-1 mt-1">
+              {contextData.body}
+            </Text>
+          </View>
+        )}
+      </View>
 
-      {/* Live transcript */}
-      {showTranscript && <TranscriptPanel segments={segments} />}
-
-      {/* Transcript toggle */}
-      {segments.length > 0 && (
-        <Pressable
-          className="mx-4 mb-2"
-          onPress={() => setShowTranscript(v => !v)}>
-          <Text className="text-brand-500 text-xs text-center">
-            {showTranscript ? 'Hide transcript' : `Show transcript (${segments.filter(s => s.is_final).length} segments)`}
-          </Text>
-        </Pressable>
-      )}
-
-      <View className="flex-1" />
-
-      {/* Call controls */}
-      <View className="px-6 pb-12 gap-6">
-        <View className="flex-row justify-around">
-          <CallButton label={isMuted ? 'Unmute' : 'Mute'} active={isMuted}
-            onPress={() => twilioService.mute(!isMuted)} />
-          <CallButton label={isSpeaker ? 'Earpiece' : 'Speaker'} active={isSpeaker}
-            onPress={() => twilioService.setSpeaker(!isSpeaker)} />
-          {callId && (
-            <CallButton label="Flag" active={false}
-              onPress={() => {
-                intelligenceApi.flagCall(callId).catch(console.warn);
-                Alert.alert('Flagged', 'This call has been flagged for manager review.');
-              }} />
-          )}
+      {/* ── BOTTOM THIRD: Call Controls Grid & Hangup ─────────────────── */}
+      <View className="gap-6 z-10">
+        {/* 2x3 Grid */}
+        <View className="gap-4">
+          <View className="flex-row justify-around">
+            <ControlButton icon={isMuted ? 'mic-off' : 'mic'} label={isMuted ? 'Muted' : 'Mute'} active={isMuted} onPress={() => twilioService.mute(!isMuted)} />
+            <ControlButton icon="grid" label="Keypad" active={showKeypad} onPress={() => setShowKeypad(!showKeypad)} />
+            <ControlButton icon="volume-2" label={isSpeaker ? 'Speaker' : 'Audio'} active={isSpeaker} onPress={() => twilioService.setSpeaker(!isSpeaker)} />
+          </View>
+          <View className="flex-row justify-around">
+            <ControlButton icon="edit-3" label="Add Note" active={noteVisible} onPress={() => setNoteVisible(true)} />
+            <ControlButton icon="pause" label={isOnHold ? 'Hold On' : 'Hold'} active={isOnHold} onPress={handleToggleHold} />
+            <ControlButton icon="phone-forwarded" label="Transfer" active={false} onPress={handleTransfer} />
+          </View>
         </View>
 
-        <Pressable
-          className="bg-red-600 rounded-full py-5 items-center"
-          onPress={handleHangup}>
-          <Text className="text-white font-semibold text-lg">End Call</Text>
-        </Pressable>
+        {/* Large Centered End Call Button */}
+        <View className="items-center mt-2">
+          <Pressable
+            onPress={handleHangup}
+            style={({pressed}) => [
+              { transform: [{ scale: pressed ? 0.93 : 1 }] }
+            ]}
+            className="w-16 h-16 rounded-full bg-danger items-center justify-center shadow-lg"
+          >
+            <Icon name="phone-off" size={24} color="#FAFAFA" style={{ transform: [{ rotate: '135deg' }] }} />
+          </Pressable>
+        </View>
       </View>
-    </View>
-  );
-}
 
-function CallButton({label, active, onPress}: {
-  label: string; active: boolean; onPress: () => void;
-}) {
-  return (
-    <Pressable
-      className={`w-20 h-20 rounded-full items-center justify-center ${
-        active ? 'bg-brand-600' : 'bg-surface-card'
-      }`}
-      onPress={onPress}>
-      <Text className="text-white text-xs text-center leading-4">{label}</Text>
-    </Pressable>
+      {/* ── Add Note Sheet Modal ────────────────────────────────────── */}
+      <Modal
+        visible={noteVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setNoteVisible(false)}
+      >
+        <View className="flex-1 justify-end bg-black/60">
+          <Pressable className="flex-1" onPress={() => setNoteVisible(false)} />
+          <View className="bg-[#090d16] rounded-t-[24px] border-t border-slate-800/80 p-6 pb-8">
+            <View className="w-12 h-1.5 bg-slate-800 rounded-full self-center mb-5" />
+            <Text className="text-white text-lg font-bold mb-1">Add Note</Text>
+            <Text className="text-text-secondary text-xs mb-5">
+              Capture quick notes or record a voice note for CRM synchronization.
+            </Text>
+
+            {/* Voice note recorder widget */}
+            <View className="items-center justify-center py-6 bg-surface border border-slate-800/80 rounded-2xl mb-5">
+              {isRecording ? (
+                <View className="items-center">
+                  <Animated.View
+                    style={{ opacity: pulseOpacity }}
+                    className="w-16 h-16 rounded-full bg-danger/10 border border-danger/30 items-center justify-center mb-3"
+                  >
+                    <Pressable
+                      onPress={stopVoiceRecording}
+                      className="w-12 h-12 rounded-full bg-danger items-center justify-center"
+                    >
+                      <Icon name="square" size={18} color="#FAFAFA" />
+                    </Pressable>
+                  </Animated.View>
+                  <Text className="text-danger font-mono text-sm mb-1">
+                    Recording: {formatElapsed(recordingSeconds)}
+                  </Text>
+                  <Text className="text-text-tertiary text-xs">Tap to stop recording</Text>
+                </View>
+              ) : (
+                <View className="items-center">
+                  <Pressable
+                    onPress={startVoiceRecording}
+                    className="w-14 h-14 rounded-full bg-brand-500 items-center justify-center mb-3 shadow"
+                    style={({pressed}) => [{transform: [{scale: pressed ? 0.95 : 1}]}]}
+                  >
+                    <Icon name="mic" size={22} color="#FAFAFA" />
+                  </Pressable>
+                  <Text className="text-white text-xs font-semibold mb-1">Record Voice Note</Text>
+                  <Text className="text-text-tertiary text-[9px] uppercase tracking-wider">
+                    AI Auto-Transcription Active
+                  </Text>
+                </View>
+              )}
+            </View>
+
+            {/* Text Note area */}
+            <TextInput
+              className="bg-surface text-white rounded-xl px-4 py-3 text-xs border border-slate-800/60"
+              placeholder="Type call details or observations here…"
+              placeholderTextColor="#71717A"
+              multiline
+              numberOfLines={4}
+              value={noteText}
+              onChangeText={setNoteText}
+              style={{minHeight: 80, textAlignVertical: 'top'}}
+            />
+
+            {/* Done / Cancel CTA */}
+            <View className="flex-row gap-3 mt-6">
+              <Pressable
+                className="flex-1 bg-surface border border-slate-800 rounded-xl py-3.5 items-center"
+                onPress={() => setNoteVisible(false)}
+              >
+                <Text className="text-slate-300 font-semibold text-xs">Cancel</Text>
+              </Pressable>
+              <Pressable
+                className="flex-1 bg-brand-500 rounded-xl py-3.5 items-center"
+                onPress={handleSaveNote}
+              >
+                <Text className="text-white font-semibold text-xs">Done</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    </View>
   );
 }

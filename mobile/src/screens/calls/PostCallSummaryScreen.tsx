@@ -12,6 +12,7 @@ import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 import {useRoute, useNavigation, RouteProp} from '@react-navigation/native';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {callsApi} from '../../api/calls';
+import {contactsApi} from '../../api/contacts';
 import {tasksApi} from '../../api/tasks';
 import {CallSummary} from '../../types';
 import type {CallsStackParamList} from '../../navigation/stacks/CallsStack';
@@ -114,11 +115,59 @@ export function PostCallSummaryScreen() {
 
       {/* Header */}
       <View className="flex-row items-center justify-between mb-6">
-        <View>
+        <View className="flex-1 mr-2">
           <Text className="text-white text-xl font-bold">
-            {contact ? `${contact.first_name} ${contact.last_name}` : 'Call Summary'}
+            {contact ? `${contact.first_name} ${contact.last_name}` : `Unknown · ${call?.remote_number}`}
           </Text>
           <Text className="text-slate-400 text-sm mt-0.5">{duration} · Just now</Text>
+          
+          {!contact && (
+            <Pressable
+              className="mt-2 flex-row items-center bg-accent/10 border border-accent/30 rounded-xl px-3 py-2 self-start"
+              onPress={() => {
+                Alert.prompt(
+                  'Create Contact',
+                  'Enter contact name (First Last) to save in CRM:',
+                  [
+                    {
+                      text: 'Cancel',
+                      style: 'cancel',
+                    },
+                    {
+                      text: 'Save',
+                      onPress: async (name?: string) => {
+                        if (!name || !name.trim()) return;
+                        const parts = name.trim().split(' ');
+                        const firstName = parts[0] || 'Unknown';
+                        const lastName = parts.slice(1).join(' ') || 'Contact';
+
+                        try {
+                          const res = await contactsApi.create({
+                            first_name: firstName,
+                            last_name: lastName,
+                            phone: call?.remote_number,
+                            status: 'new',
+                          });
+                          
+                          if (res.data) {
+                            Alert.alert('Success', 'Contact created successfully!');
+                            queryClient.invalidateQueries({queryKey: ['call', callId]});
+                            queryClient.invalidateQueries({queryKey: ['contacts']});
+                          }
+                        } catch (err) {
+                          Alert.alert('Error', 'Failed to create contact.');
+                        }
+                      },
+                    },
+                  ],
+                  'plain-text',
+                  ''
+                );
+              }}>
+              <Text className="text-accent text-xs font-semibold mr-1">✦ New contact?</Text>
+              <Text className="text-slate-400 text-xs">Tap to add to CRM</Text>
+            </Pressable>
+          )}
         </View>
         <View className={`px-3 py-1.5 rounded-full ${SENTIMENT_COLORS[summary.sentiment]}`}>
           <Text className="text-white text-xs font-semibold capitalize">{summary.sentiment}</Text>

@@ -47,6 +47,29 @@ class MobileContactController extends Controller
         ]);
     }
 
+    public function store(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name'  => 'required|string|max:255',
+            'phone'      => 'nullable|string|max:50',
+            'email'      => 'nullable|email|max:255',
+            'status'     => 'sometimes|in:new,active,qualified,nurturing,closed,archived',
+        ]);
+
+        $contact = Contact::create([
+            'first_name'        => $data['first_name'],
+            'last_name'         => $data['last_name'],
+            'phone'             => $data['phone'] ?? null,
+            'email'             => $data['email'] ?? null,
+            'status'            => $data['status'] ?? 'new',
+            'agency_id'         => $request->user()->agency_id,
+            'assigned_agent_id' => $request->user()->id,
+        ]);
+
+        return response()->json($contact, 201);
+    }
+
     public function addNote(Request $request, Contact $contact): JsonResponse
     {
         $request->validate([
