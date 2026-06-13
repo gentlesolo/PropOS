@@ -250,8 +250,8 @@ export function HomeScreen() {
   const queryClient = useQueryClient();
 
   // Role gating & tab choice state
-  const isManager = (user as any)?.roles?.some?.((r: string) => r === 'admin' || r === 'manager') ?? false;
-  const isAgent = (user as any)?.roles?.includes?.('agent') ?? true;
+  const isManager = (user as any)?.roles?.some?.((r: string) => r === 'admin' || r === 'manager' || r === 'principal' || r === 'super_admin' || r === 'branch_manager') ?? false;
+  const isAgent = (((user as any)?.roles?.includes?.('agent') || (user as any)?.roles?.includes?.('senior_agent') || ((user as any)?.roles?.length === 0))) ?? true;
   const showToggle = isManager && isAgent;
 
   const [currentTab, setCurrentTab] = useState<'My Day' | 'Team'>(() => {

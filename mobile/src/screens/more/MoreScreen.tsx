@@ -31,7 +31,7 @@ export function MoreScreen() {
   const {user, clearAuth} = useAuthStore();
 
   const isManager = (user as any)?.roles?.some?.(
-    (r: string) => r === 'admin' || r === 'manager',
+    (r: string) => r === 'admin' || r === 'manager' || r === 'principal' || r === 'super_admin' || r === 'branch_manager',
   ) ?? false;
 
   const {unreadCount: notificationsUnread} = useNotificationStore();
@@ -167,6 +167,14 @@ export function MoreScreen() {
           },
         ]
       : []),
+    {
+      id: 'phone_numbers',
+      title: 'Phone Numbers',
+      subtitle: 'Register your own number or provision a Twilio line for calling',
+      icon: 'phone',
+      route: 'PhoneNumbers',
+      badge: null, badgeBg: '', badgeBorder: '', badgeText: '',
+    },
     {
       id: 'profile',
       title: 'Profile Settings',

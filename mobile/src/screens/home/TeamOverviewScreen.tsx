@@ -67,7 +67,7 @@ export function TeamOverviewScreen({
 
   // Check roles (Manager/Admin redirect gate)
   const isManager = (user as any)?.roles?.some?.(
-    (r: string) => r === 'admin' || r === 'manager'
+    (r: string) => r === 'admin' || r === 'manager' || r === 'principal' || r === 'super_admin' || r === 'branch_manager'
   ) ?? false;
 
   useEffect(() => {

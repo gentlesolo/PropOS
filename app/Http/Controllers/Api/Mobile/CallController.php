@@ -25,7 +25,9 @@ class CallController extends Controller
         return response()->json([
             'token'          => $jwt,
             'identity'       => (string) $request->user()->id,
-            'agent_number'   => $agentNumber?->twilio_number,
+            'agent_number'   => $agentNumber?->getEffectiveDisplayNumber(),
+            'number_type'    => $agentNumber?->number_type,
+            'verified'       => $agentNumber?->verified ?? false,
         ]);
     }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Infrastructure\Persistence\Models\AgentNumber;
 use App\Infrastructure\Persistence\Models\Call;
 use App\Infrastructure\Persistence\Models\Contact;
 use App\Infrastructure\Persistence\Models\User;
@@ -25,12 +26,27 @@ class CallWebhookController extends Controller
      */
     public function outbound(Request $request): Response
     {
-        $agentId = $request->input('From'); // identity set in the SDK token
         $toNumber = $request->input('To');
+
+        // Twilio sends the identity as "client:{userId}" — extract the numeric ID
+        $fromRaw  = $request->input('From', '');
+        $agentId  = ltrim(str_replace('client:', '', $fromRaw));
+        $agent    = User::find($agentId);
+
+        $callerId = null;
+        if ($agent) {
+            $agentNumber = AgentNumber::where('user_id', $agent->id)
+                ->where('active', true)
+                ->where('verified', true)
+                ->latest()
+                ->first();
+            $callerId = $agentNumber?->getEffectiveDisplayNumber();
+        }
 
         $twiml = $this->twilio->buildOutboundTwiml(
             $toNumber,
             route('api.mobile.calls.status'),
+            $callerId,
         );
 
         return response($twiml, 200, ['Content-Type' => 'application/xml']);

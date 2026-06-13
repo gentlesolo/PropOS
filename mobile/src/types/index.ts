@@ -88,6 +88,23 @@ export interface Call {
   transcript?: CallTranscript;
 }
 
+export type NumberType = 'twilio_provisioned' | 'verified_caller_id';
+
+export interface AgentNumber {
+  id: number;
+  user_id: number;
+  agency_id: number;
+  twilio_number: string | null;
+  display_number: string | null;
+  number_type: NumberType;
+  country_code: string;
+  verified: boolean;
+  verified_at: string | null;
+  active: boolean;
+  language: string;
+  created_at: string;
+}
+
 export interface Task {
   id: number;
   title: string;

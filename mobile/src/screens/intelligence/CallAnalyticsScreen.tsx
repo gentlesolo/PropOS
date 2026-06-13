@@ -59,7 +59,7 @@ export function CallAnalyticsScreen() {
   }, []);
 
   // Manager status check
-  const isManager = (user as any)?.roles?.some((r: string) => r === 'admin' || r === 'manager') ?? false;
+  const isManager = (user as any)?.roles?.some((r: string) => r === 'admin' || r === 'manager' || r === 'principal' || r === 'super_admin' || r === 'branch_manager') ?? false;
 
   // Query fetching data
   const {data: analytics, isPending} = useQuery<CallAnalyticsResponse>({

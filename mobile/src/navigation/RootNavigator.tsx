@@ -11,6 +11,7 @@ import {TenantsStack} from './stacks/TenantsStack';
 import {FinanceStack} from './stacks/FinanceStack';
 import {IntelligenceStack} from './stacks/IntelligenceStack';
 import {ProfileScreen} from '../screens/profile/ProfileScreen';
+import {PhoneNumbersScreen} from '../screens/more/PhoneNumbersScreen';
 
 export type RootStackParamList = {
   Onboarding: undefined;
@@ -23,6 +24,7 @@ export type RootStackParamList = {
   Finance: undefined;
   Intelligence: undefined;
   Profile: undefined;
+  PhoneNumbers: undefined;
   // Deep-link targets reachable from notifications
   PostCallSummary: {callId: number};
   ContactDetail:   {contactId: number};
@@ -49,6 +51,7 @@ export function RootNavigator() {
           <Stack.Screen name="Finance" component={FinanceStack} />
           <Stack.Screen name="Intelligence" component={IntelligenceStack} />
           <Stack.Screen name="Profile" component={ProfileScreen} />
+          <Stack.Screen name="PhoneNumbers" component={PhoneNumbersScreen} />
         </>
       ) : !hasSeenOnboarding ? (
         <Stack.Screen name="Onboarding" component={OnboardingScreen} />

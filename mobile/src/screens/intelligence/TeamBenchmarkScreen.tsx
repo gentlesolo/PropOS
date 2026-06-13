@@ -275,7 +275,7 @@ export function TeamBenchmarkScreen() {
   const [smallTeamMode, setSmallTeamMode] = useState(false);
 
   const isManager =
-    (user as any)?.roles?.some((r: string) => r === 'admin' || r === 'manager') ?? false;
+    (user as any)?.roles?.some((r: string) => r === 'admin' || r === 'manager' || r === 'principal' || r === 'super_admin' || r === 'branch_manager') ?? false;
 
   // Retrieve data using React Query
   const {data, isPending, refetch} = useQuery<TeamBenchmarkResponse>({

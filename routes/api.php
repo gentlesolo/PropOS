@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\DealController;
 use App\Http\Controllers\Api\EmailWebhookController;
 use App\Http\Controllers\Api\ListingController;
 use App\Http\Controllers\Api\Mobile\AgentBenchmarkController;
+use App\Http\Controllers\Api\Mobile\AgentNumberController;
 use App\Http\Controllers\Api\Mobile\MobileLeaseController;
 use App\Http\Controllers\Api\Mobile\MobileNotificationController;
 use App\Http\Controllers\Api\Mobile\MobileTenantController;
@@ -225,6 +226,13 @@ Route::prefix('mobile')->name('api.mobile.')->group(function () {
                 ->update(['language' => $request->input('language')]);
             return response()->json(['language' => $request->input('language')]);
         })->name('numbers.language');
+
+        // Phone number management (BYON + platform-provisioned)
+        Route::get('/numbers',                              [AgentNumberController::class, 'index'])->name('numbers.index');
+        Route::post('/numbers',                             [AgentNumberController::class, 'store'])->name('numbers.store');
+        Route::get('/numbers/{agentNumber}/verification',   [AgentNumberController::class, 'checkVerification'])->name('numbers.verify');
+        Route::patch('/numbers/{agentNumber}/activate',     [AgentNumberController::class, 'activate'])->name('numbers.activate');
+        Route::delete('/numbers/{agentNumber}',             [AgentNumberController::class, 'destroy'])->name('numbers.destroy');
     });
 });
 

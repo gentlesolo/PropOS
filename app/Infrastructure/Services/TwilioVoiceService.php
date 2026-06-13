@@ -3,7 +3,6 @@
 namespace App\Infrastructure\Services;
 
 use App\Infrastructure\Persistence\Models\AgentNumber;
-use App\Infrastructure\Persistence\Models\Call;
 use App\Infrastructure\Persistence\Models\User;
 use Twilio\Jwt\AccessToken;
 use Twilio\Jwt\Grants\VoiceGrant;
@@ -59,9 +58,10 @@ class TwilioVoiceService
     }
 
     /**
-     * TwiML for outbound calls: play consent announcement then dial.
+     * TwiML for outbound calls.
+     * callerId is the number shown to the recipient — the agency's verified/provisioned number.
      */
-    public function buildOutboundTwiml(string $toNumber, string $callbackUrl): string
+    public function buildOutboundTwiml(string $toNumber, string $callbackUrl, ?string $callerId = null): string
     {
         $response = new VoiceResponse();
 
@@ -70,7 +70,12 @@ class TwilioVoiceService
             ['voice' => 'Polly.Joanna', 'language' => 'en-US'],
         );
 
-        $dial = $response->dial();
+        $dialOptions = ['action' => $callbackUrl, 'method' => 'POST'];
+        if ($callerId) {
+            $dialOptions['callerId'] = $callerId;
+        }
+
+        $dial = $response->dial($dialOptions);
         $dial->number($toNumber);
 
         return (string) $response;
@@ -85,7 +90,13 @@ class TwilioVoiceService
 
         $response->say('Please hold while we connect your call.', ['voice' => 'Polly.Joanna']);
 
-        $dial = $response->dial(['callerId' => $this->getAgentNumber($agent)?->twilio_number]);
+        $agentNumber = $this->getAgentNumber($agent);
+        $dialOptions = [];
+        if ($agentNumber?->twilio_number) {
+            $dialOptions['callerId'] = $agentNumber->twilio_number;
+        }
+
+        $dial = $response->dial($dialOptions);
         $dial->client((string) $agent->id);
 
         return (string) $response;
@@ -101,7 +112,7 @@ class TwilioVoiceService
         ]);
 
         return [
-            'sid' => $recording->sid,
+            'sid'    => $recording->sid,
             'status' => $recording->status,
         ];
     }
@@ -115,17 +126,24 @@ class TwilioVoiceService
     }
 
     /**
-     * Provision a new Twilio number and assign it to an agent.
+     * Provision a new Twilio number in the given country and assign it to an agent.
+     * Supports any country where Twilio sells local numbers (US, GB, ZA, GH, KE, CA …).
+     * Note: some countries (e.g. NG) require a Regulatory Bundle in the Twilio Console
+     * before numbers can be purchased — the API call will throw if that bundle is missing.
      */
-    public function provisionNumber(User $agent, string $areaCode = '1'): AgentNumber
+    public function provisionNumber(User $agent, string $countryCode = 'US', string $areaCode = ''): AgentNumber
     {
-        $available = $this->client->availablePhoneNumbers('US')
-            ->local
-            ->read(['areaCode' => $areaCode], 1);
+        $country   = strtoupper($countryCode);
+        $searchOpts = $areaCode ? ['areaCode' => $areaCode] : [];
 
-        if (empty($available)) {
-            $available = $this->client->availablePhoneNumbers('US')->local->read([], 1);
+        $available = $this->client->availablePhoneNumbers($country)->local->read($searchOpts, 1);
+
+        if (empty($available) && $areaCode) {
+            // Retry without area-code restriction
+            $available = $this->client->availablePhoneNumbers($country)->local->read([], 1);
         }
+
+        abort_if(empty($available), 503, "No available phone numbers in {$country}.");
 
         $number = $this->client->incomingPhoneNumbers->create([
             'phoneNumber' => $available[0]->phoneNumber,
@@ -133,13 +151,65 @@ class TwilioVoiceService
             'voiceMethod' => 'POST',
         ]);
 
+        // Deactivate the agent's other numbers
+        AgentNumber::where('user_id', $agent->id)->update(['active' => false]);
+
         return AgentNumber::create([
-            'agency_id'     => $agent->agency_id,
-            'user_id'       => $agent->id,
-            'twilio_number' => $number->phoneNumber,
-            'twilio_sid'    => $number->sid,
-            'active'        => true,
+            'agency_id'      => $agent->agency_id,
+            'user_id'        => $agent->id,
+            'twilio_number'  => $number->phoneNumber,
+            'display_number' => $number->phoneNumber,
+            'twilio_sid'     => $number->sid,
+            'number_type'    => 'twilio_provisioned',
+            'country_code'   => $country,
+            'verified'       => true,
+            'verified_at'    => now(),
+            'active'         => true,
         ]);
+    }
+
+    /**
+     * Release a Twilio-provisioned number back to Twilio.
+     */
+    public function releaseNumber(string $twilioSid): void
+    {
+        $this->client->incomingPhoneNumbers($twilioSid)->delete();
+    }
+
+    /**
+     * Step 1 of BYON: place a verification call to the agency's number.
+     * Twilio calls the number, reads the validation_code, and asks the recipient
+     * to press it on their keypad. Once confirmed the number appears in OutgoingCallerIds.
+     */
+    public function initiateCallerIdVerification(string $phoneNumber): array
+    {
+        $validation = $this->client->validationRequests->create($phoneNumber, [
+            'friendlyName' => 'Propos Agency Number Verification',
+        ]);
+
+        return [
+            'validation_code' => $validation->validationCode,
+            'call_sid'        => $validation->callSid,
+        ];
+    }
+
+    /**
+     * Step 2 of BYON: check whether Twilio has confirmed the number.
+     * Returns the OutgoingCallerId SID when verified, null while still pending.
+     */
+    public function checkCallerIdVerified(string $phoneNumber): ?string
+    {
+        $callerIds = $this->client->outgoingCallerIds->read(['phoneNumber' => $phoneNumber]);
+
+        return ! empty($callerIds) ? $callerIds[0]->sid : null;
+    }
+
+    /**
+     * Remove a verified caller ID from the Twilio account.
+     */
+    public function removeCallerId(string $callerIdSid): void
+    {
+        $this->client->outgoingCallerIds($callerIdSid)->delete();
     }
 
     public function getAgentNumber(User $agent): ?AgentNumber
