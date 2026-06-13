@@ -79,6 +79,8 @@ export function TabNavigator() {
         options={{
           tabBarLabel: 'Home',
           tabBarIcon: ({focused}) => <TabIcon name="home" focused={focused} />,
+          tabBarBadge: unreadCount > 0 ? unreadCount : undefined,
+          tabBarBadgeStyle: {backgroundColor: '#F59E0B', color: '#ffffff', fontSize: 10},
         }}
       />
       <Tab.Screen

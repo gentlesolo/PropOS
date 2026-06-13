@@ -3,7 +3,10 @@ import {apiClient} from './client';
 export interface AppNotification {
   id: string;
   type: string;
-  data: Record<string, unknown>;
+  title: string;
+  body: string;
+  action_url: string | null;
+  severity: string;
   read_at: string | null;
   created_at: string;
 }

@@ -5,11 +5,13 @@ import {useAuthStore} from '../store/authStore';
 import {TabNavigator} from './TabNavigator';
 import {LoginScreen} from '../screens/auth/LoginScreen';
 import {OnboardingScreen} from '../screens/auth/OnboardingScreen';
+import {NotificationsScreen} from '../screens/notifications/NotificationsScreen';
 
 export type RootStackParamList = {
   Onboarding: undefined;
   Auth: undefined;
   Main: undefined;
+  Notifications: undefined;
   // Deep-link targets reachable from notifications
   PostCallSummary: {callId: number};
   ContactDetail:   {contactId: number};
@@ -32,7 +34,10 @@ export function RootNavigator({navigationRef}: Props) {
     <NavigationContainer ref={navigationRef}>
       <Stack.Navigator screenOptions={{headerShown: false}}>
         {isAuthenticated ? (
-          <Stack.Screen name="Main" component={TabNavigator} />
+          <>
+            <Stack.Screen name="Main" component={TabNavigator} />
+            <Stack.Screen name="Notifications" component={NotificationsScreen} />
+          </>
         ) : !hasSeenOnboarding ? (
           <Stack.Screen name="Onboarding" component={OnboardingScreen} />
         ) : (

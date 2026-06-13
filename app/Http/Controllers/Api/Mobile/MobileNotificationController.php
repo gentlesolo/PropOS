@@ -14,8 +14,7 @@ class MobileNotificationController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $notifications = Notification::where('notifiable_id', $request->user()->id)
-            ->where('notifiable_type', 'App\\Infrastructure\\Persistence\\Models\\User')
+        $notifications = Notification::where('user_id', $request->user()->id)
             ->latest()
             ->paginate($request->input('per_page', 30));
 
@@ -27,11 +26,11 @@ class MobileNotificationController extends Controller
      */
     public function markRead(Request $request, string $id): JsonResponse
     {
-        $notification = Notification::where('notifiable_id', $request->user()->id)
+        $notification = Notification::where('user_id', $request->user()->id)
             ->where('id', $id)
             ->firstOrFail();
 
-        $notification->markAsRead();
+        $notification->update(['read_at' => now()]);
 
         return response()->json(['read' => true]);
     }
@@ -41,7 +40,7 @@ class MobileNotificationController extends Controller
      */
     public function markAllRead(Request $request): JsonResponse
     {
-        Notification::where('notifiable_id', $request->user()->id)
+        Notification::where('user_id', $request->user()->id)
             ->whereNull('read_at')
             ->update(['read_at' => now()]);
 
@@ -53,7 +52,7 @@ class MobileNotificationController extends Controller
      */
     public function unreadCount(Request $request): JsonResponse
     {
-        $count = Notification::where('notifiable_id', $request->user()->id)
+        $count = Notification::where('user_id', $request->user()->id)
             ->whereNull('read_at')
             ->count();
 

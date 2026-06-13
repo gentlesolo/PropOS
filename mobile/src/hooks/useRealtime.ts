@@ -15,6 +15,7 @@ export function useRealtime() {
   useEffect(() => {
     const unsub = notificationService.onForegroundMessage((data) => {
       increment();
+      queryClient.invalidateQueries({queryKey: ['notifications']});
 
       switch (data.type) {
         case 'call_summary_ready':

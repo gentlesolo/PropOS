@@ -567,7 +567,7 @@ export function HomeScreen() {
           {/* Notifications and Avatar */}
           <View className="flex-row items-center gap-4">
             <Pressable 
-              onPress={() => navigation.navigate('Home')}
+              onPress={() => navigation.navigate('Notifications')}
               className="w-10 h-10 bg-surface-card border border-zinc-800 rounded-full items-center justify-center relative active:opacity-75"
             >
               <Icon name="bell" size={18} color="#FAFAFA" />
