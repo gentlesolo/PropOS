@@ -4,7 +4,6 @@ import {
   ScrollView,
   Text,
   View,
-  SafeAreaView,
   Animated,
   Dimensions,
   Image,
@@ -12,6 +11,7 @@ import {
   ActivityIndicator,
   useColorScheme,
 } from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';

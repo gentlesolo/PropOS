@@ -7,10 +7,10 @@ import {
   TextInput,
   View,
   ActivityIndicator,
-  SafeAreaView,
   Animated,
   ScrollView,
 } from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {useMutation} from '@tanstack/react-query';
 import Icon from 'react-native-vector-icons/Feather';
 import * as Keychain from 'react-native-keychain';

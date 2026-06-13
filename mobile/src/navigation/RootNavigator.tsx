@@ -1,5 +1,4 @@
 import React, {useEffect} from 'react';
-import {NavigationContainer, NavigationContainerRef} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {useAuthStore} from '../store/authStore';
 import {TabNavigator} from './TabNavigator';
@@ -31,11 +30,7 @@ export type RootStackParamList = {
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-interface Props {
-  navigationRef?: React.RefObject<NavigationContainerRef<any> | null>;
-}
-
-export function RootNavigator({navigationRef}: Props) {
+export function RootNavigator() {
   const {isAuthenticated, hasSeenOnboarding, hydrate} = useAuthStore();
 
   useEffect(() => {
@@ -43,25 +38,23 @@ export function RootNavigator({navigationRef}: Props) {
   }, [hydrate]);
 
   return (
-    <NavigationContainer ref={navigationRef}>
-      <Stack.Navigator screenOptions={{headerShown: false}}>
-        {isAuthenticated ? (
-          <>
-            <Stack.Screen name="Main" component={TabNavigator} />
-            <Stack.Screen name="Notifications" component={NotificationsScreen} />
-            <Stack.Screen name="Calls" component={CallsStack} />
-            <Stack.Screen name="Viewings" component={ViewingsStack} />
-            <Stack.Screen name="Tenants" component={TenantsStack} />
-            <Stack.Screen name="Finance" component={FinanceStack} />
-            <Stack.Screen name="Intelligence" component={IntelligenceStack} />
-            <Stack.Screen name="Profile" component={ProfileScreen} />
-          </>
-        ) : !hasSeenOnboarding ? (
-          <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-        ) : (
-          <Stack.Screen name="Auth" component={LoginScreen} />
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      {isAuthenticated ? (
+        <>
+          <Stack.Screen name="Main" component={TabNavigator} />
+          <Stack.Screen name="Notifications" component={NotificationsScreen} />
+          <Stack.Screen name="Calls" component={CallsStack} />
+          <Stack.Screen name="Viewings" component={ViewingsStack} />
+          <Stack.Screen name="Tenants" component={TenantsStack} />
+          <Stack.Screen name="Finance" component={FinanceStack} />
+          <Stack.Screen name="Intelligence" component={IntelligenceStack} />
+          <Stack.Screen name="Profile" component={ProfileScreen} />
+        </>
+      ) : !hasSeenOnboarding ? (
+        <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+      ) : (
+        <Stack.Screen name="Auth" component={LoginScreen} />
+      )}
+    </Stack.Navigator>
   );
 }

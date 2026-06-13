@@ -3,8 +3,4 @@ plugins { id("com.facebook.react.settings") }
 extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
 rootProject.name = 'ProposMobile'
 include ':app'
-include ':react-native-reanimated'
-project(':react-native-reanimated').projectDir = new File('../node_modules/react-native-reanimated/android')
-include ':react-native-worklets'
-project(':react-native-worklets').projectDir = new File('../node_modules/react-native-worklets/android')
 includeBuild('../node_modules/@react-native/gradle-plugin')

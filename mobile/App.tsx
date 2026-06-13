@@ -1,7 +1,7 @@
 import React, {useEffect, useRef} from 'react';
 import {AppState, AppStateStatus} from 'react-native';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
-import {NavigationContainerRef} from '@react-navigation/native';
+import {NavigationContainer, NavigationContainerRef} from '@react-navigation/native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {RootNavigator} from './src/navigation/RootNavigator';
 import {useAuthStore} from './src/store/authStore';
@@ -122,7 +122,7 @@ function AppInner() {
   return (
     <>
       <OfflineIndicator />
-      <RootNavigator navigationRef={navigationRef} />
+      <RootNavigator />
       {isAuthenticated && isLocked && <BiometricUnlockScreen />}
     </>
   );
@@ -135,7 +135,9 @@ export default function App() {
     <SafeAreaProvider>
       <ErrorBoundary>
         <QueryClientProvider client={queryClient}>
-          <AppInner />
+          <NavigationContainer ref={navigationRef}>
+            <AppInner />
+          </NavigationContainer>
         </QueryClientProvider>
       </ErrorBoundary>
     </SafeAreaProvider>

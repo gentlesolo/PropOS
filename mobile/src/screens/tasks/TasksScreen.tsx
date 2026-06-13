@@ -6,7 +6,6 @@ import {
   Text,
   TextInput,
   View,
-  SafeAreaView,
   Modal,
   Alert,
   Animated,
@@ -15,6 +14,7 @@ import {
   ScrollView,
   Vibration,
 } from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {tasksApi} from '../../api/tasks';
 import {contactsApi} from '../../api/contacts';

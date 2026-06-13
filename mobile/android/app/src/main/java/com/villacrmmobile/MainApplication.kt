@@ -7,19 +7,13 @@ import com.facebook.react.ReactHost
 import com.facebook.react.ReactNativeApplicationEntryPoint.loadReactNative
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.twiliovoicereactnative.VoiceApplicationProxy
-import com.swmansion.reanimated.ReanimatedPackage
-import com.swmansion.worklets.WorkletsPackage
 
 class MainApplication : Application(), ReactApplication {
 
   override val reactHost: ReactHost by lazy {
     getDefaultReactHost(
       context = applicationContext,
-      packageList =
-        PackageList(this).packages.apply {
-          add(WorkletsPackage())
-          add(ReanimatedPackage())
-        },
+      packageList = PackageList(this).packages,
     )
   }
 

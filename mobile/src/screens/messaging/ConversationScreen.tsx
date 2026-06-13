@@ -10,11 +10,11 @@ import {
   Text,
   TextInput,
   View,
-  SafeAreaView,
   Modal,
   useColorScheme,
   Vibration,
 } from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {useRoute, useNavigation, RouteProp} from '@react-navigation/native';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
