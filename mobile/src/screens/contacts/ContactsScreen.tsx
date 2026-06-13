@@ -8,7 +8,6 @@ import {
   View,
   Alert,
   Modal,
-  useColorScheme,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
@@ -21,25 +20,23 @@ import {Contact} from '../../types';
 import type {ContactsStackParamList} from '../../navigation/stacks/ContactsStack';
 import {useAuthStore} from '../../store/authStore';
 import {SwipeableRow} from '../../components/SwipeableRow';
+import {useTheme} from '../../theme/ThemeProvider';
+import {ThemeTokens} from '../../theme/tokens';
 
 type NavProp = NativeStackNavigationProp<ContactsStackParamList>;
-
 type FilterType = 'All' | 'Buyers' | 'Sellers' | 'Tenants' | 'Hot Leads' | 'My Contacts';
 
-const STATUS_COLORS: Record<string, { bg: string; text: string; border: string }> = {
-  new:       { bg: 'bg-zinc-800/60', text: 'text-zinc-400', border: 'border-zinc-700/60' },
-  active:    { bg: 'bg-emerald-500/10', text: 'text-emerald-400', border: 'border-emerald-500/20' },
-  qualified: { bg: 'bg-brand-500/10', text: 'text-brand-400', border: 'border-brand-500/20' },
-  nurturing: { bg: 'bg-amber-500/10', text: 'text-amber-400', border: 'border-amber-500/20' },
-  closed:    { bg: 'bg-purple-500/10', text: 'text-purple-400', border: 'border-purple-500/20' },
-  archived:  { bg: 'bg-zinc-800', text: 'text-zinc-500', border: 'border-zinc-700' },
+const STATUS_STYLE: Record<string, {bg: string; text: string; border: string}> = {
+  new:       {bg: '#64748B1A', text: '#94A3B8', border: '#64748B33'},
+  active:    {bg: '#10B9811A', text: '#10B981',  border: '#10B98133'},
+  qualified: {bg: '#10B9811A', text: '#10B981',  border: '#10B98133'},
+  nurturing: {bg: '#F59E0B1A', text: '#F59E0B',  border: '#F59E0B33'},
+  closed:    {bg: '#A855F71A', text: '#A855F7',  border: '#A855F733'},
+  archived:  {bg: '#3F3F461A', text: '#71717A',  border: '#3F3F4633'},
 };
 
-const SENTIMENT_COLORS: Record<string, string> = {
-  hot:     'bg-danger',
-  warm:    'bg-accent',
-  cold:    'bg-info',
-  neutral: 'bg-text-tertiary',
+const SENTIMENT_DOT: Record<string, string> = {
+  hot: '#F43F5E', warm: '#F59E0B', cold: '#0EA5E9', neutral: '#71717A',
 };
 
 function ContactRow({
@@ -47,23 +44,20 @@ function ContactRow({
   onPress,
   onCall,
   onMessage,
-  isDark,
+  tokens,
 }: {
   contact: Contact;
   onPress: () => void;
   onCall: () => void;
   onMessage: () => void;
-  isDark: boolean;
+  tokens: ThemeTokens;
 }) {
   const initials =
-    contact.first_name.charAt(0).toUpperCase() +
-    contact.last_name.charAt(0).toUpperCase();
+    contact.first_name.charAt(0).toUpperCase() + contact.last_name.charAt(0).toUpperCase();
 
-  // Sentiment dot color based on latest call's sentiment
   const sentiment = contact.latestCall?.summary?.sentiment;
-  const sentimentColor = sentiment ? SENTIMENT_COLORS[sentiment] : null;
+  const dotColor = sentiment ? SENTIMENT_DOT[sentiment] : null;
 
-  // Relative time for last contact
   const lastContactText = useMemo(() => {
     if (!contact.last_contacted_at) return 'Never contacted';
     try {
@@ -71,57 +65,93 @@ function ContactRow({
         ? parseISO(contact.last_contacted_at)
         : new Date(contact.last_contacted_at);
       return `Last contact: ${formatDistanceToNow(date, {addSuffix: true})}`;
-    } catch (e) {
+    } catch {
       return 'Last contact: unknown';
     }
   }, [contact.last_contacted_at]);
 
-  const statusStyle = STATUS_COLORS[contact.status] || STATUS_COLORS.new;
+  const statusStyle = STATUS_STYLE[contact.status] || STATUS_STYLE.new;
 
   return (
     <SwipeableRow onCall={onCall} onMessage={onMessage}>
       <Pressable
-        className="flex-row items-center px-4 py-3.5 active:opacity-90"
+        style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 14}}
         onPress={onPress}
       >
-        {/* Avatar with sentiment dot overlay */}
-        <View className="relative mr-3">
-          <View className="w-10 h-10 rounded-full bg-brand-500/10 border border-brand-500/20 items-center justify-center">
-            <Text className="text-brand-500 font-extrabold text-sm">{initials}</Text>
+        {/* Avatar + sentiment dot */}
+        <View style={{position: 'relative', marginRight: 12}}>
+          <View
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 20,
+              backgroundColor: `${tokens.brandPrimary}1A`,
+              borderWidth: 1,
+              borderColor: `${tokens.brandPrimary}33`,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Text style={{color: tokens.brandPrimary, fontWeight: '800', fontSize: 14}}>{initials}</Text>
           </View>
-          {sentimentColor && (
-            <View className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 ${
-              isDark ? 'border-surface-card' : 'border-white'
-            } ${sentimentColor}`} />
+          {dotColor && (
+            <View
+              style={{
+                position: 'absolute',
+                bottom: 0,
+                right: 0,
+                width: 12,
+                height: 12,
+                borderRadius: 6,
+                borderWidth: 2,
+                borderColor: tokens.surfacePage,
+                backgroundColor: dotColor,
+              }}
+            />
           )}
         </View>
 
         {/* Info */}
-        <View className="flex-1 mr-2">
-          <View className="flex-row items-center flex-wrap gap-1.5">
-            <Text className={`font-bold text-base ${isDark ? 'text-text-primary' : 'text-slate-900'}`}>
+        <View style={{flex: 1, marginRight: 8}}>
+          <View style={{flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 6}}>
+            <Text style={{color: tokens.textPrimary, fontWeight: '700', fontSize: 16}}>
               {contact.first_name} {contact.last_name}
             </Text>
-            <View className={`px-2 py-0.5 rounded-full border ${statusStyle.bg} ${statusStyle.border}`}>
-              <Text className={`text-[9px] font-bold uppercase tracking-wider ${statusStyle.text}`}>
+            <View
+              style={{
+                paddingHorizontal: 8,
+                paddingVertical: 2,
+                borderRadius: 999,
+                borderWidth: 1,
+                backgroundColor: statusStyle.bg,
+                borderColor: statusStyle.border,
+              }}
+            >
+              <Text style={{color: statusStyle.text, fontSize: 9, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.8}}>
                 {contact.status}
               </Text>
             </View>
           </View>
-          <Text className={`text-xs mt-0.5 ${isDark ? 'text-text-tertiary' : 'text-slate-400'}`}>
+          <Text style={{color: tokens.textTertiary, fontSize: 12, marginTop: 2}}>
             {lastContactText}
           </Text>
         </View>
 
         {/* Quick-call button */}
         <Pressable
-          onPress={(e) => {
-            e.stopPropagation();
-            onCall();
+          onPress={(e) => { e.stopPropagation(); onCall(); }}
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: 20,
+            backgroundColor: `${tokens.brandPrimary}1A`,
+            borderWidth: 1,
+            borderColor: `${tokens.brandPrimary}33`,
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
-          className="w-10 h-10 rounded-full bg-brand-500/10 border border-brand-500/20 items-center justify-center active:bg-brand-500/20"
         >
-          <Icon name="phone" size={16} color="#10B981" />
+          <Icon name="phone" size={16} color={tokens.brandPrimary} />
         </Pressable>
       </Pressable>
     </SwipeableRow>
@@ -129,11 +159,11 @@ function ContactRow({
 }
 
 export function ContactsScreen() {
+  const {tokens} = useTheme();
   const [search, setSearch] = useState('');
   const [activeFilter, setActiveFilter] = useState<FilterType>('All');
   const [createModalVisible, setCreateModalVisible] = useState(false);
-  
-  // New Contact Form State
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [phone, setPhone] = useState('');
@@ -143,44 +173,25 @@ export function ContactsScreen() {
   const navigation = useNavigation<NavProp>();
   const queryClient = useQueryClient();
   const {user} = useAuthStore();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme !== 'light';
-
   const flatListRef = useRef<FlatList<Contact>>(null);
 
-  // Queries
   const {data, isLoading, refetch} = useQuery({
     queryKey: ['contacts', search, activeFilter === 'My Contacts'],
     queryFn: () =>
-      contactsApi
-        .list({
-          search,
-          mine: activeFilter === 'My Contacts' ? true : undefined,
-        })
-        .then((r) => r.data),
+      contactsApi.list({search, mine: activeFilter === 'My Contacts' ? true : undefined}).then((r) => r.data),
     staleTime: 1000 * 60 * 2,
   });
 
-  // Create Contact Mutation
   const createContact = useMutation({
     mutationFn: (newContact: Partial<Contact>) => contactsApi.create(newContact),
     onSuccess: (response) => {
       queryClient.invalidateQueries({queryKey: ['contacts']});
-      setFirstName('');
-      setLastName('');
-      setPhone('');
-      setEmail('');
-      setContactType('buyer');
+      setFirstName(''); setLastName(''); setPhone(''); setEmail(''); setContactType('buyer');
       setCreateModalVisible(false);
-      
       const newId = response.data?.id;
-      if (newId) {
-        navigation.navigate('ContactDetail', {contactId: newId});
-      }
+      if (newId) navigation.navigate('ContactDetail', {contactId: newId});
     },
-    onError: () => {
-      Alert.alert('Error', 'Could not create contact. Please try again.');
-    },
+    onError: () => Alert.alert('Error', 'Could not create contact. Please try again.'),
   });
 
   const handleCreateContact = () => {
@@ -189,49 +200,30 @@ export function ContactsScreen() {
       return;
     }
     createContact.mutate({
-      first_name: firstName.trim(),
-      last_name: lastName.trim(),
-      phone: phone.trim(),
-      email: email.trim() || undefined,
-      type: contactType,
-      status: 'new',
+      first_name: firstName.trim(), last_name: lastName.trim(),
+      phone: phone.trim(), email: email.trim() || undefined,
+      type: contactType, status: 'new',
     });
   };
 
-  // Client-side filtering & sorting
   const filteredContacts = useMemo(() => {
     const rawList = data?.data ?? [];
     let list = [...rawList];
-
-    if (activeFilter === 'Buyers') {
-      list = list.filter((c) => c.type === 'buyer');
-    } else if (activeFilter === 'Sellers') {
-      list = list.filter((c) => c.type === 'seller');
-    } else if (activeFilter === 'Tenants') {
-      list = list.filter((c) => c.type === 'tenant');
-    } else if (activeFilter === 'Hot Leads') {
-      list = list.filter(
-        (c) => (c.intent_score && c.intent_score >= 70) || c.status === 'qualified'
-      );
-    }
-
-    // Sort alphabetically by first name
-    return list.sort((a, b) => {
-      const nameA = `${a.first_name} ${a.last_name}`.toLowerCase();
-      const nameB = `${b.first_name} ${b.last_name}`.toLowerCase();
-      return nameA.localeCompare(nameB);
-    });
+    if (activeFilter === 'Buyers') list = list.filter((c) => c.type === 'buyer');
+    else if (activeFilter === 'Sellers') list = list.filter((c) => c.type === 'seller');
+    else if (activeFilter === 'Tenants') list = list.filter((c) => c.type === 'tenant');
+    else if (activeFilter === 'Hot Leads') list = list.filter((c) => (c.intent_score && c.intent_score >= 70) || c.status === 'qualified');
+    return list.sort((a, b) =>
+      `${a.first_name} ${a.last_name}`.toLowerCase().localeCompare(`${b.first_name} ${b.last_name}`.toLowerCase())
+    );
   }, [data, activeFilter]);
 
-  // A-Z indices calculation
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
   const letterIndices = useMemo(() => {
     const indices: Record<string, number> = {};
     filteredContacts.forEach((contact, idx) => {
-      const firstLetter = contact.first_name.charAt(0).toUpperCase();
-      if (firstLetter && /^[A-Z]$/.test(firstLetter) && indices[firstLetter] === undefined) {
-        indices[firstLetter] = idx;
-      }
+      const l = contact.first_name.charAt(0).toUpperCase();
+      if (l && /^[A-Z]$/.test(l) && indices[l] === undefined) indices[l] = idx;
     });
     return indices;
   }, [filteredContacts]);
@@ -239,84 +231,95 @@ export function ContactsScreen() {
   const scrollToLetter = (letter: string) => {
     const idx = letterIndices[letter];
     if (idx !== undefined && flatListRef.current) {
-      flatListRef.current.scrollToIndex({
-        index: idx,
-        animated: true,
-        viewPosition: 0,
-      });
+      flatListRef.current.scrollToIndex({index: idx, animated: true, viewPosition: 0});
     }
   };
 
   const handleCall = (contact: Contact) => {
-    if (!contact.phone) {
-      Alert.alert('No Phone', 'This contact does not have a phone number.');
-      return;
-    }
+    if (!contact.phone) { Alert.alert('No Phone', 'This contact does not have a phone number.'); return; }
     navigation.navigate('InCall', {contactId: contact.id, phoneNumber: contact.phone});
   };
 
   const handleMessage = (contact: Contact) => {
     (navigation as any).navigate('Inbox', {
       screen: 'Conversation',
-      params: {
-        contactId: contact.id,
-        contactName: `${contact.first_name} ${contact.last_name}`,
-      },
+      params: {contactId: contact.id, contactName: `${contact.first_name} ${contact.last_name}`},
     });
   };
 
-  const getItemLayout = (_: any, index: number) => ({
-    length: 76, // Height of row + padding
-    offset: 76 * index,
-    index,
-  });
-
-  const onScrollToIndexFailed = (info: { index: number }) => {
-    flatListRef.current?.scrollToOffset({
-      offset: info.index * 76,
-      animated: true,
-    });
+  const getItemLayout = (_: any, index: number) => ({length: 76, offset: 76 * index, index});
+  const onScrollToIndexFailed = (info: {index: number}) => {
+    flatListRef.current?.scrollToOffset({offset: info.index * 76, animated: true});
   };
 
-  // Styling helpers
-  const bgScreen = isDark ? 'bg-surface-page' : 'bg-slate-50';
-  const bgCard = isDark ? 'bg-[#090d16]' : 'bg-white';
-  const bgInput = isDark ? 'bg-[#111827]' : 'bg-slate-100';
-  const textPrimary = isDark ? 'text-text-primary' : 'text-slate-900';
-  const borderHeader = isDark ? 'border-zinc-800/80' : 'border-slate-200/60';
+  const inputStyle = {
+    backgroundColor: tokens.surfaceInput,
+    color: tokens.textPrimary,
+    borderWidth: 1,
+    borderColor: tokens.borderDefault,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    fontSize: 14,
+  };
 
   return (
-    <SafeAreaView className={`flex-1 ${bgScreen}`}>
-      {/* Header + Search bar pinned at top */}
-      <View className={`px-4 pt-4 pb-3 ${bgCard} border-b ${borderHeader} z-10`}>
-        <View className="flex-row justify-between items-center mb-3">
-          <Text className={`${textPrimary} text-2xl font-black tracking-tight`}>Contacts</Text>
-          
-          <View className="flex-row items-center gap-3">
-            {/* Total Contacts badge */}
-            <View className="px-2.5 py-1 bg-brand-500/10 rounded-full border border-brand-500/20">
-              <Text className="text-brand-500 font-extrabold text-xs">{filteredContacts.length}</Text>
+    <SafeAreaView style={{flex: 1, backgroundColor: tokens.surfacePage}}>
+      {/* Header + Search */}
+      <View
+        style={{
+          paddingHorizontal: 16,
+          paddingTop: 16,
+          paddingBottom: 12,
+          backgroundColor: tokens.surfaceCard,
+          borderBottomWidth: 1,
+          borderBottomColor: tokens.borderDefault,
+          zIndex: 10,
+        }}
+      >
+        <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12}}>
+          <Text style={{color: tokens.textPrimary, fontSize: 24, fontWeight: '900', letterSpacing: -0.5}}>Contacts</Text>
+          <View style={{flexDirection: 'row', alignItems: 'center', gap: 12}}>
+            <View
+              style={{
+                paddingHorizontal: 10,
+                paddingVertical: 4,
+                backgroundColor: `${tokens.brandPrimary}1A`,
+                borderRadius: 999,
+                borderWidth: 1,
+                borderColor: `${tokens.brandPrimary}33`,
+              }}
+            >
+              <Text style={{color: tokens.brandPrimary, fontWeight: '800', fontSize: 12}}>{filteredContacts.length}</Text>
             </View>
-            
-            {/* Add Contact Button */}
             <Pressable
               onPress={() => setCreateModalVisible(true)}
-              className="w-8 h-8 rounded-full bg-brand-500 items-center justify-center active:bg-brand-600"
+              style={{width: 32, height: 32, borderRadius: 16, backgroundColor: tokens.brandPrimary, alignItems: 'center', justifyContent: 'center'}}
             >
-              <Icon name="plus" size={16} color="#ffffff" />
+              <Icon name="plus" size={16} color="#FFFFFF" />
             </Pressable>
           </View>
         </View>
 
-        {/* Search bar */}
-        <View className={`flex-row items-center ${bgInput} rounded-xl px-3 py-2.5 border ${
-          isDark ? 'border-zinc-800' : 'border-slate-200'
-        }`}>
-          <Icon name="search" size={16} color={isDark ? '#71717A' : '#94a3b8'} className="mr-2" />
+        {/* Search */}
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            backgroundColor: tokens.surfaceInput,
+            borderRadius: 12,
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+            borderWidth: 1,
+            borderColor: tokens.borderDefault,
+            gap: 8,
+          }}
+        >
+          <Icon name="search" size={16} color={tokens.textTertiary} />
           <TextInput
-            className={`flex-1 text-sm ${textPrimary} p-0`}
+            style={{flex: 1, fontSize: 14, color: tokens.textPrimary, padding: 0}}
             placeholder="Search by name or phone…"
-            placeholderTextColor={isDark ? '#71717A' : '#94a3b8'}
+            placeholderTextColor={tokens.textTertiary}
             value={search}
             onChangeText={setSearch}
             clearButtonMode="while-editing"
@@ -329,25 +332,22 @@ export function ContactsScreen() {
           showsHorizontalScrollIndicator={false}
           data={['All', 'Buyers', 'Sellers', 'Tenants', 'Hot Leads', 'My Contacts'] as FilterType[]}
           keyExtractor={(item) => item}
-          contentContainerStyle={{paddingTop: 12, paddingBottom: 2}}
+          contentContainerStyle={{paddingTop: 12, paddingBottom: 2, gap: 8}}
           renderItem={({item}) => {
             const isActive = activeFilter === item;
             return (
               <Pressable
                 onPress={() => setActiveFilter(item)}
-                className={`px-4 py-2 rounded-full border mr-2 ${
-                  isActive
-                    ? 'bg-brand-500 border-brand-500 shadow-md shadow-brand-500/20'
-                    : isDark
-                    ? 'bg-[#111827] border-zinc-800 active:bg-zinc-800'
-                    : 'bg-slate-100 border-slate-200 active:bg-slate-200'
-                }`}
+                style={{
+                  paddingHorizontal: 16,
+                  paddingVertical: 8,
+                  borderRadius: 999,
+                  borderWidth: 1,
+                  backgroundColor: isActive ? tokens.brandPrimary : tokens.surfaceRaised,
+                  borderColor: isActive ? tokens.brandPrimary : tokens.borderDefault,
+                }}
               >
-                <Text
-                  className={`text-xs font-bold ${
-                    isActive ? 'text-white' : isDark ? 'text-text-secondary' : 'text-slate-600'
-                  }`}
-                >
+                <Text style={{fontSize: 12, fontWeight: '700', color: isActive ? '#FFFFFF' : tokens.textSecondary}}>
                   {item}
                 </Text>
               </Pressable>
@@ -356,16 +356,16 @@ export function ContactsScreen() {
         />
       </View>
 
-      {/* Main List & A-Z index container */}
-      <View className="flex-1 flex-row">
+      {/* List + A-Z index */}
+      <View style={{flex: 1, flexDirection: 'row'}}>
         {isLoading ? (
-          <View className="flex-1 items-center justify-center">
-            <ActivityIndicator color="#10b981" size="large" />
+          <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+            <ActivityIndicator color={tokens.brandPrimary} size="large" />
           </View>
         ) : (
           <FlatList
             ref={flatListRef}
-            className="flex-1 pt-3 pr-8" // Add padding right to avoid overlap with A-Z index
+            style={{flex: 1, paddingTop: 12, paddingRight: 32}}
             contentContainerStyle={{paddingBottom: 40}}
             data={filteredContacts}
             keyExtractor={(c) => String(c.id)}
@@ -374,7 +374,7 @@ export function ContactsScreen() {
             renderItem={({item}) => (
               <ContactRow
                 contact={item}
-                isDark={isDark}
+                tokens={tokens}
                 onPress={() => navigation.navigate('ContactDetail', {contactId: item.id})}
                 onCall={() => handleCall(item)}
                 onMessage={() => handleMessage(item)}
@@ -383,12 +383,26 @@ export function ContactsScreen() {
             onRefresh={refetch}
             refreshing={isLoading}
             ListEmptyComponent={
-              <View className="flex-1 items-center justify-center py-20 px-8">
-                <View className="w-16 h-16 bg-brand-500/10 border border-brand-500/20 rounded-full items-center justify-center mb-4">
-                  <Icon name="users" size={24} color="#10B981" />
+              <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 80, paddingHorizontal: 32}}>
+                <View
+                  style={{
+                    width: 64,
+                    height: 64,
+                    backgroundColor: `${tokens.brandPrimary}1A`,
+                    borderWidth: 1,
+                    borderColor: `${tokens.brandPrimary}33`,
+                    borderRadius: 32,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: 16,
+                  }}
+                >
+                  <Icon name="users" size={24} color={tokens.brandPrimary} />
                 </View>
-                <Text className={`${textPrimary} text-lg font-bold mb-1.5 text-center`}>No contacts found</Text>
-                <Text className="text-text-secondary text-xs text-center leading-4 max-w-[240px]">
+                <Text style={{color: tokens.textPrimary, fontSize: 18, fontWeight: '700', marginBottom: 6, textAlign: 'center'}}>
+                  No contacts found
+                </Text>
+                <Text style={{color: tokens.textSecondary, fontSize: 12, textAlign: 'center', lineHeight: 16, maxWidth: 240}}>
                   No matches. Try modifying your search or filters.
                 </Text>
               </View>
@@ -396,25 +410,23 @@ export function ContactsScreen() {
           />
         )}
 
-        {/* A-Z scroll index on the right edge */}
-        <View className="absolute right-1.5 top-0 bottom-0 justify-center items-center w-6 py-4 z-20">
+        {/* A-Z index */}
+        <View style={{position: 'absolute', right: 6, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center', width: 24, paddingVertical: 16, zIndex: 20}}>
           {alphabet.map((letter) => {
             const hasContacts = letterIndices[letter] !== undefined;
             return (
               <Pressable
                 key={letter}
                 onPress={() => hasContacts && scrollToLetter(letter)}
-                className="py-0.5 w-full items-center justify-center"
+                style={{paddingVertical: 2, width: '100%', alignItems: 'center', justifyContent: 'center'}}
                 hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
               >
                 <Text
-                  className={`text-[9px] font-extrabold ${
-                    hasContacts
-                      ? 'text-brand-500 scale-110'
-                      : isDark
-                      ? 'text-zinc-700/50'
-                      : 'text-slate-300/60'
-                  }`}
+                  style={{
+                    fontSize: 9,
+                    fontWeight: '800',
+                    color: hasContacts ? tokens.brandPrimary : tokens.textDisabled,
+                  }}
                 >
                   {letter}
                 </Text>
@@ -424,124 +436,87 @@ export function ContactsScreen() {
         </View>
       </View>
 
-      {/* New Contact Bottom Sheet Modal */}
+      {/* New Contact modal */}
       <Modal
         visible={createModalVisible}
         transparent
         animationType="slide"
         onRequestClose={() => setCreateModalVisible(false)}
       >
-        <View className="flex-1 justify-end bg-[#020617]/60">
-          <Pressable
-            className="flex-1"
-            onPress={() => setCreateModalVisible(false)}
-          />
-          <View className={`${bgCard} border-t ${
-            isDark ? 'border-zinc-800' : 'border-slate-200'
-          } rounded-t-3xl p-5 pb-8 max-h-[90%]`}>
-            {/* Grab handle */}
-            <View className={`w-12 h-1 ${isDark ? 'bg-zinc-800' : 'bg-slate-300'} rounded-full self-center mb-4`} />
-            
-            <View className="flex-row justify-between items-center mb-4">
-              <Text className={`${textPrimary} font-black text-xl`}>New Contact</Text>
+        <View style={{flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(2,6,23,0.6)'}}>
+          <Pressable style={{flex: 1}} onPress={() => setCreateModalVisible(false)} />
+          <View
+            style={{
+              backgroundColor: tokens.surfaceCard,
+              borderTopWidth: 1,
+              borderTopColor: tokens.borderDefault,
+              borderTopLeftRadius: 24,
+              borderTopRightRadius: 24,
+              padding: 20,
+              paddingBottom: 32,
+              maxHeight: '90%',
+            }}
+          >
+            <View style={{width: 48, height: 4, backgroundColor: tokens.borderStrong, borderRadius: 999, alignSelf: 'center', marginBottom: 16}} />
+
+            <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16}}>
+              <Text style={{color: tokens.textPrimary, fontWeight: '900', fontSize: 20}}>New Contact</Text>
               <Pressable
                 onPress={() => setCreateModalVisible(false)}
-                className={`w-8 h-8 rounded-full ${
-                  isDark ? 'bg-zinc-800' : 'bg-slate-100'
-                } items-center justify-center`}
+                style={{width: 32, height: 32, borderRadius: 16, backgroundColor: tokens.surfaceRaised, alignItems: 'center', justifyContent: 'center'}}
               >
-                <Icon name="x" size={16} color={isDark ? '#A1A1AA' : '#64748b'} />
+                <Icon name="x" size={16} color={tokens.textSecondary} />
               </Pressable>
             </View>
 
-            {/* Form */}
-            <View className="gap-3.5 mb-6">
-              <View>
-                <Text className={`text-xs font-bold mb-1.5 ${isDark ? 'text-text-secondary' : 'text-slate-600'}`}>
-                  First Name <Text className="text-danger">*</Text>
-                </Text>
-                <TextInput
-                  className={`rounded-xl px-4 py-3 text-sm ${bgInput} ${textPrimary} border ${
-                    isDark ? 'border-zinc-850' : 'border-slate-200'
-                  }`}
-                  placeholder="e.g. John"
-                  placeholderTextColor={isDark ? '#52525B' : '#94a3b8'}
-                  value={firstName}
-                  onChangeText={setFirstName}
-                />
-              </View>
+            <View style={{gap: 14, marginBottom: 24}}>
+              {[
+                {label: 'First Name', value: firstName, onChange: setFirstName, placeholder: 'e.g. John', required: true},
+                {label: 'Last Name', value: lastName, onChange: setLastName, placeholder: 'e.g. Doe', required: true},
+                {label: 'Phone Number', value: phone, onChange: setPhone, placeholder: 'e.g. +234 803 123 4567', required: true, keyboardType: 'phone-pad' as const},
+                {label: 'Email Address', value: email, onChange: setEmail, placeholder: 'e.g. john@example.com', required: false, keyboardType: 'email-address' as const},
+              ].map(({label, value, onChange, placeholder, required, keyboardType}) => (
+                <View key={label}>
+                  <Text style={{color: tokens.textSecondary, fontSize: 12, fontWeight: '700', marginBottom: 6}}>
+                    {label} {required && <Text style={{color: '#F43F5E'}}>*</Text>}
+                  </Text>
+                  <TextInput
+                    style={inputStyle}
+                    placeholder={placeholder}
+                    placeholderTextColor={tokens.textTertiary}
+                    value={value}
+                    onChangeText={onChange}
+                    keyboardType={keyboardType}
+                    autoCapitalize={keyboardType === 'email-address' ? 'none' : 'words'}
+                  />
+                </View>
+              ))}
 
               <View>
-                <Text className={`text-xs font-bold mb-1.5 ${isDark ? 'text-text-secondary' : 'text-slate-600'}`}>
-                  Last Name <Text className="text-danger">*</Text>
-                </Text>
-                <TextInput
-                  className={`rounded-xl px-4 py-3 text-sm ${bgInput} ${textPrimary} border ${
-                    isDark ? 'border-zinc-850' : 'border-slate-200'
-                  }`}
-                  placeholder="e.g. Doe"
-                  placeholderTextColor={isDark ? '#52525B' : '#94a3b8'}
-                  value={lastName}
-                  onChangeText={setLastName}
-                />
-              </View>
-
-              <View>
-                <Text className={`text-xs font-bold mb-1.5 ${isDark ? 'text-text-secondary' : 'text-slate-600'}`}>
-                  Phone Number <Text className="text-danger">*</Text>
-                </Text>
-                <TextInput
-                  className={`rounded-xl px-4 py-3 text-sm ${bgInput} ${textPrimary} border ${
-                    isDark ? 'border-zinc-850' : 'border-slate-200'
-                  }`}
-                  placeholder="e.g. +234 803 123 4567"
-                  placeholderTextColor={isDark ? '#52525B' : '#94a3b8'}
-                  keyboardType="phone-pad"
-                  value={phone}
-                  onChangeText={setPhone}
-                />
-              </View>
-
-              <View>
-                <Text className={`text-xs font-bold mb-1.5 ${isDark ? 'text-text-secondary' : 'text-slate-600'}`}>
-                  Email Address
-                </Text>
-                <TextInput
-                  className={`rounded-xl px-4 py-3 text-sm ${bgInput} ${textPrimary} border ${
-                    isDark ? 'border-zinc-850' : 'border-slate-200'
-                  }`}
-                  placeholder="e.g. john.doe@example.com"
-                  placeholderTextColor={isDark ? '#52525B' : '#94a3b8'}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  value={email}
-                  onChangeText={setEmail}
-                />
-              </View>
-
-              <View>
-                <Text className={`text-xs font-bold mb-1.5 ${isDark ? 'text-text-secondary' : 'text-slate-600'}`}>
-                  Contact Type
-                </Text>
-                <View className="flex-row gap-2 flex-wrap">
+                <Text style={{color: tokens.textSecondary, fontSize: 12, fontWeight: '700', marginBottom: 6}}>Contact Type</Text>
+                <View style={{flexDirection: 'row', gap: 8, flexWrap: 'wrap'}}>
                   {(['buyer', 'seller', 'tenant', 'landlord', 'investor'] as const).map((t) => {
                     const selected = contactType === t;
                     return (
                       <Pressable
                         key={t}
                         onPress={() => setContactType(t)}
-                        className={`px-3 py-2 rounded-xl border capitalize ${
-                          selected
-                            ? 'bg-brand-500/15 border-brand-500'
-                            : isDark
-                            ? 'bg-zinc-900 border-zinc-800'
-                            : 'bg-slate-100 border-slate-200'
-                        }`}
+                        style={{
+                          paddingHorizontal: 12,
+                          paddingVertical: 8,
+                          borderRadius: 12,
+                          borderWidth: 1,
+                          backgroundColor: selected ? `${tokens.brandPrimary}1A` : tokens.surfaceRaised,
+                          borderColor: selected ? tokens.brandPrimary : tokens.borderDefault,
+                        }}
                       >
                         <Text
-                          className={`text-xs font-bold ${
-                            selected ? 'text-brand-500' : isDark ? 'text-text-secondary' : 'text-slate-600'
-                          }`}
+                          style={{
+                            fontSize: 12,
+                            fontWeight: '700',
+                            textTransform: 'capitalize',
+                            color: selected ? tokens.brandPrimary : tokens.textSecondary,
+                          }}
                         >
                           {t}
                         </Text>
@@ -552,30 +527,22 @@ export function ContactsScreen() {
               </View>
             </View>
 
-            {/* Actions */}
-            <View className="flex-row gap-3">
+            <View style={{flexDirection: 'row', gap: 12}}>
               <Pressable
-                className={`flex-1 rounded-xl py-3.5 items-center ${
-                  isDark ? 'bg-zinc-800 active:bg-zinc-700' : 'bg-slate-100 active:bg-slate-200'
-                }`}
+                style={{flex: 1, borderRadius: 12, paddingVertical: 14, alignItems: 'center', backgroundColor: tokens.surfaceRaised}}
                 onPress={() => setCreateModalVisible(false)}
               >
-                <Text className={`font-bold text-sm ${isDark ? 'text-text-secondary' : 'text-slate-600'}`}>Cancel</Text>
+                <Text style={{fontWeight: '700', fontSize: 14, color: tokens.textSecondary}}>Cancel</Text>
               </Pressable>
-              
               <Pressable
-                className={`flex-1 rounded-xl py-3.5 items-center bg-brand-500 active:bg-brand-600 ${
-                  (!firstName.trim() || !lastName.trim() || !phone.trim() || createContact.isPending)
-                    ? 'opacity-50'
-                    : ''
-                }`}
+                style={{flex: 1, borderRadius: 12, paddingVertical: 14, alignItems: 'center', backgroundColor: tokens.brandPrimary, opacity: (!firstName.trim() || !lastName.trim() || !phone.trim() || createContact.isPending) ? 0.5 : 1}}
                 onPress={handleCreateContact}
                 disabled={!firstName.trim() || !lastName.trim() || !phone.trim() || createContact.isPending}
               >
                 {createContact.isPending ? (
                   <ActivityIndicator color="#fff" size="small" />
                 ) : (
-                  <Text className="text-white font-bold text-sm">Save Contact</Text>
+                  <Text style={{color: tokens.textInverse, fontWeight: '700', fontSize: 14}}>Save Contact</Text>
                 )}
               </Pressable>
             </View>

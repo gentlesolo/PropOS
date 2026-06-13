@@ -17,8 +17,10 @@ import * as Keychain from 'react-native-keychain';
 import {authApi} from '../../api/auth';
 import {useAuthStore} from '../../store/authStore';
 import {apiClient} from '../../api/client';
+import {useTheme} from '../../theme/ThemeProvider';
 
 export function LoginScreen() {
+  const {tokens, resolvedTheme} = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -28,21 +30,24 @@ export function LoginScreen() {
 
   const {setAuth} = useAuthStore();
 
-  // Animation values
   const glowOpacity = useRef(new Animated.Value(0.12)).current;
   const formShake = useRef(new Animated.Value(0)).current;
 
-  // Slowly pulse the background glow
+  // Light mode: much fainter glow (emerald-50 wash)
+  const glowMax = resolvedTheme === 'light' ? 0.06 : 0.28;
+  const glowMin = resolvedTheme === 'light' ? 0.02 : 0.12;
+
   useEffect(() => {
+    glowOpacity.setValue(glowMin);
     const pulse = Animated.loop(
       Animated.sequence([
         Animated.timing(glowOpacity, {
-          toValue: 0.28,
+          toValue: glowMax,
           duration: 3500,
           useNativeDriver: true,
         }),
         Animated.timing(glowOpacity, {
-          toValue: 0.12,
+          toValue: glowMin,
           duration: 3500,
           useNativeDriver: true,
         }),
@@ -50,7 +55,7 @@ export function LoginScreen() {
     );
     pulse.start();
     return () => pulse.stop();
-  }, []);
+  }, [resolvedTheme]);
 
   const triggerFormShake = () => {
     Animated.sequence([
@@ -71,7 +76,6 @@ export function LoginScreen() {
         platform: Platform.OS as 'ios' | 'android',
       }),
     onSuccess: async ({data}) => {
-      // Store credentials securely for biometric unlock re-auth
       await Keychain.setGenericPassword(email.trim().toLowerCase(), password, {
         service: 'villacrm_credentials',
       });
@@ -99,10 +103,13 @@ export function LoginScreen() {
     login.mutate();
   };
 
-  // Get Tenant/Agency Name from Subdomain
   const getAgencyName = () => {
     const baseUrl = apiClient.defaults.baseURL || '';
-    if (baseUrl.includes('localhost') || baseUrl.includes('127.0.0.1') || baseUrl.match(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/)) {
+    if (
+      baseUrl.includes('localhost') ||
+      baseUrl.includes('127.0.0.1') ||
+      baseUrl.match(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/)
+    ) {
       return 'Dev Agency';
     }
     const match = baseUrl.match(/https?:\/\/([^/:]+)/);
@@ -117,7 +124,7 @@ export function LoginScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-surface-page">
+    <SafeAreaView style={{flex: 1, backgroundColor: tokens.surfacePage}}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         className="flex-1"
@@ -127,14 +134,13 @@ export function LoginScreen() {
           contentContainerClassName="flex-grow justify-between px-6 pt-10 pb-6"
           keyboardShouldPersistTaps="handled"
         >
-          {/* Top Third: Brand Wordmark with subtle Pulsing Glow */}
+          {/* Brand Wordmark with subtle Pulsing Glow */}
           <View className="items-center justify-center pt-8 relative min-h-[160px]">
-            {/* Pulsing Emerald Glow */}
             <Animated.View
               style={{opacity: glowOpacity}}
               className="absolute w-48 h-48 bg-brand-500 rounded-full blur-[48px]"
             />
-            <Text className="text-text-primary text-5xl font-black tracking-tight z-10 text-center">
+            <Text style={{color: tokens.textPrimary}} className="text-5xl font-black tracking-tight z-10 text-center">
               PropOS
             </Text>
             <Text className="text-brand-500 font-mono text-xs uppercase tracking-widest font-bold mt-1 z-10">
@@ -142,26 +148,33 @@ export function LoginScreen() {
             </Text>
           </View>
 
-          {/* Middle: Inputs Form Container with Shake Animation */}
+          {/* Inputs Form */}
           <Animated.View
             style={{transform: [{translateX: formShake}]}}
             className="w-full gap-5 my-auto justify-center"
           >
             {/* Email Input */}
             <View className="gap-2">
-              <Text className="text-text-secondary text-sm font-bold ml-1">Email Address</Text>
+              <Text style={{color: tokens.textSecondary}} className="text-sm font-bold ml-1">
+                Email Address
+              </Text>
               <TextInput
-                className="w-full bg-surface-input text-text-primary px-5 rounded-[10px] text-base border"
                 style={{
                   height: 52,
-                  borderColor: emailFocused ? '#10B981' : '#27272a',
-                  shadowColor: emailFocused ? '#10B981' : 'transparent',
+                  backgroundColor: tokens.surfaceInput,
+                  color: tokens.textPrimary,
+                  borderColor: emailFocused ? tokens.brandPrimary : tokens.borderStrong,
+                  borderWidth: 1,
+                  borderRadius: 10,
+                  paddingHorizontal: 20,
+                  fontSize: 16,
+                  shadowColor: emailFocused ? tokens.brandPrimary : 'transparent',
                   shadowOpacity: emailFocused ? 0.15 : 0,
                   shadowRadius: 8,
                   shadowOffset: {width: 0, height: 0},
                 }}
                 placeholder="agent@propos.com"
-                placeholderTextColor="#71717A"
+                placeholderTextColor={tokens.textTertiary}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -177,22 +190,28 @@ export function LoginScreen() {
 
             {/* Password Input */}
             <View className="gap-2">
-              <Text className="text-text-secondary text-sm font-bold ml-1">Password</Text>
+              <Text style={{color: tokens.textSecondary}} className="text-sm font-bold ml-1">
+                Password
+              </Text>
               <View style={{position: 'relative', justifyContent: 'center'}}>
                 <TextInput
-                  className="w-full bg-surface-input text-text-primary rounded-[10px] text-base border"
                   style={{
                     height: 52,
+                    backgroundColor: tokens.surfaceInput,
+                    color: tokens.textPrimary,
+                    borderColor: passwordFocused ? tokens.brandPrimary : tokens.borderStrong,
+                    borderWidth: 1,
+                    borderRadius: 10,
                     paddingLeft: 20,
                     paddingRight: 56,
-                    borderColor: passwordFocused ? '#10B981' : '#27272a',
-                    shadowColor: passwordFocused ? '#10B981' : 'transparent',
+                    fontSize: 16,
+                    shadowColor: passwordFocused ? tokens.brandPrimary : 'transparent',
                     shadowOpacity: passwordFocused ? 0.15 : 0,
                     shadowRadius: 8,
                     shadowOffset: {width: 0, height: 0},
                   }}
                   placeholder="••••••••"
-                  placeholderTextColor="#71717A"
+                  placeholderTextColor={tokens.textTertiary}
                   secureTextEntry={!showPassword}
                   autoCapitalize="none"
                   autoCorrect={false}
@@ -220,26 +239,25 @@ export function LoginScreen() {
                   <Icon
                     name={showPassword ? 'eye-off' : 'eye'}
                     size={20}
-                    color={showPassword ? '#10B981' : '#71717A'}
+                    color={showPassword ? tokens.brandPrimary : tokens.textTertiary}
                   />
                 </Pressable>
               </View>
             </View>
 
-            {/* Inline Error Message */}
+            {/* Inline Error */}
             {localError ? (
               <View className="flex-row items-center gap-2 mt-1 px-1">
-                <Icon name="alert-circle" size={16} color="#F43F5E" />
-                <Text className="text-danger text-sm font-semibold flex-1">
+                <Icon name="alert-circle" size={16} color={tokens.dangerText} />
+                <Text style={{color: tokens.dangerText}} className="text-sm font-semibold flex-1">
                   {localError}
                 </Text>
               </View>
             ) : null}
           </Animated.View>
 
-          {/* Bottom third: CTA and Tenant details */}
+          {/* CTA and Tenant details */}
           <View className="w-full gap-5 mt-auto pt-8">
-            {/* Sign In Button */}
             <Pressable
               onPress={handleSignIn}
               disabled={login.isPending}
@@ -248,22 +266,27 @@ export function LoginScreen() {
               {login.isPending ? (
                 <View className="flex-row items-center justify-center gap-2">
                   <ActivityIndicator color="#FAFAFA" size="small" />
-                  <Text className="text-text-primary font-bold text-lg">Signing in...</Text>
+                  <Text style={{color: tokens.textInverse}} className="font-bold text-lg">
+                    Signing in...
+                  </Text>
                 </View>
               ) : (
-                <Text className="text-text-primary font-bold text-lg">Sign In</Text>
+                <Text style={{color: tokens.textInverse}} className="font-bold text-lg">
+                  Sign In
+                </Text>
               )}
             </Pressable>
 
-            {/* Forgot password */}
             <Pressable className="items-center py-2 active:opacity-75">
-              <Text className="text-accent font-bold text-sm">Forgot password?</Text>
+              <Text style={{color: tokens.brandAccent}} className="font-bold text-sm">
+                Forgot password?
+              </Text>
             </Pressable>
 
-            {/* Agency tenant details */}
             <View className="items-center mt-2">
-              <Text className="text-text-tertiary text-xs font-semibold">
-                Agency: <Text className="text-text-secondary">{getAgencyName()}</Text>
+              <Text style={{color: tokens.textTertiary}} className="text-xs font-semibold">
+                Agency:{' '}
+                <Text style={{color: tokens.textSecondary}}>{getAgencyName()}</Text>
               </Text>
             </View>
           </View>

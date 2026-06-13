@@ -23,6 +23,7 @@ import {liveTranscriptService, TranscriptSegment} from '../../services/liveTrans
 import {callsApi} from '../../api/calls';
 import {contactsApi} from '../../api/contacts';
 import type {CallsStackParamList} from '../../navigation/stacks/CallsStack';
+import {useTheme} from '../../theme/ThemeProvider';
 
 type InCallRouteProp = RouteProp<CallsStackParamList, 'InCall'>;
 type NavProp = NativeStackNavigationProp<CallsStackParamList>;
@@ -60,26 +61,35 @@ interface ControlButtonProps {
   onPress: () => void;
 }
 
+// InCallScreen is intentionally always dark to maintain call focus environment.
+// ControlButton is the only element that adapts slightly to the user's theme preference.
 function ControlButton({icon, label, active, onPress}: ControlButtonProps) {
+  const {tokens} = useTheme();
+
   const handlePress = () => {
     Vibration.vibrate(15);
     onPress();
   };
 
   return (
-    <View className="items-center w-20">
+    <View style={{alignItems: 'center', width: 80}}>
       <Pressable
         onPress={handlePress}
-        style={({pressed}) => [
-          { transform: [{ scale: pressed ? 0.95 : 1 }] }
-        ]}
-        className={`w-16 h-16 rounded-full items-center justify-center ${
-          active ? 'bg-brand-500' : 'bg-surface-raised border border-slate-800/80'
-        }`}
+        style={({pressed}) => [{
+          width: 64,
+          height: 64,
+          borderRadius: 32,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: active ? tokens.brandPrimary : tokens.surfaceRaised,
+          borderWidth: active ? 0 : 1,
+          borderColor: tokens.borderDefault,
+          transform: [{scale: pressed ? 0.95 : 1}],
+        }]}
       >
-        <Icon name={icon} size={22} color={active ? '#FAFAFA' : '#A1A1AA'} />
+        <Icon name={icon} size={22} color={active ? '#FAFAFA' : tokens.textSecondary} />
       </Pressable>
-      <Text className="text-text-secondary text-[10px] font-bold tracking-wider mt-1.5 uppercase">
+      <Text style={{color: '#A1A1AA', fontSize: 10, fontWeight: '700', letterSpacing: 1, marginTop: 6, textTransform: 'uppercase'}}>
         {label}
       </Text>
     </View>

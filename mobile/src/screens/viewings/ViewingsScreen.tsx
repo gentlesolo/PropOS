@@ -8,13 +8,10 @@ import {
   Text,
   TextInput,
   View,
-  SafeAreaView,
-  useColorScheme,
   Animated,
-  Dimensions,
   Image,
-  Linking,
 } from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {useNavigation} from '@react-navigation/native';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -22,18 +19,17 @@ import {viewingsApi, Viewing} from '../../api/viewings';
 import {format, isToday, addDays, isSameDay} from 'date-fns';
 import type {ViewingsStackParamList} from '../../navigation/stacks/ViewingsStack';
 import Icon from 'react-native-vector-icons/Feather';
+import {useTheme} from '../../theme/ThemeProvider';
 
 type NavProp = NativeStackNavigationProp<ViewingsStackParamList>;
-const {width: SCREEN_WIDTH} = Dimensions.get('window');
 
-// Outcome Options configuration
+// Outcome colors are semantic/fixed — not theme-dependent
 const OUTCOMES = [
-  {value: 'interested', label: 'Interested', emoji: '🔥', color: 'text-brand-500', bg: 'bg-brand-500/10', border: 'border-brand-500'},
-  {value: 'offer_expected', label: 'Offer Expected', emoji: '✍️', color: 'text-accent', bg: 'bg-accent/10', border: 'border-accent'},
-  {value: 'not_interested', label: 'Not Interested', emoji: '👎', color: 'text-text-secondary', bg: 'bg-zinc-800/60', border: 'border-zinc-700'},
+  {value: 'interested',     label: 'Interested',     emoji: '🔥', color: '#10B981', bg: '#10B9811A', border: '#10B981'},
+  {value: 'offer_expected', label: 'Offer Expected', emoji: '✍️', color: '#0EA5E9', bg: '#0EA5E91A', border: '#0EA5E9'},
+  {value: 'not_interested', label: 'Not Interested', emoji: '👎', color: '#71717A', bg: '#71717A1A', border: '#71717A'},
 ];
 
-// Helper to infer property type from address or title
 function getPropertyType(address?: string, title?: string): string {
   const text = ((address || '') + ' ' + (title || '')).toLowerCase();
   if (text.includes('apartment') || text.includes('flat')) return 'Apartment';
@@ -46,111 +42,72 @@ function getPropertyType(address?: string, title?: string): string {
 }
 
 export function ViewingsScreen() {
+  const {tokens, resolvedTheme} = useTheme();
   const navigation = useNavigation<NavProp>();
   const queryClient = useQueryClient();
-  const colorScheme = useColorScheme();
-  const isDarkMode = colorScheme !== 'light';
 
-  // State
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [dismissedNoShows, setDismissedNoShows] = useState<number[]>([]);
   const [pulsingViewingId, setPulsingViewingId] = useState<number | null>(null);
-
-  // Permission & Flow Modals State
   const [locationModalVisible, setLocationModalVisible] = useState(false);
   const [pendingCheckInViewing, setPendingCheckInViewing] = useState<Viewing | null>(null);
-  
-  // Complete Sheet State
   const [completeSheetVisible, setCompleteSheetVisible] = useState(false);
   const [completingViewing, setCompletingViewing] = useState<Viewing | null>(null);
   const [selectedOutcome, setSelectedOutcome] = useState<string>('interested');
   const [outcomeNotes, setOutcomeNotes] = useState('');
-  
-  // Voice Recording simulation
   const [isRecording, setIsRecording] = useState(false);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
   const voiceTimer = useRef<NodeJS.Timeout | null>(null);
   const waveAnims = useRef([
-    new Animated.Value(10),
-    new Animated.Value(15),
-    new Animated.Value(25),
-    new Animated.Value(12),
-    new Animated.Value(20),
+    new Animated.Value(10), new Animated.Value(15), new Animated.Value(25),
+    new Animated.Value(12), new Animated.Value(20),
   ]).current;
-
-  // Pulse animation for check-in
   const checkInPulseScale = useRef(new Animated.Value(1)).current;
-
-  // Toast confirmation
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const toastY = useRef(new Animated.Value(100)).current;
 
-  // Queries
-  const {data: todayViewings = [], isLoading: loadingToday, refetch: refetchToday} = useQuery({
+  const {data: todayViewings = [], isLoading: loadingToday} = useQuery({
     queryKey: ['viewings', 'today'],
-    queryFn: () => viewingsApi.today().then(r => r.data),
+    queryFn: () => viewingsApi.today().then((r) => r.data),
   });
-
-  const {data: upcoming = [], isLoading: loadingUpcoming, refetch: refetchUpcoming} = useQuery({
+  const {data: upcoming = [], isLoading: loadingUpcoming} = useQuery({
     queryKey: ['viewings', 'upcoming'],
-    queryFn: () => viewingsApi.upcoming().then(r => r.data),
+    queryFn: () => viewingsApi.upcoming().then((r) => r.data),
   });
-
   const isLoading = loadingToday || loadingUpcoming;
 
-  // Merge lists to build full route cache
   const allViewings = useMemo(() => {
     const map = new Map<number, Viewing>();
-    todayViewings.forEach(v => map.set(v.id, v));
-    upcoming.forEach(v => map.set(v.id, v));
-    return Array.from(map.values()).sort(
-      (a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime()
-    );
+    todayViewings.forEach((v) => map.set(v.id, v));
+    upcoming.forEach((v) => map.set(v.id, v));
+    return Array.from(map.values()).sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime());
   }, [todayViewings, upcoming]);
 
-  // Date strip generation (Yesterday, Today, and 5 upcoming days)
   const dateStrip = useMemo(() => {
     const dates = [];
-    for (let i = -1; i <= 5; i++) {
-      dates.push(addDays(new Date(), i));
-    }
+    for (let i = -1; i <= 5; i++) dates.push(addDays(new Date(), i));
     return dates;
   }, []);
 
-  // Filter viewings based on selected date
-  const filteredViewings = useMemo(() => {
-    return allViewings.filter(v => isSameDay(new Date(v.scheduled_at), selectedDate));
-  }, [allViewings, selectedDate]);
+  const filteredViewings = useMemo(
+    () => allViewings.filter((v) => isSameDay(new Date(v.scheduled_at), selectedDate)),
+    [allViewings, selectedDate]
+  );
 
-  // Next upcoming viewing that needs checking in (ONLY today)
   const nextViewingId = useMemo(() => {
     if (!isSameDay(selectedDate, new Date())) return null;
-    const pendingToday = filteredViewings.filter(
-      v => (v.status === 'scheduled' || v.status === 'confirmed') && !v.check_in_at
-    );
-    return pendingToday[0]?.id || null;
+    const pending = filteredViewings.filter((v) => (v.status === 'scheduled' || v.status === 'confirmed') && !v.check_in_at);
+    return pending[0]?.id || null;
   }, [filteredViewings, selectedDate]);
 
-  // Mutations
   const checkInMutation = useMutation({
     mutationFn: (id: number) => viewingsApi.checkIn(id),
     onSuccess: (data) => {
-      // Trigger check-in pulse
       setPulsingViewingId(data.data.id);
       Animated.sequence([
-        Animated.timing(checkInPulseScale, {
-          toValue: 2,
-          duration: 350,
-          useNativeDriver: true,
-        }),
-        Animated.timing(checkInPulseScale, {
-          toValue: 1,
-          duration: 250,
-          useNativeDriver: true,
-        })
+        Animated.timing(checkInPulseScale, {toValue: 2, duration: 350, useNativeDriver: true}),
+        Animated.timing(checkInPulseScale, {toValue: 1, duration: 250, useNativeDriver: true}),
       ]).start(() => setPulsingViewingId(null));
-
-      queryClient.invalidateQueries({queryKey: ['viewing', data.data.id]});
       queryClient.invalidateQueries({queryKey: ['viewings']});
       showToast('Checked in successfully!');
     },
@@ -162,15 +119,9 @@ export function ViewingsScreen() {
       viewingsApi.complete(id, outcome, notes),
     onSuccess: (data) => {
       setCompleteSheetVisible(false);
-      const clientName = data.data.contact
-        ? `${data.data.contact.first_name}`
-        : 'Client';
-      
-      queryClient.invalidateQueries({queryKey: ['viewing', data.data.id]});
+      const clientName = data.data.contact ? `${data.data.contact.first_name}` : 'Client';
       queryClient.invalidateQueries({queryKey: ['viewings']});
-      
       showToast(`Added to ${clientName}'s timeline`);
-      // Reset complete form
       setCompletingViewing(null);
       setOutcomeNotes('');
       setSelectedOutcome('interested');
@@ -180,50 +131,35 @@ export function ViewingsScreen() {
 
   const markNoShowMutation = useMutation({
     mutationFn: (id: number) => viewingsApi.updateStatus(id, 'no_show'),
-    onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['viewings']});
-      showToast('Viewing marked as No-Show');
-    },
+    onSuccess: () => { queryClient.invalidateQueries({queryKey: ['viewings']}); showToast('Viewing marked as No-Show'); },
     onError: () => Alert.alert('Error', 'Could not update status.'),
   });
 
-  // Voice recording simulation loop
   useEffect(() => {
     if (isRecording) {
       voiceTimer.current = setInterval(() => {
-        setRecordingSeconds(prev => prev + 1);
-        // Animate simulated voice waves
-        waveAnims.forEach(anim => {
-          Animated.timing(anim, {
-            toValue: Math.random() * 28 + 6,
-            duration: 120,
-            useNativeDriver: false,
-          }).start();
+        setRecordingSeconds((prev) => prev + 1);
+        waveAnims.forEach((anim) => {
+          Animated.timing(anim, {toValue: Math.random() * 28 + 6, duration: 120, useNativeDriver: false}).start();
         });
       }, 1000);
     } else {
-      if (voiceTimer.current) {
-        clearInterval(voiceTimer.current);
-        voiceTimer.current = null;
-      }
+      if (voiceTimer.current) { clearInterval(voiceTimer.current); voiceTimer.current = null; }
       setRecordingSeconds(0);
     }
-    return () => {
-      if (voiceTimer.current) clearInterval(voiceTimer.current);
-    };
+    return () => { if (voiceTimer.current) clearInterval(voiceTimer.current); };
   }, [isRecording]);
 
   const toggleRecording = () => {
     if (isRecording) {
       setIsRecording(false);
-      // Simulate high fidelity voice transcription
-      const mockTranscripts = [
-        "Buyer loved the natural light in the living room and wants to arrange a second viewing with their spouse this Saturday.",
-        "Client felt the kitchen was too small, but showed high interest in the general location. Will follow up with other matches.",
-        "Highly motivated buyer. Expressed that they want to prepare an offer immediately. Expecting draft contract by tomorrow morning."
+      const transcripts = [
+        'Buyer loved the natural light in the living room and wants to arrange a second viewing with their spouse this Saturday.',
+        'Client felt the kitchen was too small, but showed high interest in the general location. Will follow up with other matches.',
+        'Highly motivated buyer. Expressed that they want to prepare an offer immediately. Expecting draft contract by tomorrow morning.',
       ];
-      const randomTranscript = mockTranscripts[Math.floor(Math.random() * mockTranscripts.length)];
-      setOutcomeNotes(prev => (prev ? prev + ' ' : '') + randomTranscript);
+      const t = transcripts[Math.floor(Math.random() * transcripts.length)];
+      setOutcomeNotes((prev) => (prev ? prev + ' ' : '') + t);
     } else {
       setIsRecording(true);
     }
@@ -231,127 +167,80 @@ export function ViewingsScreen() {
 
   const showToast = (message: string) => {
     setToastMessage(message);
-    Animated.spring(toastY, {
-      toValue: 0,
-      tension: 50,
-      friction: 8,
-      useNativeDriver: true,
-    }).start();
-
+    Animated.spring(toastY, {toValue: 0, tension: 50, friction: 8, useNativeDriver: true}).start();
     setTimeout(() => {
-      Animated.timing(toastY, {
-        toValue: 100,
-        duration: 250,
-        useNativeDriver: true,
-      }).start(() => setToastMessage(null));
+      Animated.timing(toastY, {toValue: 100, duration: 250, useNativeDriver: true}).start(() => setToastMessage(null));
     }, 3000);
   };
 
-  const handleCheckInPress = (viewing: Viewing) => {
-    setPendingCheckInViewing(viewing);
-    setLocationModalVisible(true);
-  };
+  const handleCheckInPress = (viewing: Viewing) => { setPendingCheckInViewing(viewing); setLocationModalVisible(true); };
 
   const confirmLocationCheckIn = () => {
     setLocationModalVisible(false);
-    if (pendingCheckInViewing) {
-      checkInMutation.mutate(pendingCheckInViewing.id);
-      setPendingCheckInViewing(null);
-    }
+    if (pendingCheckInViewing) { checkInMutation.mutate(pendingCheckInViewing.id); setPendingCheckInViewing(null); }
   };
 
-  const handleCompletePress = (viewing: Viewing) => {
-    setCompletingViewing(viewing);
-    setCompleteSheetVisible(true);
-  };
+  const handleCompletePress = (viewing: Viewing) => { setCompletingViewing(viewing); setCompleteSheetVisible(true); };
 
   const submitCompletion = () => {
-    if (completingViewing) {
-      completeMutation.mutate({
-        id: completingViewing.id,
-        outcome: selectedOutcome,
-        notes: outcomeNotes || undefined,
-      });
-    }
+    if (completingViewing) completeMutation.mutate({id: completingViewing.id, outcome: selectedOutcome, notes: outcomeNotes || undefined});
   };
 
-  // Check if viewing should show no-show warning (Grace period: 15 mins past scheduled time)
   const isNoShowEligible = (viewing: Viewing) => {
     if (viewing.status !== 'scheduled' && viewing.status !== 'confirmed') return false;
-    if (viewing.check_in_at) return false;
-    if (dismissedNoShows.includes(viewing.id)) return false;
-
-    // Compare time
+    if (viewing.check_in_at || dismissedNoShows.includes(viewing.id)) return false;
     const schedDate = new Date(viewing.scheduled_at);
     const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
     return schedDate < fifteenMinutesAgo;
   };
 
-  // Dynamic Theme Styling
-  const styles = {
-    bgPage: isDarkMode ? 'bg-surface-page' : 'bg-slate-50/80',
-    bgCard: isDarkMode ? 'bg-surface-card' : 'bg-white',
-    bgHeader: isDarkMode ? 'bg-surface-page' : 'bg-white',
-    borderCard: isDarkMode ? 'border-zinc-800/80' : 'border-slate-100',
-    borderHeader: isDarkMode ? 'border-zinc-900' : 'border-slate-100',
-    textPrimary: isDarkMode ? 'text-text-primary' : 'text-slate-900',
-    textSecondary: isDarkMode ? 'text-text-secondary' : 'text-slate-500',
-    textTertiary: isDarkMode ? 'text-text-tertiary' : 'text-slate-400',
-    pillDefault: isDarkMode ? 'bg-zinc-900/80 text-text-secondary' : 'bg-slate-100 text-slate-500',
+  const sheetStyle = {
+    backgroundColor: tokens.surfaceCard,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    borderTopWidth: 1,
+    borderTopColor: tokens.borderDefault,
+    padding: 24,
+    paddingBottom: 40,
   };
 
   return (
-    <SafeAreaView className={`flex-1 ${styles.bgPage}`}>
+    <SafeAreaView style={{flex: 1, backgroundColor: tokens.surfacePage}}>
       {/* Header */}
-      <View className={`px-5 pt-4 pb-3 ${styles.bgHeader} border-b ${styles.borderHeader} shadow-sm z-10 flex-row justify-between items-center`}>
+      <View style={{paddingHorizontal: 20, paddingTop: 16, paddingBottom: 12, backgroundColor: tokens.surfaceCard, borderBottomWidth: 1, borderBottomColor: tokens.borderDefault, zIndex: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
         <View>
-          <Text className={`${styles.textPrimary} text-2xl font-extrabold tracking-tight`}>Today's Viewings</Text>
-          <Text className={`${styles.textSecondary} text-xs font-semibold mt-0.5`}>
+          <Text style={{color: tokens.textPrimary, fontSize: 22, fontWeight: '800', letterSpacing: -0.5}}>Today's Viewings</Text>
+          <Text style={{color: tokens.textSecondary, fontSize: 12, fontWeight: '600', marginTop: 2}}>
             {format(selectedDate, 'EEEE, d MMMM yyyy')}
           </Text>
         </View>
-        <View className="w-10 h-10 bg-brand-500/10 rounded-full items-center justify-center border border-brand-500/20">
-          <Text className="text-brand-500 font-extrabold text-base">{filteredViewings.length}</Text>
+        <View style={{width: 40, height: 40, backgroundColor: `${tokens.brandPrimary}1A`, borderRadius: 20, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: `${tokens.brandPrimary}33`}}>
+          <Text style={{color: tokens.brandPrimary, fontWeight: '800', fontSize: 16}}>{filteredViewings.length}</Text>
         </View>
       </View>
 
-      {/* Date Pill Selector Strip */}
-      <View className="py-3">
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerClassName="px-5"
-          className="flex-grow-0"
-        >
+      {/* Date strip */}
+      <View style={{paddingVertical: 12}}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{paddingHorizontal: 20, gap: 10}}>
           {dateStrip.map((date, index) => {
             const isSel = isSameDay(date, selectedDate);
             const isTod = isToday(date);
-            
-            // Format labels
-            const dayNum = format(date, 'd');
-            const dayName = isTod ? 'Today' : format(date, 'EEE');
-
             return (
               <Pressable
                 key={index}
                 onPress={() => setSelectedDate(date)}
-                className={`flex-col items-center justify-center w-[60px] py-2.5 mr-2.5 rounded-2xl border ${
-                  isSel
-                    ? 'bg-brand-500 border-brand-500 shadow-md shadow-brand-500/10'
-                    : isDarkMode
-                    ? 'bg-surface-card border-zinc-800'
-                    : 'bg-white border-slate-200/60'
-                }`}
+                style={{
+                  flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                  width: 60, paddingVertical: 10, borderRadius: 16, borderWidth: 1,
+                  backgroundColor: isSel ? tokens.brandPrimary : tokens.surfaceCard,
+                  borderColor: isSel ? tokens.brandPrimary : tokens.borderDefault,
+                }}
               >
-                <Text className={`text-[10px] font-bold uppercase tracking-wider ${
-                  isSel ? 'text-white/80' : styles.textTertiary
-                }`}>
-                  {dayName}
+                <Text style={{fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, color: isSel ? 'rgba(255,255,255,0.8)' : tokens.textTertiary}}>
+                  {isTod ? 'Today' : format(date, 'EEE')}
                 </Text>
-                <Text className={`text-base font-extrabold font-mono mt-1 ${
-                  isSel ? 'text-white' : styles.textPrimary
-                }`}>
-                  {dayNum}
+                <Text style={{fontSize: 16, fontWeight: '800', fontVariant: ['tabular-nums'], marginTop: 4, color: isSel ? '#FFFFFF' : tokens.textPrimary}}>
+                  {format(date, 'd')}
                 </Text>
               </Pressable>
             );
@@ -359,203 +248,162 @@ export function ViewingsScreen() {
         </ScrollView>
       </View>
 
-      {/* Viewings Timeline list */}
+      {/* Content */}
       {isLoading ? (
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator color="#10b981" size="large" />
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+          <ActivityIndicator color={tokens.brandPrimary} size="large" />
         </View>
       ) : filteredViewings.length === 0 ? (
-        <View className="flex-1 items-center justify-center px-8">
-          <View className="w-20 h-20 bg-brand-500/10 rounded-full items-center justify-center mb-5 border border-brand-500/10">
-            <Icon name="calendar" size={32} color="#10B981" />
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32}}>
+          <View style={{width: 80, height: 80, backgroundColor: `${tokens.brandPrimary}1A`, borderRadius: 40, alignItems: 'center', justifyContent: 'center', marginBottom: 20, borderWidth: 1, borderColor: `${tokens.brandPrimary}1A`}}>
+            <Icon name="calendar" size={32} color={tokens.brandPrimary} />
           </View>
-          <Text className={`${styles.textPrimary} text-lg font-bold mb-1 text-center`}>
+          <Text style={{color: tokens.textPrimary, fontSize: 18, fontWeight: '700', marginBottom: 4, textAlign: 'center'}}>
             No viewings scheduled {isToday(selectedDate) ? 'today' : 'for this day'}
           </Text>
-          <Text className={`${styles.textSecondary} text-sm text-center mb-6 px-4`}>
-            Your schedule is clear. You can check viewings scheduled for other days.
+          <Text style={{color: tokens.textSecondary, fontSize: 14, textAlign: 'center', marginBottom: 24, paddingHorizontal: 16}}>
+            Your schedule is clear. Check viewings scheduled for other days.
           </Text>
           {!isToday(selectedDate) && (
             <Pressable
               onPress={() => setSelectedDate(new Date())}
-              className="bg-brand-500/10 border border-brand-500/30 rounded-xl px-5 py-2.5 active:bg-brand-500/20"
+              style={{backgroundColor: `${tokens.brandPrimary}1A`, borderWidth: 1, borderColor: `${tokens.brandPrimary}4D`, borderRadius: 12, paddingHorizontal: 20, paddingVertical: 10}}
             >
-              <Text className="text-brand-500 font-extrabold text-xs">Return to Today</Text>
+              <Text style={{color: tokens.brandPrimary, fontWeight: '800', fontSize: 12}}>Return to Today</Text>
             </Pressable>
           )}
         </View>
       ) : (
-        <ScrollView
-          className="flex-1"
-          contentContainerClassName="pb-24 pt-2"
-          showsVerticalScrollIndicator={false}
-        >
+        <ScrollView style={{flex: 1}} contentContainerStyle={{paddingBottom: 96, paddingTop: 8}} showsVerticalScrollIndicator={false}>
           {filteredViewings.map((viewing, index) => {
             const timeStr = format(new Date(viewing.scheduled_at), 'HH:mm');
             const contact = viewing.contact;
             const listing = viewing.listing;
-            
-            // Check status states
             const isCompleted = viewing.status === 'completed';
             const isNoShow = viewing.status === 'no_show';
             const isCancelled = viewing.status === 'cancelled';
             const isCheckedIn = !!viewing.check_in_at;
             const isNext = viewing.id === nextViewingId;
             const showNoShowAlert = isNoShowEligible(viewing);
-
-            // Timeline line properties
             const isFirst = index === 0;
             const isLast = index === filteredViewings.length - 1;
             const isSingle = filteredViewings.length === 1;
 
-            // Status chip color configs
+            // Status chip
             let statusText = 'Scheduled';
-            let statusBg = isDarkMode ? 'bg-zinc-800/80' : 'bg-slate-100';
-            let statusTextColor = styles.textSecondary;
+            let statusBg = tokens.surfaceRaised;
+            let statusTextColor = tokens.textSecondary;
+            if (isCompleted) { statusText = 'Completed'; statusBg = tokens.surfaceSunken; statusTextColor = tokens.textTertiary; }
+            else if (isNoShow) { statusText = 'No Show'; statusBg = '#F43F5E1A'; statusTextColor = '#F43F5E'; }
+            else if (isCancelled) { statusText = 'Cancelled'; statusBg = tokens.surfaceSunken; statusTextColor = tokens.textTertiary; }
+            else if (isCheckedIn) { statusText = 'In Progress'; statusBg = `${tokens.brandPrimary}1A`; statusTextColor = tokens.brandPrimary; }
+            else if (viewing.status === 'confirmed') { statusText = 'Confirmed'; statusBg = '#0EA5E91A'; statusTextColor = '#0EA5E9'; }
 
-            if (isCompleted) {
-              statusText = 'Completed';
-              statusBg = isDarkMode ? 'bg-zinc-900/50' : 'bg-slate-100/60';
-              statusTextColor = styles.textTertiary;
-            } else if (isNoShow) {
-              statusText = 'No Show';
-              statusBg = isDarkMode ? 'bg-danger/10' : 'bg-rose-50';
-              statusTextColor = 'text-danger';
-            } else if (isCancelled) {
-              statusText = 'Cancelled';
-              statusBg = isDarkMode ? 'bg-zinc-900' : 'bg-slate-150';
-              statusTextColor = styles.textTertiary;
-            } else if (isCheckedIn) {
-              statusText = 'In Progress';
-              statusBg = 'bg-brand-500/10';
-              statusTextColor = 'text-brand-500';
-            } else if (viewing.status === 'confirmed') {
-              statusText = 'Confirmed';
-              statusBg = 'bg-info/10';
-              statusTextColor = 'text-info';
-            }
+            // Timeline dot
+            let dotBg = tokens.surfacePage;
+            let dotBorderColor = tokens.borderDefault;
+            let dotIcon: React.ReactNode = null;
+            if (isCompleted) { dotBg = tokens.borderStrong; dotBorderColor = tokens.borderStrong; dotIcon = <Icon name="check" size={10} color="#fff" />; }
+            else if (isCheckedIn) { dotBg = tokens.brandPrimary; dotBorderColor = tokens.brandPrimary; }
+            else if (isNext) { dotBorderColor = tokens.brandPrimary; }
 
             const propType = getPropertyType(listing?.address, listing?.title);
 
-            // Timeline dot styling
-            let dotBorderColor = isDarkMode ? 'border-zinc-800' : 'border-slate-350';
-            let dotBgColor = isDarkMode ? 'bg-surface-page' : 'bg-slate-50';
-            let dotIcon = null;
-
-            if (isCompleted) {
-              dotBgColor = isDarkMode ? 'bg-zinc-700' : 'bg-slate-400';
-              dotBorderColor = isDarkMode ? 'border-zinc-600' : 'border-slate-400';
-              dotIcon = <Icon name="check" size={10} color="#fff" />;
-            } else if (isCheckedIn) {
-              dotBgColor = 'bg-brand-500';
-              dotBorderColor = 'border-brand-500';
-            } else if (isNext) {
-              dotBorderColor = 'border-brand-500';
-            }
-
-            // Compact vs Large card details
-            // If viewing is completed, it collapses into a satisfies compact state
             return (
-              <View key={viewing.id} className="flex-row items-stretch px-5 min-h-[90px]">
-                {/* Timeline Column 1: Time */}
-                <View className="w-14 items-end justify-start pt-4 pr-3">
-                  <Text className={`font-mono font-bold text-[15px] ${isCompleted ? styles.textTertiary : styles.textPrimary}`}>
+              <View key={viewing.id} style={{flexDirection: 'row', alignItems: 'stretch', paddingHorizontal: 20, minHeight: 90}}>
+                {/* Time column */}
+                <View style={{width: 56, alignItems: 'flex-end', justifyContent: 'flex-start', paddingTop: 16, paddingRight: 12}}>
+                  <Text style={{fontFamily: 'monospace', fontWeight: '700', fontSize: 15, color: isCompleted ? tokens.textTertiary : tokens.textPrimary}}>
                     {timeStr}
                   </Text>
                   {viewing.duration_minutes && !isCompleted && (
-                    <Text className={`font-mono text-[10px] mt-0.5 ${styles.textTertiary}`}>
+                    <Text style={{fontFamily: 'monospace', fontSize: 10, marginTop: 2, color: tokens.textTertiary}}>
                       {viewing.duration_minutes}m
                     </Text>
                   )}
                 </View>
 
-                {/* Timeline Column 2: Dot & Line */}
-                <View className="w-8 items-center justify-start relative">
+                {/* Dot & line column */}
+                <View style={{width: 32, alignItems: 'center', justifyContent: 'flex-start', position: 'relative'}}>
                   {!isSingle && (
                     <View
-                      className={`absolute w-[2px] ${
-                        isDarkMode ? 'bg-zinc-800' : 'bg-slate-200'
-                      }`}
                       style={{
-                        top: isFirst ? 24 : 0,
-                        bottom: isLast ? '76%' : 0,
-                        left: '50%',
-                        marginLeft: -1,
+                        position: 'absolute', width: 2, backgroundColor: tokens.borderDefault,
+                        top: isFirst ? 24 : 0, bottom: isLast ? '76%' : 0,
+                        left: '50%', marginLeft: -1,
                       }}
                     />
                   )}
-                  <View className="pt-[18px] z-10">
-                    <View className={`w-5 h-5 rounded-full border-2 items-center justify-center ${dotBgColor} ${dotBorderColor}`}>
+                  <View style={{paddingTop: 18, zIndex: 10}}>
+                    <View style={{width: 20, height: 20, borderRadius: 10, borderWidth: 2, alignItems: 'center', justifyContent: 'center', backgroundColor: dotBg, borderColor: dotBorderColor}}>
                       {dotIcon}
                     </View>
-                    {isNext && !isCheckedIn && pulsingViewingId === null && (
-                      <View className="absolute top-[18px] left-0 w-5 h-5 rounded-full border border-brand-500/60 scale-125 opacity-30 animate-ping" />
-                    )}
                   </View>
                 </View>
 
-                {/* Timeline Column 3: Card Content */}
-                <View className="flex-1 pb-4">
-                  {/* Tap body navigates to detail, tap buttons triggers flow */}
+                {/* Card column */}
+                <View style={{flex: 1, paddingBottom: 16}}>
                   <Pressable
                     onPress={() => navigation.navigate('ViewingDetail', {viewingId: viewing.id})}
-                    className={`rounded-[12px] border ${styles.bgCard} ${styles.borderCard} p-4 shadow-sm active:opacity-90 ${
-                      isNext && !isCheckedIn ? 'border-brand-500/50 shadow-md shadow-brand-500/5' : ''
-                    } ${isCompleted ? 'opacity-75 py-2.5' : ''}`}
+                    style={{
+                      borderRadius: 12, borderWidth: isNext && !isCheckedIn ? 1.5 : 1,
+                      backgroundColor: tokens.surfaceCard,
+                      borderColor: isNext && !isCheckedIn ? tokens.brandPrimary : tokens.borderDefault,
+                      padding: 16, opacity: isCompleted ? 0.75 : 1,
+                      paddingVertical: isCompleted ? 10 : 16,
+                    }}
                   >
-                    {/* Header: Title & Status */}
-                    <View className="flex-row justify-between items-start gap-1">
-                      <View className="flex-1">
+                    {/* Title + status */}
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: 4}}>
+                      <View style={{flex: 1}}>
                         {isCompleted ? (
-                          <Text className={`font-extrabold text-sm ${styles.textSecondary} line-through`} numberOfLines={1}>
+                          <Text style={{fontWeight: '800', fontSize: 14, color: tokens.textSecondary, textDecorationLine: 'line-through'}} numberOfLines={1}>
                             {listing?.address || 'Property Viewing'}
                           </Text>
                         ) : (
-                          <View className="flex-row items-center flex-wrap gap-1">
-                            <Text className={`font-extrabold text-sm leading-5 ${styles.textPrimary} flex-1`} numberOfLines={1}>
+                          <View style={{flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 4}}>
+                            <Text style={{fontWeight: '800', fontSize: 14, lineHeight: 20, color: tokens.textPrimary, flex: 1}} numberOfLines={1}>
                               {listing?.address || 'Property Viewing'}
                             </Text>
-                            <View className="bg-brand-500/10 px-2 py-0.5 rounded-full border border-brand-500/20">
-                              <Text className="text-brand-500 text-[9px] font-extrabold uppercase">{propType}</Text>
+                            <View style={{backgroundColor: `${tokens.brandPrimary}1A`, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 999, borderWidth: 1, borderColor: `${tokens.brandPrimary}33`}}>
+                              <Text style={{color: tokens.brandPrimary, fontSize: 9, fontWeight: '800', textTransform: 'uppercase'}}>{propType}</Text>
                             </View>
                           </View>
                         )}
                       </View>
-                      <View className={`px-2 py-0.5 rounded-full ${statusBg}`}>
-                        <Text className={`text-[9px] font-extrabold uppercase ${statusTextColor}`}>{statusText}</Text>
+                      <View style={{paddingHorizontal: 8, paddingVertical: 2, borderRadius: 999, backgroundColor: statusBg}}>
+                        <Text style={{fontSize: 9, fontWeight: '800', textTransform: 'uppercase', color: statusTextColor}}>{statusText}</Text>
                       </View>
                     </View>
 
-                    {/* Geofence / Travel Warning for Next Viewing */}
+                    {/* Navigation hint for next */}
                     {isNext && !isCheckedIn && (
-                      <View className="flex-row items-center mt-1 bg-brand-500/5 border border-brand-500/10 rounded-lg py-1 px-2.5 self-start">
-                        <Icon name="navigation" size={10} color="#10B981" />
-                        <Text className="text-brand-500 text-[10px] font-bold ml-1">You're 12 min away</Text>
+                      <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 4, backgroundColor: `${tokens.brandPrimary}0D`, borderWidth: 1, borderColor: `${tokens.brandPrimary}1A`, borderRadius: 8, paddingVertical: 4, paddingHorizontal: 10, alignSelf: 'flex-start'}}>
+                        <Icon name="navigation" size={10} color={tokens.brandPrimary} />
+                        <Text style={{color: tokens.brandPrimary, fontSize: 10, fontWeight: '700', marginLeft: 4}}>You're 12 min away</Text>
                       </View>
                     )}
 
-                    {/* Card Content body: Thumbnail & Client */}
+                    {/* Body: thumbnail + client */}
                     {!isCompleted && (
-                      <View className="flex-row items-center mt-3 pt-3 border-t border-zinc-800/10 dark:border-zinc-800/80">
-                        {/* Property Thumbnail (Visual Excellence requirement) */}
+                      <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: tokens.borderSubtle}}>
                         <Image
-                          source={{ uri: `https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=120&q=80&id=${viewing.id}` }}
-                          className="w-12 h-12 rounded-lg mr-3 bg-zinc-850"
+                          source={{uri: `https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=120&q=80&id=${viewing.id}`}}
+                          style={{width: 48, height: 48, borderRadius: 8, marginRight: 12, backgroundColor: tokens.surfaceRaised}}
                         />
-                        <View className="flex-1">
-                          <View className="flex-row items-center">
-                            {/* Client Avatar */}
-                            <View className="w-5 h-5 rounded-full bg-brand-500/20 border border-brand-500/30 items-center justify-center mr-1.5">
-                              <Text className="text-brand-500 text-[9px] font-extrabold">
+                        <View style={{flex: 1}}>
+                          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                            <View style={{width: 20, height: 20, borderRadius: 10, backgroundColor: `${tokens.brandPrimary}33`, borderWidth: 1, borderColor: `${tokens.brandPrimary}4D`, alignItems: 'center', justifyContent: 'center', marginRight: 6}}>
+                              <Text style={{color: tokens.brandPrimary, fontSize: 9, fontWeight: '800'}}>
                                 {contact ? `${contact.first_name[0]}${contact.last_name[0]}` : '?'}
                               </Text>
                             </View>
-                            <Text className={`text-xs font-bold ${styles.textPrimary}`}>
+                            <Text style={{fontSize: 12, fontWeight: '700', color: tokens.textPrimary}}>
                               {contact ? `${contact.first_name} ${contact.last_name}` : 'Unknown Client'}
                             </Text>
                           </View>
                           {viewing.notes && (
-                            <Text className={`text-[11px] mt-1 ${styles.textSecondary}`} numberOfLines={1}>
+                            <Text style={{fontSize: 11, marginTop: 4, color: tokens.textSecondary}} numberOfLines={1}>
                               "{viewing.notes}"
                             </Text>
                           )}
@@ -563,69 +411,68 @@ export function ViewingsScreen() {
                       </View>
                     )}
 
-                    {/* Compact outcome notes if completed */}
+                    {/* Completed outcome notes */}
                     {isCompleted && viewing.outcome_notes && (
-                      <Text className={`text-xs mt-1 italic ${styles.textSecondary}`} numberOfLines={1}>
+                      <Text style={{fontSize: 12, marginTop: 4, fontStyle: 'italic', color: tokens.textSecondary}} numberOfLines={1}>
                         "{viewing.outcome_notes}"
                       </Text>
                     )}
 
-                    {/* Dynamic Action Buttons inside card (Core principle: One-thumb reachability) */}
+                    {/* Action buttons */}
                     {!isCompleted && !isCancelled && !isNoShow && (
-                      <View className="mt-3 pt-3 border-t border-zinc-800/10 dark:border-zinc-800/80">
+                      <View style={{marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: tokens.borderSubtle}}>
                         {isNext && !isCheckedIn && (
                           <Pressable
                             onPress={() => handleCheckInPress(viewing)}
-                            className="bg-brand-500 rounded-lg py-2.5 items-center justify-center flex-row active:bg-brand-600"
+                            style={{backgroundColor: tokens.brandPrimary, borderRadius: 8, paddingVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}
                           >
                             <Icon name="map-pin" size={13} color="#fff" />
-                            <Text className="text-white font-extrabold text-xs ml-1.5">Check In</Text>
+                            <Text style={{color: '#ffffff', fontWeight: '800', fontSize: 12, marginLeft: 6}}>Check In</Text>
                           </Pressable>
                         )}
-                        
                         {isCheckedIn && (
-                          <Pressable
-                            onPress={() => handleCompletePress(viewing)}
-                            className="bg-brand-500 rounded-lg py-2.5 items-center justify-center flex-row active:bg-brand-600"
-                          >
-                            <Icon name="check-circle" size={13} color="#fff" />
-                            <Text className="text-white font-extrabold text-xs ml-1.5">Complete Viewing</Text>
-                          </Pressable>
-                        )}
-
-                        {/* If checked in and we want to show dynamic morph text */}
-                        {isCheckedIn && viewing.check_in_at && (
-                          <View className="mt-2 flex-row items-center justify-center">
-                            <Icon name="check" size={10} color="#10B981" />
-                            <Text className="text-brand-500 font-bold text-[10px] ml-1">
-                              Checked in at {format(new Date(viewing.check_in_at), 'HH:mm')}
-                            </Text>
-                          </View>
+                          <>
+                            <Pressable
+                              onPress={() => handleCompletePress(viewing)}
+                              style={{backgroundColor: tokens.brandPrimary, borderRadius: 8, paddingVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}
+                            >
+                              <Icon name="check-circle" size={13} color="#fff" />
+                              <Text style={{color: '#ffffff', fontWeight: '800', fontSize: 12, marginLeft: 6}}>Complete Viewing</Text>
+                            </Pressable>
+                            {viewing.check_in_at && (
+                              <View style={{marginTop: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                                <Icon name="check" size={10} color={tokens.brandPrimary} />
+                                <Text style={{color: tokens.brandPrimary, fontWeight: '700', fontSize: 10, marginLeft: 4}}>
+                                  Checked in at {format(new Date(viewing.check_in_at), 'HH:mm')}
+                                </Text>
+                              </View>
+                            )}
+                          </>
                         )}
                       </View>
                     )}
 
-                    {/* No-show Danger Prompt Banner */}
+                    {/* No-show alert */}
                     {showNoShowAlert && (
-                      <View className="mt-3 bg-danger/10 border border-danger/20 rounded-lg p-2.5">
-                        <View className="flex-row items-center">
+                      <View style={{marginTop: 12, backgroundColor: '#F43F5E1A', borderWidth: 1, borderColor: '#F43F5E33', borderRadius: 8, padding: 10}}>
+                        <View style={{flexDirection: 'row', alignItems: 'center'}}>
                           <Icon name="alert-triangle" size={12} color="#F43F5E" />
-                          <Text className="text-danger font-extrabold text-[11px] ml-1.5 flex-1">
+                          <Text style={{color: '#F43F5E', fontWeight: '800', fontSize: 11, marginLeft: 6, flex: 1}}>
                             Viewing overdue by 15m+. Mark as no-show?
                           </Text>
                         </View>
-                        <View className="flex-row gap-2 mt-2">
+                        <View style={{flexDirection: 'row', gap: 8, marginTop: 8}}>
                           <Pressable
                             onPress={() => markNoShowMutation.mutate(viewing.id)}
-                            className="flex-1 bg-danger rounded-md py-1.5 items-center justify-center"
+                            style={{flex: 1, backgroundColor: '#F43F5E', borderRadius: 6, paddingVertical: 6, alignItems: 'center'}}
                           >
-                            <Text className="text-white font-bold text-[10px]">Confirm No-Show</Text>
+                            <Text style={{color: '#ffffff', fontWeight: '700', fontSize: 10}}>Confirm No-Show</Text>
                           </Pressable>
                           <Pressable
-                            onPress={() => setDismissedNoShows(prev => [...prev, viewing.id])}
-                            className="bg-zinc-800 dark:bg-zinc-800 light:bg-slate-200 rounded-md px-3 py-1.5 items-center justify-center"
+                            onPress={() => setDismissedNoShows((prev) => [...prev, viewing.id])}
+                            style={{backgroundColor: tokens.surfaceRaised, borderRadius: 6, paddingHorizontal: 12, paddingVertical: 6, alignItems: 'center'}}
                           >
-                            <Text className={`${styles.textSecondary} font-bold text-[10px]`}>Dismiss</Text>
+                            <Text style={{color: tokens.textSecondary, fontWeight: '700', fontSize: 10}}>Dismiss</Text>
                           </Pressable>
                         </View>
                       </View>
@@ -638,166 +485,107 @@ export function ViewingsScreen() {
         </ScrollView>
       )}
 
-      {/* Custom Location Permission Modal */}
+      {/* Location permission modal */}
       <Modal visible={locationModalVisible} transparent animationType="fade">
-        <View className="flex-1 bg-black/60 items-center justify-center px-6">
-          <View className={`w-full max-w-[320px] ${isDarkMode ? 'bg-surface-card border border-zinc-800' : 'bg-white'} rounded-3xl p-6 shadow-xl`}>
-            <View className="w-12 h-12 rounded-full bg-brand-500/10 border border-brand-500/20 items-center justify-center mb-4 self-center">
-              <Icon name="map-pin" size={24} color="#10B981" />
+        <View style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24}}>
+          <View style={{width: '100%', maxWidth: 320, backgroundColor: tokens.surfaceCard, borderWidth: 1, borderColor: tokens.borderDefault, borderRadius: 24, padding: 24}}>
+            <View style={{width: 48, height: 48, borderRadius: 24, backgroundColor: `${tokens.brandPrimary}1A`, borderWidth: 1, borderColor: `${tokens.brandPrimary}33`, alignItems: 'center', justifyContent: 'center', marginBottom: 16, alignSelf: 'center'}}>
+              <Icon name="map-pin" size={24} color={tokens.brandPrimary} />
             </View>
-            <Text className={`text-base font-extrabold text-center ${styles.textPrimary} mb-2`}>
+            <Text style={{fontSize: 16, fontWeight: '800', textAlign: 'center', color: tokens.textPrimary, marginBottom: 8}}>
               Verify On-Site Location
             </Text>
-            <Text className={`text-xs text-center ${styles.textSecondary} leading-5 mb-5`}>
-              PropOS requires a quick, one-time geofence check to confirm your arrival at this listing site. This helps keep client timelines accurate.
+            <Text style={{fontSize: 12, textAlign: 'center', color: tokens.textSecondary, lineHeight: 20, marginBottom: 20}}>
+              PropOS requires a quick geofence check to confirm your arrival at this listing site. This helps keep client timelines accurate.
             </Text>
-            <View className="flex-col gap-2">
-              <Pressable
-                onPress={confirmLocationCheckIn}
-                className="bg-brand-500 rounded-xl py-3 items-center justify-center"
-              >
-                <Text className="text-white font-extrabold text-xs">Allow & Check In</Text>
+            <View style={{gap: 8}}>
+              <Pressable onPress={confirmLocationCheckIn} style={{backgroundColor: tokens.brandPrimary, borderRadius: 12, paddingVertical: 12, alignItems: 'center'}}>
+                <Text style={{color: '#ffffff', fontWeight: '800', fontSize: 12}}>Allow & Check In</Text>
               </Pressable>
-              <Pressable
-                onPress={() => setLocationModalVisible(false)}
-                className={`py-3 items-center justify-center rounded-xl`}
-              >
-                <Text className={`${styles.textSecondary} font-bold text-xs`}>Cancel</Text>
+              <Pressable onPress={() => setLocationModalVisible(false)} style={{paddingVertical: 12, alignItems: 'center', borderRadius: 12}}>
+                <Text style={{color: tokens.textSecondary, fontWeight: '700', fontSize: 12}}>Cancel</Text>
               </Pressable>
             </View>
           </View>
         </View>
       </Modal>
 
-      {/* Complete Flow Bottom Sheet (sliding sheet mock) */}
+      {/* Complete sheet */}
       <Modal visible={completeSheetVisible} transparent animationType="slide">
-        <View className="flex-1 justify-end bg-black/70">
-          <Pressable className="flex-1" onPress={() => setCompleteSheetVisible(false)} />
-          <View className={`${isDarkMode ? 'bg-[#111827]' : 'bg-white'} rounded-t-[24px] p-6 shadow-2xl`}>
-            {/* Grabber indicator */}
-            <View className={`w-10 h-1 rounded-full ${isDarkMode ? 'bg-zinc-800' : 'bg-slate-200'} self-center mb-5`} />
+        <View style={{flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.7)'}}>
+          <Pressable style={{flex: 1}} onPress={() => setCompleteSheetVisible(false)} />
+          <View style={sheetStyle}>
+            <View style={{width: 40, height: 4, borderRadius: 999, backgroundColor: tokens.borderStrong, alignSelf: 'center', marginBottom: 20}} />
+            <Text style={{color: tokens.textPrimary, fontSize: 18, fontWeight: '800', marginBottom: 4}}>Complete Property Showing</Text>
+            <Text style={{color: tokens.textSecondary, fontSize: 12, marginBottom: 20}}>Log the viewing outcome and feedback notes.</Text>
 
-            <Text className={`${styles.textPrimary} text-lg font-extrabold mb-1`}>
-              Complete Property Showing
-            </Text>
-            <Text className={`${styles.textSecondary} text-xs mb-5`}>
-              Log the viewing outcome and feedback notes.
-            </Text>
-
-            {/* Outcome cards */}
-            <Text className={`${styles.textSecondary} text-[11px] font-extrabold uppercase tracking-wider mb-2.5`}>
-              Client Interest Level
-            </Text>
-            <View className="flex-row gap-2 mb-5">
+            <Text style={{color: tokens.textSecondary, fontSize: 11, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 10}}>Client Interest Level</Text>
+            <View style={{flexDirection: 'row', gap: 8, marginBottom: 20}}>
               {OUTCOMES.map((out) => {
                 const isSel = selectedOutcome === out.value;
                 return (
                   <Pressable
                     key={out.value}
                     onPress={() => setSelectedOutcome(out.value)}
-                    className={`flex-1 flex-col items-center justify-center p-3 rounded-xl border-2 ${
-                      isSel
-                        ? `${out.bg} ${out.border}`
-                        : isDarkMode
-                        ? 'bg-zinc-900/40 border-zinc-800'
-                        : 'bg-slate-50/50 border-slate-200'
-                    }`}
+                    style={{flex: 1, alignItems: 'center', justifyContent: 'center', padding: 12, borderRadius: 12, borderWidth: 2, backgroundColor: isSel ? out.bg : tokens.surfaceRaised, borderColor: isSel ? out.border : tokens.borderDefault}}
                   >
-                    <Text className="text-xl mb-1">{out.emoji}</Text>
-                    <Text className={`text-[11px] font-extrabold ${isSel ? out.color : styles.textSecondary}`}>
-                      {out.label}
-                    </Text>
+                    <Text style={{fontSize: 20, marginBottom: 4}}>{out.emoji}</Text>
+                    <Text style={{fontSize: 11, fontWeight: '800', color: isSel ? out.color : tokens.textSecondary}}>{out.label}</Text>
                   </Pressable>
                 );
               })}
             </View>
 
-            {/* Notes Input Field & Voice recorder */}
-            <View className="flex-row justify-between items-center mb-2">
-              <Text className={`${styles.textSecondary} text-[11px] font-extrabold uppercase tracking-wider`}>
-                Viewing Notes
-              </Text>
-              
+            <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8}}>
+              <Text style={{color: tokens.textSecondary, fontSize: 11, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1}}>Viewing Notes</Text>
               <Pressable
                 onPress={toggleRecording}
-                className={`flex-row items-center px-2 py-1 rounded-full ${
-                  isRecording ? 'bg-danger/10 border border-danger/20' : styles.pillDefault
-                }`}
+                style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 999, backgroundColor: isRecording ? '#F43F5E1A' : tokens.surfaceRaised, borderWidth: 1, borderColor: isRecording ? '#F43F5E33' : tokens.borderDefault}}
               >
-                <Icon name={isRecording ? 'stop-circle' : 'mic'} size={11} color={isRecording ? '#F43F5E' : '#10B981'} />
-                <Text className={`text-[9px] font-extrabold ml-1 uppercase ${isRecording ? 'text-danger' : 'text-brand-500'}`}>
+                <Icon name={isRecording ? 'stop-circle' : 'mic'} size={11} color={isRecording ? '#F43F5E' : tokens.brandPrimary} />
+                <Text style={{fontSize: 9, fontWeight: '800', marginLeft: 4, textTransform: 'uppercase', color: isRecording ? '#F43F5E' : tokens.brandPrimary}}>
                   {isRecording ? `Recording ${recordingSeconds}s` : 'Voice Note'}
                 </Text>
               </Pressable>
             </View>
 
-            {/* Recording visual indicator */}
             {isRecording && (
-              <View className="bg-zinc-900/60 dark:bg-zinc-900/60 light:bg-slate-50 border border-zinc-800/80 rounded-xl p-3.5 flex-row items-center justify-center gap-1.5 mb-3">
-                <Text className="text-text-secondary text-[11px] font-bold mr-2">Listening</Text>
+              <View style={{backgroundColor: tokens.surfaceRaised, borderWidth: 1, borderColor: tokens.borderDefault, borderRadius: 12, padding: 14, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginBottom: 12}}>
+                <Text style={{color: tokens.textSecondary, fontSize: 11, fontWeight: '700', marginRight: 8}}>Listening</Text>
                 {waveAnims.map((anim, idx) => (
-                  <Animated.View
-                    key={idx}
-                    className="w-1 bg-brand-500 rounded-full"
-                    style={{ height: anim }}
-                  />
+                  <Animated.View key={idx} style={{width: 4, backgroundColor: tokens.brandPrimary, borderRadius: 999, height: anim}} />
                 ))}
               </View>
             )}
 
             <TextInput
-              className={`w-full ${
-                isDarkMode ? 'bg-zinc-900/80 text-white' : 'bg-slate-50 text-slate-900'
-              } border ${
-                isDarkMode ? 'border-zinc-800' : 'border-slate-200'
-              } rounded-xl px-4 py-3 text-xs leading-5 mb-5`}
+              style={{width: '100%', backgroundColor: tokens.surfaceInput, color: tokens.textPrimary, borderWidth: 1, borderColor: tokens.borderDefault, borderRadius: 12, paddingHorizontal: 16, paddingVertical: 12, fontSize: 12, lineHeight: 20, marginBottom: 20, minHeight: 80, textAlignVertical: 'top'}}
               placeholder="Type viewing notes here or use voice note option..."
-              placeholderTextColor={isDarkMode ? '#64748b' : '#94a3b8'}
+              placeholderTextColor={tokens.textTertiary}
               multiline
               numberOfLines={4}
               value={outcomeNotes}
               onChangeText={setOutcomeNotes}
-              style={{minHeight: 80, textAlignVertical: 'top'}}
             />
 
-            {/* Actions */}
-            <View className="flex-row gap-3">
-              <Pressable
-                onPress={() => setCompleteSheetVisible(false)}
-                className={`flex-1 ${
-                  isDarkMode ? 'bg-zinc-800' : 'bg-slate-100'
-                } rounded-xl py-3.5 items-center justify-center`}
-              >
-                <Text className={`font-extrabold text-xs ${styles.textPrimary}`}>Cancel</Text>
+            <View style={{flexDirection: 'row', gap: 12}}>
+              <Pressable onPress={() => setCompleteSheetVisible(false)} style={{flex: 1, backgroundColor: tokens.surfaceRaised, borderRadius: 12, paddingVertical: 14, alignItems: 'center'}}>
+                <Text style={{fontWeight: '800', fontSize: 12, color: tokens.textPrimary}}>Cancel</Text>
               </Pressable>
-              
-              <Pressable
-                onPress={submitCompletion}
-                disabled={completeMutation.isPending}
-                className="flex-1 bg-brand-500 rounded-xl py-3.5 items-center justify-center active:bg-brand-600"
-              >
-                {completeMutation.isPending ? (
-                  <ActivityIndicator color="#fff" size="small" />
-                ) : (
-                  <Text className="text-white font-extrabold text-xs">Save & Complete</Text>
-                )}
+              <Pressable onPress={submitCompletion} disabled={completeMutation.isPending} style={{flex: 1, backgroundColor: tokens.brandPrimary, borderRadius: 12, paddingVertical: 14, alignItems: 'center'}}>
+                {completeMutation.isPending ? <ActivityIndicator color="#fff" size="small" /> : <Text style={{color: '#ffffff', fontWeight: '800', fontSize: 12}}>Save & Complete</Text>}
               </Pressable>
             </View>
           </View>
         </View>
       </Modal>
 
-      {/* Floating Small Toast Notification */}
+      {/* Toast */}
       {toastMessage && (
-        <Animated.View
-          style={{ transform: [{ translateY: toastY }] }}
-          className="absolute bottom-[82px] left-5 right-5 items-center z-50"
-        >
-          <View className="bg-[#111827] border border-zinc-800/80 rounded-full px-5 py-2.5 flex-row items-center shadow-xl">
-            <Icon name="check-circle" size={14} color="#10B981" />
-            <Text className="text-white text-xs font-extrabold ml-2 text-center">
-              {toastMessage}
-            </Text>
+        <Animated.View style={{position: 'absolute', bottom: 82, left: 20, right: 20, alignItems: 'center', zIndex: 50, transform: [{translateY: toastY}]}}>
+          <View style={{backgroundColor: tokens.surfaceRaised, borderWidth: 1, borderColor: tokens.borderDefault, borderRadius: 999, paddingHorizontal: 20, paddingVertical: 10, flexDirection: 'row', alignItems: 'center'}}>
+            <Icon name="check-circle" size={14} color={tokens.brandPrimary} />
+            <Text style={{color: tokens.textPrimary, fontSize: 12, fontWeight: '800', marginLeft: 8}}>{toastMessage}</Text>
           </View>
         </Animated.View>
       )}

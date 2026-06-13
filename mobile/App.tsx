@@ -12,6 +12,7 @@ import {sentryService} from './src/services/sentryService';
 import {ErrorBoundary} from './src/components/ErrorBoundary';
 import {BiometricUnlockScreen} from './src/screens/auth/BiometricUnlockScreen';
 import {OfflineIndicator} from './src/components/OfflineIndicator';
+import {ThemeProvider} from './src/theme/ThemeProvider';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -135,9 +136,11 @@ export default function App() {
     <SafeAreaProvider>
       <ErrorBoundary>
         <QueryClientProvider client={queryClient}>
-          <NavigationContainer ref={navigationRef}>
-            <AppInner />
-          </NavigationContainer>
+          <ThemeProvider>
+            <NavigationContainer ref={navigationRef}>
+              <AppInner />
+            </NavigationContainer>
+          </ThemeProvider>
         </QueryClientProvider>
       </ErrorBoundary>
     </SafeAreaProvider>

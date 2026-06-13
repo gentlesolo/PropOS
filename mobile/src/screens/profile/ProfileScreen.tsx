@@ -1,18 +1,14 @@
 import React, {useState} from 'react';
-import {
-  Alert,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-  SafeAreaView,
-} from 'react-native';
+import {Alert, Modal, Pressable, ScrollView, Text, View} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {useAuthStore} from '../../store/authStore';
 import {authApi} from '../../api/auth';
 import {benchmarkApi} from '../../api/benchmark';
 import {cacheService} from '../../services/cacheService';
 import {useTranslation} from '../../i18n';
+import Icon from 'react-native-vector-icons/Feather';
+import {useTheme, ThemePreference} from '../../theme/ThemeProvider';
 
 const LANGUAGES = [
   {code: 'en', label: 'English'},
@@ -24,35 +20,32 @@ const LANGUAGES = [
   {code: 'ar', label: 'العربية'},
 ];
 
+const APPEARANCE_OPTIONS: {value: ThemePreference; label: string; icon: string; description: string}[] = [
+  {value: 'light',  label: 'Light',  icon: 'sun',     description: 'Always use light mode'},
+  {value: 'dark',   label: 'Dark',   icon: 'moon',    description: 'Always use dark mode'},
+  {value: 'system', label: 'System', icon: 'monitor', description: 'Follow device setting'},
+];
+
 export function ProfileScreen() {
   const {t} = useTranslation();
+  const {tokens, preference, setPreference} = useTheme();
   const {user, clearAuth} = useAuthStore();
   const queryClient = useQueryClient();
 
   const [selectedLang, setSelectedLang] = useState('en');
   const [showLangPicker, setShowLangPicker] = useState(false);
+  const [appearanceSheetVisible, setAppearanceSheetVisible] = useState(false);
 
   const logout = useMutation({
     mutationFn: () => authApi.logout(),
-    onSuccess: () => {
-      cacheService.clearAll();
-      queryClient.clear();
-      clearAuth();
-    },
-    onError: () => {
-      cacheService.clearAll();
-      queryClient.clear();
-      clearAuth();
-    },
+    onSuccess: () => { cacheService.clearAll(); queryClient.clear(); clearAuth(); },
+    onError:   () => { cacheService.clearAll(); queryClient.clear(); clearAuth(); },
   });
 
   const setLanguage = useMutation({
     mutationFn: (lang: string) => benchmarkApi.setLanguage(lang),
-    onSuccess: (_, lang) => {
-      setSelectedLang(lang);
-      setShowLangPicker(false);
-    },
-    onError: () => Alert.alert(t('common.error'), t('profile.languageError')),
+    onSuccess: (_, lang) => { setSelectedLang(lang); setShowLangPicker(false); },
+    onError:   () => Alert.alert(t('common.error'), t('profile.languageError')),
   });
 
   const handleLogout = () => {
@@ -62,97 +55,256 @@ export function ProfileScreen() {
     ]);
   };
 
+  const handleAppearanceSelect = (value: ThemePreference) => {
+    setPreference(value);
+    setTimeout(() => setAppearanceSheetVisible(false), 150);
+  };
+
   const fullName = user ? `${user.first_name} ${user.last_name}` : '';
-  const avatarInitials = user
-    ? user.first_name.charAt(0) + user.last_name.charAt(0)
-    : '??';
+  const avatarInitials = user ? user.first_name.charAt(0) + user.last_name.charAt(0) : '??';
+
+  const currentAppearanceLabel = APPEARANCE_OPTIONS.find((o) => o.value === preference)?.label ?? 'Dark';
+
+  const sectionLabelStyle = {color: tokens.textTertiary, fontSize: 11, fontWeight: '900' as const, textTransform: 'uppercase' as const, letterSpacing: 2, marginBottom: 12, marginLeft: 4};
+  const cardStyle = {backgroundColor: tokens.surfaceCard, borderWidth: 1, borderColor: tokens.borderDefault, borderRadius: 16};
 
   return (
-    <SafeAreaView className="flex-1 bg-slate-50">
-      <ScrollView className="flex-1" contentContainerClassName="pb-10">
-        {/* Header */}
-        <View className="bg-white shadow-sm border-b border-slate-100 pb-10 pt-8 px-6 mb-6">
-          <Text className="text-slate-900 text-3xl font-extrabold tracking-tight mb-8">Profile</Text>
-          <View className="flex-row items-center gap-5">
-            <View className="w-20 h-20 rounded-full bg-brand-50 border-2 border-brand-100 items-center justify-center shadow-sm">
-              <Text className="text-brand-600 text-3xl font-extrabold">{avatarInitials}</Text>
+    <SafeAreaView style={{flex: 1, backgroundColor: tokens.surfacePage}}>
+      <ScrollView style={{flex: 1}} contentContainerStyle={{paddingBottom: 40}}>
+        {/* Profile header */}
+        <View
+          style={{
+            backgroundColor: tokens.surfaceCard,
+            borderBottomWidth: 1,
+            borderBottomColor: tokens.borderDefault,
+            paddingBottom: 40,
+            paddingTop: 32,
+            paddingHorizontal: 24,
+            marginBottom: 24,
+          }}
+        >
+          <Text style={{color: tokens.textPrimary, fontSize: 30, fontWeight: '800', letterSpacing: -0.5, marginBottom: 32}}>Profile</Text>
+          <View style={{flexDirection: 'row', alignItems: 'center', gap: 20}}>
+            <View
+              style={{
+                width: 80,
+                height: 80,
+                borderRadius: 40,
+                backgroundColor: `${tokens.brandPrimary}1A`,
+                borderWidth: 2,
+                borderColor: `${tokens.brandPrimary}33`,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Text style={{color: tokens.brandPrimary, fontSize: 30, fontWeight: '800'}}>{avatarInitials}</Text>
             </View>
-            <View className="flex-1">
-              <Text className="text-slate-900 text-2xl font-extrabold tracking-tight">{fullName}</Text>
-              <Text className="text-slate-500 font-bold mt-0.5">{user?.email}</Text>
+            <View style={{flex: 1}}>
+              <Text style={{color: tokens.textPrimary, fontSize: 22, fontWeight: '800', letterSpacing: -0.5}}>{fullName}</Text>
+              <Text style={{color: tokens.textSecondary, fontWeight: '600', marginTop: 2}}>{user?.email}</Text>
               {user?.job_title && (
-                <View className="bg-brand-50 self-start px-2 py-0.5 rounded-md mt-2 border border-brand-100">
-                  <Text className="text-brand-700 text-xs font-bold uppercase tracking-wide">{user.job_title}</Text>
+                <View
+                  style={{
+                    backgroundColor: `${tokens.brandPrimary}1A`,
+                    alignSelf: 'flex-start',
+                    paddingHorizontal: 8,
+                    paddingVertical: 2,
+                    borderRadius: 6,
+                    marginTop: 8,
+                    borderWidth: 1,
+                    borderColor: `${tokens.brandPrimary}26`,
+                  }}
+                >
+                  <Text style={{color: tokens.brandPrimary, fontSize: 11, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5}}>
+                    {user.job_title}
+                  </Text>
                 </View>
               )}
             </View>
           </View>
         </View>
 
-        {/* Settings sections */}
-        <View className="px-5 mt-2">
-
+        <View style={{paddingHorizontal: 20}}>
           {/* Transcription language */}
-          <Text className="text-slate-400 text-xs font-extrabold uppercase tracking-widest mb-3 ml-2">
-            {t('profile.transcriptionLanguage')}
-          </Text>
+          <Text style={sectionLabelStyle}>{t('profile.transcriptionLanguage')}</Text>
           <Pressable
-            className="bg-white shadow-sm border border-slate-100 rounded-2xl px-5 py-4 flex-row items-center justify-between mb-6"
-            onPress={() => setShowLangPicker(v => !v)}>
-            <Text className="text-slate-900 font-bold text-base">
-              {LANGUAGES.find(l => l.code === selectedLang)?.label ?? 'English'}
+            style={[cardStyle, {paddingHorizontal: 20, paddingVertical: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6}]}
+            onPress={() => setShowLangPicker((v) => !v)}
+          >
+            <Text style={{color: tokens.textPrimary, fontWeight: '700', fontSize: 16}}>
+              {LANGUAGES.find((l) => l.code === selectedLang)?.label ?? 'English'}
             </Text>
-            <View className="bg-slate-50 w-8 h-8 rounded-full items-center justify-center">
-              <Text className="text-slate-500 text-xs font-bold">{showLangPicker ? '▲' : '▼'}</Text>
+            <View style={{backgroundColor: tokens.surfaceRaised, width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center'}}>
+              <Icon name={showLangPicker ? 'chevron-up' : 'chevron-down'} size={16} color={tokens.textSecondary} />
             </View>
           </Pressable>
 
           {showLangPicker && (
-            <View className="bg-white shadow-md border border-slate-100 rounded-2xl mb-6 overflow-hidden -mt-4">
-              {LANGUAGES.map(lang => (
-                <Pressable
-                  key={lang.code}
-                  className={`flex-row items-center px-5 py-4 border-b border-slate-50 ${
-                    selectedLang === lang.code ? 'bg-brand-50' : ''
-                  }`}
-                  onPress={() => setLanguage.mutate(lang.code)}>
-                  <Text className={`flex-1 text-base font-bold ${selectedLang === lang.code ? 'text-brand-600' : 'text-slate-700'}`}>
-                    {lang.label}
-                  </Text>
-                  {selectedLang === lang.code && (
-                    <Text className="text-brand-600 font-bold text-lg">✓</Text>
-                  )}
-                </Pressable>
-              ))}
+            <View style={[cardStyle, {marginBottom: 24, overflow: 'hidden', marginTop: 2}]}>
+              {LANGUAGES.map((lang, idx) => {
+                const isSelected = selectedLang === lang.code;
+                return (
+                  <Pressable
+                    key={lang.code}
+                    style={[
+                      {flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 16},
+                      isSelected && {backgroundColor: `${tokens.brandPrimary}0D`},
+                      idx < LANGUAGES.length - 1 && {borderBottomWidth: 1, borderBottomColor: tokens.borderSubtle},
+                    ]}
+                    onPress={() => setLanguage.mutate(lang.code)}
+                  >
+                    <Text style={{flex: 1, fontSize: 16, fontWeight: '700', color: isSelected ? tokens.brandPrimary : tokens.textPrimary}}>
+                      {lang.label}
+                    </Text>
+                    {isSelected && <Icon name="check" size={18} color={tokens.brandPrimary} />}
+                  </Pressable>
+                );
+              })}
             </View>
           )}
 
+          {/* Appearance */}
+          <Text style={[sectionLabelStyle, {marginTop: 8}]}>Appearance</Text>
+          <Pressable
+            style={[cardStyle, {paddingHorizontal: 20, paddingVertical: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24}]}
+            onPress={() => setAppearanceSheetVisible(true)}
+          >
+            <View style={{flexDirection: 'row', alignItems: 'center', gap: 12}}>
+              <Icon
+                name={APPEARANCE_OPTIONS.find((o) => o.value === preference)?.icon ?? 'moon'}
+                size={18}
+                color={tokens.brandPrimary}
+              />
+              <Text style={{color: tokens.textPrimary, fontWeight: '700', fontSize: 16}}>{currentAppearanceLabel}</Text>
+            </View>
+            <Icon name="chevron-right" size={16} color={tokens.borderStrong} />
+          </Pressable>
+
           {/* App info */}
-          <Text className="text-slate-400 text-xs font-extrabold uppercase tracking-widest mb-3 ml-2 mt-4">
-            {t('profile.about')}
-          </Text>
-          <View className="bg-white shadow-sm border border-slate-100 rounded-2xl mb-8">
+          <Text style={[sectionLabelStyle, {marginTop: 4}]}>{t('profile.about')}</Text>
+          <View style={[cardStyle, {marginBottom: 32}]}>
             {[
               {label: t('profile.appVersion'), value: '1.0.0'},
               {label: t('profile.agencyId'),   value: String(user?.agency_id ?? '—')},
             ].map((row, idx) => (
               <View
                 key={row.label}
-                className={`flex-row items-center justify-between px-5 py-4 ${idx === 0 ? 'border-b border-slate-50' : ''}`}>
-                <Text className="text-slate-600 font-bold text-base">{row.label}</Text>
-                <Text className="text-slate-400 font-bold">{row.value}</Text>
+                style={[
+                  {flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 16},
+                  idx === 0 && {borderBottomWidth: 1, borderBottomColor: tokens.borderSubtle},
+                ]}
+              >
+                <Text style={{color: tokens.textSecondary, fontWeight: '700', fontSize: 16}}>{row.label}</Text>
+                <Text style={{color: tokens.textTertiary, fontWeight: '700'}}>{row.value}</Text>
               </View>
             ))}
           </View>
 
           {/* Sign out */}
           <Pressable
-            className="bg-white border border-red-200 shadow-sm rounded-2xl py-4 items-center mt-2 active:bg-red-50"
-            onPress={handleLogout}>
-            <Text className="text-red-600 font-extrabold text-lg">{t('profile.signOut')}</Text>
+            style={({pressed}) => ({
+              backgroundColor: tokens.surfaceCard,
+              borderWidth: 1,
+              borderColor: '#F43F5E33',
+              borderRadius: 16,
+              paddingVertical: 16,
+              alignItems: 'center',
+              marginTop: 8,
+              opacity: pressed ? 0.8 : 1,
+            })}
+            onPress={handleLogout}
+          >
+            <Text style={{color: '#F43F5E', fontWeight: '800', fontSize: 18}}>{t('profile.signOut')}</Text>
           </Pressable>
         </View>
       </ScrollView>
+
+      {/* Appearance bottom sheet */}
+      <Modal
+        visible={appearanceSheetVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setAppearanceSheetVisible(false)}
+      >
+        <View style={{flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(2,6,23,0.6)'}}>
+          <Pressable style={{flex: 1}} onPress={() => setAppearanceSheetVisible(false)} />
+          <View
+            style={{
+              backgroundColor: tokens.surfaceCard,
+              borderTopLeftRadius: 24,
+              borderTopRightRadius: 24,
+              borderTopWidth: 1,
+              borderTopColor: tokens.borderDefault,
+              padding: 20,
+              paddingBottom: 36,
+            }}
+          >
+            <View style={{width: 48, height: 4, backgroundColor: tokens.borderStrong, borderRadius: 999, alignSelf: 'center', marginBottom: 20}} />
+            <Text style={{color: tokens.textPrimary, fontSize: 18, fontWeight: '900', marginBottom: 4}}>Appearance</Text>
+            <Text style={{color: tokens.textSecondary, fontSize: 12, marginBottom: 20}}>Choose how PropOS looks on this device.</Text>
+
+            <View style={{gap: 10}}>
+              {APPEARANCE_OPTIONS.map((opt) => {
+                const isSelected = preference === opt.value;
+                return (
+                  <Pressable
+                    key={opt.value}
+                    onPress={() => handleAppearanceSelect(opt.value)}
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      paddingHorizontal: 16,
+                      paddingVertical: 16,
+                      borderRadius: 14,
+                      borderWidth: 1.5,
+                      backgroundColor: isSelected ? `${tokens.brandPrimary}0D` : tokens.surfaceRaised,
+                      borderColor: isSelected ? tokens.brandPrimary : tokens.borderDefault,
+                    }}
+                  >
+                    <View
+                      style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: 20,
+                        backgroundColor: isSelected ? `${tokens.brandPrimary}1A` : tokens.surfacePage,
+                        borderWidth: 1,
+                        borderColor: isSelected ? `${tokens.brandPrimary}33` : tokens.borderDefault,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginRight: 14,
+                      }}
+                    >
+                      <Icon name={opt.icon} size={18} color={isSelected ? tokens.brandPrimary : tokens.textTertiary} />
+                    </View>
+
+                    <View style={{flex: 1}}>
+                      <Text style={{color: isSelected ? tokens.brandPrimary : tokens.textPrimary, fontWeight: '800', fontSize: 16}}>
+                        {opt.label}
+                      </Text>
+                      <Text style={{color: tokens.textSecondary, fontSize: 12, marginTop: 2}}>{opt.description}</Text>
+                    </View>
+
+                    {isSelected && (
+                      <View
+                        style={{
+                          width: 24,
+                          height: 24,
+                          borderRadius: 12,
+                          backgroundColor: tokens.brandPrimary,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <Icon name="check" size={13} color="#ffffff" />
+                      </View>
+                    )}
+                  </Pressable>
+                );
+              })}
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }

@@ -15,42 +15,35 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Feather';
 import {format, isToday, isYesterday} from 'date-fns';
 import {callsApi} from '../../api/calls';
-import {contactsApi} from '../../api/contacts';
 import {tasksApi} from '../../api/tasks';
 import type {CallsStackParamList} from '../../navigation/stacks/CallsStack';
+import {useTheme} from '../../theme/ThemeProvider';
 
 type RoutePropType = RouteProp<CallsStackParamList, 'CallDetail'>;
 type NavProp = NativeStackNavigationProp<any>;
 
-const SENTIMENT_COLORS: Record<string, { bg: string; text: string; dot: string }> = {
-  hot:     { bg: 'bg-danger/10 border-danger/20',     text: 'text-danger',     dot: 'bg-danger' },
-  warm:    { bg: 'bg-accent/10 border-accent/20',     text: 'text-accent',     dot: 'bg-accent' },
-  cold:    { bg: 'bg-info/10 border-info/20',         text: 'text-info',       dot: 'bg-info' },
-  neutral: { bg: 'bg-slate-500/10 border-slate-500/20', text: 'text-slate-400',  dot: 'bg-slate-500' },
+const SENTIMENT_COLORS: Record<string, {bg: string; text: string; dotColor: string}> = {
+  hot:     {bg: '#F43F5E1A', text: '#F43F5E', dotColor: '#F43F5E'},
+  warm:    {bg: '#F59E0B1A', text: '#F59E0B', dotColor: '#F59E0B'},
+  cold:    {bg: '#0EA5E91A', text: '#0EA5E9', dotColor: '#0EA5E9'},
+  neutral: {bg: '#64748B1A', text: '#94A3B8', dotColor: '#64748B'},
 };
 
 const WAVEFORM_BARS = [
   15, 25, 12, 35, 45, 20, 15, 30, 25, 42, 28, 14, 22, 38, 48, 30,
-  24, 18, 35, 40, 28, 30, 15, 20, 12, 26, 34, 44, 32, 22, 16, 28
+  24, 18, 35, 40, 28, 30, 15, 20, 12, 26, 34, 44, 32, 22, 16, 28,
 ];
 
-function pad(n: number) {
-  return String(n).padStart(2, '0');
-}
-
-function formatTime(seconds: number) {
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  return `${mins}:${pad(secs)}`;
-}
+function pad(n: number) { return String(n).padStart(2, '0'); }
+function formatTime(seconds: number) { return `${Math.floor(seconds / 60)}:${pad(Math.floor(seconds % 60))}`; }
 
 export function CallDetailScreen() {
+  const {tokens} = useTheme();
   const route = useRoute<RoutePropType>();
   const navigation = useNavigation<NavProp>();
   const insets = useSafeAreaInsets();
   const {callId} = route.params;
 
-  // Player state
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentSeconds, setCurrentSeconds] = useState(0);
   const [speed, setSpeed] = useState<1 | 1.5 | 2>(1);
@@ -62,7 +55,6 @@ export function CallDetailScreen() {
     queryFn: () => callsApi.get(callId).then(r => r.data),
   });
 
-  // Fetch tasks to check if tasks were confirmed
   const {data: tasksData} = useQuery({
     queryKey: ['tasks'],
     queryFn: () => tasksApi.list().then(r => r.data),
@@ -75,23 +67,18 @@ export function CallDetailScreen() {
       playTimer.current = setInterval(() => {
         setCurrentSeconds(sec => {
           const next = sec + 0.5 * speed;
-          if (next >= totalDuration) {
-            setIsPlaying(false);
-            return totalDuration;
-          }
+          if (next >= totalDuration) { setIsPlaying(false); return totalDuration; }
           return next;
         });
       }, 500);
     }
-    return () => {
-      if (playTimer.current) clearInterval(playTimer.current);
-    };
+    return () => { if (playTimer.current) clearInterval(playTimer.current); };
   }, [isPlaying, speed, totalDuration]);
 
   if (isLoading || !call) {
     return (
-      <View className="flex-1 bg-surface items-center justify-center">
-        <ActivityIndicator color="#10B981" size="large" />
+      <View style={{flex: 1, backgroundColor: tokens.surfacePage, alignItems: 'center', justifyContent: 'center'}}>
+        <ActivityIndicator color={tokens.brandPrimary} size="large" />
       </View>
     );
   }
@@ -100,7 +87,6 @@ export function CallDetailScreen() {
   const displayName = contact ? `${contact.first_name} ${contact.last_name}` : call.remote_number;
   const initials = contact ? `${contact.first_name.charAt(0)}${contact.last_name.charAt(0)}`.toUpperCase() : '?';
 
-  // Check if action items were confirmed (linked tasks exist)
   const linkedTasks = ((tasksData as any)?.data || (tasksData as any) || []).filter((t: any) => t.call_id === callId);
   const hasLinkedTasks = linkedTasks.length > 0;
   const hasUnconfirmedTasks = !hasLinkedTasks && (summary?.action_items ?? []).length > 0;
@@ -113,9 +99,7 @@ export function CallDetailScreen() {
       if (isToday(date)) return `Today, ${timeStr}`;
       if (isYesterday(date)) return `Yesterday, ${timeStr}`;
       return `${format(date, 'MMM d')}, ${timeStr}`;
-    } catch {
-      return 'Today, 10:14am';
-    }
+    } catch { return 'Today, 10:14am'; }
   };
 
   const handleShare = async () => {
@@ -133,194 +117,369 @@ ${(summary.key_points ?? []).map(p => `• ${p}`).join('\n')}
 
 Action Items:
 ${(summary.action_items ?? []).map(a => `- ${a}`).join('\n')}`;
-
     try {
-      await Share.share({
-        message: shareText,
-        title: `Call Summary - ${displayName}`,
-      });
-    } catch (e) {
-      console.warn('Share error', e);
-    }
+      await Share.share({message: shareText, title: `Call Summary - ${displayName}`});
+    } catch (e) { console.warn('Share error', e); }
   };
 
-  const handlePlayPause = () => {
-    Vibration.vibrate(15);
-    setIsPlaying(!isPlaying);
-  };
-
-  const handleSpeedToggle = () => {
-    Vibration.vibrate(10);
-    setSpeed(prev => (prev === 1 ? 1.5 : prev === 1.5 ? 2 : 1));
-  };
+  const handlePlayPause = () => { Vibration.vibrate(15); setIsPlaying(!isPlaying); };
+  const handleSpeedToggle = () => { Vibration.vibrate(10); setSpeed(prev => (prev === 1 ? 1.5 : prev === 1.5 ? 2 : 1)); };
 
   const sentimentData = summary ? (SENTIMENT_COLORS[summary.sentiment] || SENTIMENT_COLORS.neutral) : SENTIMENT_COLORS.neutral;
   const progress = currentSeconds / totalDuration;
 
   return (
-    <View style={{paddingTop: Math.max(insets.top, 16), paddingBottom: Math.max(insets.bottom, 16)}} className="flex-1 bg-surface">
-      
-      {/* ── HEADER ────────────────────────────────────────────────────── */}
-      <View className="px-6 pb-4 border-b border-slate-900 flex-row items-center justify-between">
-        <Pressable onPress={() => navigation.goBack()} className="w-10 h-10 items-center justify-center bg-surface-raised border border-slate-800 rounded-full">
-          <Icon name="arrow-left" size={18} color="#FAFAFA" />
+    <View
+      style={{
+        paddingTop: Math.max(insets.top, 16),
+        paddingBottom: Math.max(insets.bottom, 16),
+        flex: 1,
+        backgroundColor: tokens.surfacePage,
+      }}
+    >
+      {/* Header */}
+      <View
+        style={{
+          paddingHorizontal: 24,
+          paddingBottom: 16,
+          borderBottomWidth: 1,
+          borderBottomColor: tokens.borderDefault,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Pressable
+          onPress={() => navigation.goBack()}
+          style={{
+            width: 40,
+            height: 40,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: tokens.surfaceRaised,
+            borderWidth: 1,
+            borderColor: tokens.borderDefault,
+            borderRadius: 20,
+          }}
+        >
+          <Icon name="arrow-left" size={18} color={tokens.textPrimary} />
         </Pressable>
-
-        <Text className="text-white text-base font-bold uppercase tracking-wider">Call Details</Text>
-
-        <Pressable onPress={handleShare} className="w-10 h-10 items-center justify-center bg-surface-raised border border-slate-800 rounded-full">
-          <Icon name="share-2" size={18} color="#FAFAFA" />
+        <Text style={{color: tokens.textPrimary, fontSize: 16, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1}}>
+          Call Details
+        </Text>
+        <Pressable
+          onPress={handleShare}
+          style={{
+            width: 40,
+            height: 40,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: tokens.surfaceRaised,
+            borderWidth: 1,
+            borderColor: tokens.borderDefault,
+            borderRadius: 20,
+          }}
+        >
+          <Icon name="share-2" size={18} color={tokens.textPrimary} />
         </Pressable>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingHorizontal: 20, paddingTop: 20, paddingBottom: 30}} className="flex-1">
-        
-        {/* ── CONTACT PROFILE BANNER ─────────────────────────────────── */}
-        <View className="flex-row items-center justify-between bg-[#090d16]/60 border border-slate-805 border-slate-800/80 rounded-2xl p-4 mb-6">
-          <View className="flex-row items-center flex-1 mr-4">
-            <View className="w-12 h-12 rounded-full bg-brand-500/10 border border-brand-500/20 items-center justify-center mr-3.5">
-              <Text className="text-brand-500 font-bold text-sm">{initials}</Text>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{paddingHorizontal: 20, paddingTop: 20, paddingBottom: 30}}
+        style={{flex: 1}}
+      >
+        {/* Contact banner */}
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            backgroundColor: tokens.surfaceCard,
+            borderWidth: 1,
+            borderColor: tokens.borderDefault,
+            borderRadius: 16,
+            padding: 16,
+            marginBottom: 24,
+          }}
+        >
+          <View style={{flexDirection: 'row', alignItems: 'center', flex: 1, marginRight: 16}}>
+            <View
+              style={{
+                width: 48,
+                height: 48,
+                borderRadius: 24,
+                backgroundColor: `${tokens.brandPrimary}1A`,
+                borderWidth: 1,
+                borderColor: `${tokens.brandPrimary}33`,
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginRight: 14,
+              }}
+            >
+              <Text style={{color: tokens.brandPrimary, fontWeight: '700', fontSize: 14}}>{initials}</Text>
             </View>
-            <View className="flex-1">
-              <Text className="text-white text-base font-bold leading-5">{displayName}</Text>
-              <Text className="text-text-secondary text-[11px] font-mono mt-0.5">{formatCallTime(call.started_at)}</Text>
+            <View style={{flex: 1}}>
+              <Text style={{color: tokens.textPrimary, fontSize: 16, fontWeight: '700', lineHeight: 20}}>{displayName}</Text>
+              <Text style={{color: tokens.textSecondary, fontSize: 11, fontFamily: 'monospace', marginTop: 2}}>
+                {formatCallTime(call.started_at)}
+              </Text>
             </View>
           </View>
-
-          {/* Badges container */}
-          <View className="items-end gap-1.5">
+          <View style={{alignItems: 'flex-end', gap: 6}}>
             {summary?.sentiment && (
-              <View className={`px-2.5 py-1 rounded-full border ${sentimentData.bg}`}>
-                <Text className={`text-[9px] font-bold uppercase tracking-wider capitalize ${sentimentData.text}`}>
+              <View
+                style={{
+                  paddingHorizontal: 10,
+                  paddingVertical: 4,
+                  borderRadius: 999,
+                  backgroundColor: sentimentData.bg,
+                  borderWidth: 1,
+                  borderColor: `${sentimentData.dotColor}33`,
+                }}
+              >
+                <Text style={{color: sentimentData.text, fontSize: 9, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.8}}>
                   {summary.sentiment}
                 </Text>
               </View>
             )}
             {hasLinkedTasks && (
-              <View className="bg-brand-500/10 border border-brand-500/20 px-2 py-0.5 rounded-full flex-row items-center">
-                <Icon name="check-circle" size={9} color="#10B981" className="mr-1" />
-                <Text className="text-brand-500 text-[8px] font-bold uppercase tracking-wider">Tasks Created</Text>
+              <View
+                style={{
+                  backgroundColor: `${tokens.brandPrimary}1A`,
+                  borderWidth: 1,
+                  borderColor: `${tokens.brandPrimary}33`,
+                  paddingHorizontal: 8,
+                  paddingVertical: 2,
+                  borderRadius: 999,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 4,
+                }}
+              >
+                <Icon name="check-circle" size={9} color={tokens.brandPrimary} />
+                <Text style={{color: tokens.brandPrimary, fontSize: 8, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5}}>
+                  Tasks Created
+                </Text>
               </View>
             )}
           </View>
         </View>
 
-        {/* ── UNCONFIRMED TASKS WARNING BANNER ────────────────────────── */}
+        {/* Unconfirmed tasks warning */}
         {hasUnconfirmedTasks && (
-          <View className="bg-accent/15 border border-accent/20 rounded-2xl p-4 mb-6 flex-row items-center justify-between shadow-sm">
-            <View className="flex-1 mr-3">
-              <Text className="text-accent text-[10px] font-bold uppercase tracking-wider mb-1">Unsaved Tasks</Text>
-              <Text className="text-slate-300 text-xs leading-4">
+          <View
+            style={{
+              backgroundColor: '#F59E0B1A',
+              borderWidth: 1,
+              borderColor: '#F59E0B33',
+              borderRadius: 16,
+              padding: 16,
+              marginBottom: 24,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <View style={{flex: 1, marginRight: 12}}>
+              <Text style={{color: '#F59E0B', fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4}}>
+                Unsaved Tasks
+              </Text>
+              <Text style={{color: tokens.textSecondary, fontSize: 12, lineHeight: 16}}>
                 {summary?.action_items?.length} action items were not added as tasks.
               </Text>
             </View>
             <Pressable
-              onPress={() => {
-                Vibration.vibrate(15);
-                navigation.navigate('PostCallSummary', {callId});
-              }}
-              className="bg-accent rounded-xl px-4 py-2 shadow-sm"
-              style={({pressed}) => [{transform: [{scale: pressed ? 0.95 : 1}]}]}
+              onPress={() => { Vibration.vibrate(15); navigation.navigate('PostCallSummary', {callId}); }}
+              style={({pressed}) => [{
+                backgroundColor: '#F59E0B',
+                borderRadius: 12,
+                paddingHorizontal: 16,
+                paddingVertical: 8,
+                transform: [{scale: pressed ? 0.95 : 1}],
+              }]}
             >
-              <Text className="text-white text-xs font-bold uppercase tracking-wider">Review Now</Text>
+              <Text style={{color: '#FFFFFF', fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.8}}>
+                Review Now
+              </Text>
             </Pressable>
           </View>
         )}
 
-        {/* ── AUDIO PLAYER widget ─────────────────────────────────────── */}
-        <View className="bg-[#090d16]/85 border border-slate-800/80 rounded-2xl p-4 mb-6">
-          <View className="flex-row items-center gap-3">
+        {/* Audio player */}
+        <View
+          style={{
+            backgroundColor: tokens.surfaceCard,
+            borderWidth: 1,
+            borderColor: tokens.borderDefault,
+            borderRadius: 16,
+            padding: 16,
+            marginBottom: 24,
+          }}
+        >
+          <View style={{flexDirection: 'row', alignItems: 'center', gap: 12}}>
             <Pressable
               onPress={handlePlayPause}
-              className="w-10 h-10 rounded-full bg-brand-500 items-center justify-center shadow"
-              style={({pressed}) => [{transform: [{scale: pressed ? 0.95 : 1}]}]}
+              style={({pressed}) => [{
+                width: 40,
+                height: 40,
+                borderRadius: 20,
+                backgroundColor: tokens.brandPrimary,
+                alignItems: 'center',
+                justifyContent: 'center',
+                transform: [{scale: pressed ? 0.95 : 1}],
+              }]}
             >
               <Icon name={isPlaying ? 'pause' : 'play'} size={16} color="#FAFAFA" style={!isPlaying ? {marginLeft: 2} : {}} />
             </Pressable>
 
-            {/* Static Waveform */}
-            <View className="flex-1 flex-row items-center justify-between h-8 gap-[3px]">
+            {/* Waveform */}
+            <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', height: 32, gap: 3}}>
               {WAVEFORM_BARS.map((height, i) => {
                 const isFinished = (i / WAVEFORM_BARS.length) <= progress;
                 return (
                   <View
                     key={i}
-                    style={{height: height - 10}}
-                    className={`flex-1 rounded-full ${isFinished ? 'bg-brand-500' : 'bg-slate-800'}`}
+                    style={{
+                      height: height - 10,
+                      flex: 1,
+                      borderRadius: 999,
+                      backgroundColor: isFinished ? tokens.brandPrimary : tokens.borderStrong,
+                    }}
                   />
                 );
               })}
             </View>
 
-            <View className="items-end gap-0.5 min-w-[45px]">
-              <Text className="text-text-primary text-[10px] font-mono font-semibold">
+            <View style={{alignItems: 'flex-end', gap: 2, minWidth: 45}}>
+              <Text style={{color: tokens.textPrimary, fontSize: 10, fontFamily: 'monospace', fontWeight: '600'}}>
                 {formatTime(currentSeconds)}
               </Text>
-              <Pressable onPress={handleSpeedToggle} className="bg-surface-raised border border-slate-850 px-1.5 py-0.2 rounded">
-                <Text className="text-brand-500 text-[9px] font-bold">{speed}x</Text>
+              <Pressable
+                onPress={handleSpeedToggle}
+                style={{
+                  backgroundColor: tokens.surfaceRaised,
+                  borderWidth: 1,
+                  borderColor: tokens.borderDefault,
+                  paddingHorizontal: 6,
+                  paddingVertical: 2,
+                  borderRadius: 4,
+                }}
+              >
+                <Text style={{color: tokens.brandPrimary, fontSize: 9, fontWeight: '700'}}>{speed}x</Text>
               </Pressable>
             </View>
           </View>
         </View>
 
-        {/* ── AI SUMMARY CARD ─────────────────────────────────────────── */}
+        {/* AI Summary */}
         {summary && (
-          <View className="bg-[#090d16]/60 border-l-[3px] border-brand-500 border border-y border-r border-slate-800/60 rounded-r-2xl p-4 mb-6">
-            <Text className="text-brand-500 text-xs font-bold uppercase tracking-wider mb-2">✦ AI Summary</Text>
-            <Text className="text-text-primary text-xs leading-5">
+          <View
+            style={{
+              backgroundColor: tokens.surfaceCard,
+              borderLeftWidth: 3,
+              borderLeftColor: tokens.brandPrimary,
+              borderTopWidth: 1,
+              borderBottomWidth: 1,
+              borderRightWidth: 1,
+              borderTopColor: tokens.borderDefault,
+              borderBottomColor: tokens.borderDefault,
+              borderRightColor: tokens.borderDefault,
+              borderRadius: 8,
+              borderTopLeftRadius: 0,
+              borderBottomLeftRadius: 0,
+              padding: 16,
+              marginBottom: 24,
+            }}
+          >
+            <Text style={{color: tokens.brandPrimary, fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 8}}>
+              ✦ AI Summary
+            </Text>
+            <Text style={{color: tokens.textPrimary, fontSize: 12, lineHeight: 20}}>
               {summary.summary_text}
             </Text>
           </View>
         )}
 
-        {/* ── KEY POINTS ──────────────────────────────────────────────── */}
+        {/* Key Points */}
         {summary && (summary.key_points ?? []).length > 0 && (
-          <View className="mb-6">
-            <Text className="text-white text-sm font-bold uppercase tracking-wider mb-2.5">Key Points</Text>
-            <View className="border-t border-slate-900">
+          <View style={{marginBottom: 24}}>
+            <Text style={{color: tokens.textPrimary, fontSize: 14, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 10}}>
+              Key Points
+            </Text>
+            <View style={{borderTopWidth: 1, borderTopColor: tokens.borderSubtle}}>
               {summary.key_points.map((point, i) => (
-                <View key={i} className="flex-row items-center py-3 border-b border-slate-900">
-                  <View className="w-1.5 h-1.5 rounded-full bg-brand-500 mr-3" />
-                  <Text className="text-text-primary text-xs leading-5 flex-1">{point}</Text>
+                <View key={i} style={{flexDirection: 'row', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: tokens.borderSubtle}}>
+                  <View style={{width: 6, height: 6, borderRadius: 3, backgroundColor: tokens.brandPrimary, marginRight: 12}} />
+                  <Text style={{color: tokens.textPrimary, fontSize: 12, lineHeight: 20, flex: 1}}>{point}</Text>
                 </View>
               ))}
             </View>
           </View>
         )}
 
-        {/* ── ACTION ITEMS LIST ────────────────────────────────────────── */}
+        {/* Action Items */}
         {summary && (summary.action_items ?? []).length > 0 && (
-          <View className="mb-6">
-            <Text className="text-white text-sm font-bold uppercase tracking-wider mb-2.5">Action Items</Text>
-            <View className="gap-2.5">
-              {summary.action_items.map((item, i) => {
-                const confirmed = hasLinkedTasks; // if tasks already exist
-                return (
-                  <View key={i} className="flex-row items-center bg-[#090d16]/75 border border-slate-800/80 rounded-xl p-3">
-                    <View className={`w-5 h-5 rounded border items-center justify-center mr-3 ${
-                      confirmed ? 'bg-brand-500 border-brand-500' : 'border-slate-700 bg-surface'
-                    }`}>
-                      {confirmed && <Icon name="check" size={12} color="#FAFAFA" />}
-                    </View>
-                    <Text className={`text-xs leading-4 flex-1 ${confirmed ? 'text-slate-200' : 'text-text-tertiary'}`}>
-                      {item}
-                    </Text>
+          <View style={{marginBottom: 24}}>
+            <Text style={{color: tokens.textPrimary, fontSize: 14, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 10}}>
+              Action Items
+            </Text>
+            <View style={{gap: 10}}>
+              {summary.action_items.map((item, i) => (
+                <View
+                  key={i}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    backgroundColor: tokens.surfaceCard,
+                    borderWidth: 1,
+                    borderColor: tokens.borderDefault,
+                    borderRadius: 12,
+                    padding: 12,
+                  }}
+                >
+                  <View
+                    style={{
+                      width: 20,
+                      height: 20,
+                      borderRadius: 4,
+                      borderWidth: 1,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginRight: 12,
+                      backgroundColor: hasLinkedTasks ? tokens.brandPrimary : tokens.surfaceInput,
+                      borderColor: hasLinkedTasks ? tokens.brandPrimary : tokens.borderDefault,
+                    }}
+                  >
+                    {hasLinkedTasks && <Icon name="check" size={12} color="#FAFAFA" />}
                   </View>
-                );
-              })}
+                  <Text style={{fontSize: 12, lineHeight: 16, flex: 1, color: hasLinkedTasks ? tokens.textPrimary : tokens.textTertiary}}>
+                    {item}
+                  </Text>
+                </View>
+              ))}
             </View>
           </View>
         )}
 
-        {/* View transcript shortcut button */}
+        {/* View transcript */}
         <Pressable
           onPress={() => { Vibration.vibrate(10); navigation.navigate('CallTranscript', {callId}); }}
-          className="bg-surface-raised border border-slate-800 rounded-xl py-4 items-center w-full"
-          style={({pressed}) => [{transform: [{scale: pressed ? 0.98 : 1}]}]}
+          style={({pressed}) => [{
+            backgroundColor: tokens.surfaceRaised,
+            borderWidth: 1,
+            borderColor: tokens.borderDefault,
+            borderRadius: 12,
+            paddingVertical: 16,
+            alignItems: 'center',
+            width: '100%',
+            transform: [{scale: pressed ? 0.98 : 1}],
+          }]}
         >
-          <Text className="text-brand-500 font-bold text-xs uppercase tracking-widest">View Full Transcript</Text>
+          <Text style={{color: tokens.brandPrimary, fontWeight: '700', fontSize: 12, textTransform: 'uppercase', letterSpacing: 2}}>
+            View Full Transcript
+          </Text>
         </Pressable>
-
       </ScrollView>
     </View>
   );

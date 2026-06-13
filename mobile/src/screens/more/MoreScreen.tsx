@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-  useColorScheme,
-} from 'react-native';
+import {Pressable, ScrollView, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -16,21 +10,19 @@ import {useQuery} from '@tanstack/react-query';
 import {callsApi} from '../../api/calls';
 import {viewingsApi} from '../../api/viewings';
 import {isToday} from 'date-fns';
+import {useTheme} from '../../theme/ThemeProvider';
 
 export function MoreScreen() {
+  const {tokens} = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
-  const colorScheme = useColorScheme();
-  const isDarkMode = colorScheme !== 'light';
   const {user, clearAuth} = useAuthStore();
 
   const isManager = (user as any)?.roles?.some?.(
     (r: string) => r === 'admin' || r === 'manager',
   ) ?? false;
 
-  // Store for notifications
   const {unreadCount: notificationsUnread} = useNotificationStore();
 
-  // Fetch pending calls to show badge
   const {data: pendingCalls} = useQuery({
     queryKey: ['calls', 'pending-review'],
     queryFn: () =>
@@ -48,7 +40,6 @@ export function MoreScreen() {
         ),
   });
 
-  // Fetch today's viewings count
   const {data: todayViewings} = useQuery({
     queryKey: ['viewings', 'today'],
     queryFn: () => viewingsApi.today().then((r) => r.data),
@@ -57,7 +48,6 @@ export function MoreScreen() {
   const pendingCallsCount = pendingCalls?.length ?? 0;
   const viewingsCount = todayViewings?.length ?? 0;
 
-  // Custom list items configuration
   const menuItems = [
     {
       id: 'viewings',
@@ -66,7 +56,8 @@ export function MoreScreen() {
       icon: 'calendar',
       route: 'Viewings',
       badge: viewingsCount > 0 ? `${viewingsCount} today` : null,
-      badgeColor: 'bg-brand-500/10 text-brand-500',
+      badgeBg: `${tokens.brandPrimary}1A`,
+      badgeText: tokens.brandPrimary,
     },
     {
       id: 'calls',
@@ -75,7 +66,8 @@ export function MoreScreen() {
       icon: 'phone-call',
       route: 'Calls',
       badge: pendingCallsCount > 0 ? `${pendingCallsCount} pending` : null,
-      badgeColor: 'bg-amber-500/10 text-amber-500',
+      badgeBg: '#F59E0B1A',
+      badgeText: '#F59E0B',
     },
     {
       id: 'notifications',
@@ -84,7 +76,8 @@ export function MoreScreen() {
       icon: 'bell',
       route: 'Notifications',
       badge: notificationsUnread > 0 ? `${notificationsUnread} new` : null,
-      badgeColor: 'bg-emerald-500 text-white font-extrabold',
+      badgeBg: tokens.brandPrimary,
+      badgeText: '#FFFFFF',
     },
     {
       id: 'tenants',
@@ -92,6 +85,7 @@ export function MoreScreen() {
       subtitle: 'Active leases, rent schedules, and tenant profiles',
       icon: 'key',
       route: 'Tenants',
+      badge: null, badgeBg: '', badgeText: '',
     },
     {
       id: 'finance',
@@ -99,17 +93,17 @@ export function MoreScreen() {
       subtitle: 'Rent collections, expense tracking, and invoicing',
       icon: 'dollar-sign',
       route: 'Finance',
+      badge: null, badgeBg: '', badgeText: '',
     },
     ...(isManager
-      ? [
-          {
-            id: 'intel',
-            title: 'Intelligence & Intel',
-            subtitle: 'Manager analytics, agency performance, and insights',
-            icon: 'bar-chart-2',
-            route: 'Intelligence',
-          },
-        ]
+      ? [{
+          id: 'intel',
+          title: 'Intelligence & Intel',
+          subtitle: 'Manager analytics, agency performance, and insights',
+          icon: 'bar-chart-2',
+          route: 'Intelligence',
+          badge: null, badgeBg: '', badgeText: '',
+        }]
       : []),
     {
       id: 'profile',
@@ -117,94 +111,145 @@ export function MoreScreen() {
       subtitle: 'Account details, notifications preferences, and device auth',
       icon: 'user',
       route: 'Profile',
+      badge: null, badgeBg: '', badgeText: '',
     },
   ];
 
-  // Styling tokens
-  const styles = {
-    bgPage: isDarkMode ? 'bg-[#030712]' : 'bg-slate-50',
-    bgCard: isDarkMode ? 'bg-[#090d16]' : 'bg-white',
-    borderCard: isDarkMode ? 'border-zinc-800/80' : 'border-slate-100',
-    textPrimary: isDarkMode ? 'text-text-primary' : 'text-slate-900',
-    textSecondary: isDarkMode ? 'text-text-secondary' : 'text-slate-500',
-    textTertiary: isDarkMode ? 'text-text-tertiary' : 'text-slate-400',
-    borderHeader: isDarkMode ? 'border-zinc-900' : 'border-slate-200/60',
-  };
-
-  const handleLogout = async () => {
-    try {
-      clearAuth();
-    } catch (err) {
-      console.warn('Logout error', err);
-    }
+  const handleLogout = () => {
+    try { clearAuth(); } catch (err) { console.warn('Logout error', err); }
   };
 
   return (
-    <SafeAreaView className={`flex-1 ${styles.bgPage}`}>
+    <SafeAreaView style={{flex: 1, backgroundColor: tokens.surfacePage}}>
       {/* Header */}
-      <View className={`px-5 pt-4 pb-4 ${styles.bgCard} border-b ${styles.borderHeader} flex-row justify-between items-center z-10`}>
-        <Text className={`${styles.textPrimary} text-2xl font-extrabold tracking-tight`}>More Options</Text>
+      <View
+        style={{
+          paddingHorizontal: 20,
+          paddingTop: 16,
+          paddingBottom: 16,
+          backgroundColor: tokens.surfaceCard,
+          borderBottomWidth: 1,
+          borderBottomColor: tokens.borderDefault,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          zIndex: 10,
+        }}
+      >
+        <Text style={{color: tokens.textPrimary, fontSize: 24, fontWeight: '800', letterSpacing: -0.5}}>More Options</Text>
         <Pressable
           onPress={handleLogout}
-          className="bg-rose-500/10 border border-rose-500/20 px-3.5 py-1.5 rounded-full active:bg-rose-500/20"
+          style={{backgroundColor: '#F43F5E1A', borderWidth: 1, borderColor: '#F43F5E33', paddingHorizontal: 14, paddingVertical: 6, borderRadius: 999}}
         >
-          <Text className="text-rose-500 font-extrabold text-xs">Sign Out</Text>
+          <Text style={{color: '#F43F5E', fontWeight: '800', fontSize: 12}}>Sign Out</Text>
         </Pressable>
       </View>
 
-      <ScrollView className="flex-1 px-4 pt-4" showsVerticalScrollIndicator={false}>
+      <ScrollView style={{flex: 1, paddingHorizontal: 16, paddingTop: 16}} showsVerticalScrollIndicator={false}>
         {/* User Card */}
-        <View className={`p-4 rounded-2xl border ${styles.borderCard} ${styles.bgCard} mb-4 flex-row items-center`}>
-          <View className="w-12 h-12 rounded-full bg-brand-500/10 border border-brand-500/20 items-center justify-center mr-4">
-            <Text className="text-brand-500 font-black text-lg">
+        <View
+          style={{
+            padding: 16,
+            borderRadius: 16,
+            borderWidth: 1,
+            borderColor: tokens.borderDefault,
+            backgroundColor: tokens.surfaceCard,
+            marginBottom: 16,
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}
+        >
+          <View
+            style={{
+              width: 48,
+              height: 48,
+              borderRadius: 24,
+              backgroundColor: `${tokens.brandPrimary}1A`,
+              borderWidth: 1,
+              borderColor: `${tokens.brandPrimary}33`,
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginRight: 16,
+            }}
+          >
+            <Text style={{color: tokens.brandPrimary, fontWeight: '900', fontSize: 18}}>
               {(user?.first_name?.[0] || 'T').toUpperCase()}
             </Text>
           </View>
-          <View className="flex-1">
-            <Text className={`${styles.textPrimary} font-extrabold text-base`}>
+          <View style={{flex: 1}}>
+            <Text style={{color: tokens.textPrimary, fontWeight: '800', fontSize: 16}}>
               {user?.first_name} {user?.last_name}
             </Text>
-            <Text className={`${styles.textSecondary} text-xs font-semibold mt-0.5`}>
+            <Text style={{color: tokens.textSecondary, fontSize: 12, fontWeight: '600', marginTop: 2}}>
               {user?.email}
             </Text>
             {isManager && (
-              <View className="bg-brand-500/10 border border-brand-500/20 self-start px-2 py-0.5 rounded-md mt-1.5">
-                <Text className="text-brand-500 text-[9px] font-extrabold uppercase">Agency Manager</Text>
+              <View
+                style={{
+                  backgroundColor: `${tokens.brandPrimary}1A`,
+                  borderWidth: 1,
+                  borderColor: `${tokens.brandPrimary}33`,
+                  alignSelf: 'flex-start',
+                  paddingHorizontal: 8,
+                  paddingVertical: 2,
+                  borderRadius: 6,
+                  marginTop: 6,
+                }}
+              >
+                <Text style={{color: tokens.brandPrimary, fontSize: 9, fontWeight: '800', textTransform: 'uppercase'}}>Agency Manager</Text>
               </View>
             )}
           </View>
         </View>
 
-        {/* Menu Items List */}
-        <View className="mb-10">
+        {/* Menu Items */}
+        <View style={{marginBottom: 40}}>
           {menuItems.map((item) => (
             <Pressable
               key={item.id}
               onPress={() => navigation.navigate(item.route)}
-              className={`flex-row items-center border ${styles.borderCard} ${styles.bgCard} rounded-2xl p-4 mb-3 shadow-sm active:scale-[0.99] transition-transform`}
+              style={({pressed}) => ({
+                flexDirection: 'row',
+                alignItems: 'center',
+                borderWidth: 1,
+                borderColor: tokens.borderDefault,
+                backgroundColor: tokens.surfaceCard,
+                borderRadius: 16,
+                padding: 16,
+                marginBottom: 12,
+                opacity: pressed ? 0.85 : 1,
+              })}
             >
               {/* Icon */}
-              <View className={`w-10 h-10 rounded-full ${isDarkMode ? 'bg-zinc-900/50' : 'bg-slate-100'} items-center justify-center mr-4 border border-zinc-800/10`}>
-                <Icon name={item.icon} size={18} color={isDarkMode ? '#10B981' : '#10B981'} />
+              <View
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 20,
+                  backgroundColor: `${tokens.brandPrimary}1A`,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginRight: 16,
+                  borderWidth: 1,
+                  borderColor: `${tokens.brandPrimary}1A`,
+                }}
+              >
+                <Icon name={item.icon} size={18} color={tokens.brandPrimary} />
               </View>
 
-              {/* Title & Subtitle */}
-              <View className="flex-1 mr-2">
-                <Text className={`${styles.textPrimary} text-sm font-extrabold`}>
-                  {item.title}
-                </Text>
-                <Text className={`${styles.textSecondary} text-[11px] leading-4 mt-0.5`}>
-                  {item.subtitle}
-                </Text>
+              {/* Text */}
+              <View style={{flex: 1, marginRight: 8}}>
+                <Text style={{color: tokens.textPrimary, fontSize: 14, fontWeight: '800'}}>{item.title}</Text>
+                <Text style={{color: tokens.textSecondary, fontSize: 11, lineHeight: 16, marginTop: 2}}>{item.subtitle}</Text>
               </View>
 
-              {/* Badge or Arrow */}
+              {/* Badge or chevron */}
               {item.badge ? (
-                <View className={`px-2.5 py-1 rounded-full ${item.badgeColor} mr-1`}>
-                  <Text className="text-[10px] font-black">{item.badge}</Text>
+                <View style={{paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999, backgroundColor: item.badgeBg, marginRight: 4}}>
+                  <Text style={{fontSize: 10, fontWeight: '900', color: item.badgeText}}>{item.badge}</Text>
                 </View>
               ) : (
-                <Icon name="chevron-right" size={16} color={isDarkMode ? '#3f3f46' : '#cbd5e1'} />
+                <Icon name="chevron-right" size={16} color={tokens.borderStrong} />
               )}
             </Pressable>
           ))}

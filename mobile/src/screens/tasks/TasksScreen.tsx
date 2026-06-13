@@ -10,22 +10,22 @@ import {
   Alert,
   Animated,
   PanResponder,
-  useColorScheme,
   ScrollView,
   Vibration,
 } from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {tasksApi} from '../../api/tasks';
 import {contactsApi} from '../../api/contacts';
 import {Task} from '../../types';
-import {format, isToday, isPast, isTomorrow, addDays, addHours, parseISO} from 'date-fns';
+import {format, isToday, isPast, isTomorrow, addDays, addHours} from 'date-fns';
 import Icon from 'react-native-vector-icons/Feather';
 import {useNavigation} from '@react-navigation/native';
+import {useTheme} from '../../theme/ThemeProvider';
+import {ThemeTokens} from '../../theme/tokens';
 
 type SegmentType = 'My Day' | 'Upcoming' | 'All';
 
-// Pulsing Overdue Header Component
 function PulsingOverdueHeader({title}: {title: string}) {
   const pulseAnim = useRef(new Animated.Value(0.4)).current;
 
@@ -39,28 +39,31 @@ function PulsingOverdueHeader({title}: {title: string}) {
   }, []);
 
   return (
-    <View className="px-4 py-3 mt-4 flex-row items-center border-l-[4px] border-l-danger bg-danger/5">
-      <Animated.View style={{opacity: pulseAnim}} className="w-1.5 h-1.5 rounded-full bg-danger mr-2" />
-      <Text className="text-danger text-xs font-black uppercase tracking-wider">
+    <View style={{paddingHorizontal: 16, paddingVertical: 12, marginTop: 16, flexDirection: 'row', alignItems: 'center', borderLeftWidth: 4, borderLeftColor: '#F43F5E', backgroundColor: '#F43F5E0D'}}>
+      <Animated.View style={{opacity: pulseAnim, width: 6, height: 6, borderRadius: 3, backgroundColor: '#F43F5E', marginRight: 8}} />
+      <Text style={{color: '#F43F5E', fontSize: 11, fontWeight: '900', textTransform: 'uppercase', letterSpacing: 1.5}}>
         {title}
       </Text>
     </View>
   );
 }
 
-// Custom Task Row with Pan Gestures and Checkbox Animation
+const PRIORITY_COLOR: Record<string, string> = {
+  low: '#10B981', medium: '#F59E0B', high: '#EF4444', urgent: '#7C3AED',
+};
+
 function TaskRowItem({
   task,
   onComplete,
   onSnooze,
   onTap,
-  isDark,
+  tokens,
 }: {
   task: Task;
   onComplete: () => void;
   onSnooze: () => void;
   onTap: () => void;
-  isDark: boolean;
+  tokens: ThemeTokens;
 }) {
   const overdue = task.due_at && isPast(new Date(task.due_at)) && task.status !== 'completed';
   const isCompleted = task.status === 'completed';
@@ -71,22 +74,12 @@ function TaskRowItem({
   const translateX = useRef(new Animated.Value(0)).current;
   const currentTranslation = useRef(0);
 
-  // Checkbox complete animation
   const handleCheckboxPress = () => {
     if (isCompleted || completing) return;
     setCompleting(true);
-
-    Animated.timing(checkScale, {
-      toValue: 1,
-      duration: 150,
-      useNativeDriver: true,
-    }).start(() => {
+    Animated.timing(checkScale, {toValue: 1, duration: 150, useNativeDriver: true}).start(() => {
       setTimeout(() => {
-        Animated.timing(rowOpacity, {
-          toValue: 0.5,
-          duration: 300,
-          useNativeDriver: true,
-        }).start(() => {
+        Animated.timing(rowOpacity, {toValue: 0.5, duration: 300, useNativeDriver: true}).start(() => {
           onComplete();
         });
       }, 300);
@@ -94,12 +87,7 @@ function TaskRowItem({
   };
 
   const snap = (toValue: number) => {
-    Animated.spring(translateX, {
-      toValue,
-      useNativeDriver: true,
-      bounciness: 4,
-      speed: 12,
-    }).start(() => {
+    Animated.spring(translateX, {toValue, useNativeDriver: true, bounciness: 4, speed: 12}).start(() => {
       currentTranslation.current = toValue;
     });
   };
@@ -107,93 +95,60 @@ function TaskRowItem({
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => false,
-      onMoveShouldSetPanResponder: (_, gestureState) => {
-        const {dx, dy} = gestureState;
-        return Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 10;
-      },
-      onPanResponderMove: (_, gestureState) => {
-        let newX = currentTranslation.current + gestureState.dx;
-        // Swipe left reveals snooze, Swipe right reveals complete
+      onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dx) > Math.abs(g.dy) && Math.abs(g.dx) > 10,
+      onPanResponderMove: (_, g) => {
+        let newX = currentTranslation.current + g.dx;
         if (newX > 160) newX = 160;
         if (newX < -100) newX = -100;
         translateX.setValue(newX);
       },
-      onPanResponderRelease: (_, gestureState) => {
-        if (gestureState.dx > 125) {
-          // Swipe Right complete gesture
-          Animated.timing(translateX, {
-            toValue: 400,
-            duration: 200,
-            useNativeDriver: true,
-          }).start(() => {
-            handleCheckboxPress();
-          });
-        } else if (gestureState.dx < -55) {
-          // Swipe Left snooze gesture
+      onPanResponderRelease: (_, g) => {
+        if (g.dx > 125) {
+          Animated.timing(translateX, {toValue: 400, duration: 200, useNativeDriver: true}).start(() => handleCheckboxPress());
+        } else if (g.dx < -55) {
           snap(-80);
         } else {
           snap(0);
         }
       },
-      onPanResponderTerminate: () => {
-        snap(0);
-      },
+      onPanResponderTerminate: () => snap(0),
     })
   ).current;
 
-  const priorityColor = {
-    low: 'bg-emerald-500',
-    medium: 'bg-amber-500',
-    high: 'bg-red-500',
-    urgent: 'bg-purple-600',
-  }[task.priority || 'medium'];
-
-  const bgCard = isDark ? 'bg-[#090d16]' : 'bg-white';
-  const borderCard = isDark ? 'border-zinc-800/80' : 'border-slate-200/50';
-  const textPrimary = isDark ? 'text-text-primary' : 'text-slate-900';
-  const textSecondary = isDark ? 'text-text-secondary' : 'text-slate-500';
+  const priorityDotColor = PRIORITY_COLOR[task.priority || 'medium'];
 
   return (
-    <View className="relative overflow-hidden mb-3 mx-4 rounded-2xl bg-[#090d16] border border-slate-800/60">
-      {/* Swipe Right Background (Complete) */}
-      <View className="absolute left-0 top-0 bottom-0 right-0 bg-emerald-600 flex-row items-center pl-5 z-0 rounded-2xl">
+    <View style={{position: 'relative', overflow: 'hidden', marginBottom: 10, marginHorizontal: 16, borderRadius: 14, backgroundColor: tokens.surfaceCard, borderWidth: 1, borderColor: tokens.borderDefault, shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: {width: 0, height: 2}, elevation: 2}}>
+      {/* Swipe right: complete */}
+      <View style={{position: 'absolute', left: 0, top: 0, bottom: 0, right: 0, backgroundColor: '#10B981', flexDirection: 'row', alignItems: 'center', paddingLeft: 20, zIndex: 0, borderRadius: 16}}>
         <Icon name="check" size={20} color="#ffffff" />
-        <Text className="text-white text-xs font-black ml-2">Complete</Text>
+        <Text style={{color: '#ffffff', fontSize: 11, fontWeight: '900', marginLeft: 8}}>Complete</Text>
       </View>
 
-      {/* Swipe Left Background (Snooze) */}
-      <View className="absolute right-0 top-0 bottom-0 w-[80px] bg-amber-500 flex-row items-center justify-center z-0 rounded-2xl">
+      {/* Swipe left: snooze */}
+      <View style={{position: 'absolute', right: 0, top: 0, bottom: 0, width: 80, backgroundColor: '#F59E0B', alignItems: 'center', justifyContent: 'center', zIndex: 0, borderRadius: 16}}>
         <Pressable
-          onPress={() => {
-            snap(0);
-            onSnooze();
-          }}
-          className="w-full h-full items-center justify-center active:bg-amber-600"
+          onPress={() => { snap(0); onSnooze(); }}
+          style={{width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}
         >
           <Icon name="clock" size={18} color="#ffffff" />
-          <Text className="text-white text-[10px] font-black mt-1">Snooze</Text>
+          <Text style={{color: '#ffffff', fontSize: 10, fontWeight: '900', marginTop: 4}}>Snooze</Text>
         </Pressable>
       </View>
 
-      {/* Content Body */}
+      {/* Animated content body */}
       <Animated.View
-        style={{
-          transform: [{translateX}],
-          opacity: rowOpacity,
-        }}
+        style={{transform: [{translateX}], opacity: rowOpacity, backgroundColor: tokens.surfaceCard, borderWidth: 1, borderColor: tokens.borderDefault, borderRadius: 16, padding: 16, flexDirection: 'row', alignItems: 'center', zIndex: 10, width: '100%'}}
         {...panResponder.panHandlers}
-        className={`${bgCard} ${borderCard} border rounded-2xl p-4 flex-row items-center z-10 w-full`}
       >
         {/* Checkbox */}
         <Pressable
           onPress={handleCheckboxPress}
-          className={`w-6 h-6 rounded-full border-2 items-center justify-center mr-3.5 ${
-            isCompleted || completing
-              ? 'bg-brand-500 border-brand-500'
-              : isDark
-              ? 'border-zinc-700 bg-transparent'
-              : 'border-slate-350 bg-transparent'
-          }`}
+          style={{
+            width: 24, height: 24, borderRadius: 12, borderWidth: 2, alignItems: 'center', justifyContent: 'center', marginRight: 14,
+            backgroundColor: (isCompleted || completing) ? tokens.brandPrimary : 'transparent',
+            borderColor: (isCompleted || completing) ? tokens.brandPrimary : tokens.borderStrong,
+          }}
         >
           {(isCompleted || completing) && (
             <Animated.View style={{transform: [{scale: isCompleted ? 1 : checkScale}]}}>
@@ -202,105 +157,89 @@ function TaskRowItem({
           )}
         </Pressable>
 
-        {/* Title / Details */}
-        <Pressable onPress={onTap} className="flex-1">
-          <View className="flex-row items-center flex-wrap gap-1.5 mb-1">
+        {/* Title & details */}
+        <Pressable onPress={onTap} style={{flex: 1}}>
+          <View style={{flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 6, marginBottom: 4}}>
             <Text
-              className={`text-sm leading-5 font-bold ${
-                isCompleted
-                  ? 'line-through text-slate-500/70'
-                  : overdue
-                  ? 'text-danger'
-                  : textPrimary
-              }`}
+              style={{fontSize: 14, lineHeight: 20, fontWeight: '700', color: isCompleted ? tokens.textDisabled : overdue ? '#F43F5E' : tokens.textPrimary, textDecorationLine: isCompleted ? 'line-through' : 'none'}}
               numberOfLines={2}
             >
               {task.title}
             </Text>
             {overdue && (
-              <View className="bg-danger/10 px-1.5 py-0.5 rounded">
-                <Text className="text-danger text-[9px] font-black uppercase">Overdue</Text>
+              <View style={{backgroundColor: '#F43F5E1A', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4}}>
+                <Text style={{color: '#F43F5E', fontSize: 9, fontWeight: '900', textTransform: 'uppercase'}}>Overdue</Text>
               </View>
             )}
           </View>
 
-          {/* Secondary info */}
-          <View className="flex-row items-center gap-2">
+          <View style={{flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginTop: 2}}>
             {task.due_at && (
-              <Text className={`text-[10px] font-mono font-bold ${overdue ? 'text-danger' : textSecondary}`}>
-                ⏰ {format(new Date(task.due_at), 'd MMM, h:mm a')}
-              </Text>
+              <View style={{flexDirection: 'row', alignItems: 'center', gap: 3}}>
+                <Icon name="clock" size={10} color={overdue ? tokens.dangerText : tokens.textTertiary} />
+                <Text style={{fontSize: 11, fontWeight: '600', color: overdue ? tokens.dangerText : tokens.textSecondary}}>
+                  {format(new Date(task.due_at), 'd MMM, h:mm a')}
+                </Text>
+              </View>
             )}
             {task.contact && (
-              <Text className={`text-[10px] font-bold ${textSecondary}`} numberOfLines={1}>
-                👤 {task.contact.first_name} {task.contact.last_name}
-              </Text>
+              <View style={{flexDirection: 'row', alignItems: 'center', gap: 3}}>
+                <Icon name="user" size={10} color={tokens.textTertiary} />
+                <Text style={{fontSize: 11, fontWeight: '600', color: tokens.textSecondary}} numberOfLines={1}>
+                  {task.contact.first_name} {task.contact.last_name}
+                </Text>
+              </View>
             )}
             {task.source === 'call_summary' && (
-              <Icon name="phone" size={10} color={isDark ? '#F59E0B' : '#D97706'} />
+              <View style={{flexDirection: 'row', alignItems: 'center', gap: 3}}>
+                <Icon name="phone" size={10} color={tokens.brandAccent} />
+                <Text style={{fontSize: 10, color: tokens.brandAccent, fontWeight: '600'}}>AI generated</Text>
+              </View>
             )}
           </View>
         </Pressable>
 
         {/* Priority dot */}
-        <View className={`w-2 h-2 rounded-full ml-2.5 ${priorityColor}`} />
+        <View style={{width: 8, height: 8, borderRadius: 4, backgroundColor: priorityDotColor, marginLeft: 10}} />
       </Animated.View>
     </View>
   );
 }
 
 export function TasksScreen() {
+  const {tokens} = useTheme();
+  const insets = useSafeAreaInsets();
   const queryClient = useQueryClient();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme !== 'light';
   const navigation = useNavigation();
 
-  // Active filters and views
   const [activeSegment, setActiveSegment] = useState<SegmentType>('My Day');
   const [showCompleted, setShowCompleted] = useState(false);
-
-  // Selected details sheet task
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [taskDetailVisible, setTaskDetailVisible] = useState(false);
   const [editTitle, setEditTitle] = useState('');
-
-  // Quick Add Sheet states
   const [quickAddVisible, setQuickAddVisible] = useState(false);
   const [quickText, setQuickText] = useState('');
-
-  // Snooze options modal
   const [snoozeTask, setSnoozeTask] = useState<Task | null>(null);
   const [snoozeVisible, setSnoozeVisible] = useState(false);
 
-  // Fetch tasks
   const {data: tasks, isLoading, refetch} = useQuery({
     queryKey: ['tasks'],
     queryFn: () => tasksApi.list().then((r) => r.data),
   });
 
-  // Fetch contacts for NLP smart parsing match
   const {data: contacts} = useQuery({
     queryKey: ['contacts'],
     queryFn: () => contactsApi.list().then((r) => r.data),
   });
 
-  // Task Mutations
   const updateTask = useMutation({
     mutationFn: ({id, status, due_at, title}: {id: number; status?: string; due_at?: string; title?: string}) =>
       tasksApi.update(id, {status, due_at, title}),
-    onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['tasks']});
-      if (selectedTask) {
-        // Refresh detail view state
-        const updated = tasks?.find((t) => t.id === selectedTask.id);
-        if (updated) setSelectedTask(updated);
-      }
-    },
+    onSuccess: () => queryClient.invalidateQueries({queryKey: ['tasks']}),
   });
 
   const createTask = useMutation({
-    mutationFn: (payload: {title: string; contact_id?: number; due_at?: string}) =>
-      tasksApi.store(payload),
+    mutationFn: (payload: {title: string; contact_id?: number; due_at?: string}) => tasksApi.store(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: ['tasks']});
       setQuickText('');
@@ -317,75 +256,53 @@ export function TasksScreen() {
     },
   });
 
-  // Overdue count for header badge
-  const overdueCount = useMemo(() => {
-    return tasks?.filter(
-      (t) => t.status !== 'completed' && t.due_at && isPast(new Date(t.due_at))
-    ).length || 0;
-  }, [tasks]);
+  const overdueCount = useMemo(
+    () => tasks?.filter((t) => t.status !== 'completed' && t.due_at && isPast(new Date(t.due_at))).length || 0,
+    [tasks]
+  );
 
-  // Smart Entity Parsing for Inline Highlights
   const parsedNLP = useMemo(() => {
     if (!quickText) return {words: [], contact: null, date: null};
     const words = quickText.split(' ');
     const contactsList = contacts?.data ?? [];
-    
-    // Match Contact
     const matchedContact = contactsList.find((c) =>
-      words.some(
-        (w) =>
-          w.toLowerCase().replace(/[^a-zA-Z]/g, '') === c.first_name.toLowerCase() ||
-          w.toLowerCase().replace(/[^a-zA-Z]/g, '') === c.last_name.toLowerCase()
-      )
+      words.some((w) => {
+        const clean = w.toLowerCase().replace(/[^a-zA-Z]/g, '');
+        return clean === c.first_name.toLowerCase() || clean === c.last_name.toLowerCase();
+      })
     );
-
-    // Match Date
     let matchedDate: string | null = null;
-    const lowerText = quickText.toLowerCase();
-    if (lowerText.includes('tomorrow')) matchedDate = 'Tomorrow';
-    else if (lowerText.includes('today')) matchedDate = 'Today';
-    else if (lowerText.includes('next week')) matchedDate = 'Next Week';
-    else if (lowerText.includes('pm') || lowerText.includes('am')) matchedDate = 'Time Specified';
-
+    const lower = quickText.toLowerCase();
+    if (lower.includes('tomorrow')) matchedDate = 'Tomorrow';
+    else if (lower.includes('today')) matchedDate = 'Today';
+    else if (lower.includes('next week')) matchedDate = 'Next Week';
+    else if (lower.includes('pm') || lower.includes('am')) matchedDate = 'Time Specified';
     return {words, contact: matchedContact || null, date: matchedDate};
   }, [quickText, contacts]);
 
-  // Generate sections based on active Segment SegmentType
   const sectionsList = useMemo(() => {
     const list = tasks ?? [];
-    const overdueList = list.filter(
-      (t) => t.status !== 'completed' && t.due_at && isPast(new Date(t.due_at))
-    );
+    const overdueList = list.filter((t) => t.status !== 'completed' && t.due_at && isPast(new Date(t.due_at)));
 
     if (activeSegment === 'My Day') {
-      const todayList = list.filter(
-        (t) => t.status !== 'completed' && t.due_at && isToday(new Date(t.due_at))
-      );
-      const nodateList = list.filter(
-        (t) => t.status !== 'completed' && !t.due_at
-      );
-
+      const todayList = list.filter((t) => t.status !== 'completed' && t.due_at && isToday(new Date(t.due_at)));
+      const nodateList = list.filter((t) => t.status !== 'completed' && !t.due_at);
       return [
         ...(overdueList.length > 0 ? [{title: 'Overdue', data: overdueList, type: 'overdue' as const}] : []),
         {title: 'Today', data: [...todayList, ...nodateList], type: 'today' as const},
       ];
     }
-
     if (activeSegment === 'Upcoming') {
-      const tomorrowList = list.filter(
-        (t) => t.status !== 'completed' && t.due_at && isTomorrow(new Date(t.due_at))
-      );
+      const tomorrowList = list.filter((t) => t.status !== 'completed' && t.due_at && isTomorrow(new Date(t.due_at)));
       const thisWeekList = list.filter((t) => {
         if (t.status === 'completed' || !t.due_at) return false;
         const d = new Date(t.due_at);
-        const limit = addDays(new Date(), 7);
-        return d > addDays(new Date(), 1) && d <= limit;
+        return d > addDays(new Date(), 1) && d <= addDays(new Date(), 7);
       });
       const laterList = list.filter((t) => {
         if (t.status === 'completed' || !t.due_at) return false;
         return new Date(t.due_at) > addDays(new Date(), 7);
       });
-
       return [
         ...(overdueList.length > 0 ? [{title: 'Overdue', data: overdueList, type: 'overdue' as const}] : []),
         {title: 'Tomorrow', data: tomorrowList, type: 'tomorrow' as const},
@@ -393,11 +310,8 @@ export function TasksScreen() {
         {title: 'Later', data: laterList, type: 'later' as const},
       ];
     }
-
-    // "All" segment
     const pendingList = list.filter((t) => t.status !== 'completed');
     const completedList = list.filter((t) => t.status === 'completed');
-
     return [
       ...(overdueList.length > 0 ? [{title: 'Overdue', data: overdueList, type: 'overdue' as const}] : []),
       {title: 'Pending Tasks', data: pendingList, type: 'pending' as const},
@@ -407,121 +321,95 @@ export function TasksScreen() {
     ];
   }, [tasks, activeSegment, showCompleted]);
 
-  // Handle Quick Add Action
   const handleQuickAdd = () => {
     if (!quickText.trim()) return;
-
-    let dueTime: Date | undefined;
+    let dueTime = new Date();
     const lower = quickText.toLowerCase();
-
-    if (lower.includes('tomorrow')) {
-      dueTime = addDays(new Date(), 1);
-      dueTime.setHours(9, 0, 0, 0);
-    } else if (lower.includes('next week')) {
-      dueTime = addDays(new Date(), 7);
-      dueTime.setHours(9, 0, 0, 0);
-    } else {
-      dueTime = new Date();
-      dueTime.setHours(18, 0, 0, 0); // End of today default
-    }
-
-    createTask.mutate({
-      title: quickText.trim(),
-      contact_id: parsedNLP.contact?.id,
-      due_at: dueTime.toISOString(),
-    });
+    if (lower.includes('tomorrow')) { dueTime = addDays(new Date(), 1); dueTime.setHours(9, 0, 0, 0); }
+    else if (lower.includes('next week')) { dueTime = addDays(new Date(), 7); dueTime.setHours(9, 0, 0, 0); }
+    else { dueTime.setHours(18, 0, 0, 0); }
+    createTask.mutate({title: quickText.trim(), contact_id: parsedNLP.contact?.id, due_at: dueTime.toISOString()});
   };
 
-  // Snooze action
   const handleSnoozeCommit = (option: '1h' | 'tomorrow' | 'week') => {
     if (!snoozeTask) return;
-
     let targetTime = new Date();
-    if (option === '1h') {
-      targetTime = addHours(new Date(), 1);
-    } else if (option === 'tomorrow') {
-      targetTime = addDays(new Date(), 1);
-      targetTime.setHours(9, 0, 0, 0);
-    } else if (option === 'week') {
-      targetTime = addDays(new Date(), 7);
-      targetTime.setHours(9, 0, 0, 0);
-    }
-
+    if (option === '1h') targetTime = addHours(new Date(), 1);
+    else if (option === 'tomorrow') { targetTime = addDays(new Date(), 1); targetTime.setHours(9, 0, 0, 0); }
+    else { targetTime = addDays(new Date(), 7); targetTime.setHours(9, 0, 0, 0); }
     updateTask.mutate({id: snoozeTask.id, due_at: targetTime.toISOString()});
     setSnoozeVisible(false);
     setSnoozeTask(null);
   };
 
-  // Inline Title Save
   const handleSaveTitle = () => {
     if (selectedTask && editTitle.trim() && editTitle !== selectedTask.title) {
       updateTask.mutate({id: selectedTask.id, title: editTitle.trim()});
     }
   };
 
-  // Styling selectors
-  const bgScreen = isDark ? 'bg-[#030712]' : 'bg-slate-50';
-  const bgCard = isDark ? 'bg-[#090d16]' : 'bg-white';
-  const bgInput = isDark ? 'bg-[#111827]' : 'bg-slate-100';
-  const borderHeader = isDark ? 'border-zinc-800/85' : 'border-slate-200/60';
-  const textPrimary = isDark ? 'text-text-primary' : 'text-slate-900';
-  const textSecondary = isDark ? 'text-text-secondary' : 'text-slate-550';
+  const sheetStyle = {
+    backgroundColor: tokens.surfaceCard,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    borderTopWidth: 1,
+    borderTopColor: tokens.borderDefault,
+    padding: 20,
+    paddingBottom: 32,
+  };
+
+  const inputStyle = {
+    backgroundColor: tokens.surfaceInput,
+    color: tokens.textPrimary,
+    borderWidth: 1,
+    borderColor: tokens.borderDefault,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    fontSize: 14,
+  };
 
   return (
-    <SafeAreaView className={`flex-1 ${bgScreen}`}>
-      {/* Header */}
-      <View className={`px-4 pt-4 pb-3 ${bgCard} border-b ${borderHeader} z-10 flex-row justify-between items-center`}>
-        <View className="flex-row items-center gap-2">
-          <Text className={`${textPrimary} text-2xl font-black tracking-tight`}>Tasks</Text>
+    <SafeAreaView style={{flex: 1, backgroundColor: tokens.surfacePage}}>
+      {/* Header — matches ContactsScreen style */}
+      <View style={{paddingHorizontal: 20, paddingTop: 12, paddingBottom: 12, backgroundColor: tokens.surfaceCard, borderBottomWidth: 1, borderBottomColor: tokens.borderDefault, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+        <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
+          <Text style={{color: tokens.textPrimary, fontSize: 22, fontWeight: '700', letterSpacing: -0.5}}>Tasks</Text>
           {overdueCount > 0 && (
-            <View className="bg-danger px-2.5 py-0.5 rounded-full">
-              <Text className="text-white text-[10px] font-black">{overdueCount} Overdue</Text>
+            <View style={{backgroundColor: tokens.dangerBg, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6, borderWidth: 1, borderColor: tokens.dangerBorder}}>
+              <Text style={{color: tokens.dangerText, fontSize: 10, fontWeight: '800'}}>{overdueCount} overdue</Text>
             </View>
           )}
         </View>
 
         {activeSegment === 'All' && (
           <Pressable
-            onPress={() => {
-              Vibration.vibrate(10);
-              setShowCompleted(!showCompleted);
-            }}
-            className="px-3 py-1.5 rounded-lg border border-brand-500/20 bg-brand-500/5 active:bg-brand-500/10 flex-row items-center gap-1.5"
+            onPress={() => { Vibration.vibrate(10); setShowCompleted(!showCompleted); }}
+            style={{paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, borderWidth: 1, borderColor: `${tokens.brandPrimary}33`, backgroundColor: `${tokens.brandPrimary}0D`, flexDirection: 'row', alignItems: 'center', gap: 6}}
           >
-            <Icon name={showCompleted ? 'eye-off' : 'eye'} size={12} color="#10B981" />
-            <Text className="text-brand-500 text-xs font-bold">
-              {showCompleted ? 'Hide Completed' : 'Show Completed'}
+            <Icon name={showCompleted ? 'eye-off' : 'eye'} size={12} color={tokens.brandPrimary} />
+            <Text style={{color: tokens.brandPrimary, fontSize: 12, fontWeight: '700'}}>
+              {showCompleted ? 'Hide done' : 'Show done'}
             </Text>
           </Pressable>
         )}
       </View>
 
-      {/* Segmented Pill Toggle */}
-      <View className={`flex-row mx-4 mt-3 mb-2 rounded-xl p-1 ${
-        isDark ? 'bg-zinc-900 border border-zinc-850' : 'bg-slate-250/60'
-      }`}>
+      {/* Segment toggle — pill style matching ContactsScreen filter chips */}
+      <View style={{flexDirection: 'row', marginHorizontal: 16, marginTop: 14, marginBottom: 6, gap: 8}}>
         {(['My Day', 'Upcoming', 'All'] as const).map((seg) => {
           const isActive = activeSegment === seg;
           return (
             <Pressable
               key={seg}
-              onPress={() => {
-                Vibration.vibrate(10);
-                setActiveSegment(seg);
+              onPress={() => { Vibration.vibrate(10); setActiveSegment(seg); }}
+              style={{
+                paddingHorizontal: 16, paddingVertical: 7, borderRadius: 20, borderWidth: 1,
+                backgroundColor: isActive ? `${tokens.brandPrimary}1A` : tokens.surfaceCard,
+                borderColor: isActive ? `${tokens.brandPrimary}40` : tokens.borderDefault,
               }}
-              className={`flex-1 py-2 rounded-lg items-center ${
-                isActive
-                  ? isDark
-                    ? 'bg-[#090d16] border border-zinc-800 shadow-sm'
-                    : 'bg-white shadow-sm'
-                  : 'bg-transparent'
-              }`}
             >
-              <Text
-                className={`text-xs font-black ${
-                  isActive ? textPrimary : isDark ? 'text-text-secondary' : 'text-slate-500'
-                }`}
-              >
+              <Text style={{fontSize: 13, fontWeight: '700', color: isActive ? tokens.brandPrimary : tokens.textSecondary}}>
                 {seg}
               </Text>
             </Pressable>
@@ -529,14 +417,14 @@ export function TasksScreen() {
         })}
       </View>
 
-      {/* Task List */}
+      {/* Task list */}
       {isLoading ? (
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator color="#10b981" size="large" />
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+          <ActivityIndicator color={tokens.brandPrimary} size="large" />
         </View>
       ) : (
         <FlatList
-          className="flex-1 pt-3"
+          style={{flex: 1, paddingTop: 12}}
           contentContainerStyle={{paddingBottom: 80}}
           data={sectionsList.flatMap((s) => [
             {type: 'header' as const, title: s.title, sectionType: s.type, id: s.title},
@@ -547,47 +435,33 @@ export function TasksScreen() {
           refreshing={isLoading}
           renderItem={({item}) => {
             if (item.type === 'header') {
-              if (item.sectionType === 'overdue') {
-                return <PulsingOverdueHeader title="⚠️ Overdue Tasks" />;
-              }
+              if (item.sectionType === 'overdue') return <PulsingOverdueHeader title="Overdue Tasks" />;
               return (
-                <View className="px-4 pt-4 pb-2">
-                  <Text className={`text-[10px] font-black uppercase tracking-widest ${textSecondary}`}>
+                <View style={{paddingHorizontal: 20, paddingTop: 20, paddingBottom: 8, flexDirection: 'row', alignItems: 'center', gap: 8}}>
+                  <Text style={{fontSize: 11, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1.5, color: tokens.textTertiary}}>
                     {item.title}
                   </Text>
+                  <View style={{flex: 1, height: 1, backgroundColor: tokens.borderSubtle}} />
                 </View>
               );
             }
-
             return (
               <TaskRowItem
                 task={item.task}
-                isDark={isDark}
-                onComplete={() => {
-                  Vibration.vibrate(25);
-                  updateTask.mutate({id: item.task.id, status: 'completed'});
-                }}
-                onSnooze={() => {
-                  setSnoozeTask(item.task);
-                  setSnoozeVisible(true);
-                }}
-                onTap={() => {
-                  setSelectedTask(item.task);
-                  setEditTitle(item.task.title);
-                  setTaskDetailVisible(true);
-                }}
+                tokens={tokens}
+                onComplete={() => { Vibration.vibrate(25); updateTask.mutate({id: item.task.id, status: 'completed'}); }}
+                onSnooze={() => { setSnoozeTask(item.task); setSnoozeVisible(true); }}
+                onTap={() => { setSelectedTask(item.task); setEditTitle(item.task.title); setTaskDetailVisible(true); }}
               />
             );
           }}
           ListEmptyComponent={
-            <View className="py-24 px-8 items-center justify-center">
-              <View className="w-16 h-16 bg-brand-500/10 border border-brand-500/20 rounded-full items-center justify-center mb-4">
-                <Icon name="check-circle" size={24} color="#10B981" />
+            <View style={{paddingVertical: 96, paddingHorizontal: 32, alignItems: 'center', justifyContent: 'center'}}>
+              <View style={{width: 64, height: 64, backgroundColor: `${tokens.brandPrimary}1A`, borderWidth: 1, borderColor: `${tokens.brandPrimary}33`, borderRadius: 32, alignItems: 'center', justifyContent: 'center', marginBottom: 16}}>
+                <Icon name="check-circle" size={24} color={tokens.brandPrimary} />
               </View>
-              <Text className={`${textPrimary} text-base font-bold mb-1.5 text-center`}>
-                Nothing left for today ✦
-              </Text>
-              <Text className="text-text-secondary text-xs text-center leading-4 max-w-[240px]">
+              <Text style={{color: tokens.textPrimary, fontSize: 16, fontWeight: '700', marginBottom: 6, textAlign: 'center'}}>Nothing left for today ✦</Text>
+              <Text style={{color: tokens.textSecondary, fontSize: 12, textAlign: 'center', lineHeight: 16, maxWidth: 240}}>
                 You've completed all active tasks. Enjoy the clean slate!
               </Text>
             </View>
@@ -595,250 +469,185 @@ export function TasksScreen() {
         />
       )}
 
-      {/* Floating Add Task FAB */}
+      {/* FAB — safe-area anchored, matching ContactDetailScreen FAB */}
       <Pressable
         onPress={() => setQuickAddVisible(true)}
-        className="absolute bottom-[82px] right-4 w-14 h-14 rounded-full bg-brand-500 shadow-xl items-center justify-center active:scale-95 z-20"
+        style={({pressed}) => ({
+          position: 'absolute',
+          bottom: (insets.bottom > 0 ? insets.bottom : 16) + 70,
+          right: 16,
+          width: 56,
+          height: 56,
+          borderRadius: 28,
+          backgroundColor: tokens.brandPrimary,
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 20,
+          shadowColor: tokens.brandPrimary,
+          shadowOpacity: 0.35,
+          shadowRadius: 12,
+          shadowOffset: {width: 0, height: 4},
+          elevation: 8,
+          transform: [{scale: pressed ? 0.93 : 1}],
+        })}
       >
-        <Icon name="plus" size={26} color="#ffffff" />
+        <Icon name="plus" size={24} color="#ffffff" />
       </Pressable>
 
-      {/* Quick Add Bottom Sheet Modal */}
-      <Modal
-        visible={quickAddVisible}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setQuickAddVisible(false)}
-      >
-        <View className="flex-1 justify-end bg-[#020617]/60">
-          <Pressable className="flex-1" onPress={() => setQuickAddVisible(false)} />
-          <View className={`${bgCard} rounded-t-3xl border-t ${borderHeader} p-5 pb-8`}>
-            <View className={`w-12 h-1 ${isDark ? 'bg-zinc-800' : 'bg-slate-350'} rounded-full self-center mb-4`} />
-
-            <View className="flex-row justify-between items-center mb-3">
-              <Text className={`${textPrimary} font-black text-lg`}>Quick Add Task</Text>
-              <Pressable
-                onPress={() => setQuickAddVisible(false)}
-                className={`w-8 h-8 rounded-full ${isDark ? 'bg-zinc-800' : 'bg-slate-100'} items-center justify-center`}
-              >
-                <Icon name="x" size={16} color={isDark ? '#A1A1AA' : '#64748b'} />
+      {/* Quick Add sheet */}
+      <Modal visible={quickAddVisible} transparent animationType="slide" onRequestClose={() => setQuickAddVisible(false)}>
+        <View style={{flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(2,6,23,0.6)'}}>
+          <Pressable style={{flex: 1}} onPress={() => setQuickAddVisible(false)} />
+          <View style={sheetStyle}>
+            <View style={{width: 48, height: 4, backgroundColor: tokens.borderStrong, borderRadius: 999, alignSelf: 'center', marginBottom: 16}} />
+            <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12}}>
+              <Text style={{color: tokens.textPrimary, fontWeight: '900', fontSize: 18}}>Quick Add Task</Text>
+              <Pressable onPress={() => setQuickAddVisible(false)} style={{width: 32, height: 32, borderRadius: 16, backgroundColor: tokens.surfaceRaised, alignItems: 'center', justifyContent: 'center'}}>
+                <Icon name="x" size={16} color={tokens.textSecondary} />
               </Pressable>
             </View>
 
-            {/* Input Box */}
             <TextInput
               autoFocus
-              className={`rounded-xl px-4 py-3.5 text-sm border ${bgInput} ${textPrimary} ${
-                isDark ? 'border-zinc-850' : 'border-slate-200'
-              }`}
+              style={inputStyle}
               placeholder="What needs to be done?"
-              placeholderTextColor={isDark ? '#52525B' : '#94a3b8'}
+              placeholderTextColor={tokens.textTertiary}
               value={quickText}
               onChangeText={setQuickText}
             />
 
-            {/* Parsing highlights display */}
             {quickText.length > 0 && (
-              <View className="mt-2 px-1 flex-row flex-wrap items-center">
-                <Text className="text-[10px] text-zinc-550 mr-1 font-bold">NLP Interpretation:</Text>
+              <View style={{marginTop: 8, paddingHorizontal: 4, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center'}}>
+                <Text style={{fontSize: 10, color: tokens.textTertiary, marginRight: 4, fontWeight: '700'}}>NLP Interpretation:</Text>
                 {parsedNLP.words.map((word, i) => {
-                  const cleanedWord = word.toLowerCase().replace(/[^a-zA-Z]/g, '');
-                  const isDate = ['tomorrow', 'today', 'pm', 'am', 'next', 'week'].includes(cleanedWord);
-                  const isContact = parsedNLP.contact && (
-                    cleanedWord === parsedNLP.contact.first_name.toLowerCase() ||
-                    cleanedWord === parsedNLP.contact.last_name.toLowerCase()
+                  const clean = word.toLowerCase().replace(/[^a-zA-Z]/g, '');
+                  const isDate = ['tomorrow', 'today', 'pm', 'am', 'next', 'week'].includes(clean);
+                  const isContact = parsedNLP.contact && (clean === parsedNLP.contact.first_name.toLowerCase() || clean === parsedNLP.contact.last_name.toLowerCase());
+                  return (
+                    <Text key={i} style={{fontSize: 10.5, color: (isDate || isContact) ? tokens.brandPrimary : tokens.textSecondary, fontWeight: (isDate || isContact) ? '800' : '400'}}>
+                      {word}{' '}
+                    </Text>
                   );
-
-                  if (isDate || isContact) {
-                    return (
-                      <Text key={i} className="text-brand-500 font-extrabold text-[10.5px]">
-                        {word}{' '}
-                      </Text>
-                    );
-                  }
-                  return <Text key={i} className={`${textSecondary} text-[10.5px]`}>{word} </Text>;
                 })}
               </View>
             )}
 
-            {/* Hint phrase */}
-            <Text className="text-zinc-500 text-[10px] mt-2 font-medium">
+            <Text style={{color: tokens.textTertiary, fontSize: 10, marginTop: 8, fontWeight: '500'}}>
               💡 Hint: Try typing "Call {contacts?.data?.[0]?.first_name || 'Sarah'} tomorrow 2pm"
             </Text>
 
-            {/* Create Actions */}
-            <View className="flex-row gap-3 mt-6">
-              <Pressable
-                className={`flex-1 rounded-xl py-3.5 items-center ${isDark ? 'bg-zinc-800' : 'bg-slate-100'}`}
-                onPress={() => setQuickAddVisible(false)}
-              >
-                <Text className={`font-bold text-sm ${isDark ? 'text-text-secondary' : 'text-slate-650'}`}>
-                  Cancel
-                </Text>
+            <View style={{flexDirection: 'row', gap: 12, marginTop: 24}}>
+              <Pressable style={{flex: 1, borderRadius: 12, paddingVertical: 14, alignItems: 'center', backgroundColor: tokens.surfaceRaised}} onPress={() => setQuickAddVisible(false)}>
+                <Text style={{fontWeight: '700', fontSize: 14, color: tokens.textSecondary}}>Cancel</Text>
               </Pressable>
-
               <Pressable
-                className={`flex-1 rounded-xl py-3.5 items-center bg-brand-500 active:bg-brand-600 ${
-                  !quickText.trim() || createTask.isPending ? 'opacity-55' : ''
-                }`}
+                style={{flex: 1, borderRadius: 12, paddingVertical: 14, alignItems: 'center', backgroundColor: tokens.brandPrimary, opacity: (!quickText.trim() || createTask.isPending) ? 0.55 : 1}}
                 onPress={handleQuickAdd}
                 disabled={!quickText.trim() || createTask.isPending}
               >
-                {createTask.isPending ? (
-                  <ActivityIndicator color="#fff" size="small" />
-                ) : (
-                  <Text className="text-white font-bold text-sm">Add Task</Text>
-                )}
+                {createTask.isPending ? <ActivityIndicator color="#fff" size="small" /> : <Text style={{color: '#ffffff', fontWeight: '700', fontSize: 14}}>Add Task</Text>}
               </Pressable>
             </View>
           </View>
         </View>
       </Modal>
 
-      {/* Task Details Bottom Sheet */}
-      <Modal
-        visible={taskDetailVisible}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setTaskDetailVisible(false)}
-      >
-        <View className="flex-1 justify-end bg-[#020617]/60">
-          <Pressable className="flex-1" onPress={() => setTaskDetailVisible(false)} />
-          <View className={`${bgCard} rounded-t-3xl border-t ${borderHeader} p-5 pb-8`}>
-            <View className={`w-12 h-1 ${isDark ? 'bg-zinc-800' : 'bg-slate-350'} rounded-full self-center mb-4`} />
-
-            <View className="flex-row justify-between items-center mb-4">
-              <Text className={`${textSecondary} text-xs font-bold uppercase tracking-wider`}>Task Detail</Text>
-              <Pressable
-                onPress={() => setTaskDetailVisible(false)}
-                className={`w-8 h-8 rounded-full ${isDark ? 'bg-zinc-800' : 'bg-slate-100'} items-center justify-center`}
-              >
-                <Icon name="x" size={16} color={isDark ? '#A1A1AA' : '#64748b'} />
+      {/* Task Detail sheet */}
+      <Modal visible={taskDetailVisible} transparent animationType="slide" onRequestClose={() => setTaskDetailVisible(false)}>
+        <View style={{flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(2,6,23,0.6)'}}>
+          <Pressable style={{flex: 1}} onPress={() => setTaskDetailVisible(false)} />
+          <View style={sheetStyle}>
+            <View style={{width: 48, height: 4, backgroundColor: tokens.borderStrong, borderRadius: 999, alignSelf: 'center', marginBottom: 16}} />
+            <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16}}>
+              <Text style={{color: tokens.textSecondary, fontSize: 11, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1}}>Task Detail</Text>
+              <Pressable onPress={() => setTaskDetailVisible(false)} style={{width: 32, height: 32, borderRadius: 16, backgroundColor: tokens.surfaceRaised, alignItems: 'center', justifyContent: 'center'}}>
+                <Icon name="x" size={16} color={tokens.textSecondary} />
               </Pressable>
             </View>
 
-            {/* Editable Title */}
             <TextInput
-              className={`text-lg font-black ${textPrimary} mb-4 border-b ${
-                isDark ? 'border-zinc-800' : 'border-slate-200'
-              } pb-2 p-0`}
+              style={{fontSize: 18, fontWeight: '900', color: tokens.textPrimary, marginBottom: 16, borderBottomWidth: 1, borderBottomColor: tokens.borderDefault, paddingBottom: 8, padding: 0}}
               value={editTitle}
               onChangeText={setEditTitle}
               onBlur={handleSaveTitle}
               placeholder="Task title"
-              placeholderTextColor={isDark ? '#52525B' : '#94a3b8'}
+              placeholderTextColor={tokens.textTertiary}
             />
 
-            {/* Metadata chips */}
             {selectedTask && (
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-2 mb-5">
-                {/* Due Date chip */}
-                {selectedTask.due_at && (
-                  <View className={`px-3 py-1.5 rounded-lg border ${
-                    isDark ? 'bg-zinc-800/40 border-zinc-700/60' : 'bg-slate-100 border-slate-200'
-                  } flex-row items-center gap-1`}>
-                    <Icon name="calendar" size={12} color="#10B981" />
-                    <Text className={`text-xs ${textPrimary}`}>
-                      {format(new Date(selectedTask.due_at), 'd MMM yyyy, h:mm a')}
-                    </Text>
-                  </View>
-                )}
-
-                {/* Contact Chip */}
-                {selectedTask.contact && (
-                  <Pressable
-                    onPress={() => {
-                      setTaskDetailVisible(false);
-                      (navigation as any).navigate('Contacts', {
-                        screen: 'ContactDetail',
-                        params: {contactId: selectedTask.contact_id},
-                      });
-                    }}
-                    className={`px-3 py-1.5 rounded-lg border ${
-                      isDark ? 'bg-brand-500/10 border-brand-500/20' : 'bg-emerald-50 border-emerald-200'
-                    } flex-row items-center gap-1 active:opacity-80`}
-                  >
-                    <Icon name="user" size={12} color="#10B981" />
-                    <Text className="text-brand-500 text-xs font-bold">
-                      {selectedTask.contact.first_name} {selectedTask.contact.last_name}
-                    </Text>
-                  </Pressable>
-                )}
-
-                {/* Mock Listing Chip if call summary */}
-                {selectedTask.source === 'call_summary' && (
-                  <View className={`px-3 py-1.5 rounded-lg border ${
-                    isDark ? 'bg-zinc-800/40 border-zinc-700/60' : 'bg-slate-100 border-slate-200'
-                  } flex-row items-center gap-1`}>
-                    <Icon name="home" size={12} color="#F59E0B" />
-                    <Text className={`text-xs ${textPrimary}`}>Lekki Phase 1 Property</Text>
-                  </View>
-                )}
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{marginBottom: 20}}>
+                <View style={{flexDirection: 'row', gap: 8}}>
+                  {selectedTask.due_at && (
+                    <View style={{paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, borderWidth: 1, backgroundColor: tokens.surfaceRaised, borderColor: tokens.borderDefault, flexDirection: 'row', alignItems: 'center', gap: 4}}>
+                      <Icon name="calendar" size={12} color={tokens.brandPrimary} />
+                      <Text style={{fontSize: 12, color: tokens.textPrimary}}>
+                        {format(new Date(selectedTask.due_at), 'd MMM yyyy, h:mm a')}
+                      </Text>
+                    </View>
+                  )}
+                  {selectedTask.contact && (
+                    <Pressable
+                      onPress={() => { setTaskDetailVisible(false); (navigation as any).navigate('Contacts', {screen: 'ContactDetail', params: {contactId: selectedTask.contact_id}}); }}
+                      style={{paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, borderWidth: 1, backgroundColor: `${tokens.brandPrimary}1A`, borderColor: `${tokens.brandPrimary}33`, flexDirection: 'row', alignItems: 'center', gap: 4}}
+                    >
+                      <Icon name="user" size={12} color={tokens.brandPrimary} />
+                      <Text style={{color: tokens.brandPrimary, fontSize: 12, fontWeight: '700'}}>
+                        {selectedTask.contact.first_name} {selectedTask.contact.last_name}
+                      </Text>
+                    </Pressable>
+                  )}
+                  {selectedTask.source === 'call_summary' && (
+                    <View style={{paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, borderWidth: 1, backgroundColor: tokens.surfaceRaised, borderColor: tokens.borderDefault, flexDirection: 'row', alignItems: 'center', gap: 4}}>
+                      <Icon name="home" size={12} color="#F59E0B" />
+                      <Text style={{fontSize: 12, color: tokens.textPrimary}}>Lekki Phase 1 Property</Text>
+                    </View>
+                  )}
+                </View>
               </ScrollView>
             )}
 
-            {/* AI Context Card if task originated from a call */}
             {selectedTask?.source === 'call_summary' && (
-              <View className={`border-l-4 border-l-brand-500 p-3.5 mb-6 rounded-r-xl ${
-                isDark ? 'bg-brand-500/5' : 'bg-emerald-500/5'
-              }`}>
-                <View className="flex-row items-center gap-1 mb-1">
-                  <Icon name="sparkles" size={12} color="#10B981" />
-                  <Text className="text-brand-500 text-[10px] font-black uppercase tracking-wider">
-                    AI Briefing Context
-                  </Text>
+              <View style={{borderLeftWidth: 4, borderLeftColor: tokens.brandPrimary, padding: 14, marginBottom: 24, borderRadius: 8, backgroundColor: `${tokens.brandPrimary}0D`, borderTopRightRadius: 12, borderBottomRightRadius: 12}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 4}}>
+                  <Icon name="zap" size={12} color={tokens.brandPrimary} />
+                  <Text style={{color: tokens.brandPrimary, fontSize: 10, fontWeight: '900', textTransform: 'uppercase', letterSpacing: 1}}>AI Briefing Context</Text>
                 </View>
-                <Text className={`text-xs leading-5 italic ${textPrimary}`}>
+                <Text style={{fontSize: 12, lineHeight: 20, fontStyle: 'italic', color: tokens.textPrimary}}>
                   "Created from your call with {selectedTask.contact?.first_name || 'Sarah'} — she requested follow-up viewing availability, Nigerian Naira pricing sheets, and nearby school coordinates."
                 </Text>
               </View>
             )}
 
-            {/* Delete option */}
-            <View className="border-t border-zinc-800/80 pt-4 flex-row justify-between items-center">
+            <View style={{borderTopWidth: 1, borderTopColor: tokens.borderDefault, paddingTop: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
               <Pressable
                 onPress={() => {
                   if (!selectedTask) return;
                   Alert.alert('Delete Task', 'Are you sure you want to permanently delete this task?', [
                     {text: 'Cancel', style: 'cancel'},
-                    {
-                      text: 'Delete',
-                      style: 'destructive',
-                      onPress: () => deleteTask.mutate(selectedTask.id),
-                    },
+                    {text: 'Delete', style: 'destructive', onPress: () => deleteTask.mutate(selectedTask.id)},
                   ]);
                 }}
-                className="py-2.5 px-4 active:opacity-75"
+                style={{paddingVertical: 10, paddingHorizontal: 16}}
               >
-                <Text className="text-danger font-black text-sm">Delete Task</Text>
+                <Text style={{color: '#F43F5E', fontWeight: '900', fontSize: 14}}>Delete Task</Text>
               </Pressable>
-
-              <Pressable
-                onPress={() => setTaskDetailVisible(false)}
-                className="bg-brand-500 px-6 py-2.5 rounded-xl active:bg-brand-650"
-              >
-                <Text className="text-white font-bold text-sm">Done</Text>
+              <Pressable onPress={() => setTaskDetailVisible(false)} style={{backgroundColor: tokens.brandPrimary, paddingHorizontal: 24, paddingVertical: 10, borderRadius: 12}}>
+                <Text style={{color: '#ffffff', fontWeight: '700', fontSize: 14}}>Done</Text>
               </Pressable>
             </View>
           </View>
         </View>
       </Modal>
 
-      {/* Snooze Picker Sheet */}
-      <Modal
-        visible={snoozeVisible}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setSnoozeVisible(false)}
-      >
-        <View className="flex-1 justify-end bg-black/60">
-          <Pressable className="flex-1" onPress={() => setSnoozeVisible(false)} />
-          <View className={`${bgCard} rounded-t-3xl border-t ${borderHeader} p-5 pb-8`}>
-            <View className={`w-12 h-1 ${isDark ? 'bg-zinc-800' : 'bg-slate-350'} rounded-full self-center mb-4`} />
+      {/* Snooze sheet */}
+      <Modal visible={snoozeVisible} transparent animationType="slide" onRequestClose={() => setSnoozeVisible(false)}>
+        <View style={{flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.6)'}}>
+          <Pressable style={{flex: 1}} onPress={() => setSnoozeVisible(false)} />
+          <View style={sheetStyle}>
+            <View style={{width: 48, height: 4, backgroundColor: tokens.borderStrong, borderRadius: 999, alignSelf: 'center', marginBottom: 16}} />
+            <Text style={{color: tokens.textPrimary, fontWeight: '900', fontSize: 18, marginBottom: 16}}>Snooze Task</Text>
 
-            <Text className={`${textPrimary} font-black text-lg mb-4`}>Snooze Task</Text>
-
-            <View className="gap-2.5">
+            <View style={{gap: 10}}>
               {[
                 {label: 'Snooze for 1 Hour', value: '1h' as const, icon: 'clock'},
                 {label: 'Snooze until Tomorrow Morning (9 AM)', value: 'tomorrow' as const, icon: 'sun'},
@@ -847,25 +656,16 @@ export function TasksScreen() {
                 <Pressable
                   key={opt.value}
                   onPress={() => handleSnoozeCommit(opt.value)}
-                  className={`flex-row items-center gap-3 p-4 rounded-xl border ${
-                    isDark
-                      ? 'bg-[#111827] border-zinc-850 active:bg-zinc-800'
-                      : 'bg-slate-100 border-slate-200 active:bg-slate-200'
-                  }`}
+                  style={{flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16, borderRadius: 12, borderWidth: 1, backgroundColor: tokens.surfaceRaised, borderColor: tokens.borderDefault}}
                 >
                   <Icon name={opt.icon} size={16} color="#F59E0B" />
-                  <Text className={`font-bold text-sm ${textPrimary}`}>{opt.label}</Text>
+                  <Text style={{fontWeight: '700', fontSize: 14, color: tokens.textPrimary}}>{opt.label}</Text>
                 </Pressable>
               ))}
             </View>
 
-            <Pressable
-              onPress={() => setSnoozeVisible(false)}
-              className={`mt-4 rounded-xl py-3.5 items-center ${isDark ? 'bg-zinc-800' : 'bg-slate-100'}`}
-            >
-              <Text className={`font-bold text-sm ${isDark ? 'text-text-secondary' : 'text-slate-650'}`}>
-                Cancel
-              </Text>
+            <Pressable onPress={() => setSnoozeVisible(false)} style={{marginTop: 16, borderRadius: 12, paddingVertical: 14, alignItems: 'center', backgroundColor: tokens.surfaceRaised}}>
+              <Text style={{fontWeight: '700', fontSize: 14, color: tokens.textSecondary}}>Cancel</Text>
             </Pressable>
           </View>
         </View>

@@ -2,7 +2,6 @@ import React, {useState, useRef, useEffect, useMemo} from 'react';
 import {
   ActivityIndicator,
   Alert,
-  FlatList,
   Modal,
   Pressable,
   ScrollView,
@@ -11,7 +10,6 @@ import {
   View,
   Animated,
   Linking,
-  useColorScheme,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
@@ -24,78 +22,55 @@ import {briefApi, TimelineActivity} from '../../api/brief';
 import type {ContactsStackParamList} from '../../navigation/stacks/ContactsStack';
 import {useAuthStore} from '../../store/authStore';
 import {Contact, Call, Deal} from '../../types';
+import {useTheme} from '../../theme/ThemeProvider';
+import {ThemeTokens} from '../../theme/tokens';
 
 type RoutePropType = RouteProp<ContactsStackParamList, 'ContactDetail'>;
 type NavProp = NativeStackNavigationProp<ContactsStackParamList>;
 
-const SENTIMENT_DOT: Record<string, string> = {
-  hot: 'bg-danger', warm: 'bg-accent', cold: 'bg-info', neutral: 'bg-zinc-500',
+const SENTIMENT_DOT_HEX: Record<string, string> = {
+  hot: '#F43F5E', warm: '#F59E0B', cold: '#0EA5E9', neutral: '#71717A',
 };
 
-const STATUS_COLORS: Record<string, { bg: string; text: string; border: string }> = {
-  new:       { bg: 'bg-zinc-800/60', text: 'text-zinc-400', border: 'border-zinc-700/60' },
-  active:    { bg: 'bg-emerald-500/10', text: 'text-emerald-400', border: 'border-emerald-500/20' },
-  qualified: { bg: 'bg-brand-500/10', text: 'text-brand-400', border: 'border-brand-500/20' },
-  nurturing: { bg: 'bg-amber-500/10', text: 'text-amber-400', border: 'border-amber-500/20' },
-  closed:    { bg: 'bg-purple-500/10', text: 'text-purple-400', border: 'border-purple-500/20' },
-  archived:  { bg: 'bg-zinc-800', text: 'text-zinc-500', border: 'border-zinc-700' },
+const STATUS_STYLE: Record<string, {bg: string; text: string; border: string}> = {
+  new:       {bg: '#64748B1A', text: '#94A3B8', border: '#64748B33'},
+  active:    {bg: '#10B9811A', text: '#10B981',  border: '#10B98133'},
+  qualified: {bg: '#10B9811A', text: '#10B981',  border: '#10B98133'},
+  nurturing: {bg: '#F59E0B1A', text: '#F59E0B',  border: '#F59E0B33'},
+  closed:    {bg: '#A855F71A', text: '#A855F7',  border: '#A855F733'},
+  archived:  {bg: '#3F3F461A', text: '#71717A',  border: '#3F3F4633'},
 };
 
 const ACTIVITY_ICON: Record<string, string> = {
-  note:          '📝',
-  call:          '📞',
-  email:         '✉️',
-  sms:           '📱',
-  meeting:       '🤝',
-  viewing:       '🏠',
-  status_change: '🔄',
-  system:        '⚙️',
+  note: '📝', call: '📞', email: '✉️', sms: '📱',
+  meeting: '🤝', viewing: '🏠', status_change: '🔄', system: '⚙️',
 };
 
-// Formatter helper
 const formatNaira = (value?: number | string) => {
   if (value === undefined || value === null) return '—';
   const num = typeof value === 'string' ? parseFloat(value) : value;
   if (isNaN(num)) return '—';
-  if (num >= 1_000_000_000) {
-    return `₦${(num / 1_000_000_000).toFixed(1)}B`;
-  }
-  if (num >= 1_000_000) {
-    return `₦${(num / 1_000_000).toFixed(1)}M`;
-  }
+  if (num >= 1_000_000_000) return `₦${(num / 1_000_000_000).toFixed(1)}B`;
+  if (num >= 1_000_000) return `₦${(num / 1_000_000).toFixed(1)}M`;
   return `₦${num.toLocaleString()}`;
 };
 
-// Inline Audio Player for Voice Notes
-function InlineAudioPlayer({duration, text, isDark}: {duration: string; text: string; isDark: boolean}) {
+function InlineAudioPlayer({duration, text, tokens}: {duration: string; text: string; tokens: ThemeTokens}) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const progressAnim = useRef(new Animated.Value(0)).current;
   const durationSec = useMemo(() => {
     const parts = duration.split(':');
-    if (parts.length === 2) {
-      return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
-    }
-    return 10;
+    return parts.length === 2 ? parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10) : 10;
   }, [duration]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isPlaying) {
-      Animated.timing(progressAnim, {
-        toValue: 1,
-        duration: durationSec * 1000,
-        useNativeDriver: false,
-      }).start();
-
+      Animated.timing(progressAnim, {toValue: 1, duration: durationSec * 1000, useNativeDriver: false}).start();
       interval = setInterval(() => {
         setProgress((prev) => {
-          if (prev >= 1) {
-            setIsPlaying(false);
-            setProgress(0);
-            progressAnim.setValue(0);
-            return 0;
-          }
+          if (prev >= 1) { setIsPlaying(false); setProgress(0); progressAnim.setValue(0); return 0; }
           return prev + 1 / durationSec;
         });
       }, 1000);
@@ -105,136 +80,84 @@ function InlineAudioPlayer({duration, text, isDark}: {duration: string; text: st
     return () => clearInterval(interval);
   }, [isPlaying, durationSec]);
 
-  const handleToggle = () => {
-    if (isPlaying) {
-      setIsPlaying(false);
-    } else {
-      setIsPlaying(true);
-    }
-  };
-
-  const widthPercent = progressAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0%', '100%'],
-  });
+  const widthPercent = progressAnim.interpolate({inputRange: [0, 1], outputRange: ['0%', '100%']});
+  const BARS = [10, 18, 14, 22, 12, 16, 24, 18, 12, 20, 14, 8, 16, 22, 14, 10, 18, 14, 22, 12];
 
   return (
-    <View className={`rounded-xl p-3 border mb-3 ${
-      isDark ? 'bg-surface-raised border-zinc-800' : 'bg-slate-100 border-slate-200'
-    }`}>
-      {/* Player Bar */}
-      <View className="flex-row items-center gap-3 mb-2">
+    <View style={{borderRadius: 12, padding: 12, borderWidth: 1, marginBottom: 12, backgroundColor: tokens.surfaceRaised, borderColor: tokens.borderDefault}}>
+      <View style={{flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 8}}>
         <Pressable
-          onPress={handleToggle}
-          className="w-8 h-8 rounded-full bg-brand-500 items-center justify-center active:scale-95"
+          onPress={() => setIsPlaying(!isPlaying)}
+          style={({pressed}) => ({width: 32, height: 32, borderRadius: 16, backgroundColor: tokens.brandPrimary, alignItems: 'center', justifyContent: 'center', transform: [{scale: pressed ? 0.95 : 1}]})}
         >
-          <Icon name={isPlaying ? 'pause' : 'play'} size={14} color="#ffffff" className="ml-0.5" />
+          <Icon name={isPlaying ? 'pause' : 'play'} size={14} color="#ffffff" />
         </Pressable>
-
-        {/* Waveform graphic */}
-        <View className="flex-1 h-6 justify-center relative bg-transparent">
-          {/* Simulated Waveform bars */}
-          <View className="flex-row items-center gap-[2px] opacity-40 absolute inset-0">
-            {[10, 18, 14, 22, 12, 16, 24, 18, 12, 20, 14, 8, 16, 22, 14, 10, 18, 14, 22, 12].map((h, i) => (
-              <View key={i} style={{height: h}} className={`flex-1 rounded-sm ${
-                isDark ? 'bg-text-secondary' : 'bg-slate-400'
-              }`} />
+        <View style={{flex: 1, height: 24, justifyContent: 'center', position: 'relative'}}>
+          <View style={{flexDirection: 'row', alignItems: 'center', gap: 2, opacity: 0.4, position: 'absolute', left: 0, right: 0, top: 0, bottom: 0}}>
+            {BARS.map((h, i) => (
+              <View key={i} style={{height: h, flex: 1, borderRadius: 2, backgroundColor: tokens.borderStrong}} />
             ))}
           </View>
-          {/* Progress fill waveform */}
-          <Animated.View style={{width: widthPercent}} className="h-6 flex-row items-center gap-[2px] absolute inset-0 overflow-hidden">
-            {[10, 18, 14, 22, 12, 16, 24, 18, 12, 20, 14, 8, 16, 22, 14, 10, 18, 14, 22, 12].map((h, i) => (
-              <View key={i} style={{height: h}} className="w-[8px] rounded-sm bg-brand-500" />
+          <Animated.View style={{width: widthPercent, height: 24, flexDirection: 'row', alignItems: 'center', gap: 2, position: 'absolute', overflow: 'hidden'}}>
+            {BARS.map((h, i) => (
+              <View key={i} style={{height: h, width: 8, borderRadius: 2, backgroundColor: tokens.brandPrimary}} />
             ))}
           </Animated.View>
         </View>
-
-        <Text className={`text-[10px] font-mono font-bold ${isDark ? 'text-text-secondary' : 'text-slate-500'}`}>
+        <Text style={{fontSize: 10, fontFamily: 'monospace', fontWeight: '700', color: tokens.textSecondary}}>
           {isPlaying ? `0:${String(Math.floor(progress * durationSec)).padStart(2, '0')}` : duration}
         </Text>
       </View>
-
-      {/* Transcription text */}
-      <Text className={`text-xs italic leading-4 ${isDark ? 'text-text-secondary' : 'text-slate-600'}`}>
-        "{text}"
-      </Text>
+      <Text style={{fontSize: 12, fontStyle: 'italic', lineHeight: 16, color: tokens.textSecondary}}>"{text}"</Text>
     </View>
   );
 }
 
-// Highlight Anim wrapper for new timeline items
-function HighlightedTimelineItem({activity, isNew, isDark}: {activity: TimelineActivity; isNew: boolean; isDark: boolean}) {
+function HighlightedTimelineItem({activity, isNew, tokens}: {activity: TimelineActivity; isNew: boolean; tokens: ThemeTokens}) {
   const bgAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (isNew) {
-      Animated.timing(bgAnim, {
-        toValue: 1,
-        duration: 100,
-        useNativeDriver: false,
-      }).start(() => {
-        Animated.timing(bgAnim, {
-          toValue: 0,
-          duration: 1000,
-          delay: 500,
-          useNativeDriver: false,
-        }).start();
+      Animated.timing(bgAnim, {toValue: 1, duration: 100, useNativeDriver: false}).start(() => {
+        Animated.timing(bgAnim, {toValue: 0, duration: 1000, delay: 500, useNativeDriver: false}).start();
       });
     }
   }, [isNew]);
 
-  const bgStyle = bgAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['transparent', 'rgba(16, 185, 129, 0.25)'],
-  });
-
+  const bgStyle = bgAnim.interpolate({inputRange: [0, 1], outputRange: ['transparent', 'rgba(16, 185, 129, 0.25)']});
   const icon = ACTIVITY_ICON[activity.type] ?? '•';
   const hasVoiceNote = activity.type === 'note' && activity.body?.startsWith('[Voice Note]');
-
-  // Parse voice note
-  let voiceDuration = '';
-  let voiceText = '';
+  let voiceDuration = '', voiceText = '';
   if (hasVoiceNote) {
     const match = activity.body?.match(/\[Voice Note\] \((.*?)\) - (.*)/);
-    if (match) {
-      voiceDuration = match[1];
-      voiceText = match[2];
-    }
+    if (match) { voiceDuration = match[1]; voiceText = match[2]; }
   }
 
   return (
-    <Animated.View style={{backgroundColor: bgStyle}} className="rounded-xl p-2.5 mb-1.5">
-      <View className="flex-row">
-        <View className={`w-8 h-8 rounded-full items-center justify-center mr-3 mt-0.5 ${
-          isDark ? 'bg-surface-raised' : 'bg-slate-200'
-        }`}>
+    <Animated.View style={{backgroundColor: bgStyle, borderRadius: 12, padding: 10, marginBottom: 6}}>
+      <View style={{flexDirection: 'row'}}>
+        <View style={{width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center', marginRight: 12, marginTop: 2, backgroundColor: tokens.surfaceRaised}}>
           <Text style={{fontSize: 14}}>{icon}</Text>
         </View>
-        <View className="flex-1">
+        <View style={{flex: 1}}>
           {activity.subject && (
-            <Text className={`text-sm font-bold ${isDark ? 'text-text-primary' : 'text-slate-800'}`}>
-              {activity.subject}
-            </Text>
+            <Text style={{fontSize: 14, fontWeight: '700', color: tokens.textPrimary}}>{activity.subject}</Text>
           )}
-          
           {hasVoiceNote ? (
-            <View className="mt-1">
-              <InlineAudioPlayer duration={voiceDuration} text={voiceText} isDark={isDark} />
+            <View style={{marginTop: 4}}>
+              <InlineAudioPlayer duration={voiceDuration} text={voiceText} tokens={tokens} />
             </View>
           ) : (
             activity.body && (
-              <Text className={`text-sm mt-0.5 leading-5 ${isDark ? 'text-text-secondary' : 'text-slate-650'}`}>
-                {activity.body}
-              </Text>
+              <Text style={{fontSize: 14, marginTop: 2, lineHeight: 20, color: tokens.textSecondary}}>{activity.body}</Text>
             )
           )}
-
-          <View className="flex-row items-center mt-1.5 gap-2">
-            <Text className={`text-[10px] font-medium ${isDark ? 'text-text-tertiary' : 'text-slate-400'}`}>
+          <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 6, gap: 8}}>
+            <Text style={{fontSize: 10, color: tokens.textTertiary}}>
               {formatDistanceToNow(new Date(activity.occurred_at), {addSuffix: true})}
             </Text>
             {activity.user && (
-              <Text className={`text-[10px] font-bold ${isDark ? 'text-zinc-650' : 'text-slate-400'}`}>
+              <Text style={{fontSize: 10, fontWeight: '700', color: tokens.textTertiary}}>
                 · {activity.user.first_name}
               </Text>
             )}
@@ -246,28 +169,21 @@ function HighlightedTimelineItem({activity, isNew, isDark}: {activity: TimelineA
 }
 
 export function ContactDetailScreen() {
+  const {tokens} = useTheme();
   const route = useRoute<RoutePropType>();
   const navigation = useNavigation<NavProp>();
   const {contactId} = route.params;
   const queryClient = useQueryClient();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme !== 'light';
 
   const [tab, setTab] = useState<'timeline' | 'calls' | 'notes'>('timeline');
   const [noteVisible, setNoteVisible] = useState(false);
   const [dealModalVisible, setDealModalVisible] = useState(false);
-  
-  // Note formulation state
   const [noteText, setNoteText] = useState('');
-  
-  // Voice recording states
   const [isRecording, setIsRecording] = useState(false);
   const [recordDuration, setRecordDuration] = useState(0);
   const recordInterval = useRef<NodeJS.Timeout | null>(null);
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const highlightNoteId = useRef<number | null>(null);
-
-  // Simulated live recording bounce values for audio waveform
   const bar1 = useRef(new Animated.Value(6)).current;
   const bar2 = useRef(new Animated.Value(10)).current;
   const bar3 = useRef(new Animated.Value(8)).current;
@@ -275,14 +191,12 @@ export function ContactDetailScreen() {
   const bar5 = useRef(new Animated.Value(7)).current;
   const bar6 = useRef(new Animated.Value(11)).current;
 
-  // Contact main query
   const {data, isLoading} = useQuery({
     queryKey: ['contact', contactId],
     queryFn: () => contactsApi.get(contactId).then((r) => r.data),
   });
 
-  // Contact timeline query
-  const {data: timeline, isLoading: timelineLoading, refetch: refetchTimeline} = useQuery({
+  const {data: timeline, isLoading: timelineLoading} = useQuery({
     queryKey: ['timeline', contactId],
     queryFn: () => briefApi.timeline(contactId).then((r) => r.data),
   });
@@ -292,118 +206,87 @@ export function ContactDetailScreen() {
   const addNote = useMutation({
     mutationFn: (bodyText: string) => contactsApi.addNote(contactId, bodyText),
     onSuccess: (response: any) => {
-      // Invalidate queries to refresh list
       queryClient.invalidateQueries({queryKey: ['contact', contactId]});
       queryClient.invalidateQueries({queryKey: ['timeline', contactId]});
-      
-      // Highlight the newly added note / activity
       if (response.data?.id) {
         highlightNoteId.current = response.data.id;
-        setTimeout(() => {
-          highlightNoteId.current = null;
-        }, 2000);
+        setTimeout(() => { highlightNoteId.current = null; }, 2000);
       }
-      
       setNoteText('');
       setNoteVisible(false);
     },
     onError: () => Alert.alert('Error', 'Could not save note.'),
   });
 
-  // Pulse animation loop for recording button
   useEffect(() => {
     if (isRecording) {
       const loop = Animated.loop(
         Animated.sequence([
-          Animated.timing(pulseAnim, { toValue: 1.25, duration: 600, useNativeDriver: true }),
-          Animated.timing(pulseAnim, { toValue: 1.0, duration: 600, useNativeDriver: true }),
+          Animated.timing(pulseAnim, {toValue: 1.25, duration: 600, useNativeDriver: true}),
+          Animated.timing(pulseAnim, {toValue: 1.0, duration: 600, useNativeDriver: true}),
         ])
       );
       loop.start();
-
-      // Live waveform bounce
-      const bounce = (val: Animated.Value, max: number) => {
-        return Animated.loop(
-          Animated.sequence([
-            Animated.timing(val, { toValue: max, duration: 350, useNativeDriver: false }),
-            Animated.timing(val, { toValue: 6, duration: 400, useNativeDriver: false }),
-          ])
-        );
-      };
-
-      const bounces = [
-        bounce(bar1, 24),
-        bounce(bar2, 36),
-        bounce(bar3, 28),
-        bounce(bar4, 42),
-        bounce(bar5, 20),
-        bounce(bar6, 32),
-      ];
+      const bounce = (val: Animated.Value, max: number) =>
+        Animated.loop(Animated.sequence([
+          Animated.timing(val, {toValue: max, duration: 350, useNativeDriver: false}),
+          Animated.timing(val, {toValue: 6, duration: 400, useNativeDriver: false}),
+        ]));
+      const bounces = [bounce(bar1, 24), bounce(bar2, 36), bounce(bar3, 28), bounce(bar4, 42), bounce(bar5, 20), bounce(bar6, 32)];
       bounces.forEach((b) => b.start());
-
-      return () => {
-        loop.stop();
-        bounces.forEach((b) => b.stop());
-      };
+      return () => { loop.stop(); bounces.forEach((b) => b.stop()); };
     } else {
       pulseAnim.setValue(1.0);
     }
   }, [isRecording]);
 
-  if (isLoading || !data) {
+  // ── Derived data — all hooks MUST be before any early return ──────────────
+  const contact = data?.contact;
+  const recent_calls = data?.recent_calls;
+
+  const aiInsight = useMemo(() => {
+    if (!contact) return '';
+    const latestCallSentiment = contact.latestCall?.summary?.sentiment || 'Warm';
+    const minB = contact.preferences?.min_budget ? formatNaira(contact.preferences.min_budget) : '₦80M';
+    const maxB = contact.preferences?.max_budget ? formatNaira(contact.preferences.max_budget) : '₦100M';
+    const prefAreas = contact.preferences?.areas?.join(', ') || 'Lekki';
+    return `${contact.first_name} is a motivated buyer, budget ${minB}-${maxB}, prefers ${prefAreas}. Last call sentiment: ${latestCallSentiment}. Hasn't seen ${prefAreas} listing with husband yet.`;
+  }, [contact]);
+
+  const callsData = useMemo(() => recent_calls ?? [], [recent_calls]);
+
+  // ── Loading / error guard ──────────────────────────────────────────────────
+  if (isLoading || !data || !contact) {
     return (
-      <View className="flex-1 bg-surface items-center justify-center">
-        <ActivityIndicator color="#10b981" size="large" />
+      <View style={{flex: 1, backgroundColor: tokens.surfacePage, alignItems: 'center', justifyContent: 'center'}}>
+        <ActivityIndicator color={tokens.brandPrimary} size="large" />
       </View>
     );
   }
 
-  const {contact, recent_calls} = data;
-
-  // Active deal check
-  const activeDeal = contact.deals?.find((d) => d.status === 'open');
-
-  // Helper values
+  const activeDeal = contact.deals?.find((d: Deal) => d.status === 'open');
   const isAssignedToSelf = contact.assigned_agent_id === user?.id;
   const agentName = contact.assigned_agent
     ? `${contact.assigned_agent.first_name} ${contact.assigned_agent.last_name}`
     : 'Unassigned';
 
   const handleCall = () => {
-    if (!contact.phone) {
-      Alert.alert('No Phone', 'This contact has no phone number on record.');
-      return;
-    }
+    if (!contact.phone) { Alert.alert('No Phone', 'This contact has no phone number on record.'); return; }
     navigation.navigate('InCall', {contactId: contact.id, phoneNumber: contact.phone});
   };
-
   const handleWhatsApp = () => {
-    if (!contact.phone) {
-      Alert.alert('No Phone', 'This contact has no phone number on record.');
-      return;
-    }
+    if (!contact.phone) { Alert.alert('No Phone', 'This contact has no phone number on record.'); return; }
     const cleanPhone = contact.phone.replace(/[^0-9+]/g, '');
-    Linking.openURL(`whatsapp://send?phone=${cleanPhone}`).catch(() => {
-      Alert.alert('WhatsApp not installed', 'Could not open WhatsApp on this device.');
-    });
+    Linking.openURL(`whatsapp://send?phone=${cleanPhone}`).catch(() => Alert.alert('WhatsApp not installed', 'Could not open WhatsApp on this device.'));
   };
-
   const handleSMS = () => {
-    if (!contact.phone) {
-      Alert.alert('No Phone', 'This contact has no phone number on record.');
-      return;
-    }
+    if (!contact.phone) { Alert.alert('No Phone', 'This contact has no phone number on record.'); return; }
     Linking.openURL(`sms:${contact.phone}`);
   };
-
   const handleEmail = () => {
-    if (!contact.email) {
-      Alert.alert('No Email', 'This contact has no email on record.');
-      return;
-    }
+    if (!contact.email) { Alert.alert('No Email', 'This contact has no email on record.'); return; }
     Linking.openURL(`mailto:${contact.email}`);
   };
-
   const handleOverflow = () => {
     Alert.alert('Contact Management', `Actions for ${contact.first_name}`, [
       {text: 'Add to Native Contacts', onPress: () => Alert.alert('Success', 'Added to device contacts list.')},
@@ -412,268 +295,145 @@ export function ContactDetailScreen() {
     ]);
   };
 
-  // Recording Logic
   const startRecording = () => {
-    setIsRecording(true);
-    setRecordDuration(0);
-    recordInterval.current = setInterval(() => {
-      setRecordDuration((prev) => prev + 1);
-    }, 1000);
+    setIsRecording(true); setRecordDuration(0);
+    recordInterval.current = setInterval(() => setRecordDuration((p) => p + 1), 1000);
   };
-
   const stopRecording = () => {
     setIsRecording(false);
-    if (recordInterval.current) {
-      clearInterval(recordInterval.current);
-      recordInterval.current = null;
-    }
-
-    // Generate mock transcription based on contact details
+    if (recordInterval.current) { clearInterval(recordInterval.current); recordInterval.current = null; }
     const seconds = recordDuration;
-    const minutesStr = String(Math.floor(seconds / 60));
-    const secondsStr = String(seconds % 60).padStart(2, '0');
-    
-    const mockTranscripts = [
+    const m = String(Math.floor(seconds / 60));
+    const s = String(seconds % 60).padStart(2, '0');
+    const transcripts = [
       'Motivated client. Mentioned budget range of ₦80-100M, interested in Lekki houses.',
       'Spoke briefly. Requested another viewing next Tuesday at 3:00 PM.',
       'Confirmed they will discuss with partner and get back to me by Thursday morning.',
       'Client wants to proceed with drawing up offers for the duplex in Lekki.',
     ];
-    const pickedText = mockTranscripts[Math.floor(Math.random() * mockTranscripts.length)];
-    
-    setNoteText(`[Voice Note] (${minutesStr}:${secondsStr}) - ${pickedText}`);
+    setNoteText(`[Voice Note] (${m}:${s}) - ${transcripts[Math.floor(Math.random() * transcripts.length)]}`);
   };
+  const saveNoteText = () => { if (noteText.trim()) addNote.mutate(noteText); };
 
-  const saveNoteText = () => {
-    if (!noteText.trim()) return;
-    addNote.mutate(noteText);
-  };
-
-  // AI Summary construction (Key insights from web CRM)
-  const aiInsight = useMemo(() => {
-    // Look at recent call sentiment
-    const latestCallSentiment = contact.latestCall?.summary?.sentiment || 'Warm';
-    const minB = contact.preferences?.min_budget ? formatNaira(contact.preferences.min_budget) : '₦80M';
-    const maxB = contact.preferences?.max_budget ? formatNaira(contact.preferences.max_budget) : '₦100M';
-    const prefAreas = contact.preferences?.areas?.join(', ') || 'Lekki';
-
-    return `${contact.first_name} is a motivated buyer, budget ${minB}-${maxB}, prefers ${prefAreas}. Last call sentiment: ${latestCallSentiment}. Hasn't seen ${prefAreas} listing with husband yet.`;
-  }, [contact]);
-
-  // Tab Filtering
   const timelineData = timeline?.data ?? [];
-  const notesData = timelineData.filter((a) => a.type === 'note');
-  
-  const callsData = useMemo(() => {
-    return recent_calls ?? [];
-  }, [recent_calls]);
+  const notesData = timelineData.filter((a: TimelineActivity) => a.type === 'note');
 
-  // Styling selectors
-  const bgScreen = isDark ? 'bg-[#030712]' : 'bg-slate-50';
-  const bgCard = isDark ? 'bg-[#090d16]' : 'bg-white';
-  const bgInput = isDark ? 'bg-[#111827]' : 'bg-slate-100';
-  const borderCard = isDark ? 'border-zinc-800/85' : 'border-slate-200/60';
-  const textPrimary = isDark ? 'text-text-primary' : 'text-slate-900';
-  const textSecondary = isDark ? 'text-text-secondary' : 'text-slate-500';
-  const textTertiary = isDark ? 'text-text-tertiary' : 'text-slate-400';
+  const statusStyle = STATUS_STYLE[contact.status] || STATUS_STYLE.new;
+
+
+  const sheetStyle = {
+    backgroundColor: tokens.surfaceCard,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    borderTopWidth: 1,
+    borderTopColor: tokens.borderDefault,
+    padding: 20,
+    paddingBottom: 32,
+  };
 
   return (
-    <SafeAreaView className={`flex-1 ${bgScreen}`}>
-      {/* 1. Header (Sticky) */}
-      <View className={`px-4 pt-3 pb-4 border-b ${bgCard} ${borderCard}`}>
-        {/* Back and Sync Status */}
-        <View className="flex-row justify-between items-center mb-3">
-          <Pressable
-            onPress={() => navigation.goBack()}
-            className="flex-row items-center gap-1.5 active:opacity-75"
-          >
-            <Icon name="arrow-left" size={18} color="#10B981" />
-            <Text className="text-brand-500 font-extrabold text-sm">Back</Text>
+    <SafeAreaView style={{flex: 1, backgroundColor: tokens.surfacePage}}>
+      {/* Header */}
+      <View style={{paddingHorizontal: 16, paddingTop: 12, paddingBottom: 16, borderBottomWidth: 1, backgroundColor: tokens.surfaceCard, borderBottomColor: tokens.borderDefault}}>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12}}>
+          <Pressable onPress={() => navigation.goBack()} style={{flexDirection: 'row', alignItems: 'center', gap: 6}}>
+            <Icon name="arrow-left" size={18} color={tokens.brandPrimary} />
+            <Text style={{color: tokens.brandPrimary, fontWeight: '800', fontSize: 14}}>Back</Text>
           </Pressable>
-          <Text className={`text-[10px] font-bold ${textTertiary}`}>
-            Last synced 2h ago
-          </Text>
+          <Text style={{fontSize: 10, fontWeight: '700', color: tokens.textTertiary}}>Last synced 2h ago</Text>
         </View>
 
-        {/* Profile Info */}
-        <View className="flex-row items-center gap-4">
-          {/* Avatar (80px) */}
-          <View className="w-20 h-20 rounded-full bg-brand-500/10 border border-brand-500/20 items-center justify-center">
-            <Text className="text-brand-500 font-black text-3xl">
-              {contact.first_name.charAt(0)}{contact.last_name.charAt(0)}
-            </Text>
+        <View style={{flexDirection: 'row', alignItems: 'center', gap: 16}}>
+          <View style={{width: 80, height: 80, borderRadius: 40, backgroundColor: `${tokens.brandPrimary}1A`, borderWidth: 1, borderColor: `${tokens.brandPrimary}33`, alignItems: 'center', justifyContent: 'center'}}>
+            <Text style={{color: tokens.brandPrimary, fontWeight: '900', fontSize: 28}}>{contact.first_name.charAt(0)}{contact.last_name.charAt(0)}</Text>
           </View>
-
-          {/* Text block */}
-          <View className="flex-1">
-            <Text className={`${textPrimary} text-2xl font-black leading-7`}>
-              {contact.first_name} {contact.last_name}
-            </Text>
-            <View className="flex-row items-center gap-1.5 mt-1.5 flex-wrap">
-              {/* Status Chip */}
-              <View className={`px-2.5 py-0.5 rounded-full border ${STATUS_COLORS[contact.status]?.bg || 'bg-zinc-800'} ${STATUS_COLORS[contact.status]?.border || 'border-zinc-700'}`}>
-                <Text className={`text-[10px] font-bold uppercase tracking-wider ${STATUS_COLORS[contact.status]?.text || 'text-zinc-400'}`}>
-                  {contact.status}
-                </Text>
+          <View style={{flex: 1}}>
+            <Text style={{color: tokens.textPrimary, fontSize: 22, fontWeight: '900', lineHeight: 28}}>{contact.first_name} {contact.last_name}</Text>
+            <View style={{flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 6, flexWrap: 'wrap'}}>
+              <View style={{paddingHorizontal: 10, paddingVertical: 2, borderRadius: 999, borderWidth: 1, backgroundColor: statusStyle.bg, borderColor: statusStyle.border}}>
+                <Text style={{fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, color: statusStyle.text}}>{contact.status}</Text>
               </View>
-
-              {/* Assigned Agent badge */}
               {!isAssignedToSelf && (
-                <View className="px-2 py-0.5 rounded-full bg-zinc-800 border border-zinc-700/60">
-                  <Text className="text-zinc-400 font-bold text-[9px]">
-                    Assigned: {agentName.split(' ')[0]}
-                  </Text>
+                <View style={{paddingHorizontal: 8, paddingVertical: 2, borderRadius: 999, backgroundColor: tokens.surfaceRaised, borderWidth: 1, borderColor: tokens.borderDefault}}>
+                  <Text style={{color: tokens.textTertiary, fontWeight: '700', fontSize: 9}}>Assigned: {agentName.split(' ')[0]}</Text>
                 </View>
               )}
             </View>
-
-            {/* View Deal in Pipeline Link */}
             {activeDeal && (
-              <Pressable
-                onPress={() => setDealModalVisible(true)}
-                className="flex-row items-center gap-1 mt-2.5"
-              >
-                <Icon name="activity" size={13} color="#10B981" />
-                <Text className="text-brand-500 font-extrabold text-xs underline">
-                  View deal in Pipeline
-                </Text>
+              <Pressable onPress={() => setDealModalVisible(true)} style={{flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 10}}>
+                <Icon name="activity" size={13} color={tokens.brandPrimary} />
+                <Text style={{color: tokens.brandPrimary, fontWeight: '800', fontSize: 12, textDecorationLine: 'underline'}}>View deal in Pipeline</Text>
               </Pressable>
             )}
           </View>
         </View>
       </View>
 
-      {/* Main Content Area */}
-      <ScrollView className="flex-1" contentContainerStyle={{paddingBottom: 88}} showsVerticalScrollIndicator={false}>
-        
-        {/* 2. Quick Actions Row (Glassmorphism card) */}
-        <View className="px-4 py-3">
-          <View className={`flex-row items-center justify-between rounded-xl p-3 border ${
-            isDark ? 'bg-[#111827]/80 border-zinc-800' : 'bg-white border-slate-200/60 shadow-sm'
-          }`}>
-            <Pressable onPress={handleCall} className="items-center flex-1 py-1 active:opacity-60">
-              <View className="w-10 h-10 rounded-full bg-brand-500/10 items-center justify-center mb-1">
-                <Icon name="phone" size={18} color="#10B981" />
-              </View>
-              <Text className={`text-[10px] font-extrabold ${textPrimary}`}>Call</Text>
-            </Pressable>
-
-            <Pressable onPress={handleWhatsApp} className="items-center flex-1 py-1 active:opacity-60">
-              <View className="w-10 h-10 rounded-full bg-emerald-500/10 items-center justify-center mb-1">
-                <Icon name="message-circle" size={18} color="#25D366" />
-              </View>
-              <Text className={`text-[10px] font-extrabold ${textPrimary}`}>WhatsApp</Text>
-            </Pressable>
-
-            <Pressable onPress={handleSMS} className="items-center flex-1 py-1 active:opacity-60">
-              <View className="w-10 h-10 rounded-full bg-brand-500/10 items-center justify-center mb-1">
-                <Icon name="mail" size={18} color="#10B981" />
-              </View>
-              <Text className={`text-[10px] font-extrabold ${textPrimary}`}>SMS</Text>
-            </Pressable>
-
-            <Pressable onPress={handleEmail} className="items-center flex-1 py-1 active:opacity-60">
-              <View className="w-10 h-10 rounded-full bg-info/10 items-center justify-center mb-1">
-                <Icon name="send" size={18} color="#0EA5E9" />
-              </View>
-              <Text className={`text-[10px] font-extrabold ${textPrimary}`}>Email</Text>
-            </Pressable>
-
-            {/* Overflow icon dots */}
-            <Pressable onPress={handleOverflow} className="items-center flex-1 py-1 active:opacity-60">
-              <View className="w-10 h-10 rounded-full bg-zinc-800/10 items-center justify-center mb-1 border border-zinc-700/20">
-                <Icon name="more-horizontal" size={18} color={isDark ? '#FAFAFA' : '#64748b'} />
-              </View>
-              <Text className={`text-[10px] font-extrabold ${textPrimary}`}>More</Text>
-            </Pressable>
+      <ScrollView style={{flex: 1}} contentContainerStyle={{paddingBottom: 88}} showsVerticalScrollIndicator={false}>
+        {/* Quick actions */}
+        <View style={{paddingHorizontal: 16, paddingVertical: 12}}>
+          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderRadius: 12, padding: 12, borderWidth: 1, backgroundColor: tokens.surfaceCard, borderColor: tokens.borderDefault}}>
+            {[
+              {label: 'Call',      icon: 'phone',          color: tokens.brandPrimary, bg: `${tokens.brandPrimary}1A`, onPress: handleCall},
+              {label: 'WhatsApp',  icon: 'message-circle', color: '#25D366',            bg: '#25D3661A',                onPress: handleWhatsApp},
+              {label: 'SMS',       icon: 'mail',           color: tokens.brandPrimary, bg: `${tokens.brandPrimary}1A`, onPress: handleSMS},
+              {label: 'Email',     icon: 'send',           color: '#0EA5E9',            bg: '#0EA5E91A',                onPress: handleEmail},
+              {label: 'More',      icon: 'more-horizontal', color: tokens.textSecondary, bg: tokens.surfaceRaised,     onPress: handleOverflow},
+            ].map(({label, icon, color, bg, onPress}) => (
+              <Pressable key={label} onPress={onPress} style={{alignItems: 'center', flex: 1, paddingVertical: 4}}>
+                <View style={{width: 40, height: 40, borderRadius: 20, backgroundColor: bg, alignItems: 'center', justifyContent: 'center', marginBottom: 4}}>
+                  <Icon name={icon} size={18} color={color} />
+                </View>
+                <Text style={{fontSize: 10, fontWeight: '800', color: tokens.textPrimary}}>{label}</Text>
+              </Pressable>
+            ))}
           </View>
         </View>
 
-        {/* 3. Key Info Card (2 columns) */}
-        <View className="px-4 mb-4">
-          <View className={`rounded-xl p-4 border ${bgCard} ${borderCard}`}>
-            <Text className={`text-[11px] font-extrabold uppercase tracking-widest mb-3 ${textTertiary}`}>
-              Key Information
-            </Text>
-
-            <View className="flex-row flex-wrap gap-y-4">
-              <Pressable onPress={handleCall} className="w-1/2 pr-2">
-                <Text className={`text-[10px] font-bold uppercase tracking-wider ${textTertiary}`}>Phone Number</Text>
-                <Text className={`text-sm font-bold font-mono mt-0.5 ${textPrimary}`} numberOfLines={1}>
-                  {contact.phone || '—'}
-                </Text>
-              </Pressable>
-
-              <Pressable onPress={handleEmail} className="w-1/2 pl-2">
-                <Text className={`text-[10px] font-bold uppercase tracking-wider ${textTertiary}`}>Email Address</Text>
-                <Text className={`text-sm font-bold mt-0.5 ${textPrimary}`} numberOfLines={1}>
-                  {contact.email || '—'}
-                </Text>
-              </Pressable>
-
-              <View className="w-1/2 pr-2">
-                <Text className={`text-[10px] font-bold uppercase tracking-wider ${textTertiary}`}>Budget Range</Text>
-                <Text className={`text-sm font-extrabold mt-0.5 ${textPrimary}`}>
-                  {contact.preferences?.min_budget || contact.preferences?.max_budget
-                    ? `${formatNaira(contact.preferences.min_budget)} - ${formatNaira(contact.preferences.max_budget)}`
-                    : '₦80M - ₦100M'}
-                </Text>
-              </View>
-
-              <View className="w-1/2 pl-2">
-                <Text className={`text-[10px] font-bold uppercase tracking-wider ${textTertiary}`}>Preferred Areas</Text>
-                <Text className={`text-sm font-bold mt-0.5 ${textPrimary}`} numberOfLines={1}>
-                  {contact.preferences?.areas && contact.preferences.areas.length > 0
-                    ? contact.preferences.areas.join(', ')
-                    : 'Lekki Phase 1'}
-                </Text>
-              </View>
-
-              <View className="w-1/2 pr-2">
-                <Text className={`text-[10px] font-bold uppercase tracking-wider ${textTertiary}`}>Bedrooms</Text>
-                <Text className={`text-sm font-bold mt-0.5 ${textPrimary}`}>
-                  {contact.preferences?.min_bedrooms ? `${contact.preferences.min_bedrooms}+ beds` : '3+ Bedrooms'}
-                </Text>
-              </View>
-
-              <View className="w-1/2 pl-2">
-                <Text className={`text-[10px] font-bold uppercase tracking-wider ${textTertiary}`}>Timeline</Text>
-                <Text className={`text-sm font-bold mt-0.5 ${textPrimary}`}>
-                  {contact.preferences?.timeline || 'Immediate'}
-                </Text>
-              </View>
+        {/* Key info */}
+        <View style={{paddingHorizontal: 16, marginBottom: 16}}>
+          <View style={{borderRadius: 12, padding: 16, borderWidth: 1, backgroundColor: tokens.surfaceCard, borderColor: tokens.borderDefault}}>
+            <Text style={{fontSize: 11, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 12, color: tokens.textTertiary}}>Key Information</Text>
+            <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 16}}>
+              {[
+                {label: 'Phone Number', value: contact.phone || '—', onPress: handleCall},
+                {label: 'Email Address', value: contact.email || '—', onPress: handleEmail},
+                {label: 'Budget Range', value: contact.preferences?.min_budget || contact.preferences?.max_budget ? `${formatNaira(contact.preferences.min_budget)} - ${formatNaira(contact.preferences.max_budget)}` : '₦80M - ₦100M'},
+                {label: 'Preferred Areas', value: contact.preferences?.areas?.length ? contact.preferences.areas.join(', ') : 'Lekki Phase 1'},
+                {label: 'Bedrooms', value: contact.preferences?.min_bedrooms ? `${contact.preferences.min_bedrooms}+ beds` : '3+ Bedrooms'},
+                {label: 'Timeline', value: contact.preferences?.timeline || 'Immediate'},
+              ].map(({label, value, onPress}) => (
+                <Pressable key={label} onPress={onPress} style={{width: '47%'}}>
+                  <Text style={{fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, color: tokens.textTertiary}}>{label}</Text>
+                  <Text style={{fontSize: 14, fontWeight: '700', marginTop: 2, color: tokens.textPrimary}} numberOfLines={1}>{value}</Text>
+                </Pressable>
+              ))}
             </View>
           </View>
         </View>
 
-        {/* 4. AI Summary Card */}
-        <View className="px-4 mb-5">
-          <View className={`rounded-r-xl border-l-4 border-brand-500 p-4 ${bgCard} ${borderCard} border-y border-r`}>
-            <View className="flex-row items-center gap-1 mb-2">
-              <Icon name="sparkles" size={14} color="#10B981" />
-              <Text className="text-brand-500 font-extrabold text-xs uppercase tracking-wider">✦ AI Insight</Text>
+        {/* AI insight */}
+        <View style={{paddingHorizontal: 16, marginBottom: 20}}>
+          <View style={{borderLeftWidth: 4, borderLeftColor: tokens.brandPrimary, padding: 16, borderTopRightRadius: 12, borderBottomRightRadius: 12, borderWidth: 1, borderColor: tokens.borderDefault, backgroundColor: tokens.surfaceCard}}>
+            <View style={{flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 8}}>
+              <Icon name="zap" size={14} color={tokens.brandPrimary} />
+              <Text style={{color: tokens.brandPrimary, fontWeight: '800', fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5}}>✦ AI Insight</Text>
             </View>
-            <Text className={`text-xs leading-5 font-semibold ${textPrimary}`}>
-              {aiInsight}
-            </Text>
+            <Text style={{fontSize: 12, lineHeight: 20, fontWeight: '600', color: tokens.textPrimary}}>{aiInsight}</Text>
           </View>
         </View>
 
-        {/* 5. Tabs (Timeline | Calls | Notes) */}
-        <View className={`flex-row border-b border-zinc-800 px-4 mb-3 ${bgCard}`}>
+        {/* Tab bar */}
+        <View style={{flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: tokens.borderDefault, paddingHorizontal: 16, marginBottom: 12, backgroundColor: tokens.surfaceCard}}>
           {(['timeline', 'calls', 'notes'] as const).map((t) => {
             const isActive = tab === t;
             return (
               <Pressable
                 key={t}
-                className={`mr-6 pb-2.5 border-b-2 active:opacity-75 ${
-                  isActive ? 'border-brand-500' : 'border-transparent'
-                }`}
                 onPress={() => setTab(t)}
+                style={{marginRight: 24, paddingBottom: 10, borderBottomWidth: 2, borderBottomColor: isActive ? tokens.brandPrimary : 'transparent'}}
               >
-                <Text className={`text-sm font-extrabold capitalize ${
-                  isActive ? textPrimary : textTertiary
-                }`}>
+                <Text style={{fontSize: 14, fontWeight: '800', textTransform: 'capitalize', color: isActive ? tokens.textPrimary : tokens.textTertiary}}>
                   {t}
                 </Text>
               </Pressable>
@@ -681,26 +441,21 @@ export function ContactDetailScreen() {
           })}
         </View>
 
-        {/* Tab content view */}
-        <View className="px-4">
+        {/* Tab content */}
+        <View style={{paddingHorizontal: 16}}>
           {tab === 'timeline' && (
             timelineLoading ? (
-              <View className="py-10 items-center">
-                <ActivityIndicator color="#10b981" />
+              <View style={{paddingVertical: 40, alignItems: 'center'}}>
+                <ActivityIndicator color={tokens.brandPrimary} />
               </View>
             ) : timelineData.length === 0 ? (
-              <View className="py-8 items-center">
-                <Text className={`text-xs ${textTertiary}`}>No timeline activities yet</Text>
+              <View style={{paddingVertical: 32, alignItems: 'center'}}>
+                <Text style={{fontSize: 12, color: tokens.textTertiary}}>No timeline activities yet</Text>
               </View>
             ) : (
-              <View className="gap-1">
-                {timelineData.map((activity) => (
-                  <HighlightedTimelineItem
-                    key={activity.id}
-                    activity={activity}
-                    isNew={activity.id === highlightNoteId.current}
-                    isDark={isDark}
-                  />
+              <View style={{gap: 4}}>
+                {timelineData.map((activity: TimelineActivity) => (
+                  <HighlightedTimelineItem key={activity.id} activity={activity} isNew={activity.id === highlightNoteId.current} tokens={tokens} />
                 ))}
               </View>
             )
@@ -708,37 +463,26 @@ export function ContactDetailScreen() {
 
           {tab === 'calls' && (
             callsData.length === 0 ? (
-              <View className="py-8 items-center">
-                <Text className={`text-xs ${textTertiary}`}>No calls recorded yet</Text>
+              <View style={{paddingVertical: 32, alignItems: 'center'}}>
+                <Text style={{fontSize: 12, color: tokens.textTertiary}}>No calls recorded yet</Text>
               </View>
             ) : (
-              <View className="gap-2">
-                {callsData.map((item) => {
+              <View style={{gap: 8}}>
+                {callsData.map((item: Call) => {
                   const sentiment = item.summary?.sentiment;
                   return (
-                    <View
-                      key={item.id}
-                      className={`flex-row items-center p-3 rounded-xl border ${bgCard} ${borderCard}`}
-                    >
-                      <View className="w-8 h-8 rounded-full bg-brand-500/10 items-center justify-center mr-3">
-                        <Icon
-                          name={item.direction === 'inbound' ? 'phone-incoming' : 'phone-outgoing'}
-                          size={14}
-                          color="#10B981"
-                        />
+                    <View key={item.id} style={{flexDirection: 'row', alignItems: 'center', padding: 12, borderRadius: 12, borderWidth: 1, backgroundColor: tokens.surfaceCard, borderColor: tokens.borderDefault}}>
+                      <View style={{width: 32, height: 32, borderRadius: 16, backgroundColor: `${tokens.brandPrimary}1A`, alignItems: 'center', justifyContent: 'center', marginRight: 12}}>
+                        <Icon name={item.direction === 'inbound' ? 'phone-incoming' : 'phone-outgoing'} size={14} color={tokens.brandPrimary} />
                       </View>
-                      <View className="flex-1">
-                        <Text className={`text-xs font-bold capitalize ${textPrimary}`}>
-                          {item.direction} Call
-                        </Text>
-                        <Text className={`text-[10px] mt-0.5 ${textTertiary}`}>
+                      <View style={{flex: 1}}>
+                        <Text style={{fontSize: 12, fontWeight: '700', textTransform: 'capitalize', color: tokens.textPrimary}}>{item.direction} Call</Text>
+                        <Text style={{fontSize: 10, marginTop: 2, color: tokens.textTertiary}}>
                           {item.started_at ? format(parseISO(item.started_at), 'd MMM, h:mm a') : '—'}
                           {item.duration_formatted ? ` · ${item.duration_formatted}` : ''}
                         </Text>
                       </View>
-                      {sentiment && (
-                        <View className={`w-2.5 h-2.5 rounded-full ${SENTIMENT_DOT[sentiment]}`} />
-                      )}
+                      {sentiment && <View style={{width: 10, height: 10, borderRadius: 5, backgroundColor: SENTIMENT_DOT_HEX[sentiment] || '#71717A'}} />}
                     </View>
                   );
                 })}
@@ -748,18 +492,13 @@ export function ContactDetailScreen() {
 
           {tab === 'notes' && (
             notesData.length === 0 ? (
-              <View className="py-8 items-center">
-                <Text className={`text-xs ${textTertiary}`}>No notes added yet</Text>
+              <View style={{paddingVertical: 32, alignItems: 'center'}}>
+                <Text style={{fontSize: 12, color: tokens.textTertiary}}>No notes added yet</Text>
               </View>
             ) : (
-              <View className="gap-1">
-                {notesData.map((activity) => (
-                  <HighlightedTimelineItem
-                    key={activity.id}
-                    activity={activity}
-                    isNew={activity.id === highlightNoteId.current}
-                    isDark={isDark}
-                  />
+              <View style={{gap: 4}}>
+                {notesData.map((activity: TimelineActivity) => (
+                  <HighlightedTimelineItem key={activity.id} activity={activity} isNew={activity.id === highlightNoteId.current} tokens={tokens} />
                 ))}
               </View>
             )
@@ -767,208 +506,133 @@ export function ContactDetailScreen() {
         </View>
       </ScrollView>
 
-      {/* 6. Floating Action Button (FAB) (Only visible on Timeline & Notes tabs) */}
+      {/* FAB */}
       {(tab === 'timeline' || tab === 'notes') && (
         <Pressable
           onPress={() => setNoteVisible(true)}
-          className="absolute bottom-6 right-4 w-14 h-14 bg-brand-500 rounded-full items-center justify-center shadow-lg shadow-brand-500/35 active:scale-95 z-30"
+          style={({pressed}) => ({position: 'absolute', bottom: 24, right: 16, width: 56, height: 56, backgroundColor: tokens.brandPrimary, borderRadius: 28, alignItems: 'center', justifyContent: 'center', zIndex: 30, transform: [{scale: pressed ? 0.95 : 1}]})}
         >
           <Icon name="mic" size={24} color="#ffffff" />
         </Pressable>
       )}
 
-      {/* FAB Bottom Sheet / Add Note Modal */}
-      <Modal
-        visible={noteVisible}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setNoteVisible(false)}
-      >
-        <View className="flex-1 justify-end bg-[#020617]/60">
-          <Pressable className="flex-1" onPress={() => setNoteVisible(false)} />
-          
-          <View className={`${bgCard} rounded-t-3xl border-t ${borderCard} p-5 pb-8`}>
-            {/* Grab handle */}
-            <View className={`w-12 h-1 ${isDark ? 'bg-zinc-800' : 'bg-slate-300'} rounded-full self-center mb-5`} />
-            
-            <View className="flex-row justify-between items-center mb-6">
-              <Text className={`${textPrimary} font-black text-lg`}>Add Activity Note</Text>
-              <Pressable
-                onPress={() => setNoteVisible(false)}
-                className={`w-8 h-8 rounded-full ${
-                  isDark ? 'bg-zinc-800' : 'bg-slate-100'
-                } items-center justify-center`}
-              >
-                <Icon name="x" size={16} color={isDark ? '#A1A1AA' : '#64748b'} />
+      {/* Add Note sheet */}
+      <Modal visible={noteVisible} transparent animationType="slide" onRequestClose={() => setNoteVisible(false)}>
+        <View style={{flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(2,6,23,0.6)'}}>
+          <Pressable style={{flex: 1}} onPress={() => setNoteVisible(false)} />
+          <View style={sheetStyle}>
+            <View style={{width: 48, height: 4, backgroundColor: tokens.borderStrong, borderRadius: 999, alignSelf: 'center', marginBottom: 20}} />
+            <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24}}>
+              <Text style={{color: tokens.textPrimary, fontWeight: '900', fontSize: 18}}>Add Activity Note</Text>
+              <Pressable onPress={() => setNoteVisible(false)} style={{width: 32, height: 32, borderRadius: 16, backgroundColor: tokens.surfaceRaised, alignItems: 'center', justifyContent: 'center'}}>
+                <Icon name="x" size={16} color={tokens.textSecondary} />
               </Pressable>
             </View>
 
-            {/* Voice Recorder simulation */}
-            <View className="items-center mb-6">
-              {/* Record Button Container */}
-              <View className="w-24 h-24 items-center justify-center relative mb-3">
+            <View style={{alignItems: 'center', marginBottom: 24}}>
+              <View style={{width: 96, height: 96, alignItems: 'center', justifyContent: 'center', position: 'relative', marginBottom: 12}}>
                 {isRecording && (
-                  <Animated.View
-                    style={{transform: [{scale: pulseAnim}]}}
-                    className="absolute inset-0 rounded-full bg-danger/15"
-                  />
+                  <Animated.View style={{transform: [{scale: pulseAnim}], position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, borderRadius: 48, backgroundColor: '#F43F5E26'}} />
                 )}
                 <Pressable
                   onPress={isRecording ? stopRecording : startRecording}
-                  className={`w-16 h-16 rounded-full items-center justify-center ${
-                    isRecording ? 'bg-danger active:bg-danger/80' : 'bg-brand-500 active:bg-brand-600'
-                  }`}
+                  style={{width: 64, height: 64, borderRadius: 32, alignItems: 'center', justifyContent: 'center', backgroundColor: isRecording ? '#F43F5E' : tokens.brandPrimary}}
                 >
                   <Icon name={isRecording ? 'square' : 'mic'} size={24} color="#ffffff" />
                 </Pressable>
               </View>
-
-              {/* Timer & Pulsing Waveform */}
-              <Text className={`text-sm font-mono font-bold mb-2.5 ${isRecording ? 'text-danger' : textSecondary}`}>
-                {isRecording
-                  ? `Recording... ${String(Math.floor(recordDuration / 60))}:${String(recordDuration % 60).padStart(2, '0')}`
-                  : 'Tap mic to start voice note'}
+              <Text style={{fontSize: 14, fontFamily: 'monospace', fontWeight: '700', marginBottom: 10, color: isRecording ? '#F43F5E' : tokens.textSecondary}}>
+                {isRecording ? `Recording... ${String(Math.floor(recordDuration / 60))}:${String(recordDuration % 60).padStart(2, '0')}` : 'Tap mic to start voice note'}
               </Text>
-
-              {/* Live Waveform Anim */}
               {isRecording && (
-                <View className="flex-row items-center gap-[3px] h-12 justify-center w-full">
+                <View style={{flexDirection: 'row', alignItems: 'center', gap: 3, height: 48, justifyContent: 'center', width: '100%'}}>
                   {[bar1, bar2, bar3, bar4, bar5, bar6, bar5, bar3, bar2, bar1].map((b, i) => (
-                    <Animated.View
-                      key={i}
-                      style={{height: b}}
-                      className="w-1.5 rounded-full bg-danger"
-                    />
+                    <Animated.View key={i} style={{height: b, width: 6, borderRadius: 999, backgroundColor: '#F43F5E'}} />
                   ))}
                 </View>
               )}
             </View>
 
-            {/* Note text field */}
-            <Text className={`text-xs font-bold mb-1.5 ${textSecondary}`}>Note Message / Transcript</Text>
+            <Text style={{fontSize: 12, fontWeight: '700', color: tokens.textSecondary, marginBottom: 6}}>Note Message / Transcript</Text>
             <TextInput
-              className={`rounded-xl px-4 py-3 text-sm border ${bgInput} ${textPrimary} ${
-                isDark ? 'border-zinc-850' : 'border-slate-200'
-              }`}
+              style={{borderRadius: 12, paddingHorizontal: 16, paddingVertical: 12, fontSize: 14, borderWidth: 1, backgroundColor: tokens.surfaceInput, color: tokens.textPrimary, borderColor: tokens.borderDefault, minHeight: 100, textAlignVertical: 'top'}}
               placeholder="Record a voice note or type notes here…"
-              placeholderTextColor={isDark ? '#52525B' : '#94a3b8'}
+              placeholderTextColor={tokens.textTertiary}
               multiline
               numberOfLines={4}
               value={noteText}
               onChangeText={setNoteText}
-              style={{minHeight: 100, textAlignVertical: 'top'}}
             />
 
-            {/* Action buttons */}
-            <View className="flex-row gap-3 mt-5">
-              <Pressable
-                className={`flex-1 rounded-xl py-3.5 items-center ${
-                  isDark ? 'bg-zinc-800' : 'bg-slate-100'
-                }`}
-                onPress={() => setNoteVisible(false)}
-              >
-                <Text className={`font-bold text-sm ${isDark ? 'text-text-secondary' : 'text-slate-650'}`}>Cancel</Text>
+            <View style={{flexDirection: 'row', gap: 12, marginTop: 20}}>
+              <Pressable style={{flex: 1, borderRadius: 12, paddingVertical: 14, alignItems: 'center', backgroundColor: tokens.surfaceRaised}} onPress={() => setNoteVisible(false)}>
+                <Text style={{fontWeight: '700', fontSize: 14, color: tokens.textSecondary}}>Cancel</Text>
               </Pressable>
-
               <Pressable
-                className={`flex-1 rounded-xl py-3.5 items-center bg-brand-500 active:bg-brand-600 ${
-                  !noteText.trim() || addNote.isPending ? 'opacity-55' : ''
-                }`}
+                style={{flex: 1, borderRadius: 12, paddingVertical: 14, alignItems: 'center', backgroundColor: tokens.brandPrimary, opacity: (!noteText.trim() || addNote.isPending) ? 0.55 : 1}}
                 onPress={saveNoteText}
                 disabled={!noteText.trim() || addNote.isPending}
               >
-                {addNote.isPending ? (
-                  <ActivityIndicator color="#fff" size="small" />
-                ) : (
-                  <Text className="text-white font-bold text-sm">Save Note</Text>
-                )}
+                {addNote.isPending ? <ActivityIndicator color="#fff" size="small" /> : <Text style={{color: '#ffffff', fontWeight: '700', fontSize: 14}}>Save Note</Text>}
               </Pressable>
             </View>
           </View>
         </View>
       </Modal>
 
-      {/* Deal Summary Bottom Sheet Modal */}
+      {/* Deal Summary sheet */}
       {activeDeal && (
-        <Modal
-          visible={dealModalVisible}
-          transparent
-          animationType="slide"
-          onRequestClose={() => setDealModalVisible(false)}
-        >
-          <View className="flex-1 justify-end bg-[#020617]/60">
-            <Pressable className="flex-1" onPress={() => setDealModalVisible(false)} />
-            <View className={`${bgCard} rounded-t-3xl border-t ${borderCard} p-5 pb-8`}>
-              <View className={`w-12 h-1 ${isDark ? 'bg-zinc-800' : 'bg-slate-300'} rounded-full self-center mb-5`} />
-              
-              <View className="flex-row justify-between items-center mb-4">
-                <View className="flex-row items-center gap-1.5">
-                  <Icon name="activity" size={18} color="#10B981" />
-                  <Text className={`${textPrimary} font-black text-lg`}>Pipeline Deal Summary</Text>
+        <Modal visible={dealModalVisible} transparent animationType="slide" onRequestClose={() => setDealModalVisible(false)}>
+          <View style={{flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(2,6,23,0.6)'}}>
+            <Pressable style={{flex: 1}} onPress={() => setDealModalVisible(false)} />
+            <View style={sheetStyle}>
+              <View style={{width: 48, height: 4, backgroundColor: tokens.borderStrong, borderRadius: 999, alignSelf: 'center', marginBottom: 20}} />
+              <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', gap: 6}}>
+                  <Icon name="activity" size={18} color={tokens.brandPrimary} />
+                  <Text style={{color: tokens.textPrimary, fontWeight: '900', fontSize: 18}}>Pipeline Deal Summary</Text>
                 </View>
-                <Pressable
-                  onPress={() => setDealModalVisible(false)}
-                  className={`w-8 h-8 rounded-full ${
-                    isDark ? 'bg-zinc-800' : 'bg-slate-100'
-                  } items-center justify-center`}
-                >
-                  <Icon name="x" size={16} color={isDark ? '#A1A1AA' : '#64748b'} />
+                <Pressable onPress={() => setDealModalVisible(false)} style={{width: 32, height: 32, borderRadius: 16, backgroundColor: tokens.surfaceRaised, alignItems: 'center', justifyContent: 'center'}}>
+                  <Icon name="x" size={16} color={tokens.textSecondary} />
                 </Pressable>
               </View>
 
-              {/* Deal information display */}
-              <View className={`rounded-xl p-4 border mb-5 ${
-                isDark ? 'bg-surface-raised border-zinc-800' : 'bg-slate-50 border-slate-200'
-              }`}>
-                <Text className={`text-[10px] font-bold uppercase tracking-wider ${textTertiary}`}>Deal Name</Text>
-                <Text className={`text-base font-extrabold mt-0.5 ${textPrimary}`}>{activeDeal.name}</Text>
-                
-                <View className="flex-row mt-4">
-                  <View className="w-1/2">
-                    <Text className={`text-[10px] font-bold uppercase tracking-wider ${textTertiary}`}>Value</Text>
-                    <Text className="text-base font-extrabold text-brand-500 mt-0.5">
-                      {activeDeal.value ? formatNaira(activeDeal.value) : '—'}
-                    </Text>
+              <View style={{borderRadius: 12, padding: 16, borderWidth: 1, marginBottom: 20, backgroundColor: tokens.surfaceRaised, borderColor: tokens.borderDefault}}>
+                <Text style={{fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, color: tokens.textTertiary}}>Deal Name</Text>
+                <Text style={{fontSize: 16, fontWeight: '800', marginTop: 2, color: tokens.textPrimary}}>{activeDeal.name}</Text>
+                <View style={{flexDirection: 'row', marginTop: 16}}>
+                  <View style={{width: '50%'}}>
+                    <Text style={{fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, color: tokens.textTertiary}}>Value</Text>
+                    <Text style={{fontSize: 16, fontWeight: '800', marginTop: 2, color: tokens.brandPrimary}}>{activeDeal.value ? formatNaira(activeDeal.value) : '—'}</Text>
                   </View>
-
-                  <View className="w-1/2">
-                    <Text className={`text-[10px] font-bold uppercase tracking-wider ${textTertiary}`}>Pipeline Stage</Text>
-                    <View className="flex-row items-center gap-1.5 mt-1">
-                      <View
-                        className="w-2.5 h-2.5 rounded-full"
-                        style={{backgroundColor: activeDeal.stage?.color || '#10B981'}}
-                      />
-                      <Text className={`text-sm font-bold ${textPrimary}`}>
-                        {activeDeal.stage?.name || 'Qualified'}
-                      </Text>
+                  <View style={{width: '50%'}}>
+                    <Text style={{fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, color: tokens.textTertiary}}>Pipeline Stage</Text>
+                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4}}>
+                      <View style={{width: 10, height: 10, borderRadius: 5, backgroundColor: activeDeal.stage?.color || tokens.brandPrimary}} />
+                      <Text style={{fontSize: 14, fontWeight: '700', color: tokens.textPrimary}}>{activeDeal.stage?.name || 'Qualified'}</Text>
                     </View>
                   </View>
                 </View>
-
-                <View className="flex-row mt-4">
-                  <View className="w-1/2">
-                    <Text className={`text-[10px] font-bold uppercase tracking-wider ${textTertiary}`}>Momentum</Text>
-                    <View className="flex-row items-center gap-1 mt-1">
+                <View style={{flexDirection: 'row', marginTop: 16}}>
+                  <View style={{width: '50%'}}>
+                    <Text style={{fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, color: tokens.textTertiary}}>Momentum</Text>
+                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4}}>
                       <Icon name="trending-up" size={14} color="#F59E0B" />
-                      <Text className="text-sm font-extrabold text-accent">
-                        {activeDeal.momentum_label || 'Warm'} ({activeDeal.momentum_score ?? 60}%)
-                      </Text>
+                      <Text style={{fontSize: 14, fontWeight: '800', color: '#F59E0B'}}>{activeDeal.momentum_label || 'Warm'} ({activeDeal.momentum_score ?? 60}%)</Text>
                     </View>
                   </View>
-
-                  <View className="w-1/2">
-                    <Text className={`text-[10px] font-bold uppercase tracking-wider ${textTertiary}`}>Deal Status</Text>
-                    <Text className={`text-sm font-bold capitalize mt-0.5 ${textPrimary}`}>{activeDeal.status}</Text>
+                  <View style={{width: '50%'}}>
+                    <Text style={{fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, color: tokens.textTertiary}}>Deal Status</Text>
+                    <Text style={{fontSize: 14, fontWeight: '700', textTransform: 'capitalize', marginTop: 2, color: tokens.textPrimary}}>{activeDeal.status}</Text>
                   </View>
                 </View>
               </View>
 
-              {/* Close Button */}
               <Pressable
-                className="w-full bg-brand-500 rounded-xl py-3.5 items-center active:bg-brand-600"
+                style={{width: '100%', backgroundColor: tokens.brandPrimary, borderRadius: 12, paddingVertical: 14, alignItems: 'center'}}
                 onPress={() => setDealModalVisible(false)}
               >
-                <Text className="text-white font-extrabold text-sm">Close Summary</Text>
+                <Text style={{color: '#ffffff', fontWeight: '800', fontSize: 14}}>Close Summary</Text>
               </Pressable>
             </View>
           </View>

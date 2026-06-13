@@ -20,14 +20,16 @@ import {callsApi} from '../../api/calls';
 import {apiClient} from '../../api/client';
 import {Call} from '../../types';
 import type {CallsStackParamList} from '../../navigation/stacks/CallsStack';
+import {useTheme} from '../../theme/ThemeProvider';
+import {ThemeTokens} from '../../theme/tokens';
 
 type NavProp = NativeStackNavigationProp<CallsStackParamList>;
 
-const SENTIMENT_DOTS: Record<string, string> = {
-  hot: 'bg-danger',
-  warm: 'bg-accent',
-  cold: 'bg-info',
-  neutral: 'bg-slate-500',
+const SENTIMENT_DOT_COLORS: Record<string, string> = {
+  hot: '#F43F5E',
+  warm: '#F59E0B',
+  cold: '#0EA5E9',
+  neutral: '#64748B',
 };
 
 const FILTER_OPTIONS = ['All', 'Inbound', 'Outbound', 'Hot', 'Warm', 'Cold', 'This Week'];
@@ -40,7 +42,6 @@ function getRelativeTime(dateStr?: string) {
     const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMins / 60);
     const diffDays = Math.floor(diffHours / 24);
-
     if (diffMins < 1) return 'now';
     if (diffMins < 60) return `${diffMins}m ago`;
     if (diffHours < 24) return `${diffHours}h ago`;
@@ -56,7 +57,6 @@ function getSearchSnippet(fullText?: string, query?: string) {
   const lowerText = fullText.toLowerCase();
   const idx = lowerText.indexOf(cleanQuery);
   if (idx === -1) return null;
-
   const start = Math.max(0, idx - 25);
   const end = Math.min(fullText.length, idx + 45);
   let snippet = fullText.substring(start, end);
@@ -69,92 +69,136 @@ interface CallRowProps {
   call: Call;
   onPress: () => void;
   searchQuery?: string;
+  tokens: ThemeTokens;
 }
 
-function CallRow({call, onPress, searchQuery}: CallRowProps) {
+function CallRow({call, onPress, searchQuery, tokens}: CallRowProps) {
   const contact = call.contact;
   const summary = call.summary;
-
   const initials = contact ? `${contact.first_name.charAt(0)}${contact.last_name.charAt(0)}`.toUpperCase() : '?';
   const name = contact ? `${contact.first_name} ${contact.last_name}` : call.remote_number;
   const isMissed = (call.status as string) === 'missed' || (call.status as string) === 'no-answer' || call.duration_seconds === 0;
 
-  // Search snippet extraction
-  const snippet = useMemo(() => {
-    return getSearchSnippet(call.transcript?.full_text, searchQuery);
-  }, [call.transcript?.full_text, searchQuery]);
+  const snippet = useMemo(
+    () => getSearchSnippet(call.transcript?.full_text, searchQuery),
+    [call.transcript?.full_text, searchQuery]
+  );
 
   const renderSnippetText = (text: string, query: string) => {
     const cleanQuery = query.trim();
     const parts = text.split(new RegExp(`(${cleanQuery})`, 'gi'));
     return (
-      <Text className="text-text-secondary text-xs mt-1 leading-5" numberOfLines={2}>
+      <Text style={{color: tokens.textSecondary, fontSize: 12, marginTop: 4, lineHeight: 20}} numberOfLines={2}>
         {parts.map((part, i) =>
           part.toLowerCase() === cleanQuery.toLowerCase() ? (
-            <Text key={i} className="text-accent font-semibold">{part}</Text>
-          ) : (
-            part
-          )
+            <Text key={i} style={{color: '#F59E0B', fontWeight: '600'}}>{part}</Text>
+          ) : part
         )}
       </Text>
     );
   };
 
+  const directionBg =
+    isMissed ? '#F43F5E1A'
+    : call.direction === 'inbound' ? `${tokens.brandPrimary}1A`
+    : tokens.surfaceRaised;
+
+  const directionColor =
+    isMissed ? '#F43F5E'
+    : call.direction === 'inbound' ? tokens.brandPrimary
+    : tokens.textTertiary;
+
+  const directionIcon =
+    isMissed ? 'phone-missed'
+    : call.direction === 'inbound' ? 'arrow-down-left'
+    : 'arrow-up-right';
+
   return (
     <Pressable
-      className="flex-row items-center bg-[#090d16]/75 border border-slate-900 rounded-2xl mx-4 mb-3 p-4 shadow-sm"
       onPress={onPress}
-      style={({pressed}) => [{transform: [{scale: pressed ? 0.98 : 1}]}]}
+      style={({pressed}) => [{
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: tokens.surfaceCard,
+        borderWidth: 1,
+        borderColor: tokens.borderDefault,
+        borderRadius: 16,
+        marginHorizontal: 16,
+        marginBottom: 12,
+        padding: 16,
+        transform: [{scale: pressed ? 0.98 : 1}],
+        ...tokens.shadowSm,
+      }]}
     >
-      {/* Left Avatar with small call direction indicator overlay */}
-      <View className="relative mr-4">
-        <View className="w-12 h-12 rounded-full bg-brand-500/10 border border-brand-500/20 items-center justify-center">
-          <Text className="text-brand-500 font-bold text-base">{initials}</Text>
+      {/* Avatar with direction indicator */}
+      <View style={{marginRight: 16, position: 'relative'}}>
+        <View
+          style={{
+            width: 48,
+            height: 48,
+            borderRadius: 24,
+            backgroundColor: `${tokens.brandPrimary}1A`,
+            borderWidth: 1,
+            borderColor: `${tokens.brandPrimary}33`,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Text style={{color: tokens.brandPrimary, fontWeight: '700', fontSize: 16}}>{initials}</Text>
         </View>
-        <View className={`absolute -bottom-1.5 -right-1 w-5 h-5 rounded-full border border-[#030712] items-center justify-center ${
-          isMissed ? 'bg-danger/20' : call.direction === 'inbound' ? 'bg-[#10B981]/10' : 'bg-slate-800'
-        }`}>
-          {isMissed ? (
-            <Icon name="phone-missed" size={10} color="#F43F5E" />
-          ) : call.direction === 'inbound' ? (
-            <Icon name="arrow-down-left" size={10} color="#10B981" />
-          ) : (
-            <Icon name="arrow-up-right" size={10} color="#A1A1AA" />
-          )}
+        <View
+          style={{
+            position: 'absolute',
+            bottom: -6,
+            right: -4,
+            width: 20,
+            height: 20,
+            borderRadius: 10,
+            borderWidth: 1.5,
+            borderColor: tokens.surfacePage,
+            backgroundColor: directionBg,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Icon name={directionIcon} size={10} color={directionColor} />
         </View>
       </View>
 
-      {/* Middle Context */}
-      <View className="flex-1 pr-2">
-        <Text className={`font-semibold text-sm leading-tight ${isMissed ? 'text-danger' : 'text-white'}`}>
+      {/* Content */}
+      <View style={{flex: 1, paddingRight: 8}}>
+        <Text style={{fontWeight: '600', fontSize: 14, lineHeight: 20, color: isMissed ? '#F43F5E' : tokens.textPrimary}}>
           {name}
         </Text>
         {isMissed ? (
-          <Text className="text-text-tertiary text-xs mt-1 font-semibold uppercase tracking-wider">No Answer</Text>
+          <Text style={{color: tokens.textTertiary, fontSize: 12, marginTop: 4, fontWeight: '600', letterSpacing: 1, textTransform: 'uppercase'}}>
+            No Answer
+          </Text>
         ) : searchQuery && snippet ? (
           renderSnippetText(snippet, searchQuery)
         ) : summary ? (
-          <Text className="text-text-secondary text-xs mt-1 leading-5" numberOfLines={2}>
+          <Text style={{color: tokens.textSecondary, fontSize: 12, marginTop: 4, lineHeight: 20}} numberOfLines={2}>
             {summary.summary_text}
           </Text>
         ) : (
-          <Text className="text-text-tertiary text-xs italic mt-1">AI transcript processing…</Text>
+          <Text style={{color: tokens.textTertiary, fontSize: 12, fontStyle: 'italic', marginTop: 4}}>
+            AI transcript processing…
+          </Text>
         )}
       </View>
 
-      {/* Right Column */}
-      <View className="items-end justify-between py-0.5 min-w-[50px]">
-        <View className="items-end gap-1 mb-2">
-          <Text className="text-white font-mono text-[11px] font-semibold">
+      {/* Right metadata */}
+      <View style={{alignItems: 'flex-end', justifyContent: 'space-between', paddingVertical: 2, minWidth: 50}}>
+        <View style={{alignItems: 'flex-end', gap: 4, marginBottom: 8}}>
+          <Text style={{color: tokens.textPrimary, fontFamily: 'monospace', fontSize: 11, fontWeight: '600'}}>
             {call.duration_formatted}
           </Text>
-          <Text className="text-text-tertiary text-[10px] uppercase font-bold tracking-wide">
+          <Text style={{color: tokens.textTertiary, fontSize: 10, textTransform: 'uppercase', fontWeight: '700', letterSpacing: 1}}>
             {getRelativeTime(call.started_at)}
           </Text>
         </View>
-        
         {summary?.sentiment && (
-          <View className={`w-2.5 h-2.5 rounded-full ${SENTIMENT_DOTS[summary.sentiment]}`} />
+          <View style={{width: 10, height: 10, borderRadius: 5, backgroundColor: SENTIMENT_DOT_COLORS[summary.sentiment] || tokens.textTertiary}} />
         )}
       </View>
     </Pressable>
@@ -162,6 +206,7 @@ function CallRow({call, onPress, searchQuery}: CallRowProps) {
 }
 
 export function CallHistoryScreen() {
+  const {tokens} = useTheme();
   const navigation = useNavigation<NavProp>();
   const insets = useSafeAreaInsets();
 
@@ -169,27 +214,22 @@ export function CallHistoryScreen() {
   const [isSearching, setIsSearching] = useState(false);
   const [activeFilter, setActiveFilter] = useState('All');
 
-  // Load complete call list
   const {data: history, isLoading: historyLoading, refetch} = useQuery({
     queryKey: ['calls'],
     queryFn: () => callsApi.list().then(r => r.data),
     enabled: !search.trim(),
   });
 
-  // Search API lookup
   const {data: searchResults, isLoading: searchLoading} = useQuery({
     queryKey: ['calls', 'search', search],
     queryFn: () =>
-      apiClient
-        .get<{data: Call[]}>('/calls/search', {params: {q: search}})
-        .then(r => r.data),
+      apiClient.get<{data: Call[]}>('/calls/search', {params: {q: search}}).then(r => r.data),
     enabled: !!search.trim(),
   });
 
   const calls = search.trim() ? (searchResults?.data ?? []) : (history?.data ?? []);
   const isLoading = search.trim() ? searchLoading : historyLoading;
 
-  // Filter logic
   const filteredCalls = useMemo(() => {
     return calls.filter(c => {
       if (activeFilter === 'All') return true;
@@ -198,71 +238,83 @@ export function CallHistoryScreen() {
       if (activeFilter === 'Hot') return c.summary?.sentiment === 'hot';
       if (activeFilter === 'Warm') return c.summary?.sentiment === 'warm';
       if (activeFilter === 'Cold') return c.summary?.sentiment === 'cold';
-      if (activeFilter === 'This Week') {
-        if (!c.started_at) return false;
-        return isThisWeek(parseISO(c.started_at));
-      }
+      if (activeFilter === 'This Week') return c.started_at ? isThisWeek(parseISO(c.started_at)) : false;
       return true;
     });
   }, [calls, activeFilter]);
 
-  // Group sections by Date (Today, Yesterday, This Week, Earlier)
   const sections = useMemo(() => {
-    const todayGroup: Call[] = [];
-    const yesterdayGroup: Call[] = [];
-    const thisWeekGroup: Call[] = [];
-    const earlierGroup: Call[] = [];
-
+    const today: Call[] = [], yesterday: Call[] = [], thisWeek: Call[] = [], earlier: Call[] = [];
     filteredCalls.forEach(c => {
-      if (!c.started_at) {
-        earlierGroup.push(c);
-        return;
-      }
+      if (!c.started_at) { earlier.push(c); return; }
       try {
         const date = parseISO(c.started_at);
-        if (isToday(date)) todayGroup.push(c);
-        else if (isYesterday(date)) yesterdayGroup.push(c);
-        else if (isThisWeek(date)) thisWeekGroup.push(c);
-        else earlierGroup.push(c);
-      } catch {
-        earlierGroup.push(c);
-      }
+        if (isToday(date)) today.push(c);
+        else if (isYesterday(date)) yesterday.push(c);
+        else if (isThisWeek(date)) thisWeek.push(c);
+        else earlier.push(c);
+      } catch { earlier.push(c); }
     });
-
     const list = [];
-    if (todayGroup.length > 0) list.push({title: 'Today', data: todayGroup});
-    if (yesterdayGroup.length > 0) list.push({title: 'Yesterday', data: yesterdayGroup});
-    if (thisWeekGroup.length > 0) list.push({title: 'This Week', data: thisWeekGroup});
-    if (earlierGroup.length > 0) list.push({title: 'Earlier', data: earlierGroup});
-
+    if (today.length > 0) list.push({title: 'Today', data: today});
+    if (yesterday.length > 0) list.push({title: 'Yesterday', data: yesterday});
+    if (thisWeek.length > 0) list.push({title: 'This Week', data: thisWeek});
+    if (earlier.length > 0) list.push({title: 'Earlier', data: earlier});
     return list;
   }, [filteredCalls]);
 
   return (
-    <SafeAreaView style={{paddingTop: Math.max(insets.top, 16)}} className="flex-1 bg-surface">
-      
-      {/* ── HEADER ────────────────────────────────────────────────────── */}
-      <View className="px-5 pb-3 bg-surface border-b border-slate-900/60 z-10">
-        <View className="flex-row justify-between items-center mb-4">
-          <Text className="text-white text-3xl font-black tracking-tight">Calls</Text>
+    <SafeAreaView style={{paddingTop: Math.max(insets.top, 16), flex: 1, backgroundColor: tokens.surfacePage}}>
+      {/* Header */}
+      <View
+        style={{
+          paddingHorizontal: 20,
+          paddingBottom: 12,
+          backgroundColor: tokens.surfacePage,
+          borderBottomWidth: 1,
+          borderBottomColor: tokens.borderSubtle,
+          zIndex: 10,
+        }}
+      >
+        <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16}}>
+          <Text style={{color: tokens.textPrimary, fontSize: 30, fontWeight: '900', letterSpacing: -0.5}}>Calls</Text>
           <Pressable
             onPress={() => { Vibration.vibrate(10); setIsSearching(!isSearching); if (isSearching) setSearch(''); }}
-            className={`w-10 h-10 rounded-full border items-center justify-center ${
-              isSearching ? 'bg-brand-500/20 border-brand-500' : 'bg-surface-raised border-slate-800'
-            }`}
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 20,
+              borderWidth: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: isSearching ? `${tokens.brandPrimary}33` : tokens.surfaceRaised,
+              borderColor: isSearching ? tokens.brandPrimary : tokens.borderDefault,
+            }}
           >
-            <Icon name={isSearching ? 'x' : 'search'} size={18} color={isSearching ? '#10B981' : '#FAFAFA'} />
+            <Icon name={isSearching ? 'x' : 'search'} size={18} color={isSearching ? tokens.brandPrimary : tokens.textPrimary} />
           </Pressable>
         </View>
 
         {isSearching && (
-          <View className="flex-row items-center bg-surface-raised rounded-2xl px-4 py-3 border border-slate-800/80">
-            <Icon name="search" size={16} color="#A1A1AA" className="mr-2" />
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              backgroundColor: tokens.surfaceInput,
+              borderRadius: 16,
+              paddingHorizontal: 16,
+              paddingVertical: 12,
+              borderWidth: 1,
+              borderColor: tokens.borderDefault,
+              gap: 8,
+            }}
+          >
+            <Icon name="search" size={16} color={tokens.textTertiary} />
             <TextInput
               autoFocus
-              className="flex-1 text-white text-sm"
+              style={{flex: 1, color: tokens.textPrimary, fontSize: 14}}
               placeholder="Search transcripts server-side…"
-              placeholderTextColor="#71717A"
+              placeholderTextColor={tokens.textTertiary}
               value={search}
               onChangeText={setSearch}
               clearButtonMode="while-editing"
@@ -272,28 +324,37 @@ export function CallHistoryScreen() {
         )}
       </View>
 
-      {/* ── HORIZONTAL FILTER ROW ─────────────────────────────────────── */}
-      <View>
+      {/* Filter strip */}
+      <View style={{backgroundColor: tokens.surfacePage, borderBottomWidth: 1, borderBottomColor: tokens.borderSubtle}}>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{paddingHorizontal: 20, paddingVertical: 12, gap: 8}}
-          className="bg-surface py-3 border-b border-slate-900/40"
         >
           {FILTER_OPTIONS.map(filter => {
             const isActive = activeFilter === filter;
             return (
               <Pressable
                 key={filter}
-                onPress={() => {
-                  Vibration.vibrate(10);
-                  setActiveFilter(filter);
+                onPress={() => { Vibration.vibrate(10); setActiveFilter(filter); }}
+                style={{
+                  paddingHorizontal: 16,
+                  paddingVertical: 8,
+                  borderRadius: 999,
+                  borderWidth: 1,
+                  backgroundColor: isActive ? tokens.brandPrimary : tokens.surfaceRaised,
+                  borderColor: isActive ? tokens.brandPrimary : tokens.borderDefault,
                 }}
-                className={`px-4 py-2 rounded-full border ${
-                  isActive ? 'bg-brand-500 border-brand-500 shadow-sm shadow-brand-500/20' : 'bg-surface-raised border-slate-850'
-                }`}
               >
-                <Text className={`text-xs font-bold uppercase tracking-wider ${isActive ? 'text-white' : 'text-text-secondary'}`}>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    fontWeight: '700',
+                    textTransform: 'uppercase',
+                    letterSpacing: 0.8,
+                    color: isActive ? '#FFFFFF' : tokens.textSecondary,
+                  }}
+                >
                   {filter}
                 </Text>
               </Pressable>
@@ -302,26 +363,37 @@ export function CallHistoryScreen() {
         </ScrollView>
       </View>
 
-      {/* ── LIST OR EMPTY STATE ──────────────────────────────────────── */}
+      {/* List or empty state */}
       {isLoading ? (
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator color="#10b981" size="large" />
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+          <ActivityIndicator color={tokens.brandPrimary} size="large" />
         </View>
       ) : (
         <SectionList
-          className="flex-1 pt-3"
+          style={{flex: 1, paddingTop: 12}}
           contentContainerStyle={{paddingBottom: 40}}
           sections={sections}
           keyExtractor={c => String(c.id)}
-          stickySectionHeadersEnabled={true}
+          stickySectionHeadersEnabled
           renderSectionHeader={({section: {title}}) => (
-            <View className="bg-surface/90 border-b border-slate-900/40 px-5 py-2">
-              <Text className="text-brand-500 text-[10px] font-extrabold uppercase tracking-widest">{title}</Text>
+            <View
+              style={{
+                backgroundColor: tokens.surfacePage,
+                borderBottomWidth: 1,
+                borderBottomColor: tokens.borderSubtle,
+                paddingHorizontal: 20,
+                paddingVertical: 8,
+              }}
+            >
+              <Text style={{color: tokens.brandPrimary, fontSize: 10, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 2}}>
+                {title}
+              </Text>
             </View>
           )}
           renderItem={({item}) => (
             <CallRow
               call={item}
+              tokens={tokens}
               searchQuery={search}
               onPress={() => navigation.navigate('CallDetail', {callId: item.id})}
             />
@@ -329,16 +401,26 @@ export function CallHistoryScreen() {
           onRefresh={refetch}
           refreshing={historyLoading}
           ListEmptyComponent={
-            <View className="flex-1 items-center justify-center py-20 px-8">
-              <View className="w-20 h-20 rounded-full bg-brand-500/10 border border-brand-500/20 items-center justify-center mb-6 relative">
-                <Icon name="phone" size={32} color="#10B981" />
-                <View className="absolute w-28 h-28 border border-brand-500/5 rounded-full" />
-                <View className="absolute w-36 h-36 border border-brand-500/5 rounded-full animate-ping" />
+            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 80, paddingHorizontal: 32}}>
+              <View
+                style={{
+                  width: 80,
+                  height: 80,
+                  borderRadius: 40,
+                  backgroundColor: `${tokens.brandPrimary}1A`,
+                  borderWidth: 1,
+                  borderColor: `${tokens.brandPrimary}33`,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: 24,
+                }}
+              >
+                <Icon name="phone" size={32} color={tokens.brandPrimary} />
               </View>
-              <Text className="text-white text-lg font-bold text-center mb-2">
+              <Text style={{color: tokens.textPrimary, fontSize: 18, fontWeight: '700', textAlign: 'center', marginBottom: 8}}>
                 {search ? 'No search matches' : 'No calls yet'}
               </Text>
-              <Text className="text-text-secondary text-xs text-center leading-5 max-w-[280px]">
+              <Text style={{color: tokens.textSecondary, fontSize: 12, textAlign: 'center', lineHeight: 20, maxWidth: 280}}>
                 {search
                   ? `Your calls did not contain any transcripts matching "${search}".`
                   : 'Your calls will appear here once you make or receive your first one.'}
