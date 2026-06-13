@@ -11,6 +11,7 @@ import {useAuthStore} from '../store/authStore';
 import {useNotificationStore} from '../store/notificationStore';
 import {useRealtime} from '../hooks/useRealtime';
 import {useQuery} from '@tanstack/react-query';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {tasksApi} from '../api/tasks';
 import {callsApi} from '../api/calls';
 import {messagingApi} from '../api/messaging';
@@ -66,6 +67,7 @@ function TabIcon({
 export function TabNavigator() {
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme !== 'light';
+  const insets = useSafeAreaInsets();
 
   // Wire up real-time push → query invalidation for the entire authenticated session
   useRealtime();
@@ -132,8 +134,8 @@ export function TabNavigator() {
           backgroundColor: styles.backgroundColor,
           borderTopColor: styles.borderTopColor,
           borderTopWidth: 1,
-          height: 62,
-          paddingBottom: 8,
+          height: 60 + insets.bottom,
+          paddingBottom: insets.bottom > 0 ? insets.bottom - 4 : 8,
           shadowColor: '#000',
           shadowOffset: {width: 0, height: -2},
           shadowOpacity: 0.05,

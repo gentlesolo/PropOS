@@ -178,11 +178,13 @@ export function LoginScreen() {
             {/* Password Input */}
             <View className="gap-2">
               <Text className="text-text-secondary text-sm font-bold ml-1">Password</Text>
-              <View className="relative justify-center">
+              <View style={{position: 'relative', justifyContent: 'center'}}>
                 <TextInput
-                  className="w-full bg-surface-input text-text-primary pl-5 pr-14 rounded-[10px] text-base border"
+                  className="w-full bg-surface-input text-text-primary rounded-[10px] text-base border"
                   style={{
                     height: 52,
+                    paddingLeft: 20,
+                    paddingRight: 56,
                     borderColor: passwordFocused ? '#10B981' : '#27272a',
                     shadowColor: passwordFocused ? '#10B981' : 'transparent',
                     shadowOpacity: passwordFocused ? 0.15 : 0,
@@ -205,13 +207,20 @@ export function LoginScreen() {
                 />
                 <Pressable
                   onPress={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 h-full justify-center px-1 active:opacity-70"
                   hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+                  style={{
+                    position: 'absolute',
+                    right: 16,
+                    height: 52,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    paddingHorizontal: 4,
+                  }}
                 >
                   <Icon
                     name={showPassword ? 'eye-off' : 'eye'}
                     size={20}
-                    color="#A1A1AA"
+                    color={showPassword ? '#10B981' : '#71717A'}
                   />
                 </Pressable>
               </View>
