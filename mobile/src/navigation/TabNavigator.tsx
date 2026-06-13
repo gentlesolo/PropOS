@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, View, useColorScheme} from 'react-native';
+import {Text, View, useColorScheme, Vibration} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Feather';
 import {HomeScreen} from '../screens/home/HomeScreen';
@@ -148,6 +148,9 @@ export function TabNavigator() {
       <Tab.Screen
         name="Home"
         component={HomeScreen}
+        listeners={{
+          tabPress: () => Vibration.vibrate(10),
+        }}
         options={{
           tabBarLabel: 'Home',
           tabBarIcon: ({focused}) => (
@@ -158,6 +161,9 @@ export function TabNavigator() {
       <Tab.Screen
         name="Contacts"
         component={ContactsStack}
+        listeners={{
+          tabPress: () => Vibration.vibrate(10),
+        }}
         options={{
           tabBarLabel: 'Contacts',
           tabBarIcon: ({focused}) => (
@@ -168,6 +174,9 @@ export function TabNavigator() {
       <Tab.Screen
         name="Inbox"
         component={MessagingStack}
+        listeners={{
+          tabPress: () => Vibration.vibrate(10),
+        }}
         options={{
           tabBarLabel: 'Inbox',
           tabBarIcon: ({focused}) => (
@@ -183,6 +192,9 @@ export function TabNavigator() {
       <Tab.Screen
         name="Tasks"
         component={TasksScreen}
+        listeners={{
+          tabPress: () => Vibration.vibrate(10),
+        }}
         options={{
           tabBarLabel: 'Tasks',
           tabBarIcon: ({focused}) => (
@@ -198,6 +210,9 @@ export function TabNavigator() {
       <Tab.Screen
         name="More"
         component={MoreScreen}
+        listeners={{
+          tabPress: () => Vibration.vibrate(10),
+        }}
         options={{
           tabBarLabel: 'More',
           tabBarIcon: ({focused}) => (

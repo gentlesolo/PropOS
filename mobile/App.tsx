@@ -2,6 +2,7 @@ import React, {useEffect, useRef} from 'react';
 import {AppState, AppStateStatus} from 'react-native';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {NavigationContainerRef} from '@react-navigation/native';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {RootNavigator} from './src/navigation/RootNavigator';
 import {useAuthStore} from './src/store/authStore';
 import {useCallStore} from './src/store/callStore';
@@ -10,6 +11,7 @@ import {twilioService} from './src/services/twilioService';
 import {sentryService} from './src/services/sentryService';
 import {ErrorBoundary} from './src/components/ErrorBoundary';
 import {BiometricUnlockScreen} from './src/screens/auth/BiometricUnlockScreen';
+import {OfflineIndicator} from './src/components/OfflineIndicator';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -119,6 +121,7 @@ function AppInner() {
 
   return (
     <>
+      <OfflineIndicator />
       <RootNavigator navigationRef={navigationRef} />
       {isAuthenticated && isLocked && <BiometricUnlockScreen />}
     </>
@@ -129,10 +132,12 @@ export default function App() {
   sentryService.init();
 
   return (
-    <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <AppInner />
-      </QueryClientProvider>
-    </ErrorBoundary>
+    <SafeAreaProvider>
+      <ErrorBoundary>
+        <QueryClientProvider client={queryClient}>
+          <AppInner />
+        </QueryClientProvider>
+      </ErrorBoundary>
+    </SafeAreaProvider>
   );
 }

@@ -204,6 +204,31 @@ function StatChip({
   );
 }
 
+function RotatingSyncIcon() {
+  const rotateAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.timing(rotateAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      })
+    ).start();
+  }, []);
+
+  const spin = rotateAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
+
+  return (
+    <Animated.View style={{transform: [{rotate: spin}]}} className="ml-2.5 justify-center items-center">
+      <Icon name="loader" size={14} color="#10B981" />
+    </Animated.View>
+  );
+}
+
 export function HomeScreen() {
   const {user} = useAuthStore();
   const {unreadCount} = useNotificationStore();
@@ -265,26 +290,26 @@ export function HomeScreen() {
   }, []);
 
   // API Queries (Serving instantly from cache to support < 1s render)
-  const {data: tasks, refetch: refetchTasks, isPending: tasksPending} = useQuery({
+  const {data: tasks, refetch: refetchTasks, isPending: tasksPending, isFetching: isFetchingTasks} = useQuery({
     queryKey: ['tasks', 'today'],
     queryFn: () => tasksApi.list().then((r) => r.data),
     initialData: cachedData?.tasks,
   });
 
-  const {data: viewings, refetch: refetchViewings} = useQuery({
+  const {data: viewings, refetch: refetchViewings, isFetching: isFetchingViewings} = useQuery({
     queryKey: ['viewings', 'today'],
     queryFn: () => viewingsApi.today().then((r) => r.data),
     initialData: cachedData?.viewings,
   });
 
-  const {data: inbox, refetch: refetchInbox} = useQuery({
+  const {data: inbox, refetch: refetchInbox, isFetching: isFetchingInbox} = useQuery({
     queryKey: ['inbox'],
     queryFn: () => messagingApi.inbox().then((r) => r.data),
     initialData: cachedData?.inbox,
     staleTime: 60_000,
   });
 
-  const {data: pendingCalls, refetch: refetchCalls} = useQuery({
+  const {data: pendingCalls, refetch: refetchCalls, isFetching: isFetchingCalls} = useQuery({
     queryKey: ['calls', 'pending-review'],
     queryFn: () =>
       callsApi
@@ -303,12 +328,14 @@ export function HomeScreen() {
     staleTime: 60_000,
   });
 
-  const {data: brief, refetch: refetchBrief} = useQuery({
+  const {data: brief, refetch: refetchBrief, isFetching: isFetchingBrief} = useQuery({
     queryKey: ['brief'],
     queryFn: () => briefApi.get().then((r) => r.data),
     initialData: cachedData?.brief,
     staleTime: 30 * 60_000,
   });
+
+  const isAnyFetching = isFetchingTasks || isFetchingViewings || isFetchingInbox || isFetchingCalls || isFetchingBrief;
 
   // Save fresh resolved queries back to MMKV
   useEffect(() => {
@@ -556,9 +583,12 @@ export function HomeScreen() {
         {/* Header Grid */}
         <View className="flex-row items-center justify-between px-5 pt-4 pb-3">
           <View>
-            <Text className="text-text-primary text-[22px] font-semibold tracking-tight">
-              Good morning, {user?.first_name || 'Tunde'}
-            </Text>
+            <View className="flex-row items-center">
+              <Text className="text-text-primary text-[22px] font-semibold tracking-tight">
+                Good morning, {user?.first_name || 'Tunde'}
+              </Text>
+              {isAnyFetching && <RotatingSyncIcon />}
+            </View>
             <Text className="text-text-secondary text-[13px] font-medium mt-0.5">
               {format(new Date(), 'EEEE, d MMMM')}
             </Text>

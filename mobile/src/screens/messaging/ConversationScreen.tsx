@@ -13,6 +13,7 @@ import {
   SafeAreaView,
   Modal,
   useColorScheme,
+  Vibration,
 } from 'react-native';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {useRoute, useNavigation, RouteProp} from '@react-navigation/native';
@@ -347,6 +348,8 @@ export function ConversationScreen() {
     const trimmed = text.trim();
     if (!trimmed) return;
 
+    Vibration.vibrate(10); // Light haptic on message send
+
     const tempId = -Date.now();
     const tempMsg: Message = {
       id: tempId,
@@ -671,7 +674,7 @@ export function ConversationScreen() {
         animationType="slide"
         onRequestClose={() => setChannelPickerVisible(false)}
       >
-        <View className="flex-1 justify-end bg-black/60">
+        <View className="flex-1 justify-end bg-[#020617]/60">
           <Pressable className="flex-1" onPress={() => setChannelPickerVisible(false)} />
           <View className={`${bgCard} rounded-t-3xl border-t ${borderHeader} p-5 pb-8`}>
             <View className={`w-12 h-1 ${isDark ? 'bg-zinc-800' : 'bg-slate-300'} rounded-full self-center mb-5`} />
@@ -685,6 +688,7 @@ export function ConversationScreen() {
                   <Pressable
                     key={ch}
                     onPress={() => {
+                      Vibration.vibrate(10); // Light haptic on select channel
                       setChannel(ch);
                       setChannelPickerVisible(false);
                     }}
@@ -724,7 +728,7 @@ export function ConversationScreen() {
         animationType="slide"
         onRequestClose={() => setTaskModalVisible(false)}
       >
-        <View className="flex-1 justify-end bg-black/60">
+        <View className="flex-1 justify-end bg-[#020617]/60">
           <Pressable className="flex-1" onPress={() => setTaskModalVisible(false)} />
           <View className={`${bgCard} rounded-t-3xl border-t ${borderHeader} p-5 pb-8`}>
             <View className={`w-12 h-1 ${isDark ? 'bg-zinc-800' : 'bg-slate-300'} rounded-full self-center mb-5`} />
@@ -768,7 +772,10 @@ export function ConversationScreen() {
                   return (
                     <Pressable
                       key={due.value}
-                      onPress={() => setTaskDue(due.value as any)}
+                      onPress={() => {
+                        Vibration.vibrate(10); // Light haptic on due date toggle
+                        setTaskDue(due.value as any);
+                      }}
                       className={`flex-1 py-2.5 rounded-xl border items-center ${
                         isSelected
                           ? 'bg-brand-500/10 border-brand-500'

@@ -13,6 +13,7 @@ import {
   PanResponder,
   useColorScheme,
   ScrollView,
+  Vibration,
 } from 'react-native';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {tasksApi} from '../../api/tasks';
@@ -481,7 +482,10 @@ export function TasksScreen() {
 
         {activeSegment === 'All' && (
           <Pressable
-            onPress={() => setShowCompleted(!showCompleted)}
+            onPress={() => {
+              Vibration.vibrate(10);
+              setShowCompleted(!showCompleted);
+            }}
             className="px-3 py-1.5 rounded-lg border border-brand-500/20 bg-brand-500/5 active:bg-brand-500/10 flex-row items-center gap-1.5"
           >
             <Icon name={showCompleted ? 'eye-off' : 'eye'} size={12} color="#10B981" />
@@ -501,7 +505,10 @@ export function TasksScreen() {
           return (
             <Pressable
               key={seg}
-              onPress={() => setActiveSegment(seg)}
+              onPress={() => {
+                Vibration.vibrate(10);
+                setActiveSegment(seg);
+              }}
               className={`flex-1 py-2 rounded-lg items-center ${
                 isActive
                   ? isDark
@@ -556,7 +563,10 @@ export function TasksScreen() {
               <TaskRowItem
                 task={item.task}
                 isDark={isDark}
-                onComplete={() => updateTask.mutate({id: item.task.id, status: 'completed'})}
+                onComplete={() => {
+                  Vibration.vibrate(25);
+                  updateTask.mutate({id: item.task.id, status: 'completed'});
+                }}
                 onSnooze={() => {
                   setSnoozeTask(item.task);
                   setSnoozeVisible(true);

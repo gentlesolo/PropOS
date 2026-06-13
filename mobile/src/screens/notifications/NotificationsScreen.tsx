@@ -152,6 +152,80 @@ function NewItemAnimator({children}: {children: React.ReactNode}) {
   );
 }
 
+// 3. Animated Rotating Sync Icon
+function RotatingSyncIcon() {
+  const rotateAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.timing(rotateAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      })
+    ).start();
+  }, []);
+
+  const spin = rotateAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
+
+  return (
+    <Animated.View style={{transform: [{rotate: spin}]}} className="ml-2 justify-center items-center">
+      <Icon name="loader" size={14} color="#10B981" />
+    </Animated.View>
+  );
+}
+
+// 4. Custom pulsate Skeleton Rows
+function SkeletonRow({isDarkMode}: {isDarkMode: boolean}) {
+  const pulse = useRef(new Animated.Value(0.4)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulse, {toValue: 0.8, duration: 800, useNativeDriver: true}),
+        Animated.timing(pulse, {toValue: 0.4, duration: 800, useNativeDriver: true}),
+      ])
+    ).start();
+  }, []);
+
+  const bgStyle = isDarkMode ? 'bg-zinc-800' : 'bg-zinc-200';
+
+  return (
+    <Animated.View
+      style={{opacity: pulse}}
+      className="flex-row items-center border border-transparent rounded-2xl p-3 mb-2"
+    >
+      <View className={`w-10 h-10 rounded-full ${bgStyle} mr-3`} />
+      <View className="flex-1 gap-1.5">
+        <View className={`h-3 w-28 rounded ${bgStyle}`} />
+        <View className={`h-2.5 w-48 rounded ${bgStyle}`} />
+        <View className={`h-2 w-16 rounded mt-1 ${bgStyle}`} />
+      </View>
+    </Animated.View>
+  );
+}
+
+function NotificationsSkeleton({isDarkMode}: {isDarkMode: boolean}) {
+  return (
+    <ScrollView className="flex-1 px-4 pt-3" scrollEnabled={false}>
+      <View className="mb-4">
+        <View className={`h-2.5 w-12 rounded mb-3 ${isDarkMode ? 'bg-zinc-800' : 'bg-zinc-200'}`} />
+        <SkeletonRow isDarkMode={isDarkMode} />
+        <SkeletonRow isDarkMode={isDarkMode} />
+        <SkeletonRow isDarkMode={isDarkMode} />
+      </View>
+      <View className="mb-4">
+        <View className={`h-2.5 w-16 rounded mb-3 ${isDarkMode ? 'bg-zinc-800' : 'bg-zinc-200'}`} />
+        <SkeletonRow isDarkMode={isDarkMode} />
+        <SkeletonRow isDarkMode={isDarkMode} />
+      </View>
+    </ScrollView>
+  );
+}
+
 export function NotificationsScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const queryClient = useQueryClient();
@@ -169,7 +243,7 @@ export function NotificationsScreen() {
   const {setUnreadCount} = useNotificationStore();
 
   // Query notifications list
-  const {data, isLoading, refetch} = useQuery({
+  const {data, isLoading, refetch, isFetching} = useQuery({
     queryKey: ['notifications'],
     queryFn: () => notificationsApi.list().then(r => r.data),
   });
@@ -353,6 +427,7 @@ export function NotificationsScreen() {
             <Icon name="arrow-left" size={20} color={isDarkMode ? '#FAFAFA' : '#0F172A'} />
           </Pressable>
           <Text className={`${styles.textPrimary} text-2xl font-extrabold tracking-tight`}>Notifications</Text>
+          {isFetching && !isLoading && <RotatingSyncIcon />}
         </View>
 
         {hasUnread && (
@@ -393,9 +468,7 @@ export function NotificationsScreen() {
 
       {/* Notifications list */}
       {isLoading ? (
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator color="#10b981" size="large" />
-        </View>
+        <NotificationsSkeleton isDarkMode={isDarkMode} />
       ) : groupedNotifications.unread.length === 0 && groupedNotifications.read.length === 0 ? (
         <View className="flex-1 items-center justify-center px-8">
           <View className="w-16 h-16 bg-brand-500/10 rounded-full items-center justify-center mb-4 border border-brand-500/10">
