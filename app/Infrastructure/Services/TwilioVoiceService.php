@@ -60,6 +60,8 @@ class TwilioVoiceService
     /**
      * TwiML for outbound calls.
      * callerId is the number shown to the recipient — the agency's verified/provisioned number.
+     * Recording starts automatically when the call is answered (dual-channel) and Twilio
+     * posts the completed recording to the /webhooks/calls/recording callback.
      */
     public function buildOutboundTwiml(string $toNumber, string $callbackUrl, ?string $callerId = null): string
     {
@@ -70,7 +72,14 @@ class TwilioVoiceService
             ['voice' => 'Polly.Joanna', 'language' => 'en-US'],
         );
 
-        $dialOptions = ['action' => $callbackUrl, 'method' => 'POST'];
+        $dialOptions = [
+            'action'                        => $callbackUrl,
+            'method'                        => 'POST',
+            'record'                        => 'record-from-answer-dual',
+            'recordingStatusCallback'       => route('api.mobile.calls.recording'),
+            'recordingStatusCallbackMethod' => 'POST',
+        ];
+
         if ($callerId) {
             $dialOptions['callerId'] = $callerId;
         }

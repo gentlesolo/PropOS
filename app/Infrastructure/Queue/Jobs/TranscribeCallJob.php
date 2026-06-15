@@ -50,16 +50,18 @@ VOCAB;
 
         try {
             $language   = $this->detectLanguage();
-            $transcript = $this->transcribeWithWhisper($audioPath, $language);
+            $transcript = $this->transcribeWithDeepgram($audioPath, $language);
             $segments   = $this->parseSpeakerSegments($transcript);
+
+            $fullText = $transcript['results']['channels'][0]['alternatives'][0]['transcript'] ?? '';
 
             CallTranscript::create([
                 'call_id'            => $this->call->id,
-                'full_text'          => $transcript['text'],
+                'full_text'          => $fullText,
                 'speaker_segments'   => $segments,
-                'word_count'         => str_word_count($transcript['text']),
-                'language'           => $transcript['language'] ?? $language,
-                'whisper_model'      => 'whisper-1',
+                'word_count'         => str_word_count($fullText),
+                'language'           => $language,
+                'whisper_model'      => 'deepgram-nova-2',
                 'processing_seconds' => (int) (microtime(true) - $started),
             ]);
 
@@ -98,41 +100,41 @@ VOCAB;
         return $path;
     }
 
-    private function transcribeWithWhisper(string $storagePath, string $language): array
+    private function transcribeWithDeepgram(string $storagePath, string $language): array
     {
         $fullPath = Storage::path($storagePath);
 
-        $response = Http::withToken(config('services.openai.api_key'))
-            ->attach('file', fopen($fullPath, 'r'), basename($fullPath))
-            ->post('https://api.openai.com/v1/audio/transcriptions', [
-                'model'                   => 'whisper-1',
-                'language'                => $language,
-                'response_format'         => 'verbose_json',
-                'timestamp_granularities' => ['segment'],
-                // Domain vocabulary prompt improves accuracy for real estate terms
-                'prompt' => self::DOMAIN_VOCABULARY,
-            ]);
+        $url = "https://api.deepgram.com/v1/listen?" . http_build_query([
+            'model'        => 'nova-2',
+            'smart_format' => 'true',
+            'diarize'      => 'true',
+            'utterances'   => 'true',
+            'language'     => $language,
+        ]);
+
+        $response = Http::withToken(config('services.deepgram.api_key'))
+            ->withBody(file_get_contents($fullPath), 'audio/mpeg')
+            ->post($url);
 
         if (! $response->successful()) {
-            throw new \RuntimeException("Whisper API error: " . $response->body());
+            throw new \RuntimeException("Deepgram API error: " . $response->body());
         }
 
         return $response->json();
     }
 
-    private function parseSpeakerSegments(array $whisperResponse): array
+    private function parseSpeakerSegments(array $deepgramResponse): array
     {
-        $segments = $whisperResponse['segments'] ?? [];
+        $utterances = $deepgramResponse['results']['utterances'] ?? [];
 
-        // Whisper-1 does not natively diarise; alternate speakers as heuristic.
-        // Deepgram (Phase 3) handles true diarisation for live calls.
-        return array_map(function (array $seg, int $index) {
+        return array_map(function (array $utterance) {
+            $speakerId = $utterance['speaker'] ?? 0;
             return [
-                'speaker' => $index % 2 === 0 ? 'Agent' : 'Contact',
-                'text'    => trim($seg['text']),
-                'start'   => $seg['start'],
-                'end'     => $seg['end'],
+                'speaker' => $speakerId === 0 ? 'Agent' : 'Contact',
+                'text'    => trim($utterance['transcript'] ?? ''),
+                'start'   => $utterance['start'] ?? 0,
+                'end'     => $utterance['end'] ?? 0,
             ];
-        }, $segments, array_keys($segments));
+        }, $utterances);
     }
 }
