@@ -10,7 +10,7 @@ export type CallsStackParamList = {
   CallHistory: undefined;
   CallDetail: {callId: number};
   PostCallSummary: {callId: number};
-  InCall: {contactId?: number; phoneNumber: string; callSid?: string};
+  InCall: {contactId?: number; phoneNumber: string};
   CallTranscript: {callId: number};
 };
 

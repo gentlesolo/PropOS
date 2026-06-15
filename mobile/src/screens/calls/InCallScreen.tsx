@@ -18,7 +18,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Feather';
 import {useQuery} from '@tanstack/react-query';
 import {useCallStore} from '../../store/callStore';
-import {twilioService} from '../../services/twilioService';
+import {liveKitService} from '../../services/liveKitService';
 import {liveTranscriptService, TranscriptSegment} from '../../services/liveTranscriptService';
 import {callsApi} from '../../api/calls';
 import {contactsApi} from '../../api/contacts';
@@ -100,7 +100,7 @@ export function InCallScreen() {
   const route = useRoute<InCallRouteProp>();
   const navigation = useNavigation<NavProp>();
   const insets = useSafeAreaInsets();
-  const {phoneNumber, contactId, callSid: initialSid} = route.params;
+  const {phoneNumber, contactId} = route.params;
 
   const {tokens} = useTheme();
   const {activeCallState, isMuted, isSpeaker, startTime} = useCallStore();
@@ -152,39 +152,18 @@ export function InCallScreen() {
     ).start();
   }, [pulseOpacity]);
 
-  // Find call database record by its twilio SID
-  const fetchCallIdBySid = async (sid: string) => {
-    try {
-      const response = await callsApi.list();
-      const match = response.data?.data?.find(c => c.provider_call_sid === sid);
-      if (match) {
-        setCallId(match.id);
-      }
-    } catch (e) {
-      console.warn('Failed to find call record by SID', e);
-    }
-  };
-
-  // Start call or fetch call ID on mount
+  // Start call on mount — backend creates room + dials lead, we join via LiveKit SDK
   useEffect(() => {
-    // Light haptic feedback for call connected
     Vibration.vibrate(10);
 
-    if (initialSid) {
-      fetchCallIdBySid(initialSid);
-      return;
-    }
-
-    twilioService
+    liveKitService
       .makeCall(phoneNumber, contactId)
-      .then(sid => {
-        fetchCallIdBySid(sid);
-      })
+      .then(({callId: id}) => setCallId(id))
       .catch(err => {
         setCallFailed(true);
         setFailReason(err.message || 'Connection failed.');
       });
-  }, [initialSid]);
+  }, []);
 
   // Elapsed timer
   useEffect(() => {
@@ -229,9 +208,8 @@ export function InCallScreen() {
   }, [activeCallState, callId, navigation]);
 
   const handleHangup = useCallback(() => {
-    // Heavy vibration on call end
     Vibration.vibrate([0, 50, 50, 50]);
-    twilioService.hangup();
+    liveKitService.hangup();
     if (callId) callsApi.updateStatus(callId, 'completed', elapsed);
   }, [callId, elapsed]);
 
@@ -246,7 +224,7 @@ export function InCallScreen() {
 
   const sendDigit = (digit: string) => {
     Vibration.vibrate(10);
-    twilioService.sendDigits(digit);
+    liveKitService.sendDigits(digit);
   };
 
   const startVoiceRecording = () => {
@@ -361,10 +339,10 @@ export function InCallScreen() {
             Vibration.vibrate(25);
             setCallFailed(false);
             setFailReason(null);
-            twilioService
+            liveKitService
               .makeCall(phoneNumber, contactId)
-              .then(sid => fetchCallIdBySid(sid))
-              .catch(err => {
+              .then(({callId: id}) => setCallId(id))
+              .catch((err: Error) => {
                 setCallFailed(true);
                 setFailReason(err.message || 'Connection failed.');
               });
@@ -593,9 +571,9 @@ export function InCallScreen() {
         {/* 2x3 Grid */}
         <View className="gap-4">
           <View className="flex-row justify-around">
-            <ControlButton icon={isMuted ? 'mic-off' : 'mic'} label={isMuted ? 'Muted' : 'Mute'} active={isMuted} onPress={() => twilioService.mute(!isMuted)} />
+            <ControlButton icon={isMuted ? 'mic-off' : 'mic'} label={isMuted ? 'Muted' : 'Mute'} active={isMuted} onPress={() => liveKitService.mute(!isMuted)} />
             <ControlButton icon="grid" label="Keypad" active={showKeypad} onPress={() => setShowKeypad(!showKeypad)} />
-            <ControlButton icon="volume-2" label={isSpeaker ? 'Speaker' : 'Audio'} active={isSpeaker} onPress={() => twilioService.setSpeaker(!isSpeaker)} />
+            <ControlButton icon="volume-2" label={isSpeaker ? 'Speaker' : 'Audio'} active={isSpeaker} onPress={() => liveKitService.setSpeaker(!isSpeaker)} />
           </View>
           <View className="flex-row justify-around">
             <ControlButton icon="edit-3" label="Add Note" active={noteVisible} onPress={() => setNoteVisible(true)} />

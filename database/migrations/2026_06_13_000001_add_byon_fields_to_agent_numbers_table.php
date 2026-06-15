@@ -9,35 +9,40 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('agent_numbers', function (Blueprint $table) {
-            // Make twilio_number nullable — BYON numbers have no Twilio-provisioned number
             $table->string('twilio_number', 20)->nullable()->change();
 
-            // The number shown to leads as caller ID (agency's real number for BYON,
-            // same as twilio_number for platform-provisioned numbers)
-            $table->string('display_number', 20)->nullable()->after('twilio_number');
-
-            // How the number was registered
-            $table->enum('number_type', ['twilio_provisioned', 'verified_caller_id'])
-                ->default('twilio_provisioned')
-                ->after('display_number');
-
-            // ISO 3166-1 alpha-2 country code (NG, ZA, GB, US …)
-            $table->string('country_code', 2)->default('US')->after('number_type');
-
-            // Verification state — Twilio-provisioned numbers start as verified
-            $table->boolean('verified')->default(false)->after('country_code');
-            $table->timestamp('verified_at')->nullable()->after('verified');
-
-            // Twilio OutgoingCallerId SID stored after verification completes (BYON only)
-            $table->string('caller_id_sid', 50)->nullable()->after('verified_at');
-
-            // Unique display_number per agency — prevents duplicate registrations
-            $table->unique(['agency_id', 'display_number']);
+            if (! Schema::hasColumn('agent_numbers', 'display_number')) {
+                $table->string('display_number', 20)->nullable();
+            }
+            if (! Schema::hasColumn('agent_numbers', 'number_type')) {
+                $table->string('number_type', 30)->default('twilio_provisioned');
+            }
+            if (! Schema::hasColumn('agent_numbers', 'country_code')) {
+                $table->string('country_code', 2)->default('US');
+            }
+            if (! Schema::hasColumn('agent_numbers', 'verified')) {
+                $table->boolean('verified')->default(false);
+            }
+            if (! Schema::hasColumn('agent_numbers', 'verified_at')) {
+                $table->timestamp('verified_at')->nullable();
+            }
+            if (! Schema::hasColumn('agent_numbers', 'caller_id_sid')) {
+                $table->string('caller_id_sid', 50)->nullable();
+            }
         });
+
+        // Add unique constraint only if it doesn't exist yet
+        try {
+            Schema::table('agent_numbers', function (Blueprint $table) {
+                $table->unique(['agency_id', 'display_number']);
+            });
+        } catch (\Exception) {
+            // Constraint already exists — safe to ignore
+        }
 
         // Backfill display_number = twilio_number for all existing rows
         \Illuminate\Support\Facades\DB::statement(
-            'UPDATE agent_numbers SET display_number = twilio_number, verified = 1, verified_at = NOW() WHERE display_number IS NULL AND twilio_number IS NOT NULL'
+            'UPDATE agent_numbers SET display_number = twilio_number, verified = 1, verified_at = CURRENT_TIMESTAMP WHERE display_number IS NULL AND twilio_number IS NOT NULL'
         );
     }
 

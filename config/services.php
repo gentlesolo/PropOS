@@ -62,6 +62,21 @@ return [
         'api_key_secret' => env('TWILIO_API_KEY_SECRET'),
     ],
 
+    // LiveKit self-hosted server
+    'livekit' => [
+        'server_url'   => env('LIVEKIT_SERVER_URL'),   // e.g. https://livekit.yourdomain.com
+        'api_key'      => env('LIVEKIT_API_KEY'),
+        'api_secret'   => env('LIVEKIT_API_SECRET'),
+        'sip_trunk_id' => env('LIVEKIT_SIP_TRUNK_ID'), // configured in LiveKit console after linking AT SIP
+    ],
+
+    // Africa's Talking — SIP provider + SMS for OTP verification
+    'africastalking' => [
+        'username'  => env('AT_USERNAME', 'sandbox'),
+        'api_key'   => env('AT_API_KEY'),
+        'sender_id' => env('AT_SENDER_ID'),            // alphanumeric sender, e.g. "Propos"
+    ],
+
     'fcm' => [
         'server_key' => env('FCM_SERVER_KEY'),
     ],

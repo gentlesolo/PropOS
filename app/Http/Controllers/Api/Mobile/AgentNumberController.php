@@ -4,14 +4,14 @@ namespace App\Http\Controllers\Api\Mobile;
 
 use App\Http\Controllers\Controller;
 use App\Infrastructure\Persistence\Models\AgentNumber;
-use App\Infrastructure\Services\TwilioVoiceService;
+use App\Infrastructure\Services\LiveKitVoiceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class AgentNumberController extends Controller
 {
-    public function __construct(private readonly TwilioVoiceService $twilio) {}
+    public function __construct(private readonly LiveKitVoiceService $liveKit) {}
 
     /**
      * List all numbers registered for the authenticated agent.
@@ -27,36 +27,22 @@ class AgentNumberController extends Controller
     }
 
     /**
-     * Register a number for the agent.
+     * Register a number.
      *
-     * type=twilio_provisioned  → platform buys a Twilio number in the given country
-     * type=verified_caller_id  → Twilio calls the agent's real number to verify it
+     * type=twilio_provisioned  → not supported in LiveKit stack
+     * type=verified_caller_id  → sends an SMS OTP to the agent's number to prove ownership
      */
     public function store(Request $request): JsonResponse
     {
         $request->validate([
-            'type'         => 'required|in:twilio_provisioned,verified_caller_id',
+            'type'         => 'required|in:verified_caller_id',
             'country_code' => 'required|string|size:2',
-            'number'       => 'required_if:type,verified_caller_id|nullable|string|max:20',
-            'area_code'    => 'nullable|string|max:10',
+            'number'       => 'required|string|max:20',
         ]);
 
-        $user = $request->user();
-
-        if ($request->type === 'twilio_provisioned') {
-            $agentNumber = $this->twilio->provisionNumber(
-                $user,
-                strtoupper($request->country_code),
-                $request->area_code ?? '',
-            );
-
-            return response()->json($agentNumber, 201);
-        }
-
-        // BYON — verified_caller_id path
+        $user        = $request->user();
         $phoneNumber = $request->string('number')->toString();
 
-        // Prevent duplicate registrations
         $existing = AgentNumber::where('user_id', $user->id)
             ->where('display_number', $phoneNumber)
             ->first();
@@ -68,61 +54,92 @@ class AgentNumberController extends Controller
             ], 409);
         }
 
-        $verification = $this->twilio->initiateCallerIdVerification($phoneNumber);
+        $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
         $agentNumber = AgentNumber::create([
-            'agency_id'      => $user->agency_id,
-            'user_id'        => $user->id,
-            'twilio_number'  => null,
-            'display_number' => $phoneNumber,
-            'number_type'    => 'verified_caller_id',
-            'country_code'   => strtoupper($request->country_code),
-            'verified'       => false,
-            'active'         => false,
+            'agency_id'               => $user->agency_id,
+            'user_id'                 => $user->id,
+            'twilio_number'           => null,
+            'display_number'          => $phoneNumber,
+            'number_type'             => 'verified_caller_id',
+            'country_code'            => strtoupper($request->country_code),
+            'verified'                => false,
+            'active'                  => false,
+            'verification_code'       => $code,
+            'verification_expires_at' => now()->addMinutes(10),
         ]);
 
+        $sent = $this->liveKit->sendVerificationOtp($phoneNumber, $code);
+
         return response()->json([
-            'id'              => $agentNumber->id,
-            'display_number'  => $agentNumber->display_number,
-            'number_type'     => $agentNumber->number_type,
-            'country_code'    => $agentNumber->country_code,
-            'verified'        => false,
-            'active'          => false,
-            'validation_code' => $verification['validation_code'],
-            'message'         => "We're calling {$phoneNumber}. When prompted, enter the code on your keypad.",
+            'id'             => $agentNumber->id,
+            'display_number' => $agentNumber->display_number,
+            'number_type'    => $agentNumber->number_type,
+            'country_code'   => $agentNumber->country_code,
+            'verified'       => false,
+            'active'         => false,
+            'sms_sent'       => $sent,
+            'message'        => $sent
+                ? "A 6-digit code has been sent to {$phoneNumber}. Enter it below to verify."
+                : "SMS delivery failed — check your AT_API_KEY in .env. Your code is: {$code} (dev only).",
         ], 201);
     }
 
     /**
-     * Poll whether Twilio has confirmed a BYON number.
-     * Mobile calls this every few seconds after initiating verification.
+     * Submit the OTP code received via SMS to complete verification.
      */
-    public function checkVerification(Request $request, AgentNumber $agentNumber): JsonResponse
+    public function confirm(Request $request, AgentNumber $agentNumber): JsonResponse
     {
         abort_unless($agentNumber->user_id === $request->user()->id, 403);
-        abort_unless($agentNumber->number_type === 'verified_caller_id', 400, 'Only applicable to BYON numbers.');
+        abort_unless($agentNumber->number_type === 'verified_caller_id', 400, 'Only BYON numbers need confirmation.');
+        abort_unless(! $agentNumber->verified, 422, 'Number is already verified.');
 
-        if ($agentNumber->verified) {
-            return response()->json(['verified' => true, 'number' => $agentNumber]);
+        $request->validate(['code' => 'required|string|size:6']);
+
+        if (
+            $agentNumber->verification_code !== $request->code ||
+            now()->isAfter($agentNumber->verification_expires_at)
+        ) {
+            return response()->json(['message' => 'Invalid or expired code. Please request a new one.'], 422);
         }
 
-        $callerIdSid = $this->twilio->checkCallerIdVerified($agentNumber->display_number);
+        // Deactivate other numbers, activate and verify this one
+        AgentNumber::where('user_id', $request->user()->id)
+            ->where('id', '!=', $agentNumber->id)
+            ->update(['active' => false]);
 
-        if ($callerIdSid) {
-            // Deactivate other numbers and activate this one
-            AgentNumber::where('user_id', $request->user()->id)
-                ->where('id', '!=', $agentNumber->id)
-                ->update(['active' => false]);
+        $agentNumber->update([
+            'verified'                => true,
+            'verified_at'             => now(),
+            'active'                  => true,
+            'verification_code'       => null,
+            'verification_expires_at' => null,
+        ]);
 
-            $agentNumber->update([
-                'verified'      => true,
-                'verified_at'   => now(),
-                'caller_id_sid' => $callerIdSid,
-                'active'        => true,
-            ]);
-        }
+        return response()->json($agentNumber->fresh());
+    }
 
-        return response()->json(['verified' => (bool) $callerIdSid, 'number' => $agentNumber->fresh()]);
+    /**
+     * Resend the OTP SMS for a pending verification.
+     */
+    public function resendOtp(Request $request, AgentNumber $agentNumber): JsonResponse
+    {
+        abort_unless($agentNumber->user_id === $request->user()->id, 403);
+        abort_unless(! $agentNumber->verified, 422, 'Number is already verified.');
+
+        $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+        $agentNumber->update([
+            'verification_code'       => $code,
+            'verification_expires_at' => now()->addMinutes(10),
+        ]);
+
+        $sent = $this->liveKit->sendVerificationOtp($agentNumber->display_number, $code);
+
+        return response()->json([
+            'message'  => $sent ? 'A new code has been sent.' : 'SMS failed. Check AT_API_KEY.',
+            'sms_sent' => $sent,
+        ]);
     }
 
     /**
@@ -141,27 +158,10 @@ class AgentNumberController extends Controller
 
     /**
      * Remove a number from the agent's account.
-     * Releases Twilio-provisioned numbers back to Twilio and removes verified caller IDs.
      */
     public function destroy(Request $request, AgentNumber $agentNumber): JsonResponse
     {
         abort_unless($agentNumber->user_id === $request->user()->id, 403);
-
-        if ($agentNumber->number_type === 'twilio_provisioned' && $agentNumber->twilio_sid) {
-            try {
-                $this->twilio->releaseNumber($agentNumber->twilio_sid);
-            } catch (\Throwable $e) {
-                Log::warning("Failed to release Twilio number {$agentNumber->twilio_sid}: {$e->getMessage()}");
-            }
-        }
-
-        if ($agentNumber->number_type === 'verified_caller_id' && $agentNumber->caller_id_sid) {
-            try {
-                $this->twilio->removeCallerId($agentNumber->caller_id_sid);
-            } catch (\Throwable $e) {
-                Log::warning("Failed to remove Twilio caller ID {$agentNumber->caller_id_sid}: {$e->getMessage()}");
-            }
-        }
 
         $agentNumber->delete();
 

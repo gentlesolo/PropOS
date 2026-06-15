@@ -5,59 +5,87 @@ namespace App\Http\Controllers\Api\Mobile;
 use App\Http\Controllers\Controller;
 use App\Infrastructure\Persistence\Models\Call;
 use App\Infrastructure\Persistence\Models\CallTranscript;
-use App\Infrastructure\Services\TwilioVoiceService;
+use App\Infrastructure\Services\LiveKitVoiceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class CallController extends Controller
 {
-    public function __construct(private readonly TwilioVoiceService $twilio) {}
+    public function __construct(private readonly LiveKitVoiceService $liveKit) {}
 
     /**
-     * Generate a Twilio Access Token for the mobile Voice SDK.
+     * Return LiveKit server info and the agent's active number.
+     * Called on app init so the mobile client knows where to connect.
      */
     public function token(Request $request): JsonResponse
     {
-        $jwt = $this->twilio->generateAccessToken($request->user());
-
-        $agentNumber = $this->twilio->getAgentNumber($request->user());
+        $agentNumber = $this->liveKit->getAgentNumber($request->user());
 
         return response()->json([
-            'token'          => $jwt,
-            'identity'       => (string) $request->user()->id,
-            'agent_number'   => $agentNumber?->getEffectiveDisplayNumber(),
-            'number_type'    => $agentNumber?->number_type,
-            'verified'       => $agentNumber?->verified ?? false,
+            'server_url'   => config('services.livekit.server_url'),
+            'identity'     => (string) $request->user()->id,
+            'agent_number' => $agentNumber?->getEffectiveDisplayNumber(),
+            'number_type'  => $agentNumber?->number_type,
+            'verified'     => $agentNumber?->verified ?? false,
         ]);
     }
 
     /**
-     * Log a new outbound call initiation from the mobile app.
+     * Initiate an outbound call.
+     * Creates the LiveKit room, starts Egress recording, dials the lead via SIP,
+     * and returns the room token so the mobile SDK can join.
      */
     public function store(Request $request): JsonResponse
     {
         $request->validate([
-            'contact_id'       => 'nullable|exists:contacts,id',
-            'remote_number'    => 'required|string|max:20',
-            'provider_call_sid' => 'nullable|string|max:50',
+            'contact_id'    => 'nullable|exists:contacts,id',
+            'remote_number' => 'required|string|max:20',
         ]);
 
-        $user   = $request->user();
-        $number = $this->twilio->getAgentNumber($user);
+        $user        = $request->user();
+        $agentNumber = $this->liveKit->getAgentNumber($user);
 
+        abort_unless(
+            $agentNumber,
+            422,
+            'No verified phone number found. Go to More → Phone Numbers to set one up.',
+        );
+
+        $roomName = 'call_' . Str::uuid();
+        $callerId = $agentNumber->getEffectiveDisplayNumber();
+
+        // 1. Create the LiveKit room
+        $this->liveKit->createRoom($roomName);
+
+        // 2. Start dual-participant audio recording
+        $this->liveKit->startEgress($roomName);
+
+        // 3. Dial the lead via Africa's Talking SIP trunk
+        $this->liveKit->dialSipParticipant($roomName, $request->remote_number, $callerId);
+
+        // 4. Mint the agent's room access token
+        $token = $this->liveKit->generateAccessToken($user, $roomName);
+
+        // 5. Persist the call record
         $call = Call::create([
-            'agency_id'        => $user->agency_id,
-            'agent_id'         => $user->id,
-            'contact_id'       => $request->contact_id,
-            'direction'        => 'outbound',
-            'status'           => 'initiated',
-            'provider_call_sid' => $request->provider_call_sid,
-            'twilio_number'    => $number?->twilio_number,
-            'remote_number'    => $request->remote_number,
-            'started_at'       => now(),
+            'agency_id'         => $user->agency_id,
+            'agent_id'          => $user->id,
+            'contact_id'        => $request->contact_id,
+            'direction'         => 'outbound',
+            'status'            => 'initiated',
+            'livekit_room_name' => $roomName,
+            'twilio_number'     => $agentNumber->display_number,
+            'remote_number'     => $request->remote_number,
+            'started_at'        => now(),
         ]);
 
-        return response()->json($call, 201);
+        return response()->json([
+            'call_id'    => $call->id,
+            'room_name'  => $roomName,
+            'token'      => $token,
+            'server_url' => config('services.livekit.server_url'),
+        ], 201);
     }
 
     /**
@@ -81,9 +109,7 @@ class CallController extends Controller
     public function show(Call $call): JsonResponse
     {
         $this->authorizeCall($call);
-
         $call->load(['contact', 'transcript', 'summary', 'agent:id,first_name,last_name']);
-
         return response()->json($call);
     }
 
@@ -95,8 +121,8 @@ class CallController extends Controller
         $this->authorizeCall($call);
 
         $request->validate([
-            'status'            => 'required|in:ringing,in-progress,completed,no-answer,busy,failed,canceled',
-            'duration_seconds'  => 'nullable|integer|min:0',
+            'status'           => 'required|in:ringing,in-progress,completed,no-answer,busy,failed,canceled',
+            'duration_seconds' => 'nullable|integer|min:0',
         ]);
 
         $updates = ['status' => $request->status];
@@ -119,9 +145,9 @@ class CallController extends Controller
         $this->authorizeCall($call);
 
         $request->validate([
-            'summary_text'      => 'required|string',
-            'action_items'      => 'nullable|array',
-            'action_items.*'    => 'string',
+            'summary_text'        => 'required|string',
+            'action_items'        => 'nullable|array',
+            'action_items.*'      => 'string',
             'suggested_next_step' => 'nullable|string',
         ]);
 
@@ -147,10 +173,8 @@ class CallController extends Controller
 
     /**
      * Return a short-lived signed URL for streaming a call recording.
-     * The actual MP3 is on Twilio; we proxy the URL through the backend
-     * to enforce access control without leaking Twilio credentials to the client.
      */
-    public function recording(Call $call): \Illuminate\Http\JsonResponse
+    public function recording(Call $call): JsonResponse
     {
         $this->authorizeCall($call);
 
@@ -158,8 +182,6 @@ class CallController extends Controller
             return response()->json(['message' => 'No recording available.'], 404);
         }
 
-        // Return a signed URL valid for 60 minutes.
-        // The mobile audio player fetches the MP3 directly from this URL.
         $signedUrl = \Illuminate\Support\Facades\URL::temporarySignedRoute(
             'api.mobile.calls.recording.proxy',
             now()->addHour(),

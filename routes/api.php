@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\LeadWebhookController;
 use App\Http\Controllers\Api\Mobile\MobileInvoiceController;
 use App\Http\Controllers\PaymentWebhookController;
 use App\Http\Controllers\Api\CallWebhookController;
+use App\Http\Controllers\Api\LiveKitWebhookController;
 use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\DealController;
 use App\Http\Controllers\Api\EmailWebhookController;
@@ -113,15 +114,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/deals/{deal}', [DealController::class, 'update']);
 });
 
-// ─── Twilio Voice webhooks (public — Twilio-signed) ────────────────────────
-Route::post('/webhooks/calls/outbound', [CallWebhookController::class, 'outbound'])
-    ->name('api.mobile.calls.outbound');
-Route::post('/webhooks/calls/inbound', [CallWebhookController::class, 'inbound'])
-    ->name('api.mobile.calls.inbound');
-Route::post('/webhooks/calls/status', [CallWebhookController::class, 'status'])
-    ->name('api.mobile.calls.status');
-Route::post('/webhooks/calls/recording', [CallWebhookController::class, 'recording'])
-    ->name('api.mobile.calls.recording');
+// ─── LiveKit webhooks (public — JWT-signed by LiveKit server) ──────────────
+Route::post('/webhooks/livekit', [LiveKitWebhookController::class, 'handle'])
+    ->name('api.livekit.webhook');
 
 // ─── Mobile API (Sanctum token) ────────────────────────────────────────────
 Route::prefix('mobile')->name('api.mobile.')->group(function () {
@@ -227,27 +222,25 @@ Route::prefix('mobile')->name('api.mobile.')->group(function () {
             return response()->json(['language' => $request->input('language')]);
         })->name('numbers.language');
 
-        // Phone number management (BYON + platform-provisioned)
+        // Phone number management (BYON)
         Route::get('/numbers',                              [AgentNumberController::class, 'index'])->name('numbers.index');
         Route::post('/numbers',                             [AgentNumberController::class, 'store'])->name('numbers.store');
-        Route::get('/numbers/{agentNumber}/verification',   [AgentNumberController::class, 'checkVerification'])->name('numbers.verify');
+        Route::post('/numbers/{agentNumber}/confirm',       [AgentNumberController::class, 'confirm'])->name('numbers.confirm');
+        Route::post('/numbers/{agentNumber}/resend',        [AgentNumberController::class, 'resendOtp'])->name('numbers.resend');
         Route::patch('/numbers/{agentNumber}/activate',     [AgentNumberController::class, 'activate'])->name('numbers.activate');
         Route::delete('/numbers/{agentNumber}',             [AgentNumberController::class, 'destroy'])->name('numbers.destroy');
     });
 });
 
-// Recording proxy — validates the signed URL then streams the MP3 from Twilio
+// Recording proxy — validates the signed URL then streams the OGG from S3 (LiveKit Egress)
 Route::get('/mobile/calls/{call}/recording/stream', function (\Illuminate\Http\Request $request, \App\Infrastructure\Persistence\Models\Call $call) {
     abort_unless($request->hasValidSignature(), 403);
     abort_unless($call->recording_url, 404);
 
-    $stream = \Illuminate\Support\Facades\Http::withBasicAuth(
-        config('services.twilio.sid'),
-        config('services.twilio.token'),
-    )->get($call->recording_url);
+    $stream = \Illuminate\Support\Facades\Http::get($call->recording_url);
 
     return response($stream->body(), 200, [
-        'Content-Type'  => 'audio/mpeg',
+        'Content-Type'  => 'audio/ogg',
         'Cache-Control' => 'private, max-age=3600',
     ]);
 })->name('api.mobile.calls.recording.proxy');

@@ -1,6 +1,6 @@
 import {useCallback} from 'react';
 import {useNavigation} from '@react-navigation/native';
-import {twilioService} from '../services/twilioService';
+import {liveKitService} from '../services/liveKitService';
 import {callsApi} from '../api/calls';
 import {useCallStore} from '../store/callStore';
 
@@ -20,7 +20,7 @@ export function useCall() {
   );
 
   const hangup = useCallback(async (callId?: number, elapsed?: number) => {
-    twilioService.hangup();
+    liveKitService.hangup();
     if (callId && elapsed) {
       await callsApi.updateStatus(callId, 'completed', elapsed);
     }

@@ -10,7 +10,7 @@ import {CallTranscriptScreen} from '../../screens/calls/CallTranscriptScreen';
 export type ContactsStackParamList = {
   ContactsList: undefined;
   ContactDetail: {contactId: number};
-  InCall: {contactId?: number; phoneNumber: string; callSid?: string};
+  InCall: {contactId?: number; phoneNumber: string};
   PostCallSummary: {callId: number};
   CallDetail: {callId: number};
   CallTranscript: {callId: number};
