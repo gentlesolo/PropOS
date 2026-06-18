@@ -184,9 +184,9 @@ class DashboardPage extends Component
             ->orderByDesc('total_gci')
             ->get();
 
-        $maxGci = $leaderboardRaw->max('total_gci') ?: 1;
+        $maxGci = max(1.0, (float) $leaderboardRaw->max('total_gci'));
         $leaderboard = $leaderboardRaw->map(function($agent) use ($maxGci) {
-            $agent->percentage = min(100, round(($agent->total_gci / $maxGci) * 100));
+            $agent->percentage = min(100, round(((float) $agent->total_gci / $maxGci) * 100));
             return $agent;
         });
 
