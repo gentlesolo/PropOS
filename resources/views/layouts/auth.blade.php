@@ -146,10 +146,10 @@
                 <div class="flex items-center space-x-3">
                     <div class="h-9 w-9 rounded-md bg-[#10B981]/10 flex items-center justify-center border border-[#10B981]/25 backdrop-blur-sm">
                         <!-- Custom premium logo box -->
-                        <span class="font-bold tracking-wider text-lg text-[#10B981]">P</span>
+                        <span class="font-bold tracking-wider text-lg text-[#10B981]">V</span>
                     </div>
                     <span class="text-xl font-bold tracking-tight text-[#FAFAFA]">
-                        Prop<span class="relative inline-block text-[#FAFAFA]">O<span class="absolute top-[4px] left-[3px] w-[5px] h-[5px] bg-[#10B981] rounded-full shadow-[0_0_8px_#10B981]"></span></span>S
+                        VillaCRM
                     </span>
                 </div>
                 <!-- Active stats indicator badge -->

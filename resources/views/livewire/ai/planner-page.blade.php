@@ -1,4 +1,4 @@
-<div>
+<div wire:init="generateBrief">
     {{-- ── Header ─────────────────────────────────────────────────────── --}}
     <div class="mb-8 flex items-start justify-between gap-4">
         <div>
@@ -49,8 +49,25 @@
         @endif
     </div>
 
+    {{-- ── Generating skeleton ─────────────────────────────────────────── --}}
+    @if($generating)
+        <div class="animate-pulse space-y-8">
+            <div class="p-6 bg-brand-primary/5 rounded-3xl border border-brand-primary/20 h-24"></div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 space-y-8">
+                    <div class="bg-surface-card rounded-3xl border border-border-default h-48"></div>
+                    <div class="bg-surface-card rounded-3xl border border-border-default h-64"></div>
+                </div>
+                <div class="space-y-8">
+                    <div class="bg-surface-card rounded-3xl border border-border-default h-48"></div>
+                    <div class="bg-surface-card rounded-3xl border border-border-default h-48"></div>
+                </div>
+            </div>
+            <p class="text-center text-sm text-text-tertiary pt-2">Generating your daily brief with AI...</p>
+        </div>
+
     {{-- ── No brief for past date ──────────────────────────────────────── --}}
-    @if(!$brief)
+    @elseif(!$brief)
         <div class="text-center py-32">
             <div class="w-20 h-20 bg-surface-raised border border-border-default rounded-3xl flex items-center justify-center mx-auto mb-6">
                 <svg class="w-10 h-10 text-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>

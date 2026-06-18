@@ -24,7 +24,7 @@ export function OnboardingScreen() {
   const slides = [
     {
       title: 'Your CRM, in your pocket',
-      subtitle: 'PropOS brings your active files, client histories, and daily agenda into the palm of your hand. Built for the field.',
+      subtitle: 'VillaCRM brings your active files, client histories, and daily agenda into the palm of your hand. Built for the field.',
       icon: 'phone',
       renderIllustration: () => (
         <View className="items-center justify-center h-64 w-full">
@@ -73,7 +73,7 @@ export function OnboardingScreen() {
     },
     {
       title: 'Every call, transcribed & summarised',
-      subtitle: 'Never scribble notes on your steering wheel again. PropOS automatically records, transcribes, and extracts key action items.',
+      subtitle: 'Never scribble notes on your steering wheel again. VillaCRM automatically records, transcribes, and extracts key action items.',
       icon: 'mic',
       renderIllustration: () => (
         <View className="items-center justify-center h-64 w-full">

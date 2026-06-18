@@ -36,7 +36,7 @@
                 <!-- Mini mobile logo mark (visible on mobile only) -->
                 <div class="lg:hidden flex items-center space-x-2.5 mb-6">
                     <div class="h-8 w-8 rounded-md bg-[#10B981]/10 flex items-center justify-center border border-[#10B981]/25">
-                        <span class="font-bold text-base text-[#10B981]">P</span>
+                        <span class="font-bold text-base text-[#10B981]">V</span>
                     </div>
                     <span class="text-lg font-bold tracking-tight text-[#FAFAFA]">VillaCRM</span>
                 </div>

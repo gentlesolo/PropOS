@@ -63,7 +63,7 @@ export function BiometricUnlockScreen() {
         Animated.spring(slideAnim, {toValue: 0, useNativeDriver: true}).start();
         return;
       }
-      const {success} = await rnb.simplePrompt({promptMessage: 'Authenticate to unlock PropOS'});
+      const {success} = await rnb.simplePrompt({promptMessage: 'Authenticate to unlock VillaCRM'});
       if (success) {
         handleSuccess();
       } else {
@@ -220,7 +220,7 @@ export function BiometricUnlockScreen() {
 
           <View className="items-center mt-6 gap-2">
             <Text style={{color: tokens.textPrimary}} className="text-xl font-extrabold tracking-tight">
-              {status === 'success' ? 'Unlocked' : 'PropOS is Locked'}
+              {status === 'success' ? 'Unlocked' : 'VillaCRM is Locked'}
             </Text>
 
             <View

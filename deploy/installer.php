@@ -15,9 +15,9 @@
 // ─── EDIT THESE BEFORE UPLOADING ─────────────────────────────────────────────
 
 // Absolute path to your Laravel root (NOT public_html, the folder above or beside it)
-// cPanel example: /home/yourusername/privatematch
+// cPanel example: /home/yourusername/villacrm
 // If unsure, check File Manager — find the 'artisan' file and copy its directory path
-const APP_ROOT_HINT = '/home/yourusername/privatematch'; // used as placeholder only
+const APP_ROOT_HINT = '/home/yourusername/villacrm'; // used as placeholder only
 
 // Temporary password to access this installer — change before uploading!
 const INSTALLER_PASSWORD = '12345';
@@ -218,10 +218,10 @@ function app_root(): string
         $parent2 . '/' . $folderName,
         $parent1 . '/myapp',
         $parent1 . '/main',
-        $parent1 . '/privatematch',
+        $parent1 . '/villacrm',
         $parent2 . '/myapp',
         $parent2 . '/main',
-        $parent2 . '/privatematch',
+        $parent2 . '/villacrm',
     ];
 
     foreach ($candidates as $c) {
@@ -1368,7 +1368,7 @@ function render_step0(): void
         <div class="field">
             <label>Laravel Root Path on Server</label>
             <input type="text" name="app_root" value="<?= htmlspecialchars(app_root()) ?>"
-                placeholder="/home/username/privatematch" autocomplete="off">
+                placeholder="/home/username/villacrm" autocomplete="off">
             <p class="hint">In cPanel File Manager, navigate to the folder containing <code>artisan</code> and copy its
                 path.</p>
         </div>

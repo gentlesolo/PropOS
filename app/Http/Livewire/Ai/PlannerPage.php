@@ -12,6 +12,7 @@ class PlannerPage extends Component
 {
     public ?DailyBrief $brief = null;
     public bool $generatingBrief = false;
+    public bool $generating = false;
     public string $selectedDate = '';
 
     public bool $showGoalModal = false;
@@ -37,15 +38,23 @@ class PlannerPage extends Component
             ->first();
 
         if ($existing) {
-            $this->brief = $existing;
+            $this->brief      = $existing;
+            $this->generating = false;
             return;
         }
 
-        if ($date->isToday()) {
-            $this->brief = app(GenerateDailyBriefAction::class)->execute($userId, $agencyId);
-        } else {
-            $this->brief = null;
+        $this->brief      = null;
+        $this->generating = $date->isToday();
+    }
+
+    public function generateBrief(): void
+    {
+        if (!$this->generating || !Carbon::parse($this->selectedDate)->isToday()) {
+            return;
         }
+
+        $this->brief      = app(GenerateDailyBriefAction::class)->execute(auth()->id(), auth()->user()->agency_id);
+        $this->generating = false;
     }
 
     public function previousDay(): void
@@ -70,19 +79,14 @@ class PlannerPage extends Component
             return;
         }
 
-        $this->generatingBrief = true;
-
         DailyBrief::where('agency_id', auth()->user()->agency_id)
             ->where('user_id', auth()->id())
             ->where('date', Carbon::today())
             ->delete();
 
-        $this->brief = app(GenerateDailyBriefAction::class)->execute(
-            auth()->id(),
-            auth()->user()->agency_id
-        );
-
-        $this->generatingBrief = false;
+        $this->brief      = null;
+        $this->generating = true;
+        $this->generateBrief();
         $this->dispatch('notify', message: 'Brief regenerated from live data.', type: 'success');
     }
 

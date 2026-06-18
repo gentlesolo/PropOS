@@ -72,7 +72,7 @@ export function LoginScreen() {
       authApi.login({
         email: email.trim().toLowerCase(),
         password,
-        device_name: 'PropOSMobile',
+        device_name: 'VillaCRMMobile',
         platform: Platform.OS as 'ios' | 'android',
       }),
     onSuccess: async ({data}) => {
@@ -120,7 +120,7 @@ export function LoginScreen() {
         return sub.charAt(0).toUpperCase() + sub.slice(1);
       }
     }
-    return 'PropOS HQ';
+    return 'VillaCRM HQ';
   };
 
   return (
@@ -141,7 +141,7 @@ export function LoginScreen() {
               className="absolute w-48 h-48 bg-brand-500 rounded-full blur-[48px]"
             />
             <Text style={{color: tokens.textPrimary}} className="text-5xl font-black tracking-tight z-10 text-center">
-              PropOS
+              VillaCRM
             </Text>
             <Text className="text-brand-500 font-mono text-xs uppercase tracking-widest font-bold mt-1 z-10">
               Agent Field Companion
@@ -173,7 +173,7 @@ export function LoginScreen() {
                   shadowRadius: 8,
                   shadowOffset: {width: 0, height: 0},
                 }}
-                placeholder="agent@propos.com"
+                placeholder="agent@villacrm.com"
                 placeholderTextColor={tokens.textTertiary}
                 keyboardType="email-address"
                 autoCapitalize="none"

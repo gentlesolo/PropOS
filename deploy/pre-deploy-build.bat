@@ -1,6 +1,6 @@
 @echo off
 :: ============================================================================
-::  PropOS Platform — Local Pre-Deploy Build (Windows)
+::  VillaCRM Platform — Local Pre-Deploy Build (Windows)
 ::  Run this on your Windows machine BEFORE uploading files to the server.
 ::  It compiles frontend assets and installs production Composer dependencies.
 ::
@@ -12,8 +12,8 @@ setlocal enabledelayedexpansion
 cd /d "%~dp0\.."
 
 echo.
-echo  PropOS Platform ^| Pre-Deploy Build
-echo  ====================================
+echo  VillaCRM Platform ^| Pre-Deploy Build
+echo  ======================================
 echo.
 
 :: â”€â”€ 1. Check Node.js â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -91,10 +91,10 @@ echo.
 set /p MAKE_ZIP="Create upload zip? (y/n): "
 if /i "%MAKE_ZIP%"=="y" (
     for /f "tokens=1-3 delims=/" %%a in ("%date%") do set DATESTR=%%c%%a%%b
-    set ARCHIVE=PropOS_!DATESTR!.zip
+    set ARCHIVE=VillaCRM_!DATESTR!.zip
 
     echo  Creating !ARCHIVE!...
-    tar.exe -a -c -f "!ARCHIVE!" --exclude=node_modules --exclude=.git --exclude=.env --exclude=database/database.sqlite --exclude=*.zip *
+    tar.exe -a -c -f "!ARCHIVE!" --exclude=node_modules --exclude=.git --exclude=.env --exclude=database/database.sqlite --exclude=*.zip --exclude=mobile *
     if !errorlevel! neq 0 (
         echo  [WARNING] Archive created, but some files may have been locked or skipped.
     ) else (
@@ -106,18 +106,18 @@ if /i "%MAKE_ZIP%"=="y" (
     echo  1. Upload !ARCHIVE! to cPanel File Manager
     echo     (Upload to /home/yourusername/ — NOT inside public_html)
     echo  2. Right-click the zip ^> Extract
-    echo  3. Rename extracted folder to 'PropOS' if needed
+    echo  3. Rename extracted folder to 'villacrm' if needed
     echo  4. Upload deploy\installer.php to public_html\install.php
     echo  5. Visit https://yourdomain.com/install.php
     echo  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 ) else (
     echo.
     echo  â”€â”€ Manual upload â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    echo  Upload this entire folder to /home/yourusername/PropOS/
+    echo  Upload this entire folder to /home/yourusername/villacrm/
     echo  using FileZilla or cPanel File Manager.
     echo.
     echo  DO NOT upload these folders (save time + space):
-    echo    node_modules\     .git\     .env	mobile\
+    echo    node_modules\     .git\     .env     mobile\
     echo.
     echo  Upload deploy\installer.php to public_html\install.php
     echo  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€

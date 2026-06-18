@@ -27,38 +27,24 @@ class DeepSeekCompletionService implements AiCompletionServiceInterface
         }
 
         try {
-            $payload = [
-                'model'       => $this->model,
-                'messages'    => [
-                    ['role' => 'system', 'content' => $systemPrompt],
-                    ['role' => 'user',   'content' => $userPrompt],
-                ],
-                'temperature' => $context['temperature'] ?? 0.7,
-            ];
+            $response = Http::timeout(120)
+                ->withToken($this->apiKey)
+                ->post("{$this->baseUrl}/chat/completions", [
+                    'model'       => $this->model,
+                    'messages'    => [
+                        ['role' => 'system', 'content' => $systemPrompt],
+                        ['role' => 'user',   'content' => $userPrompt],
+                    ],
+                    'temperature' => $context['temperature'] ?? 0.7,
+                ]);
 
-            $tempFile = tempnam(sys_get_temp_dir(), 'ds_payload');
-            file_put_contents($tempFile, json_encode($payload));
+            $data = $response->json();
 
-            $command = sprintf(
-                'curl -s -X POST %s -H "Content-Type: application/json" -H "Authorization: Bearer %s" -d "@%s"',
-                escapeshellarg("{$this->baseUrl}/chat/completions"),
-                escapeshellcmd($this->apiKey),
-                $tempFile
-            );
-
-            $output = shell_exec($command);
-            @unlink($tempFile);
-
-            if (!$output) {
-                return 'AI generation failed — no response from curl.';
-            }
-
-            $data = json_decode($output, true);
             if (isset($data['choices'][0]['message']['content'])) {
                 return $this->sanitize($data['choices'][0]['message']['content']);
             }
 
-            Log::error('DeepSeek generate failed', ['body' => $output]);
+            Log::error('DeepSeek generate failed', ['body' => $response->body()]);
             return 'AI error: ' . ($data['error']['message'] ?? 'Unknown API error');
         } catch (\Exception $e) {
             Log::error('DeepSeek generate exception', ['error' => $e->getMessage()]);
@@ -88,27 +74,12 @@ class DeepSeekCompletionService implements AiCompletionServiceInterface
                 $payload['tool_choice'] = 'auto';
             }
 
-            $tempFile = tempnam(sys_get_temp_dir(), 'ds_chat_payload');
-            file_put_contents($tempFile, json_encode($payload));
+            $response = Http::timeout(120)
+                ->withToken($this->apiKey)
+                ->post("{$this->baseUrl}/chat/completions", $payload);
 
-            $command = sprintf(
-                'curl -s -X POST %s -H "Content-Type: application/json" -H "Authorization: Bearer %s" -d "@%s"',
-                escapeshellarg("{$this->baseUrl}/chat/completions"),
-                escapeshellcmd($this->apiKey),
-                $tempFile
-            );
+            $data = $response->json();
 
-            $output = shell_exec($command);
-            @unlink($tempFile);
-
-            if (!$output) {
-                return [
-                    'content'    => 'Chat request failed — no response from curl.',
-                    'tool_calls' => null,
-                ];
-            }
-
-            $data = json_decode($output, true);
             if (isset($data['choices'][0]['message'])) {
                 $message = $data['choices'][0]['message'];
                 return [
@@ -117,7 +88,7 @@ class DeepSeekCompletionService implements AiCompletionServiceInterface
                 ];
             }
 
-            Log::error('DeepSeek chat failed', ['body' => $output]);
+            Log::error('DeepSeek chat failed', ['body' => $response->body()]);
             return [
                 'content'    => 'Chat error: ' . ($data['error']['message'] ?? 'Unknown API error'),
                 'tool_calls' => null,

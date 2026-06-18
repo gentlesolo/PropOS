@@ -17,6 +17,8 @@ class GenerateDailyBriefAction
 
     public function execute(int $userId, int $agencyId): DailyBrief
     {
+        set_time_limit(300);
+
         $today = Carbon::today();
 
         // ── Pull real data ────────────────────────────────────────────────
@@ -158,38 +160,41 @@ class GenerateDailyBriefAction
             "Day: " . $today->format('l, F j'),
         ]));
 
-        // ── AI calls ──────────────────────────────────────────────────────
-        $marketSnapshot = $this->ai->generate(
-            "You are a concise real estate intelligence assistant. Write a 2-sentence morning market snapshot for a real estate agent. Be encouraging, data-driven, and actionable.",
-            $context
-        );
+        // ── Single AI call returning all 4 sections ───────────────────────
+        $systemPrompt = <<<'PROMPT'
+You are an AI assistant for a real estate CRM. Based on the agent data provided, respond ONLY with a single valid JSON object — no explanation, no markdown fences, no extra text. The object must have exactly these keys:
+{
+  "ai_summary": "2-3 sentence executive briefing, direct and motivating",
+  "market_snapshot": "2 sentence morning market snapshot, encouraging and data-driven",
+  "coaching_tips": [{"category":"string","tip":"actionable tip under 20 words","icon":"single emoji"}],
+  "goals": [{"title":"string","target":integer,"unit":"string","current":0,"completed":false}]
+}
+coaching_tips must have exactly 3 items. Categories: prospecting, pipeline, mindset, skills, time_management.
+goals must have exactly 3 items. Units: calls, emails, deals, contacts, tasks, viewings.
+PROMPT;
 
-        $aiSummary = $this->ai->generate(
-            "You are a real estate agent's personal AI assistant. Write a 2–3 sentence executive briefing capturing the key priorities and mood for the agent's day. Be direct, motivating, and specific to the data.",
-            $context
-        );
+        $raw = $this->ai->generate($systemPrompt, $context);
 
-        $coachingJson = $this->ai->generate(
-            "You are a high-performance real estate coach. Based on the agent's data, provide exactly 3 personalized coaching tips. Respond ONLY with a valid JSON array — no explanation, no markdown: [{\"category\":\"category_name\",\"tip\":\"actionable tip text under 20 words\",\"icon\":\"single emoji\"}]. Categories: prospecting, pipeline, mindset, skills, time_management.",
-            $context
-        );
+        $aiData = $this->parseAiResponse($raw);
 
-        $goalsJson = $this->ai->generate(
-            "You are a real estate performance coach. Based on the agent's data, suggest exactly 3 specific, achievable daily goals. Respond ONLY with a valid JSON array — no explanation, no markdown: [{\"title\":\"goal title\",\"target\":number,\"unit\":\"unit label\",\"current\":0,\"completed\":false}]. Units: calls, emails, deals, contacts, tasks, viewings.",
-            $context
-        );
+        $marketSnapshot = $aiData['market_snapshot'] ?? 'Market data unavailable.';
+        $aiSummary      = $aiData['ai_summary']      ?? 'Briefing unavailable.';
 
-        $coachingTips = $this->parseJson($coachingJson, [
-            ['category' => 'mindset',      'tip' => 'Start your day with your 3 most important calls before opening email.',    'icon' => '🎯'],
-            ['category' => 'pipeline',     'tip' => 'Touch every stale deal with a quick value-add message today.',             'icon' => '⚡'],
-            ['category' => 'prospecting',  'tip' => 'Hot leads go cold in 48 hours — prioritise your top intent scores first.', 'icon' => '🔥'],
-        ]);
+        $coachingTips = (isset($aiData['coaching_tips']) && is_array($aiData['coaching_tips']) && count($aiData['coaching_tips']) > 0)
+            ? $aiData['coaching_tips']
+            : [
+                ['category' => 'mindset',     'tip' => 'Start your day with your 3 most important calls before opening email.',    'icon' => '🎯'],
+                ['category' => 'pipeline',    'tip' => 'Touch every stale deal with a quick value-add message today.',             'icon' => '⚡'],
+                ['category' => 'prospecting', 'tip' => 'Hot leads go cold in 48 hours — prioritise your top intent scores first.', 'icon' => '🔥'],
+            ];
 
-        $goals = $this->parseJson($goalsJson, [
-            ['title' => 'Follow-up calls',  'target' => 3, 'unit' => 'calls',  'current' => 0, 'completed' => false],
-            ['title' => 'Deal check-ins',   'target' => 2, 'unit' => 'emails', 'current' => 0, 'completed' => false],
-            ['title' => 'Pipeline updates', 'target' => 2, 'unit' => 'deals',  'current' => 0, 'completed' => false],
-        ]);
+        $goals = (isset($aiData['goals']) && is_array($aiData['goals']) && count($aiData['goals']) > 0)
+            ? $aiData['goals']
+            : [
+                ['title' => 'Follow-up calls',  'target' => 3, 'unit' => 'calls',  'current' => 0, 'completed' => false],
+                ['title' => 'Deal check-ins',   'target' => 2, 'unit' => 'emails', 'current' => 0, 'completed' => false],
+                ['title' => 'Pipeline updates', 'target' => 2, 'unit' => 'deals',  'current' => 0, 'completed' => false],
+            ];
 
         // Simple heuristic focus score (0–100)
         $focusScore = (int) min(100, max(20,
@@ -216,15 +221,19 @@ class GenerateDailyBriefAction
         );
     }
 
-    private function parseJson(string $raw, array $fallback): array
+    private function parseAiResponse(string $raw): array
     {
-        if (preg_match('/\[.*\]/s', $raw, $m)) {
+        // Strip markdown fences if the model wraps the response
+        $cleaned = preg_replace('/```(?:json)?\s*([\s\S]*?)```/', '$1', $raw);
+
+        // Extract the first {...} object
+        if (preg_match('/\{.*\}/s', $cleaned, $m)) {
             $decoded = json_decode($m[0], true);
-            if (is_array($decoded) && count($decoded) > 0) {
+            if (is_array($decoded)) {
                 return $decoded;
             }
         }
 
-        return $fallback;
+        return [];
     }
 }
