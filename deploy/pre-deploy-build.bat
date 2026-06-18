@@ -94,7 +94,7 @@ if /i "%MAKE_ZIP%"=="y" (
     set ARCHIVE=VillaCRM_!DATESTR!.zip
 
     echo  Creating !ARCHIVE!...
-    tar.exe -a -c -f "!ARCHIVE!" --exclude=node_modules --exclude=.git --exclude=.env --exclude=database/database.sqlite --exclude=*.zip --exclude=mobile *
+    tar.exe -a -c -f "!ARCHIVE!" --exclude=node_modules --exclude=.git --exclude=.env --exclude=database/database.sqlite --exclude=*.zip --exclude=mobile --exclude=wordpress-plugin *
     if !errorlevel! neq 0 (
         echo  [WARNING] Archive created, but some files may have been locked or skipped.
     ) else (
@@ -117,7 +117,7 @@ if /i "%MAKE_ZIP%"=="y" (
     echo  using FileZilla or cPanel File Manager.
     echo.
     echo  DO NOT upload these folders (save time + space):
-    echo    node_modules\     .git\     .env     mobile\
+    echo    node_modules\     .git\     .env     mobile\     wordpress-plugin\
     echo.
     echo  Upload deploy\installer.php to public_html\install.php
     echo  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
