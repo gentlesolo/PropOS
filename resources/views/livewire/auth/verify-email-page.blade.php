@@ -1,4 +1,14 @@
 <div class="relative">
+
+    @if (session('payment_success'))
+        <div class="mb-6 p-4 rounded-md bg-[#10B981]/10 border border-[#10B981]/25 flex items-start gap-3">
+            <svg class="h-5 w-5 text-[#10B981] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
+            </svg>
+            <p class="text-sm text-[#10B981]">{{ session('payment_success') }}</p>
+        </div>
+    @endif
+
     <!-- Header -->
     <div class="mb-8 text-center">
         <div class="h-16 w-16 bg-[#10B981]/10 rounded-full flex items-center justify-center mx-auto border border-[#10B981]/25 mb-4">
@@ -6,15 +16,17 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
             </svg>
         </div>
-        <h2 class="text-2xl font-semibold tracking-tight text-[#FAFAFA] font-sans">Verify your email</h2>
-        <p class="mt-4 text-sm text-[#A1A1AA] leading-relaxed">
-            Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.
+        <h2 class="text-2xl font-semibold tracking-tight text-[#FAFAFA] font-sans">Check your inbox</h2>
+        <p class="mt-3 text-sm text-[#A1A1AA] leading-relaxed">
+            We sent a verification link to
+            <span class="text-[#FAFAFA] font-medium">{{ auth()->user()->email }}</span>.
+            Click the link in that email to activate your account.
         </p>
     </div>
 
     @if ($verificationLinkSent)
         <div class="mb-6 p-3.5 rounded-md bg-[#10B981]/10 border border-[#10B981]/20 text-[#10B981] text-xs text-center">
-            A new verification link has been sent to the email address you provided during registration.
+            A new verification link has been sent to your email address.
         </div>
     @endif
 

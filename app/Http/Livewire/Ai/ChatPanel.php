@@ -2,16 +2,18 @@
 
 namespace App\Http\Livewire\Ai;
 
-use Livewire\Component;
-use App\Infrastructure\Persistence\Models\ChatSession;
+use App\Domain\AI\Contracts\AiCompletionServiceInterface;
 use App\Infrastructure\Persistence\Models\ChatMessage;
+use App\Infrastructure\Persistence\Models\ChatSession;
+use Livewire\Component;
 
 class ChatPanel extends Component
 {
     public $isOpen = false;
     public $sessionId = null;
     public $newMessage = '';
-    
+    public bool $isProcessing = false;
+
     protected $listeners = [
         'toggleChatPanel' => 'toggle',
         'open-chat-with-context' => 'openWithContext',
@@ -31,7 +33,6 @@ class ChatPanel extends Component
             $this->isOpen = true;
             $this->startNewSession();
         }
-        // Pre-populate the message field with the context prompt
         $this->newMessage = $context;
     }
 
@@ -43,8 +44,8 @@ class ChatPanel extends Component
             'title' => 'New Conversation',
         ]);
         $this->sessionId = $session->id;
-        
-        // Add initial system greeting
+        $this->isProcessing = false;
+
         ChatMessage::create([
             'chat_session_id' => $this->sessionId,
             'role' => 'assistant',
@@ -52,7 +53,7 @@ class ChatPanel extends Component
         ]);
     }
 
-    public function sendMessage(\App\Domain\AI\Contracts\AiCompletionServiceInterface $aiService)
+    public function sendMessage()
     {
         if (empty(trim($this->newMessage))) {
             return;
@@ -66,36 +67,63 @@ class ChatPanel extends Component
 
         $this->newMessage = '';
 
-        $this->processAiResponse($aiService);
-    }
-
-    private function processAiResponse($aiService)
-    {
-        // Get message history for context
-        $history = ChatMessage::where('chat_session_id', $this->sessionId)
-            ->orderBy('id', 'asc')
-            ->get()
-            ->map(function ($msg) {
-                return ['role' => $msg->role, 'content' => $msg->content];
-            })
-            ->toArray();
-
-        // Ensure system prompt is first
-        array_unshift($history, [
-            'role' => 'system',
-            'content' => 'You are VillaCRM Copilot, an AI assistant for a real estate agency. You are helpful, concise, and knowledgeable about property management, CRM, and real estate pipelines.'
-        ]);
-
-        // Call the AI Service
-        $response = $aiService->chat($history);
-
-        // Store response
-        ChatMessage::create([
+        $placeholder = ChatMessage::create([
             'chat_session_id' => $this->sessionId,
             'role' => 'assistant',
-            'content' => $response['content'],
-            'tool_calls' => $response['tool_calls'],
+            'content' => null,
         ]);
+
+        $messageId = $placeholder->id;
+        $sessionId = $this->sessionId;
+
+        // defer() sends the Livewire response first, then runs this after PHP-FPM
+        // flushes the connection — no queue worker needed, works on shared hosting.
+        defer(function () use ($messageId, $sessionId) {
+            $placeholder = ChatMessage::find($messageId);
+            if (! $placeholder) {
+                return;
+            }
+
+            $history = ChatMessage::where('chat_session_id', $sessionId)
+                ->where('id', '!=', $messageId)
+                ->orderBy('id', 'asc')
+                ->get()
+                ->map(fn($msg) => ['role' => $msg->role, 'content' => $msg->content])
+                ->toArray();
+
+            array_unshift($history, [
+                'role' => 'system',
+                'content' => 'You are VillaCRM Copilot, an AI assistant for a real estate agency. You are helpful, concise, and knowledgeable about property management, CRM, and real estate pipelines.',
+            ]);
+
+            try {
+                $ai = app(AiCompletionServiceInterface::class);
+                $response = $ai->chat($history);
+                $placeholder->update([
+                    'content' => $response['content'] ?: 'I encountered an error. Please try again.',
+                    'tool_calls' => $response['tool_calls'],
+                ]);
+            } catch (\Throwable) {
+                $placeholder->update(['content' => 'AI response failed. Please try again.']);
+            }
+        });
+
+        $this->isProcessing = true;
+    }
+
+    public function checkForResponse(): void
+    {
+        if (! $this->isProcessing || ! $this->sessionId) {
+            return;
+        }
+
+        $hasPending = ChatMessage::where('chat_session_id', $this->sessionId)
+            ->whereNull('content')
+            ->exists();
+
+        if (! $hasPending) {
+            $this->isProcessing = false;
+        }
     }
 
     public function getMessagesProperty()

@@ -27,7 +27,7 @@ class DeepSeekCompletionService implements AiCompletionServiceInterface
         }
 
         try {
-            $response = Http::timeout(120)
+            $response = Http::timeout(25)
                 ->withToken($this->apiKey)
                 ->post("{$this->baseUrl}/chat/completions", [
                     'model'       => $this->model,
@@ -74,7 +74,7 @@ class DeepSeekCompletionService implements AiCompletionServiceInterface
                 $payload['tool_choice'] = 'auto';
             }
 
-            $response = Http::timeout(120)
+            $response = Http::timeout(25)
                 ->withToken($this->apiKey)
                 ->post("{$this->baseUrl}/chat/completions", $payload);
 

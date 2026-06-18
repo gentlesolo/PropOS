@@ -79,7 +79,8 @@
                         </div>
 
                         <!-- Chat Messages Container -->
-                        <div class="flex-1 overflow-y-auto p-6 space-y-4 bg-[#030712]/30 relative">
+                        <div class="flex-1 overflow-y-auto p-6 space-y-4 bg-[#030712]/30 relative"
+                             wire:poll.2000ms="checkForResponse">
                             <!-- Subtle Grid Background -->
                             <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: radial-gradient(#10B981 1px, transparent 0); background-size: 12px 12px;"></div>
                             
@@ -91,7 +92,15 @@
                                             <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                                         </div>
                                         <div class="bg-[#111827]/80 border border-white/5 rounded px-3.5 py-2.5 shadow-sm max-w-[85%] font-mono text-[11px] leading-relaxed text-[#FAFAFA]">
-                                            <p class="whitespace-pre-wrap">{{ $msg->content }}</p>
+                                            @if($msg->content !== null)
+                                                <p class="whitespace-pre-wrap">{{ $msg->content }}</p>
+                                            @else
+                                                <div class="flex items-center space-x-1.5 py-0.5">
+                                                    <div class="h-1.5 w-1.5 bg-[#10B981]/60 rounded-full animate-bounce"></div>
+                                                    <div class="h-1.5 w-1.5 bg-[#10B981]/60 rounded-full animate-bounce [animation-delay:0.2s]"></div>
+                                                    <div class="h-1.5 w-1.5 bg-[#10B981]/60 rounded-full animate-bounce [animation-delay:0.4s]"></div>
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
                                 @else

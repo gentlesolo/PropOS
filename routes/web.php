@@ -153,11 +153,13 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     // ── Notification settings (agency-level reminder preferences) ───────────
     Route::get('/settings/notifications', \App\Http\Livewire\Settings\NotificationsPage::class)->name('settings.notifications');
 
+    // Payment callback — auth + tenant only; security comes from Paystack reference verification
+    Route::get('/settings/billing/verify', [\App\Http\Controllers\PaymentWebhookController::class, 'verifyPaystackSubscription'])->name('settings.billing.verify');
+
     // ── Team Management & Billing — requires agency.manage ──────────────────────────────
     Route::middleware('permission:agency.manage')->group(function () {
         Route::get('/settings/team', \App\Http\Livewire\Settings\TeamPage::class)->name('settings.team');
         Route::get('/settings/billing', \App\Http\Livewire\Settings\BillingPage::class)->name('settings.billing');
-        Route::get('/settings/billing/verify', [\App\Http\Controllers\PaymentWebhookController::class, 'verifyPaystackSubscription'])->name('settings.billing.verify');
     });
 
     // ── Offers ───────────────────────────────────────────────────────────────

@@ -108,6 +108,13 @@ class PaymentWebhookController extends Controller
 
                 Log::info('Paystack billing verified: subscription', ['agency_id' => $agency->id, 'plan' => $plan]);
 
+                // New registrations land on email verification; existing users go straight to billing.
+                $user = auth()->user();
+                if ($user && ! $user->hasVerifiedEmail()) {
+                    return redirect()->route('verification.notice')
+                        ->with('payment_success', 'Payment confirmed! Check your email to activate your account.');
+                }
+
                 return redirect()->route('settings.billing')->with('success', 'Plan upgraded successfully!');
             }
 
