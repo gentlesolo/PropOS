@@ -78,7 +78,7 @@ class ProfilePage extends Component
                 'agency_address' => $agency->address ?? '',
                 'timezone'       => $agency->timezone ?? 'UTC',
                 'currency'       => $agency->currency ?? 'NGN',
-                'primary_color'   => $agency->primary_color ?? '#1E40AF',
+                'primary_color'   => $agency->primary_color ?? '#10B981',
                 'secondary_color' => $agency->secondary_color ?? '#18181B',
                 'accent_color'    => $agency->accent_color ?? '#F59E0B',
                 'font_family'          => $agency->font_family ?? '',

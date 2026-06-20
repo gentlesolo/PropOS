@@ -11,7 +11,7 @@ class WebsiteIntegrationPage extends Component
     public string $facebook_pixel_id     = '';
     public string $custom_header_scripts = '';
     public bool   $website_enabled       = true;
-    public string $primary_color         = '#1E40AF';
+    public string $primary_color         = '#10B981';
 
     // Snippet builder state
     public string $snippet_city         = '';
@@ -28,7 +28,7 @@ class WebsiteIntegrationPage extends Component
         $this->google_analytics_id   = $settings['google_analytics_id']           ?? '';
         $this->facebook_pixel_id     = $settings['facebook_pixel_id']             ?? '';
         $this->custom_header_scripts = $settings['custom_header_scripts']         ?? '';
-        $this->primary_color         = $agency->primary_color                     ?? '#1E40AF';
+        $this->primary_color         = $agency->primary_color                     ?? '#10B981';
     }
 
     public function save(): void

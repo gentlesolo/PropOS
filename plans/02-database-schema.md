@@ -25,7 +25,7 @@
 | slug | string | unique, subdomain |
 | custom_domain | string | nullable, unique |
 | logo_path | string | nullable |
-| primary_color | string(7) | hex, default #1E40AF |
+| primary_color | string(7) | hex, default #10B981 |
 | secondary_color | string(7) | hex |
 | accent_color | string(7) | hex |
 | tagline | string | nullable |

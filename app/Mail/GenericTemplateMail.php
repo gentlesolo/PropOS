@@ -15,6 +15,7 @@ class GenericTemplateMail extends Mailable
     public function __construct(
         public readonly string $emailSubject,
         public readonly string $bodyHtml,
+        public readonly ?int $agencyId = null,
     ) {}
 
     public function envelope(): Envelope
@@ -24,8 +25,17 @@ class GenericTemplateMail extends Mailable
 
     public function content(): Content
     {
+        $primaryColor = '#10B981';
+        if ($this->agencyId) {
+            $agency = \App\Infrastructure\Persistence\Models\Agency::find($this->agencyId);
+            if ($agency && $agency->primary_color) {
+                $primaryColor = $agency->primary_color;
+            }
+        }
+
         return new Content(view: 'emails.generic-template', with: [
             'bodyHtml' => $this->bodyHtml,
+            'primaryColor' => $primaryColor,
         ]);
     }
 }

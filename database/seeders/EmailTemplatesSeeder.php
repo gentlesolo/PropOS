@@ -106,7 +106,7 @@ HTML,
     <p>A new {{property_type}} has just been listed in {{location}} that matches your search criteria.</p>
     <div style="border:2px solid #3b82f6;border-radius:12px;overflow:hidden;margin:24px 0">
       <div style="background:#eff6ff;padding:16px">
-        <h3 style="margin:0 0 4px;color:#1e40af">{{address}}</h3>
+        <h3 style="margin:0 0 4px;color:#10b981">{{address}}</h3>
         <p style="margin:0;color:#3b82f6;font-size:20px;font-weight:bold">₦{{price}}</p>
       </div>
       <div style="padding:16px;display:flex;gap:16px">
@@ -361,9 +361,9 @@ HTML,
   </div>
   <div style="padding:24px">
     <p>Hi {{first_name}},</p>
-    <h2 style="color:#1e40af">Market Insights</h2>
+    <h2 style="color:#10b981">Market Insights</h2>
     <p>{{market_insight}}</p>
-    <h2 style="color:#1e40af">Featured Listings This Month</h2>
+    <h2 style="color:#10b981">Featured Listings This Month</h2>
     <p>{{featured_listings}}</p>
     <div style="text-align:center;margin:32px 0">
       <a href="#" style="display:inline-block;background:#3b82f6;color:#fff;padding:12px 32px;border-radius:8px;text-decoration:none;font-weight:bold">Browse All Listings</a>

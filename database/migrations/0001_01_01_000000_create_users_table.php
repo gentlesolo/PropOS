@@ -17,9 +17,9 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('custom_domain')->nullable()->unique();
             $table->string('logo_path')->nullable();
-            $table->string('primary_color', 7)->default('#1E40AF');
-            $table->string('secondary_color', 7)->nullable();
-            $table->string('accent_color', 7)->nullable();
+            $table->string('primary_color', 7)->default('#10B981');
+            $table->string('secondary_color', 7)->default('#18181B');
+            $table->string('accent_color', 7)->default('#F59E0B');
             $table->string('tagline')->nullable();
             $table->text('address')->nullable();
             $table->string('phone')->nullable();

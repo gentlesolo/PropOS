@@ -121,7 +121,7 @@
 
 &lt;villacrm-listings-grid
     agency-key="YOUR_API_KEY"
-    primary-color="{{ auth()->user()->agency?->primary_color ?? '#1E40AF' }}"
+    primary-color="{{ auth()->user()->agency?->primary_color ?? '#10B981' }}"
     items-per-page="9"
     view-type="grid"&gt;
 &lt;/villacrm-listings-grid&gt;</code></pre>

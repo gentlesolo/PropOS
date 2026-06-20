@@ -3,7 +3,7 @@
 
 .villacrm-price {
     font-weight: 700;
-    color: #1e40af;
+    color: #10B981;
 }
 
 .villacrm-listing-meta {
@@ -24,4 +24,4 @@
 }
 
 .villacrm-badge-sale   { background: #dcfce7; color: #166534; }
-.villacrm-badge-rental { background: #eff6ff; color: #1e40af; }
+.villacrm-badge-rental { background: #ecfdf5; color: #047857; }

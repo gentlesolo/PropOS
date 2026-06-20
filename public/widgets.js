@@ -3,7 +3,7 @@
  * Usage: <script src="https://cdn.villacrm.app/widgets.js" defer></script>
  *
  * Available components:
- *   <villacrm-listings-grid agency-key="..." primary-color="#1E40AF" items-per-page="9" view-type="grid">
+ *   <villacrm-listings-grid agency-key="..." primary-color="#10B981" items-per-page="9" view-type="grid">
  *   <villacrm-listing-details agency-key="..." listing-id="123">
  *   <villacrm-inquiry-form agency-key="..." listing-id="123">
  *   <villacrm-booking-scheduler agency-key="..." agent-id="1">
@@ -55,7 +55,7 @@
         display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600;
       }
       .badge-active { background: #dcfce7; color: #166534; }
-      .badge-rental { background: #eff6ff; color: #1e40af; }
+      .badge-rental { background: #ecfdf5; color: #047857; }
     `;
   }
 
@@ -75,7 +75,7 @@
     connectedCallback() { this._render(); }
     attributeChangedCallback() { this._page = 1; this._render(); }
 
-    get _primary() { return this.getAttribute('primary-color') || '#1E40AF'; }
+    get _primary() { return this.getAttribute('primary-color') || '#10B981'; }
     get _key()     { return this.getAttribute('agency-key') || ''; }
     get _perPage() { return parseInt(this.getAttribute('items-per-page') || '9', 10); }
     get _view()    { return this.getAttribute('view-type') || 'grid'; }
@@ -184,7 +184,7 @@
     connectedCallback() { this._render(); }
     attributeChangedCallback() { this._render(); }
 
-    get _primary() { return this.getAttribute('primary-color') || '#1E40AF'; }
+    get _primary() { return this.getAttribute('primary-color') || '#10B981'; }
     get _key()     { return this.getAttribute('agency-key') || ''; }
     get _id()      { return this.getAttribute('listing-id') || ''; }
 
@@ -270,7 +270,7 @@
     connectedCallback() { this._render(); }
     attributeChangedCallback() { this._render(); }
 
-    get _primary() { return this.getAttribute('primary-color') || '#1E40AF'; }
+    get _primary() { return this.getAttribute('primary-color') || '#10B981'; }
     get _key()     { return this.getAttribute('agency-key') || ''; }
     get _listingId(){ return this.getAttribute('listing-id') || ''; }
 
@@ -361,7 +361,7 @@
     connectedCallback() { this._render(); }
     attributeChangedCallback() { this._render(); }
 
-    get _primary()   { return this.getAttribute('primary-color') || '#1E40AF'; }
+    get _primary()   { return this.getAttribute('primary-color') || '#10B981'; }
     get _key()       { return this.getAttribute('agency-key') || ''; }
     get _agentId()   { return this.getAttribute('agent-id') || ''; }
     get _listingId() { return this.getAttribute('listing-id') || ''; }

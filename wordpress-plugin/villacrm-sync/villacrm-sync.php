@@ -538,7 +538,7 @@ function villacrm_shortcode_listings(array $atts): string {
                     <?php the_post_thumbnail('medium', ['style' => 'width:100%;height:200px;object-fit:cover;display:block;']); ?>
                 <?php endif; ?>
                 <div style="padding:14px;">
-                    <div style="font-weight:700;font-size:18px;color:#1e40af;margin-bottom:4px;">
+                    <div style="font-weight:700;font-size:18px;color:#10B981;margin-bottom:4px;">
                         <?php villacrm_the_price(); ?>
                     </div>
                     <h3 style="font-size:14px;margin:0 0 6px;font-weight:600;"><?php the_title(); ?></h3>
@@ -577,7 +577,7 @@ function villacrm_shortcode_single(array $atts): string {
         <a href="<?php echo esc_url(get_permalink($id)); ?>" style="text-decoration:none;color:inherit;">
             <?php if (has_post_thumbnail($id)) : echo get_the_post_thumbnail($id, 'medium', ['style' => 'width:100%;height:220px;object-fit:cover;display:block;']); endif; ?>
             <div style="padding:16px;">
-                <div style="font-weight:700;font-size:20px;color:#1e40af;margin-bottom:4px;"><?php villacrm_the_price($id); ?></div>
+                <div style="font-weight:700;font-size:20px;color:#10B981;margin-bottom:4px;"><?php villacrm_the_price($id); ?></div>
                 <h3 style="font-size:15px;margin:0 0 6px;"><?php echo esc_html(get_the_title($id)); ?></h3>
                 <p style="font-size:13px;color:#6b7280;margin:0;"><?php echo esc_html(implode(', ', array_filter([$listing['address'], $listing['city']]))); ?></p>
             </div>
@@ -594,7 +594,7 @@ function villacrm_shortcode_inquiry(array $atts): string {
     $atts = shortcode_atts([
         'listing_id'   => 0,
         'button_label' => __('Send Enquiry', 'villacrm-sync'),
-        'primary_color'=> '#1E40AF',
+        'primary_color'=> '#10B981',
     ], $atts, 'villacrm_inquiry');
 
     $api_key = get_option(VILLACRM_OPTION_KEY, '');

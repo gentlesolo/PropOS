@@ -45,7 +45,7 @@ class GenerateListingGraphicAction
         imagesavealpha($canvas, true);
 
         // 2. Fill with agency primary colour as base background
-        $bgHex      = ltrim($agency->primary_color ?? '#1E40AF', '#');
+        $bgHex      = ltrim($agency->primary_color ?? '#10B981', '#');
         $bgR        = hexdec(substr($bgHex, 0, 2));
         $bgG        = hexdec(substr($bgHex, 2, 2));
         $bgB        = hexdec(substr($bgHex, 4, 2));
@@ -233,7 +233,7 @@ class GenerateListingGraphicAction
         $badgeX    = $cW - $badgeW - 24;
         $badgeY    = $cH - ($format === 'story' ? 340 : 188);
 
-        $hexBrand = ltrim($agency->primary_color ?? '#1E40AF', '#');
+        $hexBrand = ltrim($agency->primary_color ?? '#10B981', '#');
         $bR = hexdec(substr($hexBrand, 0, 2));
         $bG = hexdec(substr($hexBrand, 2, 2));
         $bB = hexdec(substr($hexBrand, 4, 2));

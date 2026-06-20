@@ -30,7 +30,7 @@ class TeamInvitationNotification extends Notification implements ShouldQueue
                 'invitation'   => $this->invitation,
                 'agency'       => $agency,
                 'acceptUrl'    => $acceptUrl,
-                'primaryColor' => $agency->primary_color ?? '#1E40AF',
+                'primaryColor' => $agency->primary_color ?? '#10B981',
             ]);
     }
 }

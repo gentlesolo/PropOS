@@ -217,7 +217,7 @@
                     <label class="block text-sm font-medium text-text-primary mb-1">Primary Color</label>
                     <div class="flex items-center gap-3">
                         <input wire:model.defer="primary_color" type="color" class="h-10 w-20 rounded-lg border border-border-default cursor-pointer">
-                        <input wire:model.defer="primary_color" type="text" placeholder="#1E40AF" class="flex-1 rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary text-sm font-mono">
+                        <input wire:model.defer="primary_color" type="text" placeholder="#10B981" class="flex-1 rounded-xl border border-border-default bg-surface-input px-3 py-2 text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary text-sm font-mono">
                     </div>
                     @error('primary_color') <span class="text-xs text-danger-600">{{ $message }}</span> @enderror
                 </div>

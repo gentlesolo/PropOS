@@ -34,7 +34,7 @@ class EmailService
         ]);
 
         try {
-            Mail::to($toEmail, $toName)->send(new GenericTemplateMail($subject, $bodyHtml));
+            Mail::to($toEmail, $toName)->send(new GenericTemplateMail($subject, $bodyHtml, $template->agency_id));
             $log->update(['status' => 'sent', 'sent_at' => now()]);
         } catch (\Throwable $e) {
             $log->update(['status' => 'failed', 'error_message' => $e->getMessage()]);
@@ -61,7 +61,7 @@ class EmailService
         ]);
 
         try {
-            Mail::to($toEmail)->send(new GenericTemplateMail($subject, $bodyHtml));
+            Mail::to($toEmail)->send(new GenericTemplateMail($subject, $bodyHtml, $log->agency_id));
             $log->update(['status' => 'sent', 'sent_at' => now()]);
         } catch (\Throwable $e) {
             $log->update(['status' => 'failed', 'error_message' => $e->getMessage()]);

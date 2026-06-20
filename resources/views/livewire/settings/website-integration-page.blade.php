@@ -75,7 +75,7 @@
 
 &lt;villacrm-listings-grid
     agency-key="YOUR_PUBLIC_READ_KEY"
-    primary-color="{{ $agency->primary_color ?? '#1E40AF' }}"
+    primary-color="{{ $agency->primary_color ?? '#10B981' }}"
     items-per-page="{{ $snippet_per_page }}"
     view-type="{{ $snippet_view_type }}"{{ $snippet_city ? "\n    city=\"{$snippet_city}\"" : '' }}{{ $snippet_mandate_type ? "\n    mandate-type=\"{$snippet_mandate_type}\"" : '' }}&gt;
 &lt;/villacrm-listings-grid&gt;</code></pre>
@@ -85,9 +85,9 @@
             {{-- Other widget snippets --}}
             <div class="grid grid-cols-1 gap-4">
                 @foreach([
-                    ['title' => 'Listing Detail', 'desc' => 'Embed a full listing detail view on any page.', 'code' => '<villacrm-listing-details agency-key="YOUR_KEY" listing-id="123" primary-color="' . ($agency->primary_color ?? '#1E40AF') . '"></villacrm-listing-details>'],
-                    ['title' => 'Inquiry Form', 'desc' => 'Contact form that sends leads directly to your CRM.', 'code' => '<villacrm-inquiry-form agency-key="YOUR_KEY" listing-id="123" primary-color="' . ($agency->primary_color ?? '#1E40AF') . '"></villacrm-inquiry-form>'],
-                    ['title' => 'Booking Scheduler', 'desc' => 'Let buyers book viewings from your website.', 'code' => '<villacrm-booking-scheduler agency-key="YOUR_KEY" agent-id="1" listing-id="123" primary-color="' . ($agency->primary_color ?? '#1E40AF') . '"></villacrm-booking-scheduler>'],
+                    ['title' => 'Listing Detail', 'desc' => 'Embed a full listing detail view on any page.', 'code' => '<villacrm-listing-details agency-key="YOUR_KEY" listing-id="123" primary-color="' . ($agency->primary_color ?? '#10B981') . '"></villacrm-listing-details>'],
+                    ['title' => 'Inquiry Form', 'desc' => 'Contact form that sends leads directly to your CRM.', 'code' => '<villacrm-inquiry-form agency-key="YOUR_KEY" listing-id="123" primary-color="' . ($agency->primary_color ?? '#10B981') . '"></villacrm-inquiry-form>'],
+                    ['title' => 'Booking Scheduler', 'desc' => 'Let buyers book viewings from your website.', 'code' => '<villacrm-booking-scheduler agency-key="YOUR_KEY" agent-id="1" listing-id="123" primary-color="' . ($agency->primary_color ?? '#10B981') . '"></villacrm-booking-scheduler>'],
                 ] as $widget)
                 <div class="bg-white border border-gray-200 rounded-xl p-5 space-y-2">
                     <h3 class="text-sm font-semibold text-gray-800">{{ $widget['title'] }}</h3>
