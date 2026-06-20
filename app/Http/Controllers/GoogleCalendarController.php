@@ -44,13 +44,10 @@ class GoogleCalendarController extends Controller
             }
 
             IntegrationCredential::updateOrCreate(
-                ['user_id' => auth()->id(), 'provider' => 'google_calendar'],
+                ['service' => 'google_calendar'],
                 [
-                    'agency_id'   => auth()->user()->agency_id,
-                    'credentials' => json_encode($token),
-                    'expires_at'  => isset($token['expires_in'])
-                        ? now()->addSeconds($token['expires_in'])
-                        : null,
+                    'credentials' => $token,
+                    'status'      => 'active',
                 ]
             );
 
@@ -65,8 +62,7 @@ class GoogleCalendarController extends Controller
 
     public function disconnect()
     {
-        IntegrationCredential::where('user_id', auth()->id())
-            ->where('provider', 'google_calendar')
+        IntegrationCredential::where('service', 'google_calendar')
             ->delete();
 
         return redirect()->route('settings')->with('success', 'Google Calendar disconnected.');

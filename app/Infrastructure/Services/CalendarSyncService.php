@@ -74,13 +74,12 @@ class CalendarSyncService
         return implode("\r\n", $lines);
     }
 
-    private function getGoogleToken(int $userId): ?array
+    private function getGoogleToken(?int $userId = null): ?array
     {
-        $cred = \App\Infrastructure\Persistence\Models\IntegrationCredential::where('user_id', $userId)
-            ->where('provider', 'google_calendar')
+        $cred = \App\Infrastructure\Persistence\Models\IntegrationCredential::where('service', 'google_calendar')
             ->first();
 
-        return $cred ? json_decode($cred->credentials, true) : null;
+        return $cred ? $cred->credentials : null;
     }
 
     private function buildGoogleClient(array $token): \Google\Client

@@ -439,8 +439,7 @@
 
         {{-- Google Calendar --}}
         @php
-            $googleCred = \App\Infrastructure\Persistence\Models\IntegrationCredential::where('user_id', auth()->id())
-                ->where('provider', 'google_calendar')
+            $googleCred = \App\Infrastructure\Persistence\Models\IntegrationCredential::where('service', 'google_calendar')
                 ->first();
         @endphp
         <div class="flex items-center justify-between py-4 border-b border-border-default last:border-0">
