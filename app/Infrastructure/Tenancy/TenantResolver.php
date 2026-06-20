@@ -13,7 +13,7 @@ class TenantResolver
     public function resolve(Request $request): ?Agency
     {
         if (config('tenancy.mode') === 'self_hosted') {
-            $agency = Agency::first() ?? Agency::factory()->create(['id' => 1, 'slug' => 'default']);
+            $agency = Agency::first();
             static::$currentAgency = $agency;
             return $agency;
         }

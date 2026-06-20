@@ -295,12 +295,18 @@ function generate_app_key(): string
 
 function run_artisan(string $command, array $params = []): array
 {
-    // Reset environment so Laravel reads our new .env
+    // Reset environment so Laravel reads our new .env, not inherited process env
     foreach (array_keys($_ENV) as $k) {
         if (
             str_starts_with($k, 'APP_') || str_starts_with($k, 'DB_') ||
             str_starts_with($k, 'CACHE_') || str_starts_with($k, 'SESSION_') ||
-            str_starts_with($k, 'QUEUE_') || str_starts_with($k, 'MAIL_')
+            str_starts_with($k, 'QUEUE_') || str_starts_with($k, 'MAIL_') ||
+            str_starts_with($k, 'LOG_') || str_starts_with($k, 'BROADCAST_') ||
+            str_starts_with($k, 'FILESYSTEM_') || str_starts_with($k, 'PAYSTACK_') ||
+            str_starts_with($k, 'STRIPE_') || str_starts_with($k, 'PUSHER_') ||
+            str_starts_with($k, 'ANTHROPIC_') || str_starts_with($k, 'OPENAI_') ||
+            str_starts_with($k, 'DEEPSEEK_') || str_starts_with($k, 'GEMINI_') ||
+            str_starts_with($k, 'TENANCY_') || str_starts_with($k, 'RESEND_')
         ) {
             putenv($k);
             unset($_ENV[$k], $_SERVER[$k]);
@@ -487,6 +493,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['cfg']['mail_from'] = trim($_POST['mail_from'] ?? '');
         $_SESSION['cfg']['mail_name'] = trim($_POST['mail_name'] ?? 'VillaCRM Platform');
         $_SESSION['cfg']['resend_key'] = trim($_POST['resend_key'] ?? '');
+        $_SESSION['cfg']['tenancy_mode'] = in_array($_POST['tenancy_mode'] ?? '', ['self_hosted', 'saas'])
+            ? $_POST['tenancy_mode']
+            : 'self_hosted';
         advance(4);
         header('Location: ' . $_SERVER['PHP_SELF']);
         exit;
@@ -600,6 +609,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    // Quick fix: switch QUEUE_CONNECTION to sync so jobs/emails run immediately without a worker
+    if ($action === 'fix_queue_sync') {
+        $envFile = app_root() . '/.env';
+        $patched = false;
+        if (file_exists($envFile)) {
+            $content = file_get_contents($envFile);
+            $content = preg_replace('/^QUEUE_CONNECTION=.*/m', 'QUEUE_CONNECTION=sync', $content);
+            if (!preg_match('/^QUEUE_CONNECTION=/m', $content)) {
+                $content .= "\nQUEUE_CONNECTION=sync\n";
+            }
+            file_put_contents($envFile, $content);
+            $patched = true;
+        }
+        run_artisan('config:clear');
+        run_artisan('config:cache');
+        $fixLog = $patched
+            ? [
+                ['ok' => true, 'msg' => 'QUEUE_CONNECTION=sync — all jobs (including email verification) now run immediately inline. No queue worker needed.'],
+                ['ok' => true, 'msg' => 'Config cache refreshed. ✅ Users can now register and receive verification emails instantly.'],
+              ]
+            : [['ok' => false, 'msg' => '.env file not found at ' . app_root()]];
+        $_SESSION['fix_mail_log'] = $fixLog;
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit;
+    }
+
     // Fix storage link — tries symlink first, then PHP-proxy fallback (for hosts with symlinks disabled)
     if ($action === 'fix_storage_link') {
         $root = app_root();
@@ -668,6 +703,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    // Seed full demo dataset (all seeders including demo agencies, users, listings, deals, etc.)
+    if ($action === 'seed_demo') {
+        $log = [];
+        $r = run_artisan('db:seed', ['--force' => true]);
+        $log[] = ['ok' => $r['ok'], 'msg' => 'Demo data seeded: ' . ($r['ok'] ? 'complete' : $r['error'] ?? $r['output'])];
+        if ($r['ok']) {
+            $log[] = ['ok' => true, 'msg' => '✅ Demo agencies, users, listings, contacts, deals and more are now loaded.'];
+            $log[] = ['ok' => true, 'msg' => '⚠ Remember to click "Clear All Demo Data" before registering real users.'];
+        }
+        $_SESSION['fix_mail_log'] = $log;
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit;
+    }
+
+    // Clear all data — drop and recreate schema, then seed only roles/permissions
+    if ($action === 'clear_demo') {
+        $log = [];
+        $r1 = run_artisan('migrate:fresh', ['--force' => true]);
+        $log[] = ['ok' => $r1['ok'], 'msg' => 'Database wiped and schema recreated: ' . ($r1['ok'] ? 'done' : $r1['error'] ?? $r1['output'])];
+        if ($r1['ok']) {
+            $r2 = run_artisan('db:seed', [
+                '--class' => 'Database\\Seeders\\RoleAndPermissionSeeder',
+                '--force' => true,
+            ]);
+            $log[] = ['ok' => $r2['ok'], 'msg' => 'Roles & permissions re-seeded: ' . ($r2['ok'] ? 'done' : $r2['error'] ?? $r2['output'])];
+            if ($r2['ok']) {
+                $log[] = ['ok' => true, 'msg' => '✅ Database is clean. Register your first real user to get started.'];
+            }
+        }
+        $_SESSION['fix_mail_log'] = $log;
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit;
+    }
+
     // Quick fix: clear application cache
     if ($action === 'clear_cache') {
         $root = app_root();
@@ -690,11 +759,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $r1 = run_artisan('cache:clear');
         $r2 = run_artisan('config:clear');
         $r3 = run_artisan('view:clear');
+        $r4 = run_artisan('route:clear');
 
         $_SESSION['fix_mail_log'] = [
-            ['ok' => true, 'msg' => 'Physical cache files deleted.'],
-            ['ok' => $r1['ok'], 'msg' => 'cache:clear — ' . ($r1['ok'] ? 'done' : $r1['error'] ?? $r1['output'])],
-            ['ok' => $r2['ok'], 'msg' => 'config:clear — ' . ($r2['ok'] ? 'done' : $r2['error'] ?? $r2['output'])],
+            ['ok' => true,       'msg' => 'Physical bootstrap/cache + framework cache files deleted.'],
+            ['ok' => $r1['ok'],  'msg' => 'cache:clear — '  . ($r1['ok'] ? 'done' : $r1['error'] ?? $r1['output'])],
+            ['ok' => $r2['ok'],  'msg' => 'config:clear — ' . ($r2['ok'] ? 'done' : $r2['error'] ?? $r2['output'])],
+            ['ok' => $r3['ok'],  'msg' => 'view:clear — '   . ($r3['ok'] ? 'done' : $r3['error'] ?? $r3['output'])],
+            ['ok' => $r4['ok'],  'msg' => 'route:clear — '  . ($r4['ok'] ? 'done' : $r4['error'] ?? $r4['output'])],
         ];
         header('Location: ' . $_SERVER['PHP_SELF']);
         exit;
@@ -734,10 +806,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'SESSION_DOMAIN' => 'null',
             'SESSION_SECURE_COOKIE' => str_starts_with($cfg['app_url'] ?? '', 'https') ? 'true' : 'false',
             'BROADCAST_CONNECTION' => 'log',
-            'FILESYSTEM_DISK' => 'public',  // Required: photos stored on Storage::disk('public')
-            'QUEUE_CONNECTION' => 'database',
+            'FILESYSTEM_DISK' => 'public',
+            // sync runs jobs immediately — no queue worker needed on shared hosting.
+            // Switch to "database" + set up the queue:work cron once the site is stable.
+            'QUEUE_CONNECTION' => 'sync',
             'CACHE_STORE' => 'database',
-            // Disabled by default on fresh install — enable once platform is stable
+            'TENANCY_MODE' => $cfg['tenancy_mode'] ?? 'self_hosted',
             'WORKFLOW_AUTOMATIONS_ENABLED' => 'false',
             'MAIL_MAILER' => $cfg['mail_mailer'] ?? 'smtp',
             'MAIL_ENCRYPTION' => ($cfg['mail_port'] ?? '465') === '587' ? 'tls' : 'smtps',
@@ -765,6 +839,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'PAYSTACK_PUBLIC_KEY' => $cfg['paystack_pk'] ?? '',
             'PAYSTACK_SECRET_KEY' => $cfg['paystack_sk'] ?? '',
             'PAYSTACK_CURRENCY' => $cfg['paystack_cur'] ?? 'NGN',
+            'PAYSTACK_MODE' => 'live',
             'VITE_APP_NAME' => $cfg['app_name'] ?? 'VillaCRM Platform',
         ];
 
@@ -858,9 +933,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $log[] = ['ok' => $result['ok'], 'msg' => 'Database migrations: ' . ($result['ok'] ? 'complete' : $result['error'] ?? $result['output'])];
 
         if ($result['ok']) {
-            // Seed
-            $seed = run_artisan('db:seed', ['--force' => true]);
-            $log[] = ['ok' => $seed['ok'], 'msg' => 'Database seeders: ' . ($seed['ok'] ? 'complete' : $seed['error'] ?? $seed['output'])];
+            // Seed roles and permissions only — never demo data.
+            // DemoAgencySeeder hard-codes agency id=1, which hijacks Agency::first() in
+            // TenantResolver (self_hosted mode) and causes every real user's agency to be
+            // ignored, breaking auth and permission scoping after registration.
+            $seed = run_artisan('db:seed', [
+                '--class' => 'Database\\Seeders\\RoleAndPermissionSeeder',
+                '--force' => true,
+            ]);
+            $log[] = ['ok' => $seed['ok'], 'msg' => 'Roles & permissions seeded: ' . ($seed['ok'] ? 'complete' : $seed['error'] ?? $seed['output'])];
 
             // Storage link
             if (!is_link("$root/public/storage")) {
@@ -1007,7 +1088,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 function page(string $title, string $body, int $currentStep = 0): void
 {
     $steps = ['Login', 'Requirements', 'Database', 'App & Mail', 'Services', 'Install', 'Done'];
-    $stepCount = count($steps);
     ob_start(); ?>
     <!DOCTYPE html>
     <html lang="en">
@@ -1468,6 +1548,32 @@ function render_step3(): void
             </div>
         </div>
 
+        <div class="section-label">Deployment Mode</div>
+        <?php
+        $modes = [
+            'self_hosted' => [
+                'label' => 'Self-Hosted (Single Agency)',
+                'desc'  => 'You run VillaCRM for your own agency only. One agency exists in the database and is always the active tenant. Best choice for shared hosting and private deployments.',
+            ],
+            'saas' => [
+                'label' => 'SaaS (Multi-Agency)',
+                'desc'  => 'You offer VillaCRM to multiple agencies. Each registered user is resolved to their own agency. Requires proper domain or subdomain routing per tenant.',
+            ],
+        ];
+        $selectedMode = $cfg['tenancy_mode'] ?? 'self_hosted';
+        foreach ($modes as $val => $mode): ?>
+            <label style="display:flex;gap:.85rem;padding:.9rem 1rem;background:#1a1a25;border:1px solid <?= $selectedMode === $val ? '#a855f7' : '#2d2d3d' ?>;border-radius:8px;cursor:pointer;margin-bottom:.6rem">
+                <input type="radio" name="tenancy_mode" value="<?= $val ?>"
+                    <?= $selectedMode === $val ? 'checked' : '' ?>
+                    style="margin-top:.2rem;accent-color:#a855f7;flex-shrink:0"
+                    onchange="document.querySelectorAll('[data-mode]').forEach(el=>el.style.borderColor='#2d2d3d');this.closest('label').style.borderColor='#a855f7'">
+                <div>
+                    <div style="font-weight:600;font-size:.88rem;color:#e4e4e7"><?= htmlspecialchars($mode['label']) ?></div>
+                    <div style="font-size:.77rem;color:#a1a1aa;margin-top:.2rem"><?= htmlspecialchars($mode['desc']) ?></div>
+                </div>
+            </label>
+        <?php endforeach ?>
+
         <div class="section-label">Mail (SMTP)</div>
         <div class="row">
             <div class="field">
@@ -1579,12 +1685,15 @@ function render_step5(): void
     <div class="section-label">Summary</div>
     <table style="width:100%;font-size:.85rem;border-collapse:collapse;margin-bottom:1.5rem">
         <?php
+        $tenancyLabels = ['self_hosted' => 'Self-Hosted (Single Agency)', 'saas' => 'SaaS (Multi-Agency)'];
+        $tenancyMode   = $cfg['tenancy_mode'] ?? 'self_hosted';
         $summary = [
-            'App URL' => $cfg['app_url'] ?? '—',
-            'Environment' => $cfg['app_env'] ?? '—',
-            'Database' => ($cfg['db_user'] ?? '?') . '@' . ($cfg['db_host'] ?? '?') . '/' . ($cfg['db_name'] ?? '?'),
-            'Mail' => ($cfg['mail_mailer'] ?? '—') . ' → ' . ($cfg['mail_host'] ?? ''),
-            'AI Provider' => $cfg['ai_provider'] ?? '—',
+            'App URL'      => $cfg['app_url'] ?? '—',
+            'Environment'  => $cfg['app_env'] ?? '—',
+            'Tenancy Mode' => $tenancyLabels[$tenancyMode] ?? $tenancyMode,
+            'Database'     => ($cfg['db_user'] ?? '?') . '@' . ($cfg['db_host'] ?? '?') . '/' . ($cfg['db_name'] ?? '?'),
+            'Mail'         => ($cfg['mail_mailer'] ?? '—') . ' → ' . ($cfg['mail_host'] ?? ''),
+            'AI Provider'  => $cfg['ai_provider'] ?? '—',
         ];
         foreach ($summary as $k => $v): ?>
             <tr style="border-bottom:1px solid #1f1f2e">
@@ -1685,6 +1794,15 @@ function render_step6(): void
         </form>
 
         <form method="post">
+            <input type="hidden" name="action" value="fix_queue_sync">
+            <button type="submit" class="btn btn-primary"
+                style="width:100%;justify-content:center;padding:.85rem;background:linear-gradient(135deg,#059669,#047857)">
+                ⚡ Fix: Emails Not Sending (Set QUEUE_CONNECTION=sync)
+            </button>
+            <p class="hint" style="text-align:center;margin-top:.4rem">Shared hosting has no queue worker — sync runs jobs immediately so verification emails are sent during registration.</p>
+        </form>
+
+        <form method="post">
             <input type="hidden" name="action" value="fix_mail">
             <button type="submit" class="btn btn-ghost" style="width:100%;justify-content:center;padding:.85rem">
                 🔧 Fix SMTP Scheme (ssl → smtps)
@@ -1694,8 +1812,9 @@ function render_step6(): void
         <form method="post">
             <input type="hidden" name="action" value="clear_cache">
             <button type="submit" class="btn btn-ghost" style="width:100%;justify-content:center;padding:.85rem;color:#eab308;border-color:#ca8a04">
-                🧹 Clear Application Cache (cache:clear)
+                🧹 Purge All Cache (fixes stale local config deployed to server)
             </button>
+            <p class="hint" style="text-align:center;margin-top:.4rem">Run this if the server is using wrong .env values — deletes bootstrap/cache/*.php and all framework caches.</p>
         </form>
 
         <form method="post">
@@ -1705,6 +1824,37 @@ function render_step6(): void
                 onclick="return confirm('This wipes the database and reruns all migrations. Continue?')">
                 🔄 Retry Full Installation (wipes database!)
             </button>
+        </form>
+
+    </div>
+
+    <div class="section-label" style="margin-top:1.5rem">Demo Data</div>
+    <p style="font-size:.85rem;color:#a1a1aa;margin-bottom:.75rem">
+        Seed the full demo dataset to preview the app with sample agencies, users, listings, contacts, and deals.
+        Clear it when you're ready to register real accounts.
+    </p>
+    <div style="display:grid;gap:.75rem;margin-bottom:1.5rem">
+
+        <form method="post" onsubmit="return confirm('Seed all demo agencies, users, and data? This will overwrite any existing demo content.')">
+            <input type="hidden" name="action" value="seed_demo">
+            <button type="submit" class="btn btn-ghost"
+                style="width:100%;justify-content:center;padding:.85rem;color:#a3e635;border-color:#4d7c0f">
+                🌱 Seed Demo Data
+            </button>
+            <p class="hint" style="text-align:center;margin-top:.4rem">
+                Runs all demo seeders — creates two sample agencies, demo users, listings, contacts, deals, tasks, and more.
+            </p>
+        </form>
+
+        <form method="post" onsubmit="return confirm('This wipes ALL data (including any real users) and resets to a clean install. Continue?')">
+            <input type="hidden" name="action" value="clear_demo">
+            <button type="submit" class="btn btn-danger"
+                style="width:100%;justify-content:center;padding:.85rem">
+                🗑 Clear All Data &amp; Reset
+            </button>
+            <p class="hint" style="text-align:center;margin-top:.4rem;color:#f87171">
+                Drops all rows, recreates schema, re-seeds only roles and permissions. Use this before registering real users.
+            </p>
         </form>
 
     </div>
@@ -1750,7 +1900,9 @@ function render_step6(): void
     <div class="cron-box">* * * * * <?= htmlspecialchars($phpBin) ?>     <?= htmlspecialchars($root) ?>/artisan schedule:run >>
         /dev/null 2>&1</div>
 
-    <p style="font-size:.8rem;color:#a1a1aa;margin-bottom:.25rem">Every minute — Queue Worker:</p>
+    <p style="font-size:.8rem;color:#a1a1aa;margin-bottom:.25rem">
+        Every minute — Queue Worker <span style="color:#6b6b80">(only needed if QUEUE_CONNECTION=database; skip if using sync)</span>:
+    </p>
     <div class="cron-box">* * * * * <?= htmlspecialchars($phpBin) ?>     <?= htmlspecialchars($root) ?>/artisan queue:work
         --stop-when-empty --tries=3 --timeout=90 --max-jobs=20 >> <?= htmlspecialchars($root) ?>/storage/logs/queue-cron.log
         2>&1</div>

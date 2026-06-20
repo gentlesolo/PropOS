@@ -95,5 +95,15 @@ class AppServiceProvider extends ServiceProvider
             }
             $view->with('currencySymbol', $symbol);
         });
+
+        if (class_exists(\Livewire\Livewire::class)) {
+            \Livewire\Livewire::setScriptRoute(function ($handle) {
+                return \Illuminate\Support\Facades\Route::get('/livewire/livewire.js', $handle);
+            });
+
+            \Livewire\Livewire::setUpdateRoute(function ($handle) {
+                return \Illuminate\Support\Facades\Route::post('/livewire/update', $handle);
+            });
+        }
     }
 }

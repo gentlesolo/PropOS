@@ -200,7 +200,7 @@ class RegisterPage extends Component
                 );
 
                 return redirect()->away($checkout['url']);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 \Illuminate\Support\Facades\Log::error('Paystack checkout failed during registration', ['error' => $e->getMessage()]);
                 // Fallback to dashboard if payment init fails
                 return redirect()->route('dashboard')->with('error', 'Could not initialize payment. Please update your billing settings.');

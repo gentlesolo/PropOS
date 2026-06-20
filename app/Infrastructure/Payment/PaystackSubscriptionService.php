@@ -13,7 +13,7 @@ class PaystackSubscriptionService
 
     public function __construct()
     {
-        $this->secretKey = config('services.paystack.secret_key', '');
+        $this->secretKey = config('services.paystack.secret_key') ?? '';
     }
 
     /**

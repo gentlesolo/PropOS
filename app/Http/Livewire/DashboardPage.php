@@ -36,9 +36,8 @@ class DashboardPage extends Component
     public function render()
     {
         $resolver = app(TenantResolver::class);
-        $agency   = $resolver->getCurrentAgency();
         $user     = auth()->user();
-        $agencyId = $user->agency_id;
+        $agency   = $resolver->getCurrentAgency() ?? $user?->agency;
 
         // --- AGENT VIEW METRICS ---
         $myPipelineValue = Deal::where('assigned_agent_id', $user->id)->sum('value');
