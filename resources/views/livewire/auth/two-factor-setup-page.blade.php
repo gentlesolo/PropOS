@@ -34,9 +34,12 @@
                 @error('disable_password') <span class="text-xs text-danger-600 mt-1 block">{{ $message }}</span> @enderror
             </div>
             <div class="flex gap-3">
-                <button wire:click="disable" class="flex-1 py-2 bg-danger-600 text-white rounded-xl text-sm font-medium hover:bg-danger-700 transition-colors">
+                <button wire:click="disable" wire:loading.attr="disabled" wire:target="disable" class="flex-1 py-2 bg-danger-600 text-white rounded-xl text-sm font-medium hover:bg-danger-700 transition-colors flex justify-center items-center disabled:opacity-70 disabled:cursor-not-allowed">
                     <span wire:loading.remove wire:target="disable">Disable 2FA</span>
-                    <span wire:loading wire:target="disable">Disabling...</span>
+                    <span wire:loading wire:target="disable" class="flex items-center space-x-2">
+                        <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        <span>Disabling...</span>
+                    </span>
                 </button>
                 <button wire:click="$set('showDisableConfirm', false)" class="flex-1 py-2 border border-border-default text-text-secondary rounded-xl text-sm font-medium hover:bg-surface-sunken transition-colors">Cancel</button>
             </div>
@@ -67,9 +70,12 @@
                     class="w-full rounded-xl border border-border-default bg-surface-input px-4 py-3 text-center text-xl font-mono tracking-widest text-text-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page/20">
                 @error('code') <span class="text-xs text-danger-600 mt-1 block text-center">{{ $message }}</span> @enderror
             </div>
-            <button type="submit" class="w-full py-3 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl font-semibold hover:bg-brand-secondary transition-colors">
+            <button type="submit" wire:loading.attr="disabled" wire:target="enable" class="w-full flex justify-center items-center py-3 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl font-semibold hover:bg-brand-secondary transition-colors disabled:opacity-70 disabled:cursor-not-allowed">
                 <span wire:loading.remove wire:target="enable">Enable 2FA</span>
-                <span wire:loading wire:target="enable">Verifying...</span>
+                <span wire:loading wire:target="enable" class="flex items-center space-x-2">
+                    <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    <span>Verifying...</span>
+                </span>
             </button>
         </form>
         @endif

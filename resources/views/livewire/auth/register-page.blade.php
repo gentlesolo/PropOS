@@ -188,8 +188,12 @@
                 </div>
 
                 <div class="pt-2">
-                    <button type="button" wire:click="nextStep" class="cta-shimmer w-full h-[44px] bg-[#10B981] text-white text-sm font-semibold rounded-md shadow-[0_2px_8px_rgba(16,185,129,0.16)] hover:bg-[#10B981]/90 active:scale-[0.98] transition-all flex items-center justify-center cursor-pointer">
-                        Continue to profile
+                    <button type="button" wire:click="nextStep" wire:loading.attr="disabled" wire:target="nextStep" class="cta-shimmer relative w-full h-[44px] bg-[#10B981] text-white text-sm font-semibold rounded-md shadow-[0_2px_8px_rgba(16,185,129,0.16)] hover:bg-[#10B981]/90 active:scale-[0.98] transition-all flex items-center justify-center cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed">
+                        <span wire:loading.remove wire:target="nextStep">Continue to profile</span>
+                        <span wire:loading wire:target="nextStep" class="flex items-center space-x-2">
+                            <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                            <span>Loading...</span>
+                        </span>
                     </button>
                 </div>
             </div>
@@ -263,9 +267,13 @@
                         Back
                     </button>
                 @endif
-                <button type="button" wire:click="nextStep" 
-                    class="cta-shimmer flex-1 h-[44px] bg-[#10B981] text-white text-sm font-semibold rounded-md shadow-[0_2px_8px_rgba(16,185,129,0.16)] hover:bg-[#10B981]/90 active:scale-[0.98] transition-all flex items-center justify-center cursor-pointer">
-                    @if($invitationToken) Continue to security @else Choose your plan @endif
+                <button type="button" wire:click="nextStep" wire:loading.attr="disabled" wire:target="nextStep"
+                    class="cta-shimmer relative flex-1 h-[44px] bg-[#10B981] text-white text-sm font-semibold rounded-md shadow-[0_2px_8px_rgba(16,185,129,0.16)] hover:bg-[#10B981]/90 active:scale-[0.98] transition-all flex items-center justify-center cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed">
+                    <span wire:loading.remove wire:target="nextStep">@if($invitationToken) Continue to security @else Choose your plan @endif</span>
+                    <span wire:loading wire:target="nextStep" class="flex items-center space-x-2">
+                        <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        <span>Loading...</span>
+                    </span>
                 </button>
             </div>
         </div>
@@ -343,9 +351,13 @@
                     class="w-24 h-[44px] border border-white/10 hover:bg-white/5 text-[#A1A1AA] hover:text-[#FAFAFA] text-sm font-semibold rounded-md transition-all flex items-center justify-center cursor-pointer">
                     Back
                 </button>
-                <button type="button" wire:click="nextStep" 
-                    class="cta-shimmer flex-1 h-[44px] bg-[#10B981] text-white text-sm font-semibold rounded-md shadow-[0_2px_8px_rgba(16,185,129,0.16)] hover:bg-[#10B981]/90 active:scale-[0.98] transition-all flex items-center justify-center cursor-pointer">
-                    Continue to security
+                <button type="button" wire:click="nextStep" wire:loading.attr="disabled" wire:target="nextStep"
+                    class="cta-shimmer relative flex-1 h-[44px] bg-[#10B981] text-white text-sm font-semibold rounded-md shadow-[0_2px_8px_rgba(16,185,129,0.16)] hover:bg-[#10B981]/90 active:scale-[0.98] transition-all flex items-center justify-center cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed">
+                    <span wire:loading.remove wire:target="nextStep">Continue to security</span>
+                    <span wire:loading wire:target="nextStep" class="flex items-center space-x-2">
+                        <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        <span>Loading...</span>
+                    </span>
                 </button>
             </div>
         </div>
@@ -390,9 +402,13 @@
                     class="w-24 h-[44px] border border-white/10 hover:bg-white/5 text-[#A1A1AA] hover:text-[#FAFAFA] text-sm font-semibold rounded-md transition-all flex items-center justify-center cursor-pointer">
                     Back
                 </button>
-                <button type="submit" wire:click.prevent="submit"
-                    class="cta-shimmer flex-1 h-[44px] bg-[#10B981] text-white text-sm font-semibold rounded-md shadow-[0_2px_8px_rgba(16,185,129,0.16)] hover:bg-[#10B981]/90 active:scale-[0.98] transition-all flex items-center justify-center cursor-pointer">
-                    @if($invitationToken) Complete Registration @else Complete Agency Setup @endif
+                <button type="submit" wire:click.prevent="submit" wire:loading.attr="disabled" wire:target="submit"
+                    class="cta-shimmer relative flex-1 h-[44px] bg-[#10B981] text-white text-sm font-semibold rounded-md shadow-[0_2px_8px_rgba(16,185,129,0.16)] hover:bg-[#10B981]/90 active:scale-[0.98] transition-all flex items-center justify-center cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed">
+                    <span wire:loading.remove wire:target="submit">@if($invitationToken) Complete Registration @else Complete Agency Setup @endif</span>
+                    <span wire:loading wire:target="submit" class="flex items-center space-x-2">
+                        <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        <span>Processing...</span>
+                    </span>
                 </button>
             </div>
         </div>
