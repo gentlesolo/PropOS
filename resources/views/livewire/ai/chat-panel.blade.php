@@ -1,11 +1,14 @@
 <div>
     <!-- Trigger Button (Floating FAB) - Only on Mobile -->
-    <button wire:click="toggle" class="md:hidden fixed bottom-6 right-6 z-40 h-14 w-14 rounded-full bg-gradient-to-br from-[#10B981] to-[#0ea5e9] text-white shadow-lg shadow-[#10B981]/25 border border-white/15 flex items-center justify-center hover:scale-105 active:scale-95 transition-all focus:outline-none">
-        <svg class="h-6 w-6 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+    <button wire:click="toggle" class="disabled:opacity-70 disabled:cursor-not-allowed relative md:hidden fixed bottom-6 right-6 z-40 h-14 w-14 rounded-full bg-gradient-to-br from-[#10B981] to-[#0ea5e9] text-white shadow-lg shadow-[#10B981]/25 border border-white/15 flex items-center justify-center hover:scale-105 active:scale-95 transition-all focus:outline-none" wire:loading.attr="disabled" wire:target="toggle">
+                <span wire:loading.remove wire:target="toggle"><svg class="h-6 w-6 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21l-.813-5.096L3 15l5.096-.813L9 9l.813 5.096L15 15l-5.188.904zm9.193-7.658L18 12l-1.006-3.754L13.25 7.25l3.744-1.006L18 2.5l1.006 3.744 3.744 1.006-3.744 1.006z"/>
         </svg>
-        <span class="absolute top-0 right-0 h-3 w-3 rounded-full bg-[#22C55E] border-2 border-[#030712] animate-pulse"></span>
-    </button>
+        <span class="absolute top-0 right-0 h-3 w-3 rounded-full bg-[#22C55E] border-2 border-[#030712] animate-pulse"></span></span>
+                <span wire:loading wire:target="toggle" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
 
     <!-- Slide-over Panel -->
     <div x-data="{ open: @entangle('isOpen') }"
@@ -53,9 +56,12 @@
                                 </div>
                             </div>
                             <div class="flex items-center space-x-2">
-                                <button wire:click="startNewSession" class="p-1.5 rounded text-[#A1A1AA] hover:text-[#10B981] hover:bg-[#111827] transition-colors focus:outline-none" title="New Session">
-                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
-                                </button>
+                                <button wire:click="startNewSession" class="disabled:opacity-70 disabled:cursor-not-allowed relative p-1.5 rounded text-[#A1A1AA] hover:text-[#10B981] hover:bg-[#111827] transition-colors focus:outline-none" title="New Session" wire:loading.attr="disabled" wire:target="startNewSession">
+                <span wire:loading.remove wire:target="startNewSession"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg></span>
+                <span wire:loading wire:target="startNewSession" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                                 <button @click="open = false" class="p-1.5 rounded text-[#52525B] hover:text-[#FAFAFA] hover:bg-[#111827] transition-colors focus:outline-none">
                                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                                 </button>

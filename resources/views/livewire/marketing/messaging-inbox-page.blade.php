@@ -44,9 +44,12 @@
             <div class="flex gap-1 p-1 bg-surface-hover/50 rounded-xl">
                 @foreach(['all'=>'All','email'=>'Email','sms'=>'SMS','whatsapp'=>'WhatsApp'] as $ch=>$label)
                 <button wire:click="$set('channel', '{{ $ch }}')"
-                    class="px-4 py-1.5 rounded-lg text-sm font-medium transition-colors {{ $channel === $ch ? 'bg-white text-text-primary shadow-sm dark:bg-surface-card' : 'text-text-secondary hover:text-text-primary' }}">
-                    {{ $label }}
-                </button>
+                    class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-1.5 rounded-lg text-sm font-medium transition-colors {{ $channel === $ch ? 'bg-white text-text-primary shadow-sm dark:bg-surface-card' : 'text-text-secondary hover:text-text-primary' }}" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">{{ $label }}</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 @endforeach
             </div>
             <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search messages…"
@@ -154,7 +157,12 @@
                                     <p class="text-sm text-text-primary line-clamp-2">{{ $msg->body }}</p>
                                     <p class="text-xs text-text-secondary mt-0.5">{{ $msg->direction === 'outbound' ? 'To: '.$msg->to_number : 'From: '.$msg->from_number }}</p>
                                     @if($msg->contact)
-                                    <button wire:click="selectContact({{ $msg->contact->id }})" class="text-xs text-brand-primary hover:underline mt-0.5">{{ $msg->contact->full_name }}</button>
+                                    <button wire:click="selectContact({{ $msg->contact->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-brand-primary hover:underline mt-0.5" wire:loading.attr="disabled" wire:target="selectContact">
+                <span wire:loading.remove wire:target="selectContact">{{ $msg->contact->full_name }}</span>
+                <span wire:loading wire:target="selectContact" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                                     @endif
                                 </div>
                                 <div class="flex items-center gap-2 shrink-0">
@@ -186,7 +194,12 @@
                                             {{ $msg->direction === 'inbound' ? 'In' : 'Out' }}
                                         </span>
                                         @if($msg->contact)
-                                        <button wire:click="selectContact({{ $msg->contact->id }})" class="text-xs font-medium text-brand-primary hover:underline">{{ $msg->contact->full_name }}</button>
+                                        <button wire:click="selectContact({{ $msg->contact->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs font-medium text-brand-primary hover:underline" wire:loading.attr="disabled" wire:target="selectContact">
+                <span wire:loading.remove wire:target="selectContact">{{ $msg->contact->full_name }}</span>
+                <span wire:loading wire:target="selectContact" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                                         @else
                                         <span class="text-xs text-text-secondary">{{ $msg->to_number }}</span>
                                         @endif
@@ -208,7 +221,12 @@
                 <div class="bg-surface-card rounded-2xl border border-brand-200 p-5">
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-base font-semibold text-text-primary">Compose {{ ucfirst($composeChannel) }}</h2>
-                        <button wire:click="$set('showCompose', false)" class="text-text-tertiary hover:text-text-secondary text-xl leading-none">&times;</button>
+                        <button wire:click="$set('showCompose', false)" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-text-tertiary hover:text-text-secondary text-xl leading-none" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">&times;</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     </div>
                     <form wire:submit.prevent="sendMessage" class="space-y-4">
                         <div>
@@ -229,7 +247,12 @@
                             <button type="submit" wire:loading.attr="disabled"
                                 class="px-5 py-2 bg-brand-primary text-white rounded-xl text-sm font-medium hover:opacity-90 transition">Send</button>
                             <button type="button" wire:click="$set('showCompose', false)"
-                                class="px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition">Cancel</button>
+                                class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Cancel</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         </div>
                     </form>
                 </div>
@@ -255,7 +278,12 @@
                                     {{ implode(' · ', (array) $selectedThread->participants) }}
                                 </p>
                             </div>
-                            <button wire:click="closeThread" class="text-text-tertiary hover:text-text-secondary text-xl leading-none shrink-0">&times;</button>
+                            <button wire:click="closeThread" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-text-tertiary hover:text-text-secondary text-xl leading-none shrink-0" wire:loading.attr="disabled" wire:target="closeThread">
+                <span wire:loading.remove wire:target="closeThread">&times;</span>
+                <span wire:loading wire:target="closeThread" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         </div>
 
                         {{-- Assign to agent --}}
@@ -271,9 +299,12 @@
                                 @endforeach
                             </select>
                             <button wire:click="archiveThread({{ $selectedThread->id }})"
-                                    class="ml-auto text-xs text-text-tertiary hover:text-text-primary">
-                                Archive
-                            </button>
+                                    class="disabled:opacity-70 disabled:cursor-not-allowed relative ml-auto text-xs text-text-tertiary hover:text-text-primary" wire:loading.attr="disabled" wire:target="archiveThread">
+                <span wire:loading.remove wire:target="archiveThread">Archive</span>
+                <span wire:loading wire:target="archiveThread" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         </div>
                     </div>
 
@@ -310,12 +341,15 @@
                     {{-- Reply bar --}}
                     <div class="p-3 border-t border-border-default shrink-0">
                         <button wire:click="openComposeForThread"
-                                class="w-full flex items-center gap-2 px-4 py-2.5 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-elevated hover:text-text-primary transition text-left">
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full flex items-center gap-2 px-4 py-2.5 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-elevated hover:text-text-primary transition text-left" wire:loading.attr="disabled" wire:target="openComposeForThread">
+                <span wire:loading.remove wire:target="openComposeForThread"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
                             </svg>
-                            Reply to this thread…
-                        </button>
+                            Reply to this thread…</span>
+                <span wire:loading wire:target="openComposeForThread" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     </div>
                 </div>
 
@@ -327,7 +361,12 @@
                             <p class="text-sm font-semibold text-text-primary">{{ $selectedContact->full_name }}</p>
                             <p class="text-xs text-text-tertiary">{{ $selectedContact->email ?? $selectedContact->phone ?? '' }}</p>
                         </div>
-                        <button wire:click="$set('selectedContactId', null)" class="text-text-tertiary hover:text-text-secondary text-xl leading-none">&times;</button>
+                        <button wire:click="$set('selectedContactId', null)" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-text-tertiary hover:text-text-secondary text-xl leading-none" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">&times;</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     </div>
                     <div class="overflow-y-auto flex-1 p-3 space-y-2">
                         @forelse($thread as $msg)

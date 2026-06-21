@@ -4,9 +4,12 @@
             <h1 class="text-2xl font-bold text-text-primary">Tax Configuration</h1>
             <p class="text-sm text-text-secondary mt-0.5">Configure VAT and tax rules for your agency</p>
         </div>
-        <button wire:click="$set('showForm', true)" class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">
-            + Add Tax Rule
-        </button>
+        <button wire:click="$set('showForm', true)" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">+ Add Tax Rule</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
     </div>
 
     @if($showForm)
@@ -51,7 +54,12 @@
             </div>
             <div class="md:col-span-2 flex gap-3">
                 <button type="submit" wire:loading.attr="disabled" class="px-5 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">Save</button>
-                <button type="button" wire:click="resetForm" class="px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors">Cancel</button>
+                <button type="button" wire:click="resetForm" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors" wire:loading.attr="disabled" wire:target="resetForm">
+                <span wire:loading.remove wire:target="resetForm">Cancel</span>
+                <span wire:loading wire:target="resetForm" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             </div>
         </form>
     </div>
@@ -88,9 +96,19 @@
                     </td>
                     <td class="px-4 py-3">
                         <div class="flex gap-1">
-                            <button wire:click="edit({{ $config->id }})" class="text-xs px-2 py-1 border border-border-default rounded-lg hover:bg-surface-hover text-text-secondary">Edit</button>
+                            <button wire:click="edit({{ $config->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs px-2 py-1 border border-border-default rounded-lg hover:bg-surface-hover text-text-secondary" wire:loading.attr="disabled" wire:target="edit">
+                <span wire:loading.remove wire:target="edit">Edit</span>
+                <span wire:loading wire:target="edit" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                             @if($config->is_active)
-                            <button wire:click="deactivate({{ $config->id }})" class="text-xs px-2 py-1 text-danger-600 border border-danger-200 rounded-lg hover:bg-danger-50">Deactivate</button>
+                            <button wire:click="deactivate({{ $config->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs px-2 py-1 text-danger-600 border border-danger-200 rounded-lg hover:bg-danger-50" wire:loading.attr="disabled" wire:target="deactivate">
+                <span wire:loading.remove wire:target="deactivate">Deactivate</span>
+                <span wire:loading wire:target="deactivate" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                             @endif
                         </div>
                     </td>

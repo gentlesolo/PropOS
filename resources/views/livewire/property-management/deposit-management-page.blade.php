@@ -40,16 +40,24 @@
             <div class="flex items-center gap-3 mb-2 p-2 bg-surface-hover/30 rounded-lg">
                 <span class="text-sm text-text-primary flex-1">{{ $ded['description'] }}</span>
                 <span class="text-sm font-medium text-text-primary">R{{ number_format($ded['amount'], 2) }}</span>
-                <button type="button" wire:click="removeDeduction({{ $i }})" class="text-danger-600 hover:text-danger-700">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
+                <button type="button" wire:click="removeDeduction({{ $i }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-danger-600 hover:text-danger-700" wire:loading.attr="disabled" wire:target="removeDeduction">
+                <span wire:loading.remove wire:target="removeDeduction"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></span>
+                <span wire:loading wire:target="removeDeduction" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             </div>
             @endforeach
             <div class="grid grid-cols-2 gap-3 mt-2">
                 <input wire:model="deduction_description" type="text" placeholder="Description…" class="rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                 <div class="flex gap-2">
                     <input wire:model="deduction_amount" type="number" min="0.01" step="0.01" placeholder="Amount" class="flex-1 rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
-                    <button type="button" wire:click="addDeduction" class="px-3 py-2 bg-surface-hover border border-border-default rounded-lg text-xs text-text-secondary hover:bg-surface-hover/80">Add</button>
+                    <button type="button" wire:click="addDeduction" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-3 py-2 bg-surface-hover border border-border-default rounded-lg text-xs text-text-secondary hover:bg-surface-hover/80" wire:loading.attr="disabled" wire:target="addDeduction">
+                <span wire:loading.remove wire:target="addDeduction">Add</span>
+                <span wire:loading wire:target="addDeduction" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 </div>
             </div>
             @if(count($deductions) > 0)
@@ -61,7 +69,12 @@
 
         <div class="flex gap-3">
             <button wire:click="processRefund" wire:loading.attr="disabled" class="px-5 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">Confirm Refund</button>
-            <button wire:click="$set('showRefundForm', false)" class="px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors">Cancel</button>
+            <button wire:click="$set('showRefundForm', false)" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Cancel</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
         </div>
     </div>
     @endif
@@ -110,7 +123,12 @@
                     </td>
                     <td class="px-4 py-3">
                         @if(!$lease->deposit_refunded_at && in_array($lease->status, ['terminated', 'vacated', 'expired']))
-                        <button wire:click="openRefundForm({{ $lease->id }})" class="text-xs px-2.5 py-1 bg-brand-50 text-brand-700 border border-brand-200 rounded-lg hover:bg-brand-100 transition-colors">Process Refund</button>
+                        <button wire:click="openRefundForm({{ $lease->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs px-2.5 py-1 bg-brand-50 text-brand-700 border border-brand-200 rounded-lg hover:bg-brand-100 transition-colors" wire:loading.attr="disabled" wire:target="openRefundForm">
+                <span wire:loading.remove wire:target="openRefundForm">Process Refund</span>
+                <span wire:loading wire:target="openRefundForm" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         @endif
                     </td>
                 </tr>

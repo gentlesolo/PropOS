@@ -11,8 +11,11 @@
             </div>
             @if($activeTab === 'setup')
             <button wire:click="openCreateForm"
-                class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">
-                + New Budget
+                class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors" wire:loading.attr="disabled" wire:target="openCreateForm">
+                <span wire:loading.remove wire:target="openCreateForm">+ New Budget</span>
+                <span wire:loading wire:target="openCreateForm" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
             </button>
             @endif
         </div>
@@ -21,8 +24,11 @@
         <div class="flex gap-1 mb-6 bg-surface-hover/40 rounded-xl p-1 w-fit">
             @foreach(['setup'=>'Budgets','variance'=>'Variance Analysis','forecast'=>'Forecast'] as $tab => $label)
             <button wire:click="$set('activeTab','{{ $tab }}')"
-                class="px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ $activeTab === $tab ? 'bg-surface-card text-text-primary shadow-sm' : 'text-text-secondary hover:text-text-primary' }}">
-                {{ $label }}
+                class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ $activeTab === $tab ? 'bg-surface-card text-text-primary shadow-sm' : 'text-text-secondary hover:text-text-primary' }}" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">{{ $label }}</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
             </button>
             @endforeach
         </div>
@@ -35,7 +41,12 @@
         <div class="bg-surface-card rounded-2xl border border-brand-200 p-5 mb-6">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-base font-semibold text-text-primary">{{ $editBudgetId ? 'Edit Budget' : 'New Budget' }}</h2>
-                <button wire:click="cancelForm" class="text-text-tertiary hover:text-text-secondary text-xl leading-none">&times;</button>
+                <button wire:click="cancelForm" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-text-tertiary hover:text-text-secondary text-xl leading-none" wire:loading.attr="disabled" wire:target="cancelForm">
+                <span wire:loading.remove wire:target="cancelForm">&times;</span>
+                <span wire:loading wire:target="cancelForm" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             </div>
             <form wire:submit.prevent="saveBudget" class="space-y-5">
 
@@ -142,9 +153,12 @@
                         <span wire:loading wire:target="saveBudget">Saving&#8358;</span>
                     </button>
                     <button type="button" wire:click="cancelForm"
-                        class="px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors">
-                        Cancel
-                    </button>
+                        class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors" wire:loading.attr="disabled" wire:target="cancelForm">
+                <span wire:loading.remove wire:target="cancelForm">Cancel</span>
+                <span wire:loading wire:target="cancelForm" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 </div>
             </form>
         </div>
@@ -154,7 +168,12 @@
         @if($budgets->isEmpty() && !$showForm)
         <div class="bg-surface-card rounded-2xl border border-border-default p-14 text-center">
             <div class="text-text-tertiary text-sm mb-3">No budgets created yet.</div>
-            <button wire:click="openCreateForm" class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">Create First Budget</button>
+            <button wire:click="openCreateForm" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors" wire:loading.attr="disabled" wire:target="openCreateForm">
+                <span wire:loading.remove wire:target="openCreateForm">Create First Budget</span>
+                <span wire:loading wire:target="openCreateForm" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
         </div>
         @else
         <div class="space-y-3">
@@ -189,33 +208,51 @@
                     </div>
                     <div class="flex items-center gap-1 flex-shrink-0" wire:click.stop>
                         <button wire:click="editBudget({{ $budget->id }})"
-                            class="text-xs px-2.5 py-1.5 border border-border-default rounded-lg hover:bg-surface-hover text-text-secondary transition-colors">
-                            Edit
-                        </button>
+                            class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs px-2.5 py-1.5 border border-border-default rounded-lg hover:bg-surface-hover text-text-secondary transition-colors" wire:loading.attr="disabled" wire:target="editBudget">
+                <span wire:loading.remove wire:target="editBudget">Edit</span>
+                <span wire:loading wire:target="editBudget" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         <button wire:click="duplicateBudget({{ $budget->id }})"
-                            class="text-xs px-2.5 py-1.5 border border-border-default rounded-lg hover:bg-surface-hover text-text-secondary transition-colors"
-                            title="Duplicate to next year">
-                            Copy
-                        </button>
+                            class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs px-2.5 py-1.5 border border-border-default rounded-lg hover:bg-surface-hover text-text-secondary transition-colors"
+                            title="Duplicate to next year" wire:loading.attr="disabled" wire:target="duplicateBudget">
+                <span wire:loading.remove wire:target="duplicateBudget">Copy</span>
+                <span wire:loading wire:target="duplicateBudget" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         @if($budget->status === 'draft')
                             <button wire:click="approveBudget({{ $budget->id }})"
-                                class="text-xs px-2.5 py-1.5 bg-success-50 text-success-700 border border-success-200 rounded-lg hover:bg-success-100 transition-colors">
-                                Approve
-                            </button>
+                                class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs px-2.5 py-1.5 bg-success-50 text-success-700 border border-success-200 rounded-lg hover:bg-success-100 transition-colors" wire:loading.attr="disabled" wire:target="approveBudget">
+                <span wire:loading.remove wire:target="approveBudget">Approve</span>
+                <span wire:loading wire:target="approveBudget" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                             <button wire:click="deleteBudget({{ $budget->id }})" onclick="return confirm('Delete this draft budget?')"
-                                class="text-xs px-2.5 py-1.5 text-danger-600 border border-danger-200 rounded-lg hover:bg-danger-50 transition-colors">
-                                Del
-                            </button>
+                                class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs px-2.5 py-1.5 text-danger-600 border border-danger-200 rounded-lg hover:bg-danger-50 transition-colors" wire:loading.attr="disabled" wire:target="deleteBudget">
+                <span wire:loading.remove wire:target="deleteBudget">Del</span>
+                <span wire:loading wire:target="deleteBudget" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         @elseif($budget->status === 'approved')
                             <button wire:click="activateBudget({{ $budget->id }})"
-                                class="text-xs px-2.5 py-1.5 bg-brand-50 text-brand-600 border border-brand-200 rounded-lg hover:bg-brand-100 transition-colors">
-                                Activate
-                            </button>
+                                class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs px-2.5 py-1.5 bg-brand-50 text-brand-600 border border-brand-200 rounded-lg hover:bg-brand-100 transition-colors" wire:loading.attr="disabled" wire:target="activateBudget">
+                <span wire:loading.remove wire:target="activateBudget">Activate</span>
+                <span wire:loading wire:target="activateBudget" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         @elseif($budget->status === 'active')
                             <button wire:click="closeBudget({{ $budget->id }})" onclick="return confirm('Close this budget?')"
-                                class="text-xs px-2.5 py-1.5 border border-border-default text-text-secondary rounded-lg hover:bg-surface-hover transition-colors">
-                                Close
-                            </button>
+                                class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs px-2.5 py-1.5 border border-border-default text-text-secondary rounded-lg hover:bg-surface-hover transition-colors" wire:loading.attr="disabled" wire:target="closeBudget">
+                <span wire:loading.remove wire:target="closeBudget">Close</span>
+                <span wire:loading wire:target="closeBudget" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         @endif
                     </div>
                 </div>
@@ -415,7 +452,12 @@
                     <div class="font-semibold text-text-primary text-sm leading-tight">{{ $detailBudget->name }}</div>
                     <div class="text-xs text-text-tertiary mt-0.5">{{ $detailBudget->year }} &#8358; {{ $detailBudget->property?->address_line_1 ?? 'All Properties' }}</div>
                 </div>
-                <button wire:click="closeDetail" class="text-text-tertiary hover:text-text-secondary text-xl leading-none">&times;</button>
+                <button wire:click="closeDetail" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-text-tertiary hover:text-text-secondary text-xl leading-none" wire:loading.attr="disabled" wire:target="closeDetail">
+                <span wire:loading.remove wire:target="closeDetail">&times;</span>
+                <span wire:loading wire:target="closeDetail" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             </div>
 
             @php
@@ -502,32 +544,50 @@
             {{-- Actions --}}
             <div class="space-y-2">
                 <button wire:click="editBudget({{ $detailBudget->id }})"
-                    class="w-full py-2 border border-border-default text-text-secondary rounded-xl text-sm font-medium hover:bg-surface-hover transition-colors">
-                    Edit Budget
-                </button>
+                    class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full py-2 border border-border-default text-text-secondary rounded-xl text-sm font-medium hover:bg-surface-hover transition-colors" wire:loading.attr="disabled" wire:target="editBudget">
+                <span wire:loading.remove wire:target="editBudget">Edit Budget</span>
+                <span wire:loading wire:target="editBudget" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 <button wire:click="duplicateBudget({{ $detailBudget->id }})"
-                    class="w-full py-2 border border-brand-300 text-brand-600 bg-brand-50 rounded-xl text-sm font-medium hover:bg-brand-100 transition-colors">
-                    Duplicate to {{ $detailBudget->year + 1 }}
-                </button>
+                    class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full py-2 border border-brand-300 text-brand-600 bg-brand-50 rounded-xl text-sm font-medium hover:bg-brand-100 transition-colors" wire:loading.attr="disabled" wire:target="duplicateBudget">
+                <span wire:loading.remove wire:target="duplicateBudget">Duplicate to {{ $detailBudget->year + 1 }}</span>
+                <span wire:loading wire:target="duplicateBudget" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 @if($detailBudget->status === 'draft')
                 <button wire:click="approveBudget({{ $detailBudget->id }})"
-                    class="w-full py-2 bg-success-600 text-white rounded-xl text-sm font-medium hover:bg-success-700 transition-colors">
-                    Approve Budget
-                </button>
+                    class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full py-2 bg-success-600 text-white rounded-xl text-sm font-medium hover:bg-success-700 transition-colors" wire:loading.attr="disabled" wire:target="approveBudget">
+                <span wire:loading.remove wire:target="approveBudget">Approve Budget</span>
+                <span wire:loading wire:target="approveBudget" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 <button wire:click="deleteBudget({{ $detailBudget->id }})" onclick="return confirm('Delete this draft budget?')"
-                    class="w-full py-2 border border-danger-200 text-danger-600 rounded-xl text-sm font-medium hover:bg-danger-50 transition-colors">
-                    Delete Draft
-                </button>
+                    class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full py-2 border border-danger-200 text-danger-600 rounded-xl text-sm font-medium hover:bg-danger-50 transition-colors" wire:loading.attr="disabled" wire:target="deleteBudget">
+                <span wire:loading.remove wire:target="deleteBudget">Delete Draft</span>
+                <span wire:loading wire:target="deleteBudget" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 @elseif($detailBudget->status === 'approved')
                 <button wire:click="activateBudget({{ $detailBudget->id }})"
-                    class="w-full py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">
-                    Set Active
-                </button>
+                    class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors" wire:loading.attr="disabled" wire:target="activateBudget">
+                <span wire:loading.remove wire:target="activateBudget">Set Active</span>
+                <span wire:loading wire:target="activateBudget" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 @elseif($detailBudget->status === 'active')
                 <button wire:click="closeBudget({{ $detailBudget->id }})" onclick="return confirm('Close this budget?')"
-                    class="w-full py-2 border border-border-default text-text-secondary rounded-xl text-sm font-medium hover:bg-surface-hover transition-colors">
-                    Close Budget
-                </button>
+                    class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full py-2 border border-border-default text-text-secondary rounded-xl text-sm font-medium hover:bg-surface-hover transition-colors" wire:loading.attr="disabled" wire:target="closeBudget">
+                <span wire:loading.remove wire:target="closeBudget">Close Budget</span>
+                <span wire:loading wire:target="closeBudget" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 @endif
             </div>
         </div>

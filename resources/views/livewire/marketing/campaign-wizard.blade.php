@@ -130,7 +130,12 @@
             <div class="p-10">
                 <div class="flex items-center justify-between mb-6">
                     <h2 class="text-2xl font-bold text-text-primary">Review & Schedule</h2>
-                    <button wire:click="saveCampaign" class="bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 px-6 py-3 rounded-xl text-sm font-bold shadow-lg hover:shadow-xl hover:bg-brand-secondary transition-all hover-spring active:scale-95">Schedule Campaign</button>
+                    <button wire:click="saveCampaign" class="disabled:opacity-70 disabled:cursor-not-allowed relative bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 px-6 py-3 rounded-xl text-sm font-bold shadow-lg hover:shadow-xl hover:bg-brand-secondary transition-all hover-spring active:scale-95" wire:loading.attr="disabled" wire:target="saveCampaign">
+                <span wire:loading.remove wire:target="saveCampaign">Schedule Campaign</span>
+                <span wire:loading wire:target="saveCampaign" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 </div>
                 
                 <div class="space-y-8">
@@ -155,8 +160,18 @@
         <!-- Footer Actions -->
         @if($step > 1 && $step < 4)
             <div class="px-10 py-6 border-t border-border-default bg-surface-sunken/30 flex items-center justify-between">
-                <button wire:click="prevStep" class="px-6 py-2.5 rounded-xl border border-border-default text-text-secondary font-bold hover:bg-surface-raised hover:text-text-primary transition-colors">Back</button>
-                <button wire:click="nextStep" class="px-6 py-2.5 rounded-xl bg-text-primary text-surface-page font-bold hover:bg-brand-primary hover:text-white transition-colors shadow-md">Continue &rarr;</button>
+                <button wire:click="prevStep" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-6 py-2.5 rounded-xl border border-border-default text-text-secondary font-bold hover:bg-surface-raised hover:text-text-primary transition-colors" wire:loading.attr="disabled" wire:target="prevStep">
+                <span wire:loading.remove wire:target="prevStep">Back</span>
+                <span wire:loading wire:target="prevStep" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
+                <button wire:click="nextStep" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-6 py-2.5 rounded-xl bg-text-primary text-surface-page font-bold hover:bg-brand-primary hover:text-white transition-colors shadow-md" wire:loading.attr="disabled" wire:target="nextStep">
+                <span wire:loading.remove wire:target="nextStep">Continue &rarr;</span>
+                <span wire:loading wire:target="nextStep" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             </div>
         @endif
         

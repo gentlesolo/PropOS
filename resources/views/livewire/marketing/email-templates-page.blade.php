@@ -10,9 +10,12 @@
                 <p class="text-sm text-text-secondary mt-0.5">Manage reusable email templates across categories</p>
             </div>
             <button wire:click="openCreate"
-                class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                New Template
+                class="disabled:opacity-70 disabled:cursor-not-allowed relative inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors" wire:loading.attr="disabled" wire:target="openCreate">
+                <span wire:loading.remove wire:target="openCreate"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                New Template</span>
+                <span wire:loading wire:target="openCreate" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
             </button>
         </div>
 
@@ -21,7 +24,12 @@
         <div class="bg-surface-card rounded-2xl border border-brand-200 p-5 mb-6">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-base font-semibold text-text-primary">{{ $editingId ? 'Edit' : 'Create' }} Template</h2>
-                <button wire:click="cancelForm" class="text-text-tertiary hover:text-text-secondary text-xl leading-none">&times;</button>
+                <button wire:click="cancelForm" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-text-tertiary hover:text-text-secondary text-xl leading-none" wire:loading.attr="disabled" wire:target="cancelForm">
+                <span wire:loading.remove wire:target="cancelForm">&times;</span>
+                <span wire:loading wire:target="cancelForm" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             </div>
             <form wire:submit.prevent="save" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -74,7 +82,12 @@
                         {{ $editingId ? 'Update' : 'Create' }} Template
                     </button>
                     <button type="button" wire:click="cancelForm"
-                        class="px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors">Cancel</button>
+                        class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors" wire:loading.attr="disabled" wire:target="cancelForm">
+                <span wire:loading.remove wire:target="cancelForm">Cancel</span>
+                <span wire:loading wire:target="cancelForm" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 </div>
             </form>
         </div>
@@ -129,15 +142,40 @@
 
                     <div class="flex gap-1 mt-auto pt-3 flex-wrap">
                         <button wire:click="openPreview({{ $template->id }})"
-                            class="flex-1 text-xs py-1.5 border border-border-default rounded-lg text-text-secondary hover:bg-surface-hover transition-colors">Preview</button>
+                            class="disabled:opacity-70 disabled:cursor-not-allowed relative flex-1 text-xs py-1.5 border border-border-default rounded-lg text-text-secondary hover:bg-surface-hover transition-colors" wire:loading.attr="disabled" wire:target="openPreview">
+                <span wire:loading.remove wire:target="openPreview">Preview</span>
+                <span wire:loading wire:target="openPreview" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         <button wire:click="openEdit({{ $template->id }})"
-                            class="flex-1 text-xs py-1.5 border border-border-default rounded-lg text-text-secondary hover:bg-surface-hover transition-colors">Edit</button>
+                            class="disabled:opacity-70 disabled:cursor-not-allowed relative flex-1 text-xs py-1.5 border border-border-default rounded-lg text-text-secondary hover:bg-surface-hover transition-colors" wire:loading.attr="disabled" wire:target="openEdit">
+                <span wire:loading.remove wire:target="openEdit">Edit</span>
+                <span wire:loading wire:target="openEdit" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         <button wire:click="toggleActive({{ $template->id }})"
-                            class="flex-1 text-xs py-1.5 border border-border-default rounded-lg text-text-secondary hover:bg-surface-hover transition-colors">{{ $template->is_active ? 'Disable' : 'Enable' }}</button>
+                            class="disabled:opacity-70 disabled:cursor-not-allowed relative flex-1 text-xs py-1.5 border border-border-default rounded-lg text-text-secondary hover:bg-surface-hover transition-colors" wire:loading.attr="disabled" wire:target="toggleActive">
+                <span wire:loading.remove wire:target="toggleActive">{{ $template->is_active ? 'Disable' : 'Enable' }}</span>
+                <span wire:loading wire:target="toggleActive" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         <button wire:click="duplicate({{ $template->id }})"
-                            class="text-xs py-1.5 px-2.5 border border-border-default rounded-lg text-text-secondary hover:bg-surface-hover transition-colors" title="Duplicate">Dup</button>
+                            class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs py-1.5 px-2.5 border border-border-default rounded-lg text-text-secondary hover:bg-surface-hover transition-colors" title="Duplicate" wire:loading.attr="disabled" wire:target="duplicate">
+                <span wire:loading.remove wire:target="duplicate">Dup</span>
+                <span wire:loading wire:target="duplicate" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         <button wire:click="delete({{ $template->id }})" wire:confirm="Delete this template?"
-                            class="text-xs py-1.5 px-2.5 border border-danger-200 rounded-lg text-danger-600 hover:bg-danger-50 transition-colors">Del</button>
+                            class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs py-1.5 px-2.5 border border-danger-200 rounded-lg text-danger-600 hover:bg-danger-50 transition-colors" wire:loading.attr="disabled" wire:target="delete">
+                <span wire:loading.remove wire:target="delete">Del</span>
+                <span wire:loading wire:target="delete" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     </div>
                 </div>
                 @endforeach
@@ -147,7 +185,12 @@
         <div class="bg-surface-card rounded-2xl border border-border-default p-12 text-center">
             <p class="text-text-tertiary text-sm">No email templates yet.
                 @if($search || $categoryFilter)
-                <button wire:click="$set('search',''); $set('categoryFilter','')" class="ml-1 text-brand-600 underline">Clear filters</button>
+                <button wire:click="$set('search',''); $set('categoryFilter','')" class="disabled:opacity-70 disabled:cursor-not-allowed relative ml-1 text-brand-600 underline" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Clear filters</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 @else
                 Create your first one above.
                 @endif
@@ -165,7 +208,12 @@
                     <div class="font-semibold text-text-primary text-sm">{{ $previewTemplate->name }}</div>
                     <div class="text-xs text-text-tertiary capitalize mt-0.5">{{ $previewTemplate->category }}</div>
                 </div>
-                <button wire:click="closePreview" class="text-text-tertiary hover:text-text-secondary text-xl leading-none ml-2">&times;</button>
+                <button wire:click="closePreview" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-text-tertiary hover:text-text-secondary text-xl leading-none ml-2" wire:loading.attr="disabled" wire:target="closePreview">
+                <span wire:loading.remove wire:target="closePreview">&times;</span>
+                <span wire:loading wire:target="closePreview" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             </div>
 
             <div class="bg-surface-card rounded-xl border border-border-default p-3 mb-3">
@@ -200,13 +248,26 @@
 
             <div class="space-y-2 mt-4">
                 <button wire:click="openEdit({{ $previewTemplate->id }})"
-                    class="w-full py-2 border border-border-default text-text-secondary rounded-xl text-sm font-medium hover:bg-surface-hover transition-colors">Edit Template</button>
+                    class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full py-2 border border-border-default text-text-secondary rounded-xl text-sm font-medium hover:bg-surface-hover transition-colors" wire:loading.attr="disabled" wire:target="openEdit">
+                <span wire:loading.remove wire:target="openEdit">Edit Template</span>
+                <span wire:loading wire:target="openEdit" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 <button wire:click="duplicate({{ $previewTemplate->id }})"
-                    class="w-full py-2 border border-border-default text-text-secondary rounded-xl text-sm font-medium hover:bg-surface-hover transition-colors">Duplicate</button>
+                    class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full py-2 border border-border-default text-text-secondary rounded-xl text-sm font-medium hover:bg-surface-hover transition-colors" wire:loading.attr="disabled" wire:target="duplicate">
+                <span wire:loading.remove wire:target="duplicate">Duplicate</span>
+                <span wire:loading wire:target="duplicate" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 <button wire:click="toggleActive({{ $previewTemplate->id }})"
-                    class="w-full py-2 border border-border-default text-text-secondary rounded-xl text-sm font-medium hover:bg-surface-hover transition-colors">
-                    {{ $previewTemplate->is_active ? 'Disable Template' : 'Enable Template' }}
-                </button>
+                    class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full py-2 border border-border-default text-text-secondary rounded-xl text-sm font-medium hover:bg-surface-hover transition-colors" wire:loading.attr="disabled" wire:target="toggleActive">
+                <span wire:loading.remove wire:target="toggleActive">{{ $previewTemplate->is_active ? 'Disable Template' : 'Enable Template' }}</span>
+                <span wire:loading wire:target="toggleActive" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             </div>
         </div>
     </div>

@@ -5,8 +5,11 @@
             <p class="mt-2 text-text-secondary">Automated email, SMS, and task touches to nurture lead relationships.</p>
         </div>
         <div>
-            <button wire:click="$toggle('showCreateForm')" class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors">
-                {{ $showCreateForm ? 'Cancel Creation' : '+ New Sequence' }}
+            <button wire:click="$toggle('showCreateForm')" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors" wire:loading.attr="disabled" wire:target="$toggle">
+                <span wire:loading.remove wire:target="$toggle">{{ $showCreateForm ? 'Cancel Creation' : '+ New Sequence' }}</span>
+                <span wire:loading wire:target="$toggle" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
             </button>
         </div>
     </div>
@@ -57,12 +60,22 @@
         <div class="space-y-4 mb-6">
             <div class="flex items-center justify-between">
                 <h3 class="text-sm font-bold text-text-primary">Sequence Steps</h3>
-                <button type="button" wire:click="addEmptyStep" class="text-xs text-brand-primary hover:underline font-bold">+ Add Step</button>
+                <button type="button" wire:click="addEmptyStep" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-brand-primary hover:underline font-bold" wire:loading.attr="disabled" wire:target="addEmptyStep">
+                <span wire:loading.remove wire:target="addEmptyStep">+ Add Step</span>
+                <span wire:loading wire:target="addEmptyStep" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             </div>
 
             @foreach($steps as $index => $step)
             <div class="p-4 bg-surface-sunken/40 rounded-xl border border-border-default relative">
-                <button type="button" wire:click="removeStep({{ $index }})" class="absolute top-4 right-4 text-xs text-danger-500 hover:text-danger-700 font-medium">Remove</button>
+                <button type="button" wire:click="removeStep({{ $index }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative absolute top-4 right-4 text-xs text-danger-500 hover:text-danger-700 font-medium" wire:loading.attr="disabled" wire:target="removeStep">
+                <span wire:loading.remove wire:target="removeStep">Remove</span>
+                <span wire:loading wire:target="removeStep" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 
                 <p class="text-xs font-bold text-brand-primary mb-3">Step #{{ $index + 1 }}</p>
                 
@@ -98,8 +111,18 @@
         </div>
 
         <div class="flex justify-end gap-3">
-            <button type="button" wire:click="$set('showCreateForm', false)" class="px-4 py-2 border border-border-default rounded-xl text-sm font-medium hover:bg-surface-sunken">Cancel</button>
-            <button type="button" wire:click="createSequence" class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-bold hover:bg-brand-secondary">Start Sequence</button>
+            <button type="button" wire:click="$set('showCreateForm', false)" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 border border-border-default rounded-xl text-sm font-medium hover:bg-surface-sunken" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Cancel</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
+            <button type="button" wire:click="createSequence" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-bold hover:bg-brand-secondary" wire:loading.attr="disabled" wire:target="createSequence">
+                <span wire:loading.remove wire:target="createSequence">Start Sequence</span>
+                <span wire:loading wire:target="createSequence" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
         </div>
     </div>
     @endif
@@ -114,10 +137,13 @@
             <div class="flex gap-2">
                 @foreach(['' => 'All', 'active' => 'Active', 'paused' => 'Paused', 'completed' => 'Completed', 'cancelled' => 'Cancelled'] as $val => $label)
                 <button wire:click="$set('statusFilter', '{{ $val }}')"
-                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
-                    {{ $statusFilter === $val ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10' : 'bg-surface-card border border-border-default text-text-secondary hover:bg-surface-sunken' }}">
-                    {{ $label }}
-                </button>
+                    class="disabled:opacity-70 disabled:cursor-not-allowed relative px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
+                    {{ $statusFilter === $val ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10' : 'bg-surface-card border border-border-default text-text-secondary hover:bg-surface-sunken' }}" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">{{ $label }}</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 @endforeach
             </div>
         </div>
@@ -168,13 +194,28 @@
                             <td class="py-4 pr-2 text-right">
                                 <div class="flex items-center justify-end gap-2">
                                     @if($seq->status === 'active')
-                                    <button wire:click="pauseSequence({{ $seq->id }})" class="px-2 py-1 text-xs font-semibold text-warning-600 border border-warning-200 hover:bg-warning-50 rounded-lg">Pause</button>
+                                    <button wire:click="pauseSequence({{ $seq->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-2 py-1 text-xs font-semibold text-warning-600 border border-warning-200 hover:bg-warning-50 rounded-lg" wire:loading.attr="disabled" wire:target="pauseSequence">
+                <span wire:loading.remove wire:target="pauseSequence">Pause</span>
+                <span wire:loading wire:target="pauseSequence" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                                     @elseif($seq->status === 'paused')
-                                    <button wire:click="resumeSequence({{ $seq->id }})" class="px-2 py-1 text-xs font-semibold text-success-600 border border-success-200 hover:bg-success-50 rounded-lg">Resume</button>
+                                    <button wire:click="resumeSequence({{ $seq->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-2 py-1 text-xs font-semibold text-success-600 border border-success-200 hover:bg-success-50 rounded-lg" wire:loading.attr="disabled" wire:target="resumeSequence">
+                <span wire:loading.remove wire:target="resumeSequence">Resume</span>
+                <span wire:loading wire:target="resumeSequence" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                                     @endif
 
                                     @if(in_array($seq->status, ['active', 'paused']))
-                                    <button wire:click="cancelSequence({{ $seq->id }})" wire:confirm="Cancel this sequence?" class="px-2 py-1 text-xs font-semibold text-danger-600 border border-danger-200 hover:bg-danger-50 rounded-lg">Cancel</button>
+                                    <button wire:click="cancelSequence({{ $seq->id }})" wire:confirm="Cancel this sequence?" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-2 py-1 text-xs font-semibold text-danger-600 border border-danger-200 hover:bg-danger-50 rounded-lg" wire:loading.attr="disabled" wire:target="cancelSequence">
+                <span wire:loading.remove wire:target="cancelSequence">Cancel</span>
+                <span wire:loading wire:target="cancelSequence" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                                     @endif
                                 </div>
                             </td>

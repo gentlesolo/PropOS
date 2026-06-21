@@ -6,9 +6,12 @@
             </h1>
             <p class="mt-2 text-text-secondary">Send templated messages, track delivery, and manage your WhatsApp contact flow.</p>
         </div>
-        <button wire:click="$toggle('showCompose')" class="px-4 py-2 bg-success-600 text-white rounded-xl text-sm font-bold hover:bg-success-700 transition-colors">
-            {{ $showCompose ? 'Cancel' : '+ New Message' }}
-        </button>
+        <button wire:click="$toggle('showCompose')" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 bg-success-600 text-white rounded-xl text-sm font-bold hover:bg-success-700 transition-colors" wire:loading.attr="disabled" wire:target="$toggle">
+                <span wire:loading.remove wire:target="$toggle">{{ $showCompose ? 'Cancel' : '+ New Message' }}</span>
+                <span wire:loading wire:target="$toggle" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
     </div>
 
     <!-- Stats -->
@@ -25,10 +28,13 @@
     <div class="flex gap-1 border-b border-border-default mb-6">
         @foreach(['messages' => 'Messages', 'templates' => 'Templates'] as $tab => $label)
         <button wire:click="$set('activeTab', '{{ $tab }}')"
-            class="px-5 py-2.5 border-b-2 font-bold text-sm transition-colors
-            {{ $activeTab === $tab ? 'border-success-500 text-success-600' : 'border-transparent text-text-secondary hover:text-text-primary' }}">
-            {{ $label }}
-        </button>
+            class="disabled:opacity-70 disabled:cursor-not-allowed relative px-5 py-2.5 border-b-2 font-bold text-sm transition-colors
+            {{ $activeTab === $tab ? 'border-success-500 text-success-600' : 'border-transparent text-text-secondary hover:text-text-primary' }}" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">{{ $label }}</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
         @endforeach
     </div>
 
@@ -147,14 +153,29 @@
                 <textarea wire:model.defer="template_body" rows="4" class="w-full rounded-xl border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page resize-none"></textarea>
             </div>
             <div class="flex gap-2 justify-end">
-                <button type="button" wire:click="$set('showTemplateForm', false)" class="px-4 py-2 border border-border-default text-text-secondary rounded-xl text-sm font-medium">Cancel</button>
-                <button type="submit" class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors">Save Template</button>
+                <button type="button" wire:click="$set('showTemplateForm', false)" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 border border-border-default text-text-secondary rounded-xl text-sm font-medium" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Cancel</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
+                <button type="submit" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors" wire:loading.attr="disabled">
+                <span wire:loading.remove>Save Template</span>
+                <span wire:loading class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             </div>
         </form>
     </div>
     @else
     <div class="flex justify-end mb-4">
-        <button wire:click="$set('showTemplateForm', true)" class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors">+ New Template</button>
+        <button wire:click="$set('showTemplateForm', true)" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">+ New Template</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
     </div>
     @endif
 
@@ -174,8 +195,11 @@
             <div class="p-3 bg-surface-sunken/40 rounded-xl border border-border-default/40 mb-3">
                 <p class="text-xs text-text-primary leading-relaxed">{{ Str::limit($template->body, 120) }}</p>
             </div>
-            <button wire:click="useTemplate({{ $template->id }})" class="w-full py-1.5 border border-success-300 text-success-600 rounded-xl text-xs font-bold hover:bg-success-50 transition-colors">
-                Use Template
+            <button wire:click="useTemplate({{ $template->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full py-1.5 border border-success-300 text-success-600 rounded-xl text-xs font-bold hover:bg-success-50 transition-colors" wire:loading.attr="disabled" wire:target="useTemplate">
+                <span wire:loading.remove wire:target="useTemplate">Use Template</span>
+                <span wire:loading wire:target="useTemplate" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
             </button>
         </div>
         @empty

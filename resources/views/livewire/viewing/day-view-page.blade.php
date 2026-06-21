@@ -40,13 +40,24 @@
                 <p class="text-sm font-semibold text-text-secondary mt-1">{{ \Carbon\Carbon::parse($date)->format('l, F j, Y') }}</p>
             </div>
             <div class="flex items-center gap-1">
-                <button wire:click="previousDay" class="h-8 w-8 rounded-full bg-surface-raised border border-border-default flex items-center justify-center hover:bg-surface-sunken transition-colors">
-                    <svg class="h-4 w-4 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-                </button>
-                <button wire:click="$set('date', '{{ \Carbon\Carbon::today()->format('Y-m-d') }}')" class="px-2 py-1 text-xs font-bold text-brand-primary hover:bg-brand-primary/10 rounded-lg transition-colors">Today</button>
-                <button wire:click="nextDay" class="h-8 w-8 rounded-full bg-surface-raised border border-border-default flex items-center justify-center hover:bg-surface-sunken transition-colors">
-                    <svg class="h-4 w-4 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                </button>
+                <button wire:click="previousDay" class="disabled:opacity-70 disabled:cursor-not-allowed relative h-8 w-8 rounded-full bg-surface-raised border border-border-default flex items-center justify-center hover:bg-surface-sunken transition-colors" wire:loading.attr="disabled" wire:target="previousDay">
+                <span wire:loading.remove wire:target="previousDay"><svg class="h-4 w-4 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></span>
+                <span wire:loading wire:target="previousDay" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
+                <button wire:click="$set('date', '{{ \Carbon\Carbon::today()->format('Y-m-d') }}')" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-2 py-1 text-xs font-bold text-brand-primary hover:bg-brand-primary/10 rounded-lg transition-colors" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Today</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
+                <button wire:click="nextDay" class="disabled:opacity-70 disabled:cursor-not-allowed relative h-8 w-8 rounded-full bg-surface-raised border border-border-default flex items-center justify-center hover:bg-surface-sunken transition-colors" wire:loading.attr="disabled" wire:target="nextDay">
+                <span wire:loading.remove wire:target="nextDay"><svg class="h-4 w-4 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></span>
+                <span wire:loading wire:target="nextDay" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             </div>
         </div>
 
@@ -62,10 +73,14 @@
                         <div class="flex gap-2">
                             @foreach([1,2,3,4,5] as $star)
                             <button type="button" wire:click="$set('overall_rating', {{ $star }})"
-                                class="h-10 w-10 rounded-xl border flex items-center justify-center text-lg transition-colors
-                                {{ $overall_rating >= $star ? 'bg-warning-100 border-warning-400 text-warning-600' : 'bg-surface-sunken border-border-default text-text-tertiary' }}">
-                                ★
-                            </button>
+                                class="disabled:opacity-70 disabled:cursor-not-allowed relative h-10 w-10 rounded-xl border flex items-center justify-center text-lg transition-colors
+                                {{ $overall_rating  wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">= $star ? 'bg-warning-100 border-warning-400 text-warning-600' : 'bg-surface-sunken border-border-default text-text-tertiary' }}">
+                                ★</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                             @endforeach
                         </div>
                     </div>
@@ -74,10 +89,13 @@
                         <div class="flex gap-2 flex-wrap">
                             @foreach([1 => 'Too High', 2 => 'Slightly High', 3 => 'Fair', 4 => 'Good Value', 5 => 'Excellent'] as $val => $label)
                             <button type="button" wire:click="$set('price_perception', {{ $val }})"
-                                class="px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-colors
-                                {{ $price_perception == $val ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 border-brand-primary' : 'bg-surface-sunken border-border-default text-text-secondary hover:border-brand-primary' }}">
-                                {{ $label }}
-                            </button>
+                                class="disabled:opacity-70 disabled:cursor-not-allowed relative px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-colors
+                                {{ $price_perception == $val ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 border-brand-primary' : 'bg-surface-sunken border-border-default text-text-secondary hover:border-brand-primary' }}" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">{{ $label }}</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                             @endforeach
                         </div>
                     </div>
@@ -111,7 +129,12 @@
                             <span wire:loading.remove wire:target="saveFeedback">Save Feedback</span>
                             <span wire:loading wire:target="saveFeedback">Saving...</span>
                         </button>
-                        <button type="button" wire:click="$set('feedbackViewingId', null)" class="flex-1 py-2.5 border border-border-default text-text-secondary rounded-xl font-semibold hover:bg-surface-sunken transition-colors">Skip</button>
+                        <button type="button" wire:click="$set('feedbackViewingId', null)" class="disabled:opacity-70 disabled:cursor-not-allowed relative flex-1 py-2.5 border border-border-default text-text-secondary rounded-xl font-semibold hover:bg-surface-sunken transition-colors" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Skip</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     </div>
                 </form>
             </div>
@@ -140,7 +163,12 @@
                             <span wire:loading.remove wire:target="saveReschedule">Confirm</span>
                             <span wire:loading wire:target="saveReschedule">Saving...</span>
                         </button>
-                        <button type="button" wire:click="$set('reschedulingId', null)" class="flex-1 py-2 border border-border-default text-text-secondary rounded-xl text-sm font-semibold hover:bg-surface-sunken transition-colors">Cancel</button>
+                        <button type="button" wire:click="$set('reschedulingId', null)" class="disabled:opacity-70 disabled:cursor-not-allowed relative flex-1 py-2 border border-border-default text-text-secondary rounded-xl text-sm font-semibold hover:bg-surface-sunken transition-colors" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Cancel</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     </div>
                 </form>
             </div>
@@ -209,7 +237,12 @@
 
                         @if($viewing->status !== 'completed')
                         <div class="mt-5 pt-4 border-t border-border-default/40 grid grid-cols-2 gap-3">
-                            <button wire:click="startReschedule({{ $viewing->id }})" class="bg-surface-raised text-text-primary text-xs font-bold py-2 rounded-xl border border-border-default hover:bg-surface-sunken transition-colors">Reschedule</button>
+                            <button wire:click="startReschedule({{ $viewing->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative bg-surface-raised text-text-primary text-xs font-bold py-2 rounded-xl border border-border-default hover:bg-surface-sunken transition-colors" wire:loading.attr="disabled" wire:target="startReschedule">
+                <span wire:loading.remove wire:target="startReschedule">Reschedule</span>
+                <span wire:loading wire:target="startReschedule" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                             <button wire:click="completeViewing({{ $viewing->id }})" class="bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 text-xs font-bold py-2 rounded-xl shadow-md hover:bg-brand-secondary hover-spring active:scale-95 transition-colors">
                                 <span wire:loading.remove wire:target="completeViewing({{ $viewing->id }})">Complete Viewing</span>
                                 <span wire:loading wire:target="completeViewing({{ $viewing->id }})">...</span>
@@ -217,9 +250,12 @@
                         </div>
                         @elseif(!$viewing->feedback)
                         <div class="mt-4 pt-4 border-t border-border-default/40">
-                            <button wire:click="$set('feedbackViewingId', {{ $viewing->id }})" class="w-full py-2 text-xs font-bold text-brand-primary border border-brand-primary/30 rounded-xl hover:bg-brand-primary/5 transition-colors">
-                                + Log Feedback
-                            </button>
+                            <button wire:click="$set('feedbackViewingId', {{ $viewing->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full py-2 text-xs font-bold text-brand-primary border border-brand-primary/30 rounded-xl hover:bg-brand-primary/5 transition-colors" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">+ Log Feedback</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         </div>
                         @else
                         <div class="mt-4 pt-4 border-t border-border-default/40">

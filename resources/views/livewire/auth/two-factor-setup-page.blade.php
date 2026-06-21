@@ -22,9 +22,12 @@
         </div>
 
         @if(!$showDisableConfirm)
-        <button wire:click="$set('showDisableConfirm', true)" class="w-full py-2 border border-danger-300 text-danger-600 rounded-xl text-sm font-medium hover:bg-danger-50 transition-colors">
-            Disable Two-Factor Authentication
-        </button>
+        <button wire:click="$set('showDisableConfirm', true)" class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full py-2 border border-danger-300 text-danger-600 rounded-xl text-sm font-medium hover:bg-danger-50 transition-colors" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Disable Two-Factor Authentication</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
         @else
         <div class="space-y-4">
             <p class="text-sm text-text-secondary">Enter your password to confirm disabling 2FA:</p>
@@ -41,7 +44,12 @@
                         <span>Disabling...</span>
                     </span>
                 </button>
-                <button wire:click="$set('showDisableConfirm', false)" class="flex-1 py-2 border border-border-default text-text-secondary rounded-xl text-sm font-medium hover:bg-surface-sunken transition-colors">Cancel</button>
+                <button wire:click="$set('showDisableConfirm', false)" class="disabled:opacity-70 disabled:cursor-not-allowed relative flex-1 py-2 border border-border-default text-text-secondary rounded-xl text-sm font-medium hover:bg-surface-sunken transition-colors" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Cancel</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             </div>
         </div>
         @endif

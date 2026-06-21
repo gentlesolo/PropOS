@@ -16,9 +16,12 @@
             <p class="text-xs font-semibold text-brand-primary mb-0.5">AI Suggestion</p>
             <p class="text-sm text-text-primary">{{ $nextActionSuggestion }}</p>
         </div>
-        <button wire:click="dismissNextAction" class="shrink-0 text-text-tertiary hover:text-text-secondary">
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-        </button>
+        <button wire:click="dismissNextAction" class="disabled:opacity-70 disabled:cursor-not-allowed relative shrink-0 text-text-tertiary hover:text-text-secondary" wire:loading.attr="disabled" wire:target="dismissNextAction">
+                <span wire:loading.remove wire:target="dismissNextAction"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></span>
+                <span wire:loading wire:target="dismissNextAction" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
     </div>
     @endif
 
@@ -34,10 +37,13 @@
                     <div class="flex items-center gap-2">
                         @if($contact->email)
                         <button wire:click="sendEmail"
-                                class="text-xs text-white bg-brand-primary border border-brand-primary rounded-lg px-2.5 py-1.5 hover:opacity-90 transition-colors flex items-center gap-1">
-                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                            Email
-                        </button>
+                                class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-white bg-brand-primary border border-brand-primary rounded-lg px-2.5 py-1.5 hover:opacity-90 transition-colors flex items-center gap-1" wire:loading.attr="disabled" wire:target="sendEmail">
+                <span wire:loading.remove wire:target="sendEmail"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                            Email</span>
+                <span wire:loading wire:target="sendEmail" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         @endif
                         <button wire:click="loadNextAction"
                             wire:loading.attr="disabled"
@@ -46,14 +52,21 @@
                             <span wire:loading.remove wire:target="loadNextAction">? AI</span>
                             <span wire:loading wire:target="loadNextAction">...</span>
                         </button>
-                        <button wire:click="$toggle('showEditForm')" class="text-xs text-brand-primary border border-brand-primary/30 rounded-lg px-3 py-1.5 hover:bg-brand-primary/5 transition-colors">
-                            {{ $showEditForm ? 'Cancel' : 'Edit' }}
-                        </button>
+                        <button wire:click="$toggle('showEditForm')" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-brand-primary border border-brand-primary/30 rounded-lg px-3 py-1.5 hover:bg-brand-primary/5 transition-colors" wire:loading.attr="disabled" wire:target="$toggle">
+                <span wire:loading.remove wire:target="$toggle">{{ $showEditForm ? 'Cancel' : 'Edit' }}</span>
+                <span wire:loading wire:target="$toggle" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         <button wire:click="deleteContact"
-                            onclick="return confirm('Permanently delete {{ addslashes($contact->full_name) }}? This cannot be undone.')"
+                            onclick="return confirm('Permanently delete {{ addslashes($contact- wire:loading.attr="disabled" wire:target="deleteContact">
+                <span wire:loading.remove wire:target="deleteContact">full_name) }}? This cannot be undone.')"
                             class="text-xs text-danger-600 border border-danger-200 rounded-lg px-2.5 py-1.5 hover:bg-danger-50 transition-colors">
-                            Delete
-                        </button>
+                            Delete</span>
+                <span wire:loading wire:target="deleteContact" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     </div>
                 </div>
 
@@ -152,9 +165,12 @@
                             @forelse($contact->tags ?? [] as $tag)
                             <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-2xs font-bold bg-brand-primary/10 text-brand-primary">
                                 {{ $tag }}
-                                <button type="button" wire:click="removeTag('{{ $tag }}')" class="hover:text-danger-600 focus:outline-none font-bold">
-                                    &times;
-                                </button>
+                                <button type="button" wire:click="removeTag('{{ $tag }}')" class="disabled:opacity-70 disabled:cursor-not-allowed relative hover:text-danger-600 focus:outline-none font-bold" wire:loading.attr="disabled" wire:target="removeTag">
+                <span wire:loading.remove wire:target="removeTag">&times;</span>
+                <span wire:loading wire:target="removeTag" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                             </span>
                             @empty
                             <span class="text-2xs text-text-tertiary">No tags added yet.</span>
@@ -162,7 +178,12 @@
                         </div>
                         <form wire:submit.prevent="addTag" class="flex gap-1 mt-2">
                             <input wire:model.defer="newTag" type="text" placeholder="Add tag..." class="w-full text-2xs rounded-lg border border-border-default bg-surface-input px-2 py-1 focus:outline-none focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page focus:border-brand-primary">
-                            <button type="submit" class="px-2.5 py-1 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 text-2xs font-bold rounded-lg hover:bg-brand-secondary">Add</button>
+                            <button type="submit" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-2.5 py-1 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 text-2xs font-bold rounded-lg hover:bg-brand-secondary" wire:loading.attr="disabled">
+                <span wire:loading.remove>Add</span>
+                <span wire:loading class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         </form>
                     </div>
 
@@ -184,9 +205,12 @@
             <div class="bg-surface-card rounded-2xl border border-border-default p-5">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-sm font-semibold text-text-primary">Buyer Preferences</h3>
-                    <button wire:click="$toggle('showPreferencesForm')" class="text-xs text-brand-primary border border-brand-primary/30 rounded-lg px-2.5 py-1.5 hover:bg-brand-primary/5 transition-colors">
-                        {{ $showPreferencesForm ? 'Cancel' : 'Edit' }}
-                    </button>
+                    <button wire:click="$toggle('showPreferencesForm')" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-brand-primary border border-brand-primary/30 rounded-lg px-2.5 py-1.5 hover:bg-brand-primary/5 transition-colors" wire:loading.attr="disabled" wire:target="$toggle">
+                <span wire:loading.remove wire:target="$toggle">{{ $showPreferencesForm ? 'Cancel' : 'Edit' }}</span>
+                <span wire:loading wire:target="$toggle" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 </div>
                 @if($showPreferencesForm)
                 <form wire:submit.prevent="savePreferences" class="space-y-3">
@@ -220,7 +244,12 @@
                         <label class="block text-xs font-medium text-text-secondary mb-1">Target Timeline</label>
                         <input wire:model.defer="pref_timeline" type="text" placeholder="e.g. Next 3 months, Immediate" class="w-full rounded-lg border border-border-default bg-surface-input px-2 py-1.5 text-xs text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     </div>
-                    <button type="submit" class="w-full py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg text-sm font-medium hover:bg-brand-secondary transition-colors">Save Preferences</button>
+                    <button type="submit" class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg text-sm font-medium hover:bg-brand-secondary transition-colors" wire:loading.attr="disabled">
+                <span wire:loading.remove>Save Preferences</span>
+                <span wire:loading class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 </form>
                 @else
                 @php $prefs = $contact->preferences ?? []; @endphp
@@ -288,9 +317,12 @@
             <div class="bg-surface-card rounded-2xl border border-border-default p-5">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-sm font-semibold text-text-primary">Family Details</h3>
-                    <button wire:click="$toggle('showFamilyForm')" class="text-xs text-brand-primary border border-brand-primary/30 rounded-lg px-2.5 py-1 hover:bg-brand-primary/5 transition-colors font-bold">
-                        {{ $showFamilyForm ? 'Cancel' : 'Edit' }}
-                    </button>
+                    <button wire:click="$toggle('showFamilyForm')" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-brand-primary border border-brand-primary/30 rounded-lg px-2.5 py-1 hover:bg-brand-primary/5 transition-colors font-bold" wire:loading.attr="disabled" wire:target="$toggle">
+                <span wire:loading.remove wire:target="$toggle">{{ $showFamilyForm ? 'Cancel' : 'Edit' }}</span>
+                <span wire:loading wire:target="$toggle" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 </div>
                 @if($showFamilyForm)
                 <form wire:submit.prevent="saveFamily" class="space-y-3">
@@ -306,11 +338,21 @@
                     <div class="space-y-2">
                         <div class="flex justify-between items-center">
                             <span class="text-xs font-semibold text-text-secondary">Children</span>
-                            <button type="button" wire:click="addFamilyChild" class="text-xs text-brand-primary hover:underline font-bold">+ Add Child</button>
+                            <button type="button" wire:click="addFamilyChild" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-brand-primary hover:underline font-bold" wire:loading.attr="disabled" wire:target="addFamilyChild">
+                <span wire:loading.remove wire:target="addFamilyChild">+ Add Child</span>
+                <span wire:loading wire:target="addFamilyChild" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         </div>
                         @foreach($fam_children as $index => $child)
                         <div class="p-2 border border-border-default/40 rounded-lg bg-surface-sunken/20 space-y-1.5 relative">
-                            <button type="button" wire:click="removeFamilyChild({{ $index }})" class="absolute top-1.5 right-1.5 text-text-tertiary hover:text-danger-600 text-xs font-bold">&times;</button>
+                            <button type="button" wire:click="removeFamilyChild({{ $index }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative absolute top-1.5 right-1.5 text-text-tertiary hover:text-danger-600 text-xs font-bold" wire:loading.attr="disabled" wire:target="removeFamilyChild">
+                <span wire:loading.remove wire:target="removeFamilyChild">&times;</span>
+                <span wire:loading wire:target="removeFamilyChild" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                             <input wire:model.defer="fam_children.{{ $index }}.name" type="text" placeholder="Name" class="w-full rounded bg-surface-input border border-border-default px-2 py-1 text-2xs text-text-primary">
                             <div class="grid grid-cols-2 gap-1.5">
                                 <input wire:model.defer="fam_children.{{ $index }}.birthday" type="date" placeholder="Birthday" class="w-full rounded bg-surface-input border border-border-default px-2 py-1 text-2xs text-text-primary">
@@ -320,7 +362,12 @@
                         @endforeach
                     </div>
 
-                    <button type="submit" class="w-full py-1.5 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg text-xs font-medium hover:bg-brand-secondary transition-colors">Save Family Details</button>
+                    <button type="submit" class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full py-1.5 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg text-xs font-medium hover:bg-brand-secondary transition-colors" wire:loading.attr="disabled">
+                <span wire:loading.remove>Save Family Details</span>
+                <span wire:loading class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 </form>
                 @else
                 @php $prefs = $contact->preferences ?? []; $family = $prefs['family'] ?? []; @endphp
@@ -365,20 +412,33 @@
             <div class="bg-surface-card rounded-2xl border border-border-default p-5">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-sm font-semibold text-text-primary">Ownership History</h3>
-                    <button wire:click="$toggle('showHistoryForm')" class="text-xs text-brand-primary border border-brand-primary/30 rounded-lg px-2.5 py-1 hover:bg-brand-primary/5 transition-colors font-bold">
-                        {{ $showHistoryForm ? 'Cancel' : 'Edit' }}
-                    </button>
+                    <button wire:click="$toggle('showHistoryForm')" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-brand-primary border border-brand-primary/30 rounded-lg px-2.5 py-1 hover:bg-brand-primary/5 transition-colors font-bold" wire:loading.attr="disabled" wire:target="$toggle">
+                <span wire:loading.remove wire:target="$toggle">{{ $showHistoryForm ? 'Cancel' : 'Edit' }}</span>
+                <span wire:loading wire:target="$toggle" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 </div>
                 @if($showHistoryForm)
                 <form wire:submit.prevent="saveHistory" class="space-y-3">
                     <div class="space-y-2">
                         <div class="flex justify-between items-center">
                             <span class="text-xs font-semibold text-text-secondary">Past Properties</span>
-                            <button type="button" wire:click="addHistoryItem" class="text-xs text-brand-primary hover:underline font-bold">+ Add Property</button>
+                            <button type="button" wire:click="addHistoryItem" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-brand-primary hover:underline font-bold" wire:loading.attr="disabled" wire:target="addHistoryItem">
+                <span wire:loading.remove wire:target="addHistoryItem">+ Add Property</span>
+                <span wire:loading wire:target="addHistoryItem" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         </div>
                         @foreach($history_items as $index => $item)
                         <div class="p-2 border border-border-default/40 rounded-lg bg-surface-sunken/20 space-y-1.5 relative">
-                            <button type="button" wire:click="removeHistoryItem({{ $index }})" class="absolute top-1.5 right-1.5 text-text-tertiary hover:text-danger-600 text-xs font-bold">&times;</button>
+                            <button type="button" wire:click="removeHistoryItem({{ $index }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative absolute top-1.5 right-1.5 text-text-tertiary hover:text-danger-600 text-xs font-bold" wire:loading.attr="disabled" wire:target="removeHistoryItem">
+                <span wire:loading.remove wire:target="removeHistoryItem">&times;</span>
+                <span wire:loading wire:target="removeHistoryItem" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                             <input wire:model.defer="history_items.{{ $index }}.address" type="text" placeholder="Address / Property Name" class="w-full rounded bg-surface-input border border-border-default px-2 py-1 text-2xs text-text-primary">
                             <div class="grid grid-cols-3 gap-1">
                                 <input wire:model.defer="history_items.{{ $index }}.price" type="text" placeholder="Price" class="w-full rounded bg-surface-input border border-border-default px-2 py-1 text-2xs text-text-primary">
@@ -389,7 +449,12 @@
                         @endforeach
                     </div>
 
-                    <button type="submit" class="w-full py-1.5 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg text-xs font-medium hover:bg-brand-secondary transition-colors">Save History</button>
+                    <button type="submit" class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full py-1.5 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg text-xs font-medium hover:bg-brand-secondary transition-colors" wire:loading.attr="disabled">
+                <span wire:loading.remove>Save History</span>
+                <span wire:loading class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 </form>
                 @else
                 @php $prefs = $contact->preferences ?? []; $history = $prefs['ownership_history'] ?? []; @endphp
@@ -429,9 +494,12 @@
                             <a href="{{ Storage::url($doc['file_path']) }}" target="_blank" class="p-1 text-brand-primary hover:bg-brand-primary/10 rounded">
                                 ??
                             </a>
-                            <button type="button" wire:click="deleteDocument({{ $index }})" class="p-1 text-text-tertiary hover:text-danger-600 rounded">
-                                ???
-                            </button>
+                            <button type="button" wire:click="deleteDocument({{ $index }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative p-1 text-text-tertiary hover:text-danger-600 rounded" wire:loading.attr="disabled" wire:target="deleteDocument">
+                <span wire:loading.remove wire:target="deleteDocument">???</span>
+                <span wire:loading wire:target="deleteDocument" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         </div>
                     </li>
                     @endforeach
@@ -444,9 +512,12 @@
                     <input wire:model.defer="docTitle" type="text" placeholder="Doc title (e.g. ID Card)" class="w-full rounded bg-surface-input border border-border-default px-2 py-1 text-xs text-text-primary focus:outline-none focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                     <div class="flex items-center gap-2">
                         <input wire:model="docFile" type="file" class="text-2xs text-text-secondary w-full">
-                        <button type="submit" class="px-2.5 py-1 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 text-xs font-semibold rounded-lg hover:bg-brand-secondary shrink-0">
-                            Upload
-                        </button>
+                        <button type="submit" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-2.5 py-1 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 text-xs font-semibold rounded-lg hover:bg-brand-secondary shrink-0" wire:loading.attr="disabled">
+                <span wire:loading.remove>Upload</span>
+                <span wire:loading class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     </div>
                     @error('docFile') <span class="text-2xs text-danger-600 block">{{ $message }}</span> @enderror
                     @error('docTitle') <span class="text-2xs text-danger-600 block">{{ $message }}</span> @enderror
@@ -465,10 +536,13 @@
                 <div class="flex gap-2 mb-3 flex-wrap">
                     @foreach(['note' => 'Note', 'call' => 'Call', 'email' => 'Email', 'meeting' => 'Meeting', 'sms' => 'SMS'] as $val => $label)
                     <button wire:click="$set('activityType', '{{ $val }}')"
-                        class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
-                        {{ $activityType === $val ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10' : 'bg-surface-sunken text-text-secondary hover:bg-brand-primary/10' }}">
-                        {{ $label }}
-                    </button>
+                        class="disabled:opacity-70 disabled:cursor-not-allowed relative px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
+                        {{ $activityType === $val ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10' : 'bg-surface-sunken text-text-secondary hover:bg-brand-primary/10' }}" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">{{ $label }}</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     @endforeach
                 </div>
 
@@ -491,16 +565,22 @@
             <!-- Tab switcher: Activity / Emails -->
             <div class="flex gap-1 p-1 bg-surface-hover/50 rounded-xl w-fit">
                 <button wire:click="$set('activeTab', 'activity')"
-                        class="px-4 py-1.5 rounded-lg text-sm font-medium transition-colors {{ $activeTab === 'activity' ? 'bg-white text-text-primary shadow-sm dark:bg-surface-card' : 'text-text-secondary hover:text-text-primary' }}">
-                    Activity
-                </button>
+                        class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-1.5 rounded-lg text-sm font-medium transition-colors {{ $activeTab === 'activity' ? 'bg-white text-text-primary shadow-sm dark:bg-surface-card' : 'text-text-secondary hover:text-text-primary' }}" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Activity</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 <button wire:click="$set('activeTab', 'emails')"
-                        class="px-4 py-1.5 rounded-lg text-sm font-medium transition-colors {{ $activeTab === 'emails' ? 'bg-white text-text-primary shadow-sm dark:bg-surface-card' : 'text-text-secondary hover:text-text-primary' }}">
-                    Emails
+                        class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-1.5 rounded-lg text-sm font-medium transition-colors {{ $activeTab === 'emails' ? 'bg-white text-text-primary shadow-sm dark:bg-surface-card' : 'text-text-secondary hover:text-text-primary' }}" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Emails
                     @if($emailThreads->sum('unread_count') > 0)
                     <span class="ml-1 px-1.5 py-0.5 bg-brand-primary text-white text-xs rounded-full">{{ $emailThreads->sum('unread_count') }}</span>
-                    @endif
-                </button>
+                    @endif</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             </div>
 
             @if($activeTab === 'emails')
@@ -510,10 +590,13 @@
                     <h3 class="text-sm font-semibold text-text-primary">Email Threads</h3>
                     @if($contact->email)
                     <button wire:click="sendEmail"
-                            class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-primary text-white text-xs font-medium rounded-lg hover:opacity-90 transition">
-                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                        New Email
-                    </button>
+                            class="disabled:opacity-70 disabled:cursor-not-allowed relative inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-primary text-white text-xs font-medium rounded-lg hover:opacity-90 transition" wire:loading.attr="disabled" wire:target="sendEmail">
+                <span wire:loading.remove wire:target="sendEmail"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                        New Email</span>
+                <span wire:loading wire:target="sendEmail" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     @endif
                 </div>
 
@@ -559,7 +642,12 @@
                     </svg>
                     <p class="text-sm">No emails with this contact yet.</p>
                     @if($contact->email)
-                    <button wire:click="sendEmail" class="mt-2 text-xs text-brand-primary hover:underline">Send the first email →</button>
+                    <button wire:click="sendEmail" class="disabled:opacity-70 disabled:cursor-not-allowed relative mt-2 text-xs text-brand-primary hover:underline" wire:loading.attr="disabled" wire:target="sendEmail">
+                <span wire:loading.remove wire:target="sendEmail">Send the first email →</span>
+                <span wire:loading wire:target="sendEmail" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     @else
                     <p class="text-xs mt-1">Add an email address to this contact to start emailing.</p>
                     @endif

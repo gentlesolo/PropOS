@@ -23,14 +23,20 @@
         <div class="flex items-center gap-2 flex-shrink-0">
             @if($unreadCount > 0)
             <button wire:click="markAllRead"
-                class="px-3 py-1.5 text-xs font-medium rounded-lg border border-border-default text-text-secondary hover:text-brand-primary hover:border-brand-primary transition-colors">
-                Mark all read
+                class="disabled:opacity-70 disabled:cursor-not-allowed relative px-3 py-1.5 text-xs font-medium rounded-lg border border-border-default text-text-secondary hover:text-brand-primary hover:border-brand-primary transition-colors" wire:loading.attr="disabled" wire:target="markAllRead">
+                <span wire:loading.remove wire:target="markAllRead">Mark all read</span>
+                <span wire:loading wire:target="markAllRead" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
             </button>
             @endif
             <button wire:click="deleteAll"
                 wire:confirm="Delete all notifications? This cannot be undone."
-                class="px-3 py-1.5 text-xs font-medium rounded-lg border border-border-default text-text-secondary hover:text-danger-600 hover:border-danger-300 transition-colors">
-                Delete all
+                class="disabled:opacity-70 disabled:cursor-not-allowed relative px-3 py-1.5 text-xs font-medium rounded-lg border border-border-default text-text-secondary hover:text-danger-600 hover:border-danger-300 transition-colors" wire:loading.attr="disabled" wire:target="deleteAll">
+                <span wire:loading.remove wire:target="deleteAll">Delete all</span>
+                <span wire:loading wire:target="deleteAll" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
             </button>
         </div>
     </div>
@@ -38,20 +44,29 @@
     {{-- Filter tabs --}}
     <div class="flex gap-1 mb-4 border-b border-border-default">
         <button wire:click="setFilter('all')"
-            class="px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px
-                   {{ $filter === 'all' ? 'border-brand-primary text-brand-primary' : 'border-transparent text-text-secondary hover:text-text-primary' }}">
-            All
-        </button>
+            class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px
+                   {{ $filter === 'all' ? 'border-brand-primary text-brand-primary' : 'border-transparent text-text-secondary hover:text-text-primary' }}" wire:loading.attr="disabled" wire:target="setFilter">
+                <span wire:loading.remove wire:target="setFilter">All</span>
+                <span wire:loading wire:target="setFilter" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
         <button wire:click="setFilter('unread')"
-            class="px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px
-                   {{ $filter === 'unread' ? 'border-brand-primary text-brand-primary' : 'border-transparent text-text-secondary hover:text-text-primary' }}">
-            Unread
-        </button>
+            class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px
+                   {{ $filter === 'unread' ? 'border-brand-primary text-brand-primary' : 'border-transparent text-text-secondary hover:text-text-primary' }}" wire:loading.attr="disabled" wire:target="setFilter">
+                <span wire:loading.remove wire:target="setFilter">Unread</span>
+                <span wire:loading wire:target="setFilter" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
         <button wire:click="setFilter('read')"
-            class="px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px
-                   {{ $filter === 'read' ? 'border-brand-primary text-brand-primary' : 'border-transparent text-text-secondary hover:text-text-primary' }}">
-            Read
-        </button>
+            class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px
+                   {{ $filter === 'read' ? 'border-brand-primary text-brand-primary' : 'border-transparent text-text-secondary hover:text-text-primary' }}" wire:loading.attr="disabled" wire:target="setFilter">
+                <span wire:loading.remove wire:target="setFilter">Read</span>
+                <span wire:loading wire:target="setFilter" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
     </div>
 
     {{-- Notification list --}}
@@ -104,15 +119,21 @@
 
                     @if(! $notif->read_at)
                     <button wire:click="markRead({{ $notif->id }})"
-                        class="text-xs text-text-tertiary hover:text-brand-primary transition-colors">
-                        Mark read
-                    </button>
+                        class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-text-tertiary hover:text-brand-primary transition-colors" wire:loading.attr="disabled" wire:target="markRead">
+                <span wire:loading.remove wire:target="markRead">Mark read</span>
+                <span wire:loading wire:target="markRead" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     @endif
 
                     <button wire:click="delete({{ $notif->id }})"
-                        class="text-xs text-text-tertiary hover:text-danger-600 transition-colors ml-auto">
-                        Delete
-                    </button>
+                        class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-text-tertiary hover:text-danger-600 transition-colors ml-auto" wire:loading.attr="disabled" wire:target="delete">
+                <span wire:loading.remove wire:target="delete">Delete</span>
+                <span wire:loading wire:target="delete" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 </div>
             </div>
         </div>

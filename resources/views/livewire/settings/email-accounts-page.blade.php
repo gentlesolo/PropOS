@@ -6,9 +6,12 @@
             <p class="text-sm text-text-secondary mt-1">Connect mailboxes so you can send and receive email directly inside the platform.</p>
         </div>
         <button wire:click="openCreate"
-                class="px-4 py-2 bg-brand-primary text-white text-sm font-medium rounded-lg hover:opacity-90">
-            + Connect Account
-        </button>
+                class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 bg-brand-primary text-white text-sm font-medium rounded-lg hover:opacity-90" wire:loading.attr="disabled" wire:target="openCreate">
+                <span wire:loading.remove wire:target="openCreate">+ Connect Account</span>
+                <span wire:loading wire:target="openCreate" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
     </div>
 
     {{-- Account list --}}
@@ -56,22 +59,34 @@
                 </div>
                 <div class="flex items-center gap-2 shrink-0">
                     <button wire:click="syncNow({{ $account->id }})"
-                            class="px-3 py-1.5 text-xs font-medium text-text-secondary border border-border-default rounded-lg hover:bg-surface-elevated">
-                        Sync now
-                    </button>
+                            class="disabled:opacity-70 disabled:cursor-not-allowed relative px-3 py-1.5 text-xs font-medium text-text-secondary border border-border-default rounded-lg hover:bg-surface-elevated" wire:loading.attr="disabled" wire:target="syncNow">
+                <span wire:loading.remove wire:target="syncNow">Sync now</span>
+                <span wire:loading wire:target="syncNow" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     <button wire:click="openEdit({{ $account->id }})"
-                            class="px-3 py-1.5 text-xs font-medium text-text-secondary border border-border-default rounded-lg hover:bg-surface-elevated">
-                        Edit
-                    </button>
+                            class="disabled:opacity-70 disabled:cursor-not-allowed relative px-3 py-1.5 text-xs font-medium text-text-secondary border border-border-default rounded-lg hover:bg-surface-elevated" wire:loading.attr="disabled" wire:target="openEdit">
+                <span wire:loading.remove wire:target="openEdit">Edit</span>
+                <span wire:loading wire:target="openEdit" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     <button wire:click="toggleActive({{ $account->id }})"
-                            class="px-3 py-1.5 text-xs font-medium text-text-secondary border border-border-default rounded-lg hover:bg-surface-elevated">
-                        {{ $account->is_active ? 'Pause' : 'Resume' }}
-                    </button>
+                            class="disabled:opacity-70 disabled:cursor-not-allowed relative px-3 py-1.5 text-xs font-medium text-text-secondary border border-border-default rounded-lg hover:bg-surface-elevated" wire:loading.attr="disabled" wire:target="toggleActive">
+                <span wire:loading.remove wire:target="toggleActive">{{ $account->is_active ? 'Pause' : 'Resume' }}</span>
+                <span wire:loading wire:target="toggleActive" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     <button wire:click="delete({{ $account->id }})"
                             wire:confirm="Remove this account? Synced emails will remain."
-                            class="px-3 py-1.5 text-xs font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50">
-                        Remove
-                    </button>
+                            class="disabled:opacity-70 disabled:cursor-not-allowed relative px-3 py-1.5 text-xs font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50" wire:loading.attr="disabled" wire:target="delete">
+                <span wire:loading.remove wire:target="delete">Remove</span>
+                <span wire:loading wire:target="delete" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 </div>
             </div>
         </div>
@@ -87,9 +102,12 @@
                 <h2 class="text-lg font-semibold text-text-primary">
                     {{ $editingId ? 'Edit Email Account' : 'Connect Email Account' }}
                 </h2>
-                <button wire:click="$set('showForm', false)" class="text-text-tertiary hover:text-text-primary">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
+                <button wire:click="$set('showForm', false)" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-text-tertiary hover:text-text-primary" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             </div>
 
             <div class="p-6 space-y-5">
@@ -216,9 +234,12 @@
                     </button>
                     <div class="flex gap-3">
                         <button wire:click="$set('showForm', false)"
-                                class="px-4 py-2 text-sm font-medium border border-border-default rounded-lg text-text-secondary hover:bg-surface-elevated">
-                            Cancel
-                        </button>
+                                class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 text-sm font-medium border border-border-default rounded-lg text-text-secondary hover:bg-surface-elevated" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Cancel</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         <button wire:click="save" wire:loading.attr="disabled"
                                 class="px-4 py-2 text-sm font-medium bg-brand-primary text-white rounded-lg hover:opacity-90">
                             <span wire:loading.remove wire:target="save">Save Account</span>

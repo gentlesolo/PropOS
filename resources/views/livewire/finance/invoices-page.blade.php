@@ -28,9 +28,12 @@
                     </button>
                 </div>
                 <button wire:click="openCreateForm"
-                    class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">
-                    + New Invoice
-                </button>
+                    class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors" wire:loading.attr="disabled" wire:target="openCreateForm">
+                <span wire:loading.remove wire:target="openCreateForm">+ New Invoice</span>
+                <span wire:loading wire:target="openCreateForm" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             </div>
         </div>
 
@@ -64,7 +67,12 @@
                 class="text-xs px-3 py-1.5 bg-brand-50 text-brand-600 border border-brand-200 rounded-lg hover:bg-brand-100 whitespace-nowrap">
                 Copy
             </button>
-            <button wire:click="$set('paymentLinkUrl', null)" class="text-text-tertiary hover:text-text-secondary text-lg leading-none">&times;</button>
+            <button wire:click="$set('paymentLinkUrl', null)" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-text-tertiary hover:text-text-secondary text-lg leading-none" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">&times;</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
         </div>
         @endif
 
@@ -73,7 +81,12 @@
         <div class="bg-surface-card rounded-2xl border border-brand-200 p-5 mb-6">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-base font-semibold text-text-primary">New Invoice</h2>
-                <button wire:click="$set('showCreateForm', false)" class="text-text-tertiary hover:text-text-secondary text-xl">&times;</button>
+                <button wire:click="$set('showCreateForm', false)" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-text-tertiary hover:text-text-secondary text-xl" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">&times;</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             </div>
             <form wire:submit.prevent="createInvoice" class="space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -108,7 +121,12 @@
                 <div>
                     <div class="flex items-center justify-between mb-2">
                         <label class="text-xs font-medium text-text-secondary">Line Items *</label>
-                        <button type="button" wire:click="addLineItem" class="text-xs text-brand-600 hover:text-brand-primary font-medium">+ Add Line</button>
+                        <button type="button" wire:click="addLineItem" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-brand-600 hover:text-brand-primary font-medium" wire:loading.attr="disabled" wire:target="addLineItem">
+                <span wire:loading.remove wire:target="addLineItem">+ Add Line</span>
+                <span wire:loading wire:target="addLineItem" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     </div>
                     <div class="space-y-2">
                         @foreach($form_line_items as $i => $item)
@@ -136,7 +154,12 @@
                             </div>
                             <div class="col-span-1 flex items-center justify-center pt-1.5">
                                 @if(count($form_line_items) > 1)
-                                <button type="button" wire:click="removeLineItem({{ $i }})" class="text-danger-500 hover:text-danger-700 text-base leading-none">&times;</button>
+                                <button type="button" wire:click="removeLineItem({{ $i }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-danger-500 hover:text-danger-700 text-base leading-none" wire:loading.attr="disabled" wire:target="removeLineItem">
+                <span wire:loading.remove wire:target="removeLineItem">&times;</span>
+                <span wire:loading wire:target="removeLineItem" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                                 @endif
                             </div>
                         </div>
@@ -151,7 +174,12 @@
 
                 <div class="flex gap-3">
                     <button type="submit" wire:loading.attr="disabled" class="px-5 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">Create Invoice</button>
-                    <button type="button" wire:click="$set('showCreateForm', false)" class="px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors">Cancel</button>
+                    <button type="button" wire:click="$set('showCreateForm', false)" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Cancel</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 </div>
             </form>
         </div>
@@ -162,7 +190,12 @@
         <div class="bg-surface-card rounded-2xl border border-warning-200 p-5 mb-6">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-base font-semibold text-text-primary">Edit Draft Invoice</h2>
-                <button wire:click="$set('showEditForm', false)" class="text-text-tertiary hover:text-text-secondary text-xl">&times;</button>
+                <button wire:click="$set('showEditForm', false)" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-text-tertiary hover:text-text-secondary text-xl" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">&times;</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             </div>
             <form wire:submit.prevent="saveEdit" class="space-y-4">
                 <div class="grid grid-cols-2 gap-4">
@@ -180,7 +213,12 @@
                 <div>
                     <div class="flex items-center justify-between mb-2">
                         <label class="text-xs font-medium text-text-secondary">Line Items</label>
-                        <button type="button" wire:click="addEditLineItem" class="text-xs text-brand-600 hover:text-brand-primary font-medium">+ Add Line</button>
+                        <button type="button" wire:click="addEditLineItem" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-brand-600 hover:text-brand-primary font-medium" wire:loading.attr="disabled" wire:target="addEditLineItem">
+                <span wire:loading.remove wire:target="addEditLineItem">+ Add Line</span>
+                <span wire:loading wire:target="addEditLineItem" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     </div>
                     <div class="space-y-2">
                         @foreach($edit_line_items as $i => $item)
@@ -207,7 +245,12 @@
                             </div>
                             <div class="col-span-1 flex items-center justify-center pt-1.5">
                                 @if(count($edit_line_items) > 1)
-                                <button type="button" wire:click="removeEditLineItem({{ $i }})" class="text-danger-500 hover:text-danger-700 text-base leading-none">&times;</button>
+                                <button type="button" wire:click="removeEditLineItem({{ $i }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-danger-500 hover:text-danger-700 text-base leading-none" wire:loading.attr="disabled" wire:target="removeEditLineItem">
+                <span wire:loading.remove wire:target="removeEditLineItem">&times;</span>
+                <span wire:loading wire:target="removeEditLineItem" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                                 @endif
                             </div>
                         </div>
@@ -217,7 +260,12 @@
 
                 <div class="flex gap-3">
                     <button type="submit" wire:loading.attr="disabled" class="px-5 py-2 bg-warning-600 text-white rounded-xl text-sm font-medium hover:bg-warning-700 transition-colors">Save Changes</button>
-                    <button type="button" wire:click="$set('showEditForm', false)" class="px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors">Cancel</button>
+                    <button type="button" wire:click="$set('showEditForm', false)" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Cancel</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 </div>
             </form>
         </div>
@@ -294,14 +342,39 @@
                         <td class="px-4 py-3" wire:click.stop>
                             <div class="flex gap-1 justify-end">
                                 @if($invoice->status === 'draft')
-                                    <button wire:click="openEditForm({{ $invoice->id }})" class="text-xs px-2 py-1 border border-border-default rounded-lg hover:bg-surface-hover text-text-secondary" title="Edit">Edit</button>
-                                    <button wire:click="deleteInvoice({{ $invoice->id }})" onclick="return confirm('Delete this draft?')" class="text-xs px-2 py-1 text-danger-600 border border-danger-200 rounded-lg hover:bg-danger-50" title="Delete">Del</button>
+                                    <button wire:click="openEditForm({{ $invoice->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs px-2 py-1 border border-border-default rounded-lg hover:bg-surface-hover text-text-secondary" title="Edit" wire:loading.attr="disabled" wire:target="openEditForm">
+                <span wire:loading.remove wire:target="openEditForm">Edit</span>
+                <span wire:loading wire:target="openEditForm" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
+                                    <button wire:click="deleteInvoice({{ $invoice->id }})" onclick="return confirm('Delete this draft?')" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs px-2 py-1 text-danger-600 border border-danger-200 rounded-lg hover:bg-danger-50" title="Delete" wire:loading.attr="disabled" wire:target="deleteInvoice">
+                <span wire:loading.remove wire:target="deleteInvoice">Del</span>
+                <span wire:loading wire:target="deleteInvoice" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                                 @elseif(!in_array($invoice->status, ['paid','void']))
-                                    <button wire:click="openPaymentModal({{ $invoice->id }})" class="text-xs px-2 py-1 bg-success-50 text-success-700 border border-success-200 rounded-lg hover:bg-success-100">Pay</button>
+                                    <button wire:click="openPaymentModal({{ $invoice->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs px-2 py-1 bg-success-50 text-success-700 border border-success-200 rounded-lg hover:bg-success-100" wire:loading.attr="disabled" wire:target="openPaymentModal">
+                <span wire:loading.remove wire:target="openPaymentModal">Pay</span>
+                <span wire:loading wire:target="openPaymentModal" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                                     <button wire:click="sendInvoice({{ $invoice->id }})" wire:loading.attr="disabled" class="text-xs px-2 py-1 bg-brand-50 text-brand-600 border border-brand-200 rounded-lg hover:bg-brand-100">Send</button>
-                                    <button wire:click="voidInvoice({{ $invoice->id }})" onclick="return confirm('Void this invoice?')" class="text-xs px-2 py-1 text-danger-600 border border-danger-200 rounded-lg hover:bg-danger-50">Void</button>
+                                    <button wire:click="voidInvoice({{ $invoice->id }})" onclick="return confirm('Void this invoice?')" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs px-2 py-1 text-danger-600 border border-danger-200 rounded-lg hover:bg-danger-50" wire:loading.attr="disabled" wire:target="voidInvoice">
+                <span wire:loading.remove wire:target="voidInvoice">Void</span>
+                <span wire:loading wire:target="voidInvoice" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                                 @else
-                                    <button wire:click="openNoteModal({{ $invoice->id }})" class="text-xs px-2 py-1 border border-border-default rounded-lg hover:bg-surface-hover text-text-secondary">Note</button>
+                                    <button wire:click="openNoteModal({{ $invoice->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs px-2 py-1 border border-border-default rounded-lg hover:bg-surface-hover text-text-secondary" wire:loading.attr="disabled" wire:target="openNoteModal">
+                <span wire:loading.remove wire:target="openNoteModal">Note</span>
+                <span wire:loading wire:target="openNoteModal" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                                 @endif
                             </div>
                         </td>
@@ -311,7 +384,12 @@
                         <td colspan="7" class="px-4 py-14 text-center text-text-tertiary text-sm">
                             No invoices found.
                             @if($statusFilter || $typeFilter || $search)
-                                <button wire:click="$set('statusFilter',''); $set('typeFilter',''); $set('search','')" class="ml-2 text-brand-600 underline text-xs">Clear filters</button>
+                                <button wire:click="$set('statusFilter',''); $set('typeFilter',''); $set('search','')" class="disabled:opacity-70 disabled:cursor-not-allowed relative ml-2 text-brand-600 underline text-xs" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Clear filters</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                             @endif
                         </td>
                     </tr>
@@ -332,7 +410,12 @@
                     <div class="font-mono text-sm font-bold text-text-primary">{{ $detailInvoice->reference }}</div>
                     <div class="text-xs text-text-tertiary capitalize mt-0.5">{{ str_replace('_',' ',$detailInvoice->type) }}</div>
                 </div>
-                <button wire:click="closeDetail" class="text-text-tertiary hover:text-text-secondary text-xl leading-none">&times;</button>
+                <button wire:click="closeDetail" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-text-tertiary hover:text-text-secondary text-xl leading-none" wire:loading.attr="disabled" wire:target="closeDetail">
+                <span wire:loading.remove wire:target="closeDetail">&times;</span>
+                <span wire:loading wire:target="closeDetail" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             </div>
 
             {{-- Status + total --}}
@@ -431,17 +514,47 @@
             {{-- Actions --}}
             <div class="space-y-2">
                 @if($detailInvoice->status === 'draft')
-                    <button wire:click="openEditForm({{ $detailInvoice->id }})" class="w-full py-2 border border-warning-300 text-warning-700 bg-warning-50 rounded-xl text-sm font-medium hover:bg-warning-100 transition-colors">Edit Draft</button>
+                    <button wire:click="openEditForm({{ $detailInvoice->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full py-2 border border-warning-300 text-warning-700 bg-warning-50 rounded-xl text-sm font-medium hover:bg-warning-100 transition-colors" wire:loading.attr="disabled" wire:target="openEditForm">
+                <span wire:loading.remove wire:target="openEditForm">Edit Draft</span>
+                <span wire:loading wire:target="openEditForm" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     <button wire:click="sendInvoice({{ $detailInvoice->id }})" wire:loading.attr="disabled" class="w-full py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">Send to Tenant</button>
-                    <button wire:click="deleteInvoice({{ $detailInvoice->id }})" onclick="return confirm('Delete this draft?')" class="w-full py-2 border border-danger-200 text-danger-600 rounded-xl text-sm font-medium hover:bg-danger-50 transition-colors">Delete Draft</button>
+                    <button wire:click="deleteInvoice({{ $detailInvoice->id }})" onclick="return confirm('Delete this draft?')" class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full py-2 border border-danger-200 text-danger-600 rounded-xl text-sm font-medium hover:bg-danger-50 transition-colors" wire:loading.attr="disabled" wire:target="deleteInvoice">
+                <span wire:loading.remove wire:target="deleteInvoice">Delete Draft</span>
+                <span wire:loading wire:target="deleteInvoice" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 @elseif(!in_array($detailInvoice->status, ['paid','void']))
-                    <button wire:click="openPaymentModal({{ $detailInvoice->id }})" class="w-full py-2 bg-success-600 text-white rounded-xl text-sm font-medium hover:bg-success-700 transition-colors">Record Payment</button>
+                    <button wire:click="openPaymentModal({{ $detailInvoice->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full py-2 bg-success-600 text-white rounded-xl text-sm font-medium hover:bg-success-700 transition-colors" wire:loading.attr="disabled" wire:target="openPaymentModal">
+                <span wire:loading.remove wire:target="openPaymentModal">Record Payment</span>
+                <span wire:loading wire:target="openPaymentModal" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     <button wire:click="generatePaymentLink({{ $detailInvoice->id }})" wire:loading.attr="disabled" class="w-full py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">Generate Payment Link</button>
                     <button wire:click="sendInvoice({{ $detailInvoice->id }})" wire:loading.attr="disabled" class="w-full py-2 border border-brand-300 text-brand-600 bg-brand-50 rounded-xl text-sm font-medium hover:bg-brand-100 transition-colors">Resend Invoice</button>
-                    <button wire:click="openNoteModal({{ $detailInvoice->id }})" class="w-full py-2 border border-border-default text-text-secondary rounded-xl text-sm font-medium hover:bg-surface-hover transition-colors">Add Note</button>
-                    <button wire:click="voidInvoice({{ $detailInvoice->id }})" onclick="return confirm('Void this invoice?')" class="w-full py-2 border border-danger-200 text-danger-600 rounded-xl text-sm font-medium hover:bg-danger-50 transition-colors">Void Invoice</button>
+                    <button wire:click="openNoteModal({{ $detailInvoice->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full py-2 border border-border-default text-text-secondary rounded-xl text-sm font-medium hover:bg-surface-hover transition-colors" wire:loading.attr="disabled" wire:target="openNoteModal">
+                <span wire:loading.remove wire:target="openNoteModal">Add Note</span>
+                <span wire:loading wire:target="openNoteModal" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
+                    <button wire:click="voidInvoice({{ $detailInvoice->id }})" onclick="return confirm('Void this invoice?')" class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full py-2 border border-danger-200 text-danger-600 rounded-xl text-sm font-medium hover:bg-danger-50 transition-colors" wire:loading.attr="disabled" wire:target="voidInvoice">
+                <span wire:loading.remove wire:target="voidInvoice">Void Invoice</span>
+                <span wire:loading wire:target="voidInvoice" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 @else
-                    <button wire:click="openNoteModal({{ $detailInvoice->id }})" class="w-full py-2 border border-border-default text-text-secondary rounded-xl text-sm font-medium hover:bg-surface-hover transition-colors">Add / Edit Note</button>
+                    <button wire:click="openNoteModal({{ $detailInvoice->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full py-2 border border-border-default text-text-secondary rounded-xl text-sm font-medium hover:bg-surface-hover transition-colors" wire:loading.attr="disabled" wire:target="openNoteModal">
+                <span wire:loading.remove wire:target="openNoteModal">Add / Edit Note</span>
+                <span wire:loading wire:target="openNoteModal" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 @endif
             </div>
         </div>
@@ -494,9 +607,12 @@
                         <span wire:loading wire:target="recordPayment">Saving&#8358;</span>
                     </button>
                     <button type="button" wire:click="$set('showPaymentModal', false)"
-                        class="px-4 py-2.5 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors">
-                        Cancel
-                    </button>
+                        class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2.5 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Cancel</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 </div>
             </form>
         </div>
@@ -520,7 +636,12 @@
                     <button type="submit" wire:loading.attr="disabled"
                         class="flex-1 py-2.5 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-semibold hover:bg-brand-hover transition-colors">Save Note</button>
                     <button type="button" wire:click="$set('showNoteModal', false)"
-                        class="px-4 py-2.5 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors">Cancel</button>
+                        class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2.5 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Cancel</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 </div>
             </form>
         </div>

@@ -4,10 +4,13 @@
             <h1 class="text-2xl font-bold text-text-primary">CMA Reports</h1>
             <p class="text-sm text-text-secondary mt-0.5">Generate Comparative Market Analysis reports for clients</p>
         </div>
-        <button wire:click="$toggle('showCreateForm')" class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-            New CMA Report
-        </button>
+        <button wire:click="$toggle('showCreateForm')" class="disabled:opacity-70 disabled:cursor-not-allowed relative inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors" wire:loading.attr="disabled" wire:target="$toggle">
+                <span wire:loading.remove wire:target="$toggle"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            New CMA Report</span>
+                <span wire:loading wire:target="$toggle" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
     </div>
 
     @if($showCreateForm)
@@ -61,14 +64,24 @@
                     <span class="text-text-secondary ml-2">{{ $currencySymbol }}{{ number_format($comp['sale_price']) }}</span>
                     @if($comp['sale_date']) <span class="text-text-tertiary ml-2 text-xs">{{ $comp['sale_date'] }}</span> @endif
                 </div>
-                <button wire:click="removeComparable({{ $i }})" class="text-danger-500 hover:text-danger-700 text-sm">&#8358;</button>
+                <button wire:click="removeComparable({{ $i }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-danger-500 hover:text-danger-700 text-sm" wire:loading.attr="disabled" wire:target="removeComparable">
+                <span wire:loading.remove wire:target="removeComparable">&#8358;</span>
+                <span wire:loading wire:target="removeComparable" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             </div>
             @endforeach
             <div class="grid grid-cols-2 md:grid-cols-5 gap-2 mt-2">
                 <input wire:model="comp_address" type="text" placeholder="Address *" class="md:col-span-2 rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                 <input wire:model="comp_sale_price" type="number" placeholder="Sale Price *" class="rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
                 <input wire:model="comp_sale_date" type="date" class="rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page">
-                <button type="button" wire:click="addComparable" class="px-3 py-2 bg-surface-hover border border-border-default rounded-lg text-sm text-text-secondary hover:bg-surface-card transition-colors">+ Add</button>
+                <button type="button" wire:click="addComparable" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-3 py-2 bg-surface-hover border border-border-default rounded-lg text-sm text-text-secondary hover:bg-surface-card transition-colors" wire:loading.attr="disabled" wire:target="addComparable">
+                <span wire:loading.remove wire:target="addComparable">+ Add</span>
+                <span wire:loading wire:target="addComparable" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             </div>
         </div>
 
@@ -77,7 +90,12 @@
                 <span wire:loading.remove wire:target="generate">Generate Report</span>
                 <span wire:loading wire:target="generate">Generating&#8358;</span>
             </button>
-            <button wire:click="$set('showCreateForm', false)" class="px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors">Cancel</button>
+            <button wire:click="$set('showCreateForm', false)" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Cancel</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
         </div>
     </div>
     @endif

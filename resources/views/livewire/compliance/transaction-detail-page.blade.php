@@ -84,9 +84,12 @@
             <div class="bg-surface-card rounded-2xl border border-border-default p-5">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-sm font-semibold text-text-primary">Deadlines</h3>
-                    <button wire:click="$toggle('showDeadlineForm')" class="text-xs text-brand-primary border border-brand-primary/30 rounded-lg px-2.5 py-1.5 hover:bg-brand-primary/5 transition-colors">
-                        {{ $showDeadlineForm ? 'Cancel' : 'Edit' }}
-                    </button>
+                    <button wire:click="$toggle('showDeadlineForm')" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-brand-primary border border-brand-primary/30 rounded-lg px-2.5 py-1.5 hover:bg-brand-primary/5 transition-colors" wire:loading.attr="disabled" wire:target="$toggle">
+                <span wire:loading.remove wire:target="$toggle">{{ $showDeadlineForm ? 'Cancel' : 'Edit' }}</span>
+                <span wire:loading wire:target="$toggle" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 </div>
 
                 @if($showDeadlineForm)
@@ -103,7 +106,12 @@
                         <label class="block text-xs font-medium text-text-secondary mb-1">Notes</label>
                         <textarea wire:model.defer="notes" rows="2" class="w-full rounded-lg border border-border-default bg-surface-input px-3 py-2 text-sm text-text-primary focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page resize-none"></textarea>
                     </div>
-                    <button type="submit" class="w-full py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">Save</button>
+                    <button type="submit" class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors" wire:loading.attr="disabled">
+                <span wire:loading.remove>Save</span>
+                <span wire:loading class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 </form>
                 @else
                 <dl class="space-y-2 text-sm">
@@ -154,9 +162,12 @@
             <div class="bg-surface-card rounded-2xl border border-border-default p-5">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-sm font-semibold text-text-primary">Compliance Documents</h3>
-                    <button wire:click="$toggle('showDocForm')" class="px-3 py-1.5 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg text-xs font-medium hover:bg-brand-secondary transition-colors">
-                        {{ $showDocForm ? 'Cancel' : '+ Add Document' }}
-                    </button>
+                    <button wire:click="$toggle('showDocForm')" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-3 py-1.5 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg text-xs font-medium hover:bg-brand-secondary transition-colors" wire:loading.attr="disabled" wire:target="$toggle">
+                <span wire:loading.remove wire:target="$toggle">{{ $showDocForm ? 'Cancel' : '+ Add Document' }}</span>
+                <span wire:loading wire:target="$toggle" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 </div>
 
                 @if($showDocForm)
@@ -229,8 +240,18 @@
                         <a href="{{ asset('storage/' . $doc->file_path) }}" target="_blank" class="text-xs text-brand-primary hover:text-brand-secondary font-medium">View</a>
                         @endif
                         @if($doc->status === 'uploaded' || $doc->status === 'under_review')
-                        <button wire:click="approveDocument({{ $doc->id }})" class="text-xs text-success-600 hover:text-success-700 font-medium border border-success-200 rounded-lg px-2 py-1 hover:bg-success-50 transition-colors">Approve</button>
-                        <button wire:click="rejectDocument({{ $doc->id }})" class="text-xs text-danger-500 hover:text-danger-700 font-medium border border-danger-200 rounded-lg px-2 py-1 hover:bg-danger-50 transition-colors">Reject</button>
+                        <button wire:click="approveDocument({{ $doc->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-success-600 hover:text-success-700 font-medium border border-success-200 rounded-lg px-2 py-1 hover:bg-success-50 transition-colors" wire:loading.attr="disabled" wire:target="approveDocument">
+                <span wire:loading.remove wire:target="approveDocument">Approve</span>
+                <span wire:loading wire:target="approveDocument" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
+                        <button wire:click="rejectDocument({{ $doc->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-danger-500 hover:text-danger-700 font-medium border border-danger-200 rounded-lg px-2 py-1 hover:bg-danger-50 transition-colors" wire:loading.attr="disabled" wire:target="rejectDocument">
+                <span wire:loading.remove wire:target="rejectDocument">Reject</span>
+                <span wire:loading wire:target="rejectDocument" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         @endif
                     </div>
                 </div>

@@ -73,9 +73,24 @@
                     <div>
                         <label class="block text-xs font-semibold text-slate-400 mb-1.5">Signature Style</label>
                         <div class="grid grid-cols-3 gap-2">
-                            <button type="button" wire:click="$set('signatureStyle', 'dancing')" class="px-2 py-1.5 rounded-lg border text-xs {{ $signatureStyle === 'dancing' ? 'border-blue-500 bg-blue-500/10 text-blue-400' : 'border-slate-700 bg-slate-900/30 text-slate-400' }}">Dancing</button>
-                            <button type="button" wire:click="$set('signatureStyle', 'playball')" class="px-2 py-1.5 rounded-lg border text-xs {{ $signatureStyle === 'playball' ? 'border-blue-500 bg-blue-500/10 text-blue-400' : 'border-slate-700 bg-slate-900/30 text-slate-400' }}">Playball</button>
-                            <button type="button" wire:click="$set('signatureStyle', 'reenie')" class="px-2 py-1.5 rounded-lg border text-xs {{ $signatureStyle === 'reenie' ? 'border-blue-500 bg-blue-500/10 text-blue-400' : 'border-slate-700 bg-slate-900/30 text-slate-400' }}">Reenie</button>
+                            <button type="button" wire:click="$set('signatureStyle', 'dancing')" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-2 py-1.5 rounded-lg border text-xs {{ $signatureStyle === 'dancing' ? 'border-blue-500 bg-blue-500/10 text-blue-400' : 'border-slate-700 bg-slate-900/30 text-slate-400' }}" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Dancing</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
+                            <button type="button" wire:click="$set('signatureStyle', 'playball')" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-2 py-1.5 rounded-lg border text-xs {{ $signatureStyle === 'playball' ? 'border-blue-500 bg-blue-500/10 text-blue-400' : 'border-slate-700 bg-slate-900/30 text-slate-400' }}" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Playball</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
+                            <button type="button" wire:click="$set('signatureStyle', 'reenie')" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-2 py-1.5 rounded-lg border text-xs {{ $signatureStyle === 'reenie' ? 'border-blue-500 bg-blue-500/10 text-blue-400' : 'border-slate-700 bg-slate-900/30 text-slate-400' }}" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Reenie</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         </div>
                     </div>
 
@@ -98,9 +113,12 @@
                         @error('agreed') <div class="text-xs text-red-400 mt-1">{{ $message }}</div> @enderror
                     </div>
 
-                    <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white rounded-xl text-sm font-bold tracking-wide transition-colors shadow-lg shadow-blue-600/10">
-                        Sign Document
-                    </button>
+                    <button type="submit" class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full py-2.5 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white rounded-xl text-sm font-bold tracking-wide transition-colors shadow-lg shadow-blue-600/10" wire:loading.attr="disabled">
+                <span wire:loading.remove>Sign Document</span>
+                <span wire:loading class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 </form>
             </div>
         </div>

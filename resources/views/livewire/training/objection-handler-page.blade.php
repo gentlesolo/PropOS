@@ -18,11 +18,14 @@
                 <div class="grid grid-cols-2 gap-2 mb-4">
                     @foreach(['price' => ['💰','Price'], 'timing' => ['⏰','Timing'], 'competition' => ['🏆','Competition'], 'uncertainty' => ['❓','Uncertainty']] as $cat => [$icon, $label])
                     <button wire:click="$set('objectionCategory', '{{ $cat }}')"
-                        class="p-3 rounded-xl border text-center transition-colors
-                        {{ $objectionCategory === $cat ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 border-brand-primary' : 'bg-surface-card border-border-default text-text-secondary hover:border-brand-primary/40' }}">
-                        <div class="text-lg mb-1">{{ $icon }}</div>
-                        <div class="text-xs font-bold">{{ $label }}</div>
-                    </button>
+                        class="disabled:opacity-70 disabled:cursor-not-allowed relative p-3 rounded-xl border text-center transition-colors
+                        {{ $objectionCategory === $cat ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 border-brand-primary' : 'bg-surface-card border-border-default text-text-secondary hover:border-brand-primary/40' }}" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set"><div class="text-lg mb-1">{{ $icon }}</div>
+                        <div class="text-xs font-bold">{{ $label }}</div></span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     @endforeach
                 </div>
 
@@ -85,7 +88,12 @@
                 @if($history)
                 <div class="mt-4 pt-4 border-t border-border-default/40 flex justify-between items-center">
                     <p class="text-xs text-text-secondary">{{ count($history) }} response{{ count($history) !== 1 ? 's' : '' }} in session</p>
-                    <button wire:click="clearHistory" class="text-xs text-danger-500 hover:text-danger-700 font-medium">Clear History</button>
+                    <button wire:click="clearHistory" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-danger-500 hover:text-danger-700 font-medium" wire:loading.attr="disabled" wire:target="clearHistory">
+                <span wire:loading.remove wire:target="clearHistory">Clear History</span>
+                <span wire:loading wire:target="clearHistory" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 </div>
                 @endif
             </div>

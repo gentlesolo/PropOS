@@ -8,10 +8,13 @@
     <div class="flex gap-1 mb-6 border-b border-border-default">
         @foreach(['profile' => 'My Profile', 'agency' => 'Agency', 'team' => 'Team', 'security' => 'Security'] as $tab => $label)
         <button wire:click="$set('activeTab', '{{ $tab }}')"
-            class="px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px
-            {{ $activeTab === $tab ? 'border-brand-primary text-brand-primary' : 'border-transparent text-text-secondary hover:text-text-primary' }}">
-            {{ $label }}
-        </button>
+            class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px
+            {{ $activeTab === $tab ? 'border-brand-primary text-brand-primary' : 'border-transparent text-text-secondary hover:text-text-primary' }}" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">{{ $label }}</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
         @endforeach
         <a href="{{ route('settings.email-accounts') }}"
            class="px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px border-transparent text-text-secondary hover:text-text-primary flex items-center gap-1.5">
@@ -297,8 +300,11 @@
     <div class="space-y-5">
         <div class="flex items-center justify-between">
             <h2 class="text-base font-semibold text-text-primary">Team Members</h2>
-            <button wire:click="$toggle('showInviteForm')" class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors">
-                + Invite Member
+            <button wire:click="$toggle('showInviteForm')" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors" wire:loading.attr="disabled" wire:target="$toggle">
+                <span wire:loading.remove wire:target="$toggle">+ Invite Member</span>
+                <span wire:loading wire:target="$toggle" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
             </button>
         </div>
 
@@ -325,7 +331,12 @@
                         <span wire:loading.remove wire:target="sendInvitation">Send Invitation</span>
                         <span wire:loading wire:target="sendInvitation">Sending...</span>
                     </button>
-                    <button type="button" wire:click="$set('showInviteForm', false)" class="px-4 py-2 border border-border-default text-text-secondary rounded-xl text-sm font-medium hover:bg-surface-sunken transition-colors">Cancel</button>
+                    <button type="button" wire:click="$set('showInviteForm', false)" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 border border-border-default text-text-secondary rounded-xl text-sm font-medium hover:bg-surface-sunken transition-colors" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Cancel</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 </div>
             </form>
         </div>
@@ -375,7 +386,12 @@
                     <p class="text-sm text-text-primary">{{ $invite->email }}</p>
                     <p class="text-xs text-text-secondary capitalize">{{ $invite->role }} · Invited {{ $invite->created_at->diffForHumans() }}</p>
                 </div>
-                <button wire:click="revokeInvitation({{ $invite->id }})" wire:confirm="Revoke this invitation?" class="text-xs text-danger-600 hover:text-danger-700 font-medium">Revoke</button>
+                <button wire:click="revokeInvitation({{ $invite->id }})" wire:confirm="Revoke this invitation?" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-danger-600 hover:text-danger-700 font-medium" wire:loading.attr="disabled" wire:target="revokeInvitation">
+                <span wire:loading.remove wire:target="revokeInvitation">Revoke</span>
+                <span wire:loading wire:target="revokeInvitation" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             </div>
             @endforeach
         </div>

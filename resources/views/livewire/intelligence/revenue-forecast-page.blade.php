@@ -5,8 +5,11 @@
             <p class="mt-2 text-text-secondary">Pipeline-based forecast with confidence scoring and scenario planning.</p>
         </div>
         <div class="flex items-center gap-3">
-            <button wire:click="$toggle('showScenario')" class="px-4 py-2 border border-brand-primary/40 text-brand-primary rounded-xl text-sm font-bold hover:bg-brand-primary/5 transition-colors">
-                {{ $showScenario ? 'Hide Scenario' : '?? Scenario Planner' }}
+            <button wire:click="$toggle('showScenario')" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 border border-brand-primary/40 text-brand-primary rounded-xl text-sm font-bold hover:bg-brand-primary/5 transition-colors" wire:loading.attr="disabled" wire:target="$toggle">
+                <span wire:loading.remove wire:target="$toggle">{{ $showScenario ? 'Hide Scenario' : '?? Scenario Planner' }}</span>
+                <span wire:loading wire:target="$toggle" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
             </button>
             <select wire:model="timeframe" class="bg-surface-card border border-border-default text-text-primary rounded-xl px-4 py-2 text-sm font-semibold focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page focus:border-brand-primary">
                 <option value="30_days">Next 30 Days</option>

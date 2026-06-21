@@ -64,13 +64,16 @@
         <!-- Notification Bell with Amber Dot -->
         <div class="relative" x-cloak>
             <button wire:click="toggleNotifications"
-                    class="relative p-2 rounded-md text-text-secondary hover:text-text-primary hover:bg-state-hover-bg transition-colors focus:outline-none">
-                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    class="disabled:opacity-70 disabled:cursor-not-allowed relative relative p-2 rounded-md text-text-secondary hover:text-text-primary hover:bg-state-hover-bg transition-colors focus:outline-none" wire:loading.attr="disabled" wire:target="toggleNotifications">
+                <span wire:loading.remove wire:target="toggleNotifications"><svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
                 </svg>
                 @if($unreadCount > 0)
                 <span class="absolute top-2 right-2 flex h-2 w-2 rounded-full bg-brand-accent ring-2 ring-surface-card"></span>
-                @endif
+                @endif</span>
+                <span wire:loading wire:target="toggleNotifications" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
             </button>
 
             <!-- Dropdown panel -->
@@ -89,9 +92,12 @@
                 <div class="flex items-center justify-between px-4 py-3 border-b border-border-default bg-surface-sunken">
                     <span class="text-xs font-bold text-text-primary">Notifications</span>
                     @if($unreadCount > 0)
-                    <button wire:click="toggleNotifications" class="text-[10px] font-black text-text-link hover:underline uppercase tracking-wider">
-                        Mark all read
-                    </button>
+                    <button wire:click="toggleNotifications" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-[10px] font-black text-text-link hover:underline uppercase tracking-wider" wire:loading.attr="disabled" wire:target="toggleNotifications">
+                <span wire:loading.remove wire:target="toggleNotifications">Mark all read</span>
+                <span wire:loading wire:target="toggleNotifications" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     @endif
                 </div>
 
@@ -128,11 +134,14 @@
 
                         <!-- Delete -->
                         <button wire:click="deleteNotification({{ $notif->id }})"
-                                class="shrink-0 self-start text-text-secondary hover:text-color-danger-600 transition-colors mt-0.5">
-                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                class="disabled:opacity-70 disabled:cursor-not-allowed relative shrink-0 self-start text-text-secondary hover:text-color-danger-600 transition-colors mt-0.5" wire:loading.attr="disabled" wire:target="deleteNotification">
+                <span wire:loading.remove wire:target="deleteNotification"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-                            </svg>
-                        </button>
+                            </svg></span>
+                <span wire:loading wire:target="deleteNotification" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     </div>
                     @empty
                     <div class="px-4 py-8 text-center bg-surface-sunken">
@@ -171,10 +180,13 @@
         <!-- Logout button -->
         <form method="POST" action="{{ route('logout') }}" class="m-0">
             @csrf
-            <button type="submit" title="Log Out" class="p-2 rounded-md text-text-secondary hover:text-color-danger-600 hover:bg-state-hover-bg transition-colors focus:outline-none flex items-center">
-                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <button type="submit" title="Log Out" class="disabled:opacity-70 disabled:cursor-not-allowed relative p-2 rounded-md text-text-secondary hover:text-color-danger-600 hover:bg-state-hover-bg transition-colors focus:outline-none flex items-center" wire:loading.attr="disabled">
+                <span wire:loading.remove><svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
-                </svg>
+                </svg></span>
+                <span wire:loading class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
             </button>
         </form>
     </div>

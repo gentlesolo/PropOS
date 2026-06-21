@@ -22,15 +22,21 @@
 
                 <!-- Month Navigator -->
                 <div class="px-6 py-4 border-b border-border-default flex items-center justify-between bg-surface-sunken/30">
-                    <button wire:click="previousMonth" class="h-8 w-8 rounded-full bg-surface-card border border-border-default flex items-center justify-center hover:bg-surface-sunken transition-colors">
-                        <svg class="h-4 w-4 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-                    </button>
+                    <button wire:click="previousMonth" class="disabled:opacity-70 disabled:cursor-not-allowed relative h-8 w-8 rounded-full bg-surface-card border border-border-default flex items-center justify-center hover:bg-surface-sunken transition-colors" wire:loading.attr="disabled" wire:target="previousMonth">
+                <span wire:loading.remove wire:target="previousMonth"><svg class="h-4 w-4 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></span>
+                <span wire:loading wire:target="previousMonth" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     <h2 class="text-base font-bold text-text-primary">
                         {{ \Carbon\Carbon::create($year, $month)->format('F Y') }}
                     </h2>
-                    <button wire:click="nextMonth" class="h-8 w-8 rounded-full bg-surface-card border border-border-default flex items-center justify-center hover:bg-surface-sunken transition-colors">
-                        <svg class="h-4 w-4 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                    </button>
+                    <button wire:click="nextMonth" class="disabled:opacity-70 disabled:cursor-not-allowed relative h-8 w-8 rounded-full bg-surface-card border border-border-default flex items-center justify-center hover:bg-surface-sunken transition-colors" wire:loading.attr="disabled" wire:target="nextMonth">
+                <span wire:loading.remove wire:target="nextMonth"><svg class="h-4 w-4 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></span>
+                <span wire:loading wire:target="nextMonth" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 </div>
 
                 <!-- Day Headers -->
@@ -56,8 +62,9 @@
                         <div class="space-y-0.5">
                             @foreach($dayData['contents']->take(3) as $content)
                             <button wire:click="selectContent({{ $content->id }})"
-                                class="w-full text-left px-1.5 py-0.5 rounded text-[9px] font-bold truncate transition-colors
-                                @if($selectedContentId === $content->id) ring-1 ring-brand-primary @endif
+                                class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full text-left px-1.5 py-0.5 rounded text-[9px] font-bold truncate transition-colors
+                                @if($selectedContentId === $content- wire:loading.attr="disabled" wire:target="selectContent">
+                <span wire:loading.remove wire:target="selectContent">id) ring-1 ring-brand-primary @endif
                                 @switch($content->channel)
                                     @case('instagram') bg-brand-primary/10 text-brand-primary @break
                                     @case('facebook') bg-brand-secondary/10 text-brand-secondary @break
@@ -65,8 +72,11 @@
                                     @case('email') bg-success-100 text-success-700 @break
                                     @default bg-surface-sunken text-text-secondary
                                 @endswitch">
-                                {{ strtoupper(substr($content->channel, 0, 2)) }} · {{ $content->campaign?->name }}
-                            </button>
+                                {{ strtoupper(substr($content->channel, 0, 2)) }} · {{ $content->campaign?->name }}</span>
+                <span wire:loading wire:target="selectContent" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                             @endforeach
                             @if($dayData['contents']->count() > 3)
                             <div class="text-[9px] text-text-secondary px-1">+{{ $dayData['contents']->count() - 3 }} more</div>
@@ -96,9 +106,12 @@
                 <div>
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-sm font-bold text-text-primary">Content Preview</h3>
-                        <button wire:click="$set('selectedContentId', null)" class="text-text-secondary hover:text-text-primary">
-                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                        </button>
+                        <button wire:click="$set('selectedContentId', null)" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-text-secondary hover:text-text-primary" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     </div>
                     <div class="space-y-3 text-sm">
                         <div>

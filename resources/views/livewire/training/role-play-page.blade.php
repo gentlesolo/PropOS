@@ -40,9 +40,12 @@
 
                     <div class="pt-3 border-t border-border-default/40">
                         @if(!$isStarted && !$feedback)
-                        <button wire:click="startSimulation" class="w-full bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 py-2.5 rounded-xl font-bold text-sm hover:bg-brand-secondary transition-colors hover-spring active:scale-95 shadow-md">
-                            Start Simulation
-                        </button>
+                        <button wire:click="startSimulation" class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 py-2.5 rounded-xl font-bold text-sm hover:bg-brand-secondary transition-colors hover-spring active:scale-95 shadow-md" wire:loading.attr="disabled" wire:target="startSimulation">
+                <span wire:loading.remove wire:target="startSimulation">Start Simulation</span>
+                <span wire:loading wire:target="startSimulation" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         @elseif($isStarted)
                         <button wire:click="endSimulation" class="w-full bg-danger-600 text-white py-2.5 rounded-xl font-bold text-sm hover:bg-danger-700 transition-colors hover-spring active:scale-95 shadow-md">
                             <span wire:loading.remove wire:target="endSimulation">End & Get AI Feedback</span>
@@ -52,9 +55,12 @@
                             </span>
                         </button>
                         @elseif($feedback)
-                        <button wire:click="startSimulation" class="w-full bg-surface-raised border border-border-default text-text-primary py-2.5 rounded-xl font-bold text-sm hover:bg-surface-sunken transition-colors">
-                            Try Again
-                        </button>
+                        <button wire:click="startSimulation" class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full bg-surface-raised border border-border-default text-text-primary py-2.5 rounded-xl font-bold text-sm hover:bg-surface-sunken transition-colors" wire:loading.attr="disabled" wire:target="startSimulation">
+                <span wire:loading.remove wire:target="startSimulation">Try Again</span>
+                <span wire:loading wire:target="startSimulation" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         @endif
                     </div>
                 </div>
@@ -143,10 +149,13 @@
                             class="flex-1 bg-surface-card border border-border-default rounded-xl px-4 py-2.5 text-sm text-text-primary focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-page/20 focus:border-brand-primary disabled:opacity-50"
                             {{ !$isStarted ? 'disabled' : '' }}>
                         <button type="submit"
-                            class="h-10 w-10 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl flex items-center justify-center hover:bg-brand-secondary transition-colors disabled:opacity-50"
-                            {{ !$isStarted ? 'disabled' : '' }}>
-                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-                        </button>
+                            class="disabled:opacity-70 disabled:cursor-not-allowed relative h-10 w-10 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl flex items-center justify-center hover:bg-brand-secondary transition-colors disabled:opacity-50"
+                            {{ !$isStarted ? 'disabled' : '' }} wire:loading.attr="disabled">
+                <span wire:loading.remove><svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg></span>
+                <span wire:loading class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     </form>
                 </div>
             </div>

@@ -50,11 +50,14 @@
             
             <button wire:click="openCreateForm" 
                     @click="mobileListOpen = false"
-                    class="w-full py-2.5 bg-brand-accent hover:bg-brand-accent/90 active:scale-[0.98] text-black font-semibold rounded-md shadow-[0_2px_8px_rgba(245,158,11,0.2)] transition-all duration-150 text-xs flex items-center justify-center gap-1.5 uppercase tracking-wider">
-                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full py-2.5 bg-brand-accent hover:bg-brand-accent/90 active:scale-[0.98] text-black font-semibold rounded-md shadow-[0_2px_8px_rgba(245,158,11,0.2)] transition-all duration-150 text-xs flex items-center justify-center gap-1.5 uppercase tracking-wider" wire:loading.attr="disabled" wire:target="openCreateForm">
+                <span wire:loading.remove wire:target="openCreateForm"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
                 </svg>
-                New Offer
+                New Offer</span>
+                <span wire:loading wire:target="openCreateForm" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
             </button>
             
             {{-- Search & Filters --}}
@@ -261,8 +264,18 @@
                     </div>
 
                     <div class="flex gap-3 pt-2">
-                        <button type="submit" class="px-5 py-2 bg-brand-primary hover:bg-brand-primary/90 text-white text-xs font-semibold rounded-md shadow-md transition-all">Submit Access Offer</button>
-                        <button type="button" wire:click="$set('showCreateForm', false)" class="px-4 py-2 border border-border-strong rounded-md text-xs text-text-secondary hover:bg-state-hover-bg transition-all">Cancel</button>
+                        <button type="submit" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-5 py-2 bg-brand-primary hover:bg-brand-primary/90 text-white text-xs font-semibold rounded-md shadow-md transition-all" wire:loading.attr="disabled">
+                <span wire:loading.remove>Submit Access Offer</span>
+                <span wire:loading class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
+                        <button type="button" wire:click="$set('showCreateForm', false)" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 border border-border-strong rounded-md text-xs text-text-secondary hover:bg-state-hover-bg transition-all" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Cancel</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     </div>
                 </form>
             </div>
@@ -315,8 +328,18 @@
                     </div>
 
                     <div class="flex gap-3 pt-2">
-                        <button type="submit" class="px-5 py-2 bg-brand-accent hover:bg-brand-accent/90 text-black text-xs font-semibold rounded-md shadow-md transition-all">Save Adjustments</button>
-                        <button type="button" wire:click="cancelEdit" class="px-4 py-2 border border-border-strong rounded-md text-xs text-text-secondary hover:bg-state-hover-bg transition-all">Cancel</button>
+                        <button type="submit" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-5 py-2 bg-brand-accent hover:bg-brand-accent/90 text-black text-xs font-semibold rounded-md shadow-md transition-all" wire:loading.attr="disabled">
+                <span wire:loading.remove>Save Adjustments</span>
+                <span wire:loading class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
+                        <button type="button" wire:click="cancelEdit" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 border border-border-strong rounded-md text-xs text-text-secondary hover:bg-state-hover-bg transition-all" wire:loading.attr="disabled" wire:target="cancelEdit">
+                <span wire:loading.remove wire:target="cancelEdit">Cancel</span>
+                <span wire:loading wire:target="cancelEdit" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     </div>
                 </form>
             </div>
@@ -335,9 +358,12 @@
                                 </h2>
                                 <p class="text-xs text-text-secondary mt-0.5">Comparing active offers for {{ $detailOffer->listing?->property?->address ?? 'Selected Property' }}</p>
                             </div>
-                            <button wire:click="$set('compareMode', false)" class="h-8 px-3 border border-border-strong hover:bg-state-hover-bg rounded-md text-xs font-semibold text-text-secondary hover:text-text-primary transition-all">
-                                Back to Detail
-                            </button>
+                            <button wire:click="$set('compareMode', false)" class="disabled:opacity-70 disabled:cursor-not-allowed relative h-8 px-3 border border-border-strong hover:bg-state-hover-bg rounded-md text-xs font-semibold text-text-secondary hover:text-text-primary transition-all" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Back to Detail</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         </div>
 
                         @php
@@ -507,10 +533,13 @@
                         </div>
                         
                         @if($offersCount > 1)
-                            <button wire:click="$set('compareMode', true)" class="mt-1 inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-brand-primary/10 border border-border-focus/25 text-[10px] font-bold uppercase tracking-wider text-brand-primary hover:bg-brand-primary/20 transition-all">
-                                <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-                                Compare {{ $offersCount }} Offers
-                            </button>
+                            <button wire:click="$set('compareMode', true)" class="disabled:opacity-70 disabled:cursor-not-allowed relative mt-1 inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-brand-primary/10 border border-border-focus/25 text-[10px] font-bold uppercase tracking-wider text-brand-primary hover:bg-brand-primary/20 transition-all" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set"><svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                                Compare {{ $offersCount }} Offers</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         @endif
                     </div>
                 </div>
@@ -637,35 +666,59 @@
                 {{-- Action Buttons --}}
                 <div class="flex flex-wrap gap-3 items-center">
                     @if($detailOffer->status === 'pending')
-                        <button wire:click="acceptOffer({{ $detailOffer->id }})" class="h-10 px-5 bg-brand-primary hover:bg-brand-primary/90 text-white font-semibold rounded-md text-xs flex items-center justify-center gap-1.5 transition-all shadow-[0_2px_8px_rgba(16,185,129,0.2)]">
-                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-                            Accept Offer
-                        </button>
-                        <button wire:click="openCounterForm({{ $detailOffer->id }})" class="h-10 px-5 bg-brand-accent hover:bg-brand-accent/90 text-black font-semibold rounded-md text-xs flex items-center justify-center gap-1.5 transition-all shadow-[0_2px_8px_rgba(245,158,11,0.2)]">
-                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 7.5L12 10.5L15.75 7.5M12 10.5V16.5"/></svg>
-                            Counter-Offer
-                        </button>
-                        <button wire:click="rejectOffer({{ $detailOffer->id }})" class="h-10 px-5 border border-[#F43F5E] text-color-danger-500 hover:bg-color-danger-500/10 font-semibold rounded-md text-xs transition-all">
-                            Decline
-                        </button>
-                        <button wire:click="openEditForm({{ $detailOffer->id }})" class="h-10 px-4 border border-border-strong text-text-secondary hover:text-text-primary hover:bg-state-hover-bg font-semibold rounded-md text-xs transition-all">
-                            Edit Terms
-                        </button>
+                        <button wire:click="acceptOffer({{ $detailOffer->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative h-10 px-5 bg-brand-primary hover:bg-brand-primary/90 text-white font-semibold rounded-md text-xs flex items-center justify-center gap-1.5 transition-all shadow-[0_2px_8px_rgba(16,185,129,0.2)]" wire:loading.attr="disabled" wire:target="acceptOffer">
+                <span wire:loading.remove wire:target="acceptOffer"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                            Accept Offer</span>
+                <span wire:loading wire:target="acceptOffer" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
+                        <button wire:click="openCounterForm({{ $detailOffer->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative h-10 px-5 bg-brand-accent hover:bg-brand-accent/90 text-black font-semibold rounded-md text-xs flex items-center justify-center gap-1.5 transition-all shadow-[0_2px_8px_rgba(245,158,11,0.2)]" wire:loading.attr="disabled" wire:target="openCounterForm">
+                <span wire:loading.remove wire:target="openCounterForm"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 7.5L12 10.5L15.75 7.5M12 10.5V16.5"/></svg>
+                            Counter-Offer</span>
+                <span wire:loading wire:target="openCounterForm" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
+                        <button wire:click="rejectOffer({{ $detailOffer->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative h-10 px-5 border border-[#F43F5E] text-color-danger-500 hover:bg-color-danger-500/10 font-semibold rounded-md text-xs transition-all" wire:loading.attr="disabled" wire:target="rejectOffer">
+                <span wire:loading.remove wire:target="rejectOffer">Decline</span>
+                <span wire:loading wire:target="rejectOffer" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
+                        <button wire:click="openEditForm({{ $detailOffer->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative h-10 px-4 border border-border-strong text-text-secondary hover:text-text-primary hover:bg-state-hover-bg font-semibold rounded-md text-xs transition-all" wire:loading.attr="disabled" wire:target="openEditForm">
+                <span wire:loading.remove wire:target="openEditForm">Edit Terms</span>
+                <span wire:loading wire:target="openEditForm" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     @elseif($detailOffer->status === 'countered')
-                        <button wire:click="acceptOffer({{ $detailOffer->id }})" class="h-10 px-5 bg-brand-primary hover:bg-brand-primary/90 text-white font-semibold rounded-md text-xs flex items-center justify-center gap-1.5 transition-all">
-                            Accept Counter
-                        </button>
-                        <button wire:click="openCounterForm({{ $detailOffer->id }})" class="h-10 px-5 bg-brand-accent hover:bg-brand-accent/90 text-black font-semibold rounded-md text-xs flex items-center justify-center gap-1.5 transition-all">
-                            Re-Counter
-                        </button>
-                        <button wire:click="rejectOffer({{ $detailOffer->id }})" class="h-10 px-5 border border-[#F43F5E] text-color-danger-500 hover:bg-color-danger-500/10 font-semibold rounded-md text-xs transition-all">
-                            Decline
-                        </button>
+                        <button wire:click="acceptOffer({{ $detailOffer->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative h-10 px-5 bg-brand-primary hover:bg-brand-primary/90 text-white font-semibold rounded-md text-xs flex items-center justify-center gap-1.5 transition-all" wire:loading.attr="disabled" wire:target="acceptOffer">
+                <span wire:loading.remove wire:target="acceptOffer">Accept Counter</span>
+                <span wire:loading wire:target="acceptOffer" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
+                        <button wire:click="openCounterForm({{ $detailOffer->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative h-10 px-5 bg-brand-accent hover:bg-brand-accent/90 text-black font-semibold rounded-md text-xs flex items-center justify-center gap-1.5 transition-all" wire:loading.attr="disabled" wire:target="openCounterForm">
+                <span wire:loading.remove wire:target="openCounterForm">Re-Counter</span>
+                <span wire:loading wire:target="openCounterForm" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
+                        <button wire:click="rejectOffer({{ $detailOffer->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative h-10 px-5 border border-[#F43F5E] text-color-danger-500 hover:bg-color-danger-500/10 font-semibold rounded-md text-xs transition-all" wire:loading.attr="disabled" wire:target="rejectOffer">
+                <span wire:loading.remove wire:target="rejectOffer">Decline</span>
+                <span wire:loading wire:target="rejectOffer" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     @else
                         @if(in_array($detailOffer->status, ['pending', 'expired', 'withdrawn', 'rejected']))
-                            <button wire:click="deleteOffer({{ $detailOffer->id }})" onclick="return confirm('Delete this offer record?')" class="h-10 px-5 border border-[#F43F5E] text-color-danger-500 hover:bg-color-danger-500/10 font-semibold rounded-md text-xs transition-all">
-                                Delete Record
-                            </button>
+                            <button wire:click="deleteOffer({{ $detailOffer->id }})" onclick="return confirm('Delete this offer record?')" class="disabled:opacity-70 disabled:cursor-not-allowed relative h-10 px-5 border border-[#F43F5E] text-color-danger-500 hover:bg-color-danger-500/10 font-semibold rounded-md text-xs transition-all" wire:loading.attr="disabled" wire:target="deleteOffer">
+                <span wire:loading.remove wire:target="deleteOffer">Delete Record</span>
+                <span wire:loading wire:target="deleteOffer" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         @endif
                     @endif
                 </div>
@@ -675,7 +728,12 @@
                     <div class="mt-6 p-5 border border-[#F59E0B]/20 bg-brand-accent/5 rounded-lg space-y-4">
                         <div class="flex items-center justify-between">
                             <h4 class="text-xs font-bold text-color-warning-500 uppercase tracking-wider">Propose Counter-Offer Terms</h4>
-                            <button wire:click="$set('showCounterForm', false)" class="text-text-secondary hover:text-text-primary text-lg leading-none">&times;</button>
+                            <button wire:click="$set('showCounterForm', false)" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-text-secondary hover:text-text-primary text-lg leading-none" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">&times;</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         </div>
 
                         <form wire:submit.prevent="submitCounter" class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -699,8 +757,18 @@
                             </div>
 
                             <div class="md:col-span-2 flex gap-3">
-                                <button type="submit" class="px-5 py-2 bg-brand-accent hover:bg-brand-accent/90 text-black text-xs font-bold rounded-md shadow-md transition-all">Send Counter-Offer</button>
-                                <button type="button" wire:click="$set('showCounterForm', false)" class="px-4 py-2 border border-border-strong rounded-md text-xs text-text-secondary hover:bg-state-hover-bg transition-all">Cancel</button>
+                                <button type="submit" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-5 py-2 bg-brand-accent hover:bg-brand-accent/90 text-black text-xs font-bold rounded-md shadow-md transition-all" wire:loading.attr="disabled">
+                <span wire:loading.remove>Send Counter-Offer</span>
+                <span wire:loading class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
+                                <button type="button" wire:click="$set('showCounterForm', false)" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 border border-border-strong rounded-md text-xs text-text-secondary hover:bg-state-hover-bg transition-all" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Cancel</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                             </div>
                         </form>
                     </div>

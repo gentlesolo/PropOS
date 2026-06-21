@@ -22,10 +22,13 @@
             <p class="text-sm text-text-secondary mt-0.5">Track all tenants, FICA documents, leases and maintenance</p>
         </div>
         <button wire:click="openCreateForm"
-            class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-            Add Tenant
-        </button>
+            class="disabled:opacity-70 disabled:cursor-not-allowed relative inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors" wire:loading.attr="disabled" wire:target="openCreateForm">
+                <span wire:loading.remove wire:target="openCreateForm"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Add Tenant</span>
+                <span wire:loading wire:target="openCreateForm" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
     </div>
 
     {{-- Stats --}}
@@ -43,7 +46,12 @@
     <div class="bg-surface-card rounded-2xl border border-brand-200 p-5 mb-6">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-base font-semibold text-text-primary">Add Tenant Profile</h2>
-            <button wire:click="$set('showCreateForm', false)" class="text-text-tertiary hover:text-text-secondary text-xl leading-none">&times;</button>
+            <button wire:click="$set('showCreateForm', false)" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-text-tertiary hover:text-text-secondary text-xl leading-none" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">&times;</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
         </div>
         <form wire:submit.prevent="createTenant" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -87,7 +95,12 @@
             </div>
             <div class="md:col-span-2 flex gap-3 pt-2">
                 <button type="submit" wire:loading.attr="disabled" class="px-5 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-medium hover:bg-brand-hover transition-colors">Save Tenant</button>
-                <button type="button" wire:click="$set('showCreateForm', false)" class="px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors">Cancel</button>
+                <button type="button" wire:click="$set('showCreateForm', false)" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Cancel</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             </div>
         </form>
     </div>
@@ -98,7 +111,12 @@
     <div class="bg-surface-card rounded-2xl border border-warning-200 p-5 mb-6">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-base font-semibold text-text-primary">Edit Tenant Profile</h2>
-            <button wire:click="cancelEdit" class="text-text-tertiary hover:text-text-secondary text-xl leading-none">&times;</button>
+            <button wire:click="cancelEdit" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-text-tertiary hover:text-text-secondary text-xl leading-none" wire:loading.attr="disabled" wire:target="cancelEdit">
+                <span wire:loading.remove wire:target="cancelEdit">&times;</span>
+                <span wire:loading wire:target="cancelEdit" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
         </div>
         <form wire:submit.prevent="saveEdit" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -134,7 +152,12 @@
             </div>
             <div class="md:col-span-2 flex gap-3">
                 <button type="submit" wire:loading.attr="disabled" class="px-5 py-2 bg-warning-600 text-white rounded-xl text-sm font-medium hover:bg-warning-700 transition-colors">Save Changes</button>
-                <button type="button" wire:click="cancelEdit" class="px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors">Cancel</button>
+                <button type="button" wire:click="cancelEdit" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors" wire:loading.attr="disabled" wire:target="cancelEdit">
+                <span wire:loading.remove wire:target="cancelEdit">Cancel</span>
+                <span wire:loading wire:target="cancelEdit" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             </div>
         </form>
     </div>
@@ -203,16 +226,31 @@
                             <td class="px-4 py-3 text-right" wire:click.stop>
                                 <div class="flex gap-1 justify-end">
                                     <button wire:click="openEditForm({{ $tenant->id }})"
-                                        class="text-xs px-2 py-1 border border-border-default text-text-secondary rounded-lg hover:bg-surface-hover">Edit</button>
+                                        class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs px-2 py-1 border border-border-default text-text-secondary rounded-lg hover:bg-surface-hover" wire:loading.attr="disabled" wire:target="openEditForm">
+                <span wire:loading.remove wire:target="openEditForm">Edit</span>
+                <span wire:loading wire:target="openEditForm" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                                     @if($tenant->status !== 'blacklisted')
                                     <button wire:click="blacklistTenant({{ $tenant->id }})"
-                                        onclick="return confirm('Blacklist {{ addslashes($tenant->contact?->full_name ?? 'tenant') }}?')"
-                                        class="text-xs px-2 py-1 text-danger-600 border border-danger-200 rounded-lg hover:bg-danger-50">Block</button>
+                                        onclick="return confirm('Blacklist {{ addslashes($tenant- wire:loading.attr="disabled" wire:target="blacklistTenant">
+                <span wire:loading.remove wire:target="blacklistTenant">contact?->full_name ?? 'tenant') }}?')"
+                                        class="text-xs px-2 py-1 text-danger-600 border border-danger-200 rounded-lg hover:bg-danger-50">Block</span>
+                <span wire:loading wire:target="blacklistTenant" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                                     @endif
                                     @if(!$tenant->activeLease)
                                     <button wire:click="deleteTenant({{ $tenant->id }})"
                                         onclick="return confirm('Delete this tenant record?')"
-                                        class="text-xs px-2 py-1 text-danger-600 border border-danger-200 rounded-lg hover:bg-danger-50">Del</button>
+                                        class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs px-2 py-1 text-danger-600 border border-danger-200 rounded-lg hover:bg-danger-50" wire:loading.attr="disabled" wire:target="deleteTenant">
+                <span wire:loading.remove wire:target="deleteTenant">Del</span>
+                <span wire:loading wire:target="deleteTenant" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                                     @endif
                                 </div>
                             </td>
@@ -222,7 +260,12 @@
                             <td colspan="6" class="px-4 py-12 text-center text-text-tertiary text-sm">
                                 No tenants found.
                                 @if($search || $statusFilter)
-                                <button wire:click="$set('search',''); $set('statusFilter','')" class="ml-2 text-brand-600 underline text-xs">Clear filters</button>
+                                <button wire:click="$set('search',''); $set('statusFilter','')" class="disabled:opacity-70 disabled:cursor-not-allowed relative ml-2 text-brand-600 underline text-xs" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Clear filters</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                                 @endif
                             </td>
                         </tr>
@@ -246,7 +289,12 @@
                             <p class="text-xs text-text-secondary mt-0.5">{{ $selectedTenant->contact?->email }}</p>
                             <p class="text-xs text-text-tertiary">{{ $selectedTenant->contact?->phone }}</p>
                         </div>
-                        <button wire:click="closeTenant" class="text-text-tertiary hover:text-text-secondary text-xl leading-none">&times;</button>
+                        <button wire:click="closeTenant" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-text-tertiary hover:text-text-secondary text-xl leading-none" wire:loading.attr="disabled" wire:target="closeTenant">
+                <span wire:loading.remove wire:target="closeTenant">&times;</span>
+                <span wire:loading wire:target="closeTenant" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     </div>
                     <div class="flex gap-1 flex-wrap">
                         <button wire:click="sendPortalLink" wire:loading.attr="disabled"
@@ -259,24 +307,33 @@
                             Copy Link
                         </button>
                         <button wire:click="openEditForm({{ $selectedTenant->id }})"
-                            class="text-xs px-2.5 py-1.5 border border-border-default text-text-secondary rounded-lg hover:bg-surface-hover">
-                            Edit Profile
-                        </button>
+                            class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs px-2.5 py-1.5 border border-border-default text-text-secondary rounded-lg hover:bg-surface-hover" wire:loading.attr="disabled" wire:target="openEditForm">
+                <span wire:loading.remove wire:target="openEditForm">Edit Profile</span>
+                <span wire:loading wire:target="openEditForm" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         @if(!$selectedTenant->activeLease)
                         <button wire:click="deleteTenant({{ $selectedTenant->id }})"
                             onclick="return confirm('Delete this tenant?')"
-                            class="text-xs px-2.5 py-1.5 text-danger-600 border border-danger-200 rounded-lg hover:bg-danger-50">
-                            Delete
-                        </button>
+                            class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs px-2.5 py-1.5 text-danger-600 border border-danger-200 rounded-lg hover:bg-danger-50" wire:loading.attr="disabled" wire:target="deleteTenant">
+                <span wire:loading.remove wire:target="deleteTenant">Delete</span>
+                <span wire:loading wire:target="deleteTenant" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         @endif
                     </div>
                     {{-- Tab bar --}}
                     <div class="flex gap-1 mt-3 border-t border-border-default pt-3">
                         @foreach(['overview'=>'Overview','payments'=>'Payments','fica'=>'FICA','maintenance'=>'Maintenance'] as $tab => $label)
                         <button wire:click="$set('detailTab','{{ $tab }}')"
-                            class="px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors {{ $detailTab === $tab ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10' : 'text-text-secondary hover:bg-surface-hover' }}">
-                            {{ $label }}
-                        </button>
+                            class="disabled:opacity-70 disabled:cursor-not-allowed relative px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors {{ $detailTab === $tab ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10' : 'text-text-secondary hover:bg-surface-hover' }}" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">{{ $label }}</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         @endforeach
                     </div>
                 </div>
@@ -387,7 +444,12 @@
                     <div class="flex items-center justify-between mb-3">
                         <p class="text-xs font-semibold text-text-secondary uppercase tracking-wider">Requests</p>
                         <button wire:click="$toggle('showMaintenanceForm')"
-                            class="text-xs px-2.5 py-1 bg-brand-50 text-brand-700 border border-brand-200 rounded-lg hover:bg-brand-100">+ New</button>
+                            class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs px-2.5 py-1 bg-brand-50 text-brand-700 border border-brand-200 rounded-lg hover:bg-brand-100" wire:loading.attr="disabled" wire:target="$toggle">
+                <span wire:loading.remove wire:target="$toggle">+ New</span>
+                <span wire:loading wire:target="$toggle" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     </div>
 
                     @if($showMaintenanceForm)
@@ -416,7 +478,12 @@
                             <button type="submit" wire:loading.attr="disabled"
                                 class="flex-1 py-1.5 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-lg text-xs font-medium hover:bg-brand-hover">Submit</button>
                             <button type="button" wire:click="$set('showMaintenanceForm',false)"
-                                class="px-3 py-1.5 border border-border-default rounded-lg text-xs text-text-secondary hover:bg-surface-hover">Cancel</button>
+                                class="disabled:opacity-70 disabled:cursor-not-allowed relative px-3 py-1.5 border border-border-default rounded-lg text-xs text-text-secondary hover:bg-surface-hover" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Cancel</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         </div>
                     </form>
                     @endif
@@ -440,13 +507,28 @@
                                 <div class="flex gap-1">
                                     @if($req->status === 'open')
                                     <button wire:click="updateMaintenanceStatus({{ $req->id }}, 'in_progress')"
-                                        class="text-xs px-2 py-0.5 bg-brand-50 text-brand-600 border border-brand-200 rounded-lg hover:bg-brand-100">Start</button>
+                                        class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs px-2 py-0.5 bg-brand-50 text-brand-600 border border-brand-200 rounded-lg hover:bg-brand-100" wire:loading.attr="disabled" wire:target="updateMaintenanceStatus">
+                <span wire:loading.remove wire:target="updateMaintenanceStatus">Start</span>
+                <span wire:loading wire:target="updateMaintenanceStatus" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                                     @elseif($req->status === 'in_progress')
                                     <button wire:click="updateMaintenanceStatus({{ $req->id }}, 'resolved')"
-                                        class="text-xs px-2 py-0.5 bg-success-50 text-success-700 border border-success-200 rounded-lg hover:bg-success-100">Resolve</button>
+                                        class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs px-2 py-0.5 bg-success-50 text-success-700 border border-success-200 rounded-lg hover:bg-success-100" wire:loading.attr="disabled" wire:target="updateMaintenanceStatus">
+                <span wire:loading.remove wire:target="updateMaintenanceStatus">Resolve</span>
+                <span wire:loading wire:target="updateMaintenanceStatus" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                                     @elseif($req->status === 'resolved')
                                     <button wire:click="updateMaintenanceStatus({{ $req->id }}, 'closed')"
-                                        class="text-xs px-2 py-0.5 border border-border-default text-text-secondary rounded-lg hover:bg-surface-hover">Close</button>
+                                        class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs px-2 py-0.5 border border-border-default text-text-secondary rounded-lg hover:bg-surface-hover" wire:loading.attr="disabled" wire:target="updateMaintenanceStatus">
+                <span wire:loading.remove wire:target="updateMaintenanceStatus">Close</span>
+                <span wire:loading wire:target="updateMaintenanceStatus" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                                     @endif
                                     <span class="text-xs px-2 py-0.5 capitalize text-text-tertiary">{{ str_replace('_',' ',$req->status) }}</span>
                                 </div>

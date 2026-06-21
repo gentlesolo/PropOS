@@ -52,11 +52,21 @@
     {{-- Date Navigation --}}
     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
         <div class="flex items-center justify-between mb-4">
-            <button wire:click="previousDay" class="p-2 rounded-lg hover:bg-gray-100 text-gray-600">&#8592;</button>
+            <button wire:click="previousDay" class="disabled:opacity-70 disabled:cursor-not-allowed relative p-2 rounded-lg hover:bg-gray-100 text-gray-600" wire:loading.attr="disabled" wire:target="previousDay">
+                <span wire:loading.remove wire:target="previousDay">&#8592;</span>
+                <span wire:loading wire:target="previousDay" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             <span class="font-semibold text-gray-800">
                 {{ \Carbon\Carbon::parse($selectedDate)->format('l, F j, Y') }}
             </span>
-            <button wire:click="nextDay" class="p-2 rounded-lg hover:bg-gray-100 text-gray-600">&#8594;</button>
+            <button wire:click="nextDay" class="disabled:opacity-70 disabled:cursor-not-allowed relative p-2 rounded-lg hover:bg-gray-100 text-gray-600" wire:loading.attr="disabled" wire:target="nextDay">
+                <span wire:loading.remove wire:target="nextDay">&#8594;</span>
+                <span wire:loading wire:target="nextDay" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
         </div>
 
         {{-- Slots --}}
@@ -66,11 +76,14 @@
         <div class="grid grid-cols-3 gap-2">
             @foreach($availableSlots as $slot)
             <button wire:click="selectSlot('{{ $slot }}')"
-                    class="py-2 rounded-lg text-sm font-medium border transition
+                    class="disabled:opacity-70 disabled:cursor-not-allowed relative py-2 rounded-lg text-sm font-medium border transition
                         {{ $selectedSlot === $slot
                             ? 'bg-blue-600 text-white border-blue-600'
-                            : 'bg-white text-gray-700 border-gray-300 hover:border-blue-400' }}">
-                {{ \Carbon\Carbon::parse($selectedDate . ' ' . $slot)->format('g:ia') }}
+                            : 'bg-white text-gray-700 border-gray-300 hover:border-blue-400' }}" wire:loading.attr="disabled" wire:target="selectSlot">
+                <span wire:loading.remove wire:target="selectSlot">{{ \Carbon\Carbon::parse($selectedDate . ' ' . $slot)->format('g:ia') }}</span>
+                <span wire:loading wire:target="selectSlot" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
             </button>
             @endforeach
         </div>

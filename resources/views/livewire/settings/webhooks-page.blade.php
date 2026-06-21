@@ -7,9 +7,12 @@
         </div>
         @can('agency.manage')
         <button wire:click="$set('showForm', true)"
-                class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700">
-            + Add Endpoint
-        </button>
+                class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">+ Add Endpoint</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
         @endcan
     </div>
 
@@ -23,7 +26,12 @@
             <button onclick="navigator.clipboard.writeText('{{ $revealedSecret }}').then(() => alert('Copied!'))"
                     class="px-3 py-2 bg-amber-600 text-white text-xs font-medium rounded-lg hover:bg-amber-700 shrink-0">Copy</button>
         </div>
-        <button wire:click="dismissSecret" class="text-xs text-amber-700 underline">Dismiss</button>
+        <button wire:click="dismissSecret" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-amber-700 underline" wire:loading.attr="disabled" wire:target="dismissSecret">
+                <span wire:loading.remove wire:target="dismissSecret">Dismiss</span>
+                <span wire:loading wire:target="dismissSecret" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
     </div>
     @endif
 
@@ -60,7 +68,12 @@
             </div>
 
             <div class="flex gap-3 justify-end pt-2">
-                <button wire:click="$set('showForm', false)" class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">Cancel</button>
+                <button wire:click="$set('showForm', false)" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 text-sm text-gray-600 hover:text-gray-800" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Cancel</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 <button wire:click="addSubscription" wire:loading.attr="disabled"
                         class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-60">
                     <span wire:loading.remove wire:target="addSubscription">Register Endpoint</span>
@@ -119,18 +132,36 @@
                     <td class="px-5 py-4 text-right space-x-3">
                         @can('agency.manage')
                         <button wire:click="toggleActive({{ $sub->id }})"
-                                class="text-xs text-blue-500 hover:text-blue-700">
-                            {{ $sub->is_active ? 'Pause' : 'Enable' }}
-                        </button>
+                                class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-blue-500 hover:text-blue-700" wire:loading.attr="disabled" wire:target="toggleActive">
+                <span wire:loading.remove wire:target="toggleActive">{{ $sub->is_active ? 'Pause' : 'Enable' }}</span>
+                <span wire:loading wire:target="toggleActive" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
 
                         @if($deleteId === $sub->id)
                             <button wire:click="deleteSubscription({{ $sub->id }})"
-                                    class="text-xs text-red-600 hover:text-red-800 font-medium">Confirm Delete</button>
+                                    class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-red-600 hover:text-red-800 font-medium" wire:loading.attr="disabled" wire:target="deleteSubscription">
+                <span wire:loading.remove wire:target="deleteSubscription">Confirm Delete</span>
+                <span wire:loading wire:target="deleteSubscription" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                             <button wire:click="$set('deleteId', null)"
-                                    class="text-xs text-gray-500 hover:text-gray-700">Cancel</button>
+                                    class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-gray-500 hover:text-gray-700" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Cancel</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         @else
                             <button wire:click="$set('deleteId', {{ $sub->id }})"
-                                    class="text-xs text-red-500 hover:text-red-700">Delete</button>
+                                    class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-red-500 hover:text-red-700" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Delete</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         @endif
                         @endcan
                     </td>

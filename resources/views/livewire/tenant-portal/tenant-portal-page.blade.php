@@ -327,10 +327,13 @@
                             </span>
                             @else
                             <button wire:click="openProofUpload({{ $payment->id }})"
-                                class="flex-shrink-0 inline-flex items-center gap-1 text-xs px-3 py-1.5 border border-brand-200 text-brand-700 rounded-lg bg-brand-50 hover:bg-brand-100 transition-colors">
-                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
-                                Upload Proof
-                            </button>
+                                class="disabled:opacity-70 disabled:cursor-not-allowed relative flex-shrink-0 inline-flex items-center gap-1 text-xs px-3 py-1.5 border border-brand-200 text-brand-700 rounded-lg bg-brand-50 hover:bg-brand-100 transition-colors" wire:loading.attr="disabled" wire:target="openProofUpload">
+                <span wire:loading.remove wire:target="openProofUpload"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
+                                Upload Proof</span>
+                <span wire:loading wire:target="openProofUpload" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                             @endif
                             @endif
                         </div>
@@ -419,9 +422,12 @@
                                         <span wire:loading.remove wire:target="submitProof">Submit</span>
                                     </button>
                                     <button type="button" wire:click="cancelProofUpload"
-                                        class="px-3 py-1.5 border border-border-default rounded-lg text-xs text-text-secondary hover:bg-surface-hover transition-colors">
-                                        Cancel
-                                    </button>
+                                        class="disabled:opacity-70 disabled:cursor-not-allowed relative px-3 py-1.5 border border-border-default rounded-lg text-xs text-text-secondary hover:bg-surface-hover transition-colors" wire:loading.attr="disabled" wire:target="cancelProofUpload">
+                <span wire:loading.remove wire:target="cancelProofUpload">Cancel</span>
+                <span wire:loading wire:target="cancelProofUpload" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                                 </div>
                             </form>
                         </div>

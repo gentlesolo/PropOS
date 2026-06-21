@@ -13,10 +13,13 @@
             <div class="flex gap-1.5">
                 @foreach(['' => 'All', 'pending' => 'Pending', 'processing' => 'Processing', 'paid' => 'Paid'] as $val => $label)
                 <button wire:click="$set('filterStatus', '{{ $val }}')"
-                    class="px-3 py-2 rounded-xl text-xs font-bold transition-colors
-                    {{ $filterStatus === $val ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10' : 'border border-border-default bg-surface-card text-text-secondary hover:bg-surface-sunken' }}">
-                    {{ $label }}
-                </button>
+                    class="disabled:opacity-70 disabled:cursor-not-allowed relative px-3 py-2 rounded-xl text-xs font-bold transition-colors
+                    {{ $filterStatus === $val ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10' : 'border border-border-default bg-surface-card text-text-secondary hover:bg-surface-sunken' }}" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">{{ $label }}</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 @endforeach
             </div>
             <button wire:click="reconcile" class="px-4 py-2 border border-brand-primary/40 text-brand-primary rounded-xl text-sm font-bold hover:bg-brand-primary/5 transition-colors">
@@ -122,12 +125,27 @@
                         <td class="py-4 px-5">
                             <div class="flex items-center gap-2">
                                 @if($commission->payment_status === 'pending')
-                                <button wire:click="markProcessing({{ $commission->id }})" class="text-xs text-warning-600 border border-warning-200 rounded-lg px-2 py-1 hover:bg-warning-50 transition-colors font-medium">Processing</button>
+                                <button wire:click="markProcessing({{ $commission->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-warning-600 border border-warning-200 rounded-lg px-2 py-1 hover:bg-warning-50 transition-colors font-medium" wire:loading.attr="disabled" wire:target="markProcessing">
+                <span wire:loading.remove wire:target="markProcessing">Processing</span>
+                <span wire:loading wire:target="markProcessing" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                                 @endif
                                 @if(in_array($commission->payment_status, ['pending', 'processing']))
-                                <button wire:click="markPaid({{ $commission->id }})" class="text-xs text-success-600 border border-success-200 rounded-lg px-2 py-1 hover:bg-success-50 transition-colors font-medium">Mark Paid</button>
+                                <button wire:click="markPaid({{ $commission->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-success-600 border border-success-200 rounded-lg px-2 py-1 hover:bg-success-50 transition-colors font-medium" wire:loading.attr="disabled" wire:target="markPaid">
+                <span wire:loading.remove wire:target="markPaid">Mark Paid</span>
+                <span wire:loading wire:target="markPaid" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                                 @endif
-                                <button wire:click="selectCommission({{ $commission->id }})" class="text-xs text-brand-primary border border-brand-primary/20 rounded-lg px-2 py-1 hover:bg-brand-primary/5 transition-colors font-medium">Statement</button>
+                                <button wire:click="selectCommission({{ $commission->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-brand-primary border border-brand-primary/20 rounded-lg px-2 py-1 hover:bg-brand-primary/5 transition-colors font-medium" wire:loading.attr="disabled" wire:target="selectCommission">
+                <span wire:loading.remove wire:target="selectCommission">Statement</span>
+                <span wire:loading wire:target="selectCommission" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                             </div>
                         </td>
                     </tr>
@@ -216,9 +234,12 @@
                     <button onclick="window.print()" class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-semibold hover:bg-brand-secondary transition-colors">
                         Print Statement
                     </button>
-                    <button wire:click="$set('selectedCommissionId', null)" class="px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors">
-                        Close
-                    </button>
+                    <button wire:click="$set('selectedCommissionId', null)" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 border border-border-default rounded-xl text-sm text-text-secondary hover:bg-surface-hover transition-colors" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Close</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 </div>
             </div>
         </div>

@@ -7,9 +7,12 @@
         </div>
         @can('agency.manage')
         <button wire:click="$set('showInviteForm', true)"
-                class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700">
-            + Invite Member
-        </button>
+                class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">+ Invite Member</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
         @endcan
     </div>
 
@@ -49,7 +52,12 @@
 
             <div class="flex gap-3 justify-end pt-2">
                 <button wire:click="$set('showInviteForm', false)"
-                        class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">Cancel</button>
+                        class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 text-sm text-gray-600 hover:text-gray-800" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Cancel</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 <button wire:click="sendInvitation" wire:loading.attr="disabled"
                         class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-60">
                     <span wire:loading.remove wire:target="sendInvitation">Send Invitation</span>
@@ -74,11 +82,19 @@
             <p class="text-sm text-gray-500">They will no longer be able to log in. You can reactivate them at any time.</p>
             <div class="flex gap-3 justify-center">
                 <button wire:click="$set('confirmDeactivateId', null)"
-                        class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">Cancel</button>
+                        class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 text-sm text-gray-600 hover:text-gray-800" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Cancel</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 <button wire:click="deactivateMember({{ $confirmDeactivateId }})"
-                        class="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700">
-                    Deactivate
-                </button>
+                        class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700" wire:loading.attr="disabled" wire:target="deactivateMember">
+                <span wire:loading.remove wire:target="deactivateMember">Deactivate</span>
+                <span wire:loading wire:target="deactivateMember" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             </div>
         </div>
     </div>
@@ -163,14 +179,20 @@
                 <div class="shrink-0">
                     @if($member->status === 'active')
                     <button wire:click="$set('confirmDeactivateId', {{ $member->id }})"
-                            class="text-xs text-red-500 hover:text-red-700 hover:underline">
-                        Deactivate
-                    </button>
+                            class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-red-500 hover:text-red-700 hover:underline" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Deactivate</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     @else
                     <button wire:click="reactivateMember({{ $member->id }})"
-                            class="text-xs text-green-600 hover:text-green-800 hover:underline">
-                        Reactivate
-                    </button>
+                            class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-green-600 hover:text-green-800 hover:underline" wire:loading.attr="disabled" wire:target="reactivateMember">
+                <span wire:loading.remove wire:target="reactivateMember">Reactivate</span>
+                <span wire:loading wire:target="reactivateMember" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     @endif
                 </div>
                 @endif
@@ -208,13 +230,19 @@
                 @can('agency.manage')
                 <div class="flex items-center gap-3 shrink-0">
                     <button wire:click="resendInvitation({{ $invitation->id }})"
-                            class="text-xs text-blue-600 hover:underline">
-                        Resend
-                    </button>
+                            class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-blue-600 hover:underline" wire:loading.attr="disabled" wire:target="resendInvitation">
+                <span wire:loading.remove wire:target="resendInvitation">Resend</span>
+                <span wire:loading wire:target="resendInvitation" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     <button wire:click="revokeInvitation({{ $invitation->id }})"
-                            class="text-xs text-red-500 hover:underline">
-                        Revoke
-                    </button>
+                            class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-red-500 hover:underline" wire:loading.attr="disabled" wire:target="revokeInvitation">
+                <span wire:loading.remove wire:target="revokeInvitation">Revoke</span>
+                <span wire:loading wire:target="revokeInvitation" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 </div>
                 @endcan
             </div>

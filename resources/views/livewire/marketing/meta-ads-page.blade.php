@@ -6,9 +6,12 @@
             </h1>
             <p class="mt-2 text-text-secondary">Create and monitor Facebook & Instagram ad campaigns linked to your listings.</p>
         </div>
-        <button wire:click="$toggle('showCreateForm')" class="px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors">
-            {{ $showCreateForm ? 'Cancel' : '+ New Campaign' }}
-        </button>
+        <button wire:click="$toggle('showCreateForm')" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 rounded-xl text-sm font-bold hover:bg-brand-secondary transition-colors" wire:loading.attr="disabled" wire:target="$toggle">
+                <span wire:loading.remove wire:target="$toggle">{{ $showCreateForm ? 'Cancel' : '+ New Campaign' }}</span>
+                <span wire:loading wire:target="$toggle" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
     </div>
 
     <!-- Stats -->
@@ -114,11 +117,26 @@
                         <td class="py-4 px-5">
                             <div class="flex items-center gap-2">
                                 @if($ad->status === 'draft')
-                                <button wire:click="updateStatus({{ $ad->id }}, 'active')" class="text-xs text-success-600 border border-success-200 rounded-lg px-2 py-1 hover:bg-success-50 transition-colors">Activate</button>
+                                <button wire:click="updateStatus({{ $ad->id }}, 'active')" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-success-600 border border-success-200 rounded-lg px-2 py-1 hover:bg-success-50 transition-colors" wire:loading.attr="disabled" wire:target="updateStatus">
+                <span wire:loading.remove wire:target="updateStatus">Activate</span>
+                <span wire:loading wire:target="updateStatus" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                                 @elseif($ad->status === 'active')
-                                <button wire:click="updateStatus({{ $ad->id }}, 'paused')" class="text-xs text-warning-600 border border-warning-200 rounded-lg px-2 py-1 hover:bg-warning-50 transition-colors">Pause</button>
+                                <button wire:click="updateStatus({{ $ad->id }}, 'paused')" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-warning-600 border border-warning-200 rounded-lg px-2 py-1 hover:bg-warning-50 transition-colors" wire:loading.attr="disabled" wire:target="updateStatus">
+                <span wire:loading.remove wire:target="updateStatus">Pause</span>
+                <span wire:loading wire:target="updateStatus" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                                 @endif
-                                <button wire:click="deleteCampaign({{ $ad->id }})" wire:confirm="Delete this campaign?" class="text-xs text-danger-500 hover:text-danger-700 font-medium">Delete</button>
+                                <button wire:click="deleteCampaign({{ $ad->id }})" wire:confirm="Delete this campaign?" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-danger-500 hover:text-danger-700 font-medium" wire:loading.attr="disabled" wire:target="deleteCampaign">
+                <span wire:loading.remove wire:target="deleteCampaign">Delete</span>
+                <span wire:loading wire:target="deleteCampaign" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                             </div>
                         </td>
                     </tr>

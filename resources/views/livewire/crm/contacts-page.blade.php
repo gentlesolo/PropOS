@@ -26,9 +26,12 @@
             <p class="text-xs font-semibold text-text-secondary mt-1 font-geist">Track agency customer relationships, buyer/seller leads, and communication history.</p>
         </div>
         <div class="flex items-center gap-3">
-            <button wire:click="$set('showCreateModal', true)" class="px-4 py-2.5 rounded bg-brand-accent hover:bg-amber-600 text-black text-xs font-black shadow-brand-sm transition-all flex items-center space-x-1.5">
-                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
-                <span>Add Contact</span>
+            <button wire:click="$set('showCreateModal', true)" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2.5 rounded bg-brand-accent hover:bg-amber-600 text-black text-xs font-black shadow-brand-sm transition-all flex items-center space-x-1.5" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                <span>Add Contact</span></span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
             </button>
         </div>
     </div>
@@ -79,34 +82,55 @@
             <!-- Filter chips on the left -->
             <div class="flex flex-wrap gap-2 items-center">
                 <button wire:click="$set('filterType', '')" 
-                    class="px-3.5 py-1.5 rounded-full text-xs font-bold transition-all border {{ $filterType === '' && !$smartFilterActive && $filterStatus === '' ? 'bg-brand-primary text-black border-brand-primary' : 'border-border-strong text-text-secondary hover:text-zinc-200 bg-transparent' }}">
-                    All
-                </button>
+                    class="disabled:opacity-70 disabled:cursor-not-allowed relative px-3.5 py-1.5 rounded-full text-xs font-bold transition-all border {{ $filterType === '' && !$smartFilterActive && $filterStatus === '' ? 'bg-brand-primary text-black border-brand-primary' : 'border-border-strong text-text-secondary hover:text-zinc-200 bg-transparent' }}" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">All</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 <button wire:click="$set('filterType', 'buyer')" 
-                    class="px-3.5 py-1.5 rounded-full text-xs font-bold transition-all border {{ $filterType === 'buyer' ? 'bg-brand-primary text-black border-brand-primary' : 'border-border-strong text-text-secondary hover:text-zinc-200 bg-transparent' }}">
-                    Buyers
-                </button>
+                    class="disabled:opacity-70 disabled:cursor-not-allowed relative px-3.5 py-1.5 rounded-full text-xs font-bold transition-all border {{ $filterType === 'buyer' ? 'bg-brand-primary text-black border-brand-primary' : 'border-border-strong text-text-secondary hover:text-zinc-200 bg-transparent' }}" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Buyers</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 <button wire:click="$set('filterType', 'seller')" 
-                    class="px-3.5 py-1.5 rounded-full text-xs font-bold transition-all border {{ $filterType === 'seller' ? 'bg-brand-primary text-black border-brand-primary' : 'border-border-strong text-text-secondary hover:text-zinc-200 bg-transparent' }}">
-                    Sellers
-                </button>
+                    class="disabled:opacity-70 disabled:cursor-not-allowed relative px-3.5 py-1.5 rounded-full text-xs font-bold transition-all border {{ $filterType === 'seller' ? 'bg-brand-primary text-black border-brand-primary' : 'border-border-strong text-text-secondary hover:text-zinc-200 bg-transparent' }}" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Sellers</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 <button wire:click="$set('filterType', 'tenant')" 
-                    class="px-3.5 py-1.5 rounded-full text-xs font-bold transition-all border {{ $filterType === 'tenant' ? 'bg-brand-primary text-black border-brand-primary' : 'border-border-strong text-text-secondary hover:text-zinc-200 bg-transparent' }}">
-                    Tenants
-                </button>
+                    class="disabled:opacity-70 disabled:cursor-not-allowed relative px-3.5 py-1.5 rounded-full text-xs font-bold transition-all border {{ $filterType === 'tenant' ? 'bg-brand-primary text-black border-brand-primary' : 'border-border-strong text-text-secondary hover:text-zinc-200 bg-transparent' }}" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Tenants</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 <button wire:click="$set('filterType', 'landlord')" 
-                    class="px-3.5 py-1.5 rounded-full text-xs font-bold transition-all border {{ $filterType === 'landlord' ? 'bg-brand-primary text-black border-brand-primary' : 'border-border-strong text-text-secondary hover:text-zinc-200 bg-transparent' }}">
-                    Landlords
-                </button>
+                    class="disabled:opacity-70 disabled:cursor-not-allowed relative px-3.5 py-1.5 rounded-full text-xs font-bold transition-all border {{ $filterType === 'landlord' ? 'bg-brand-primary text-black border-brand-primary' : 'border-border-strong text-text-secondary hover:text-zinc-200 bg-transparent' }}" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Landlords</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 <button wire:click="$set('filterStatus', 'qualified')" 
-                    class="px-3.5 py-1.5 rounded-full text-xs font-bold transition-all border {{ $filterStatus === 'qualified' ? 'bg-brand-primary text-black border-brand-primary' : 'border-border-strong text-text-secondary hover:text-zinc-200 bg-transparent' }}">
-                    Hot Leads
-                </button>
+                    class="disabled:opacity-70 disabled:cursor-not-allowed relative px-3.5 py-1.5 rounded-full text-xs font-bold transition-all border {{ $filterStatus === 'qualified' ? 'bg-brand-primary text-black border-brand-primary' : 'border-border-strong text-text-secondary hover:text-zinc-200 bg-transparent' }}" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Hot Leads</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 
                 <button wire:click="toggleSmartFilter" 
-                    class="px-3.5 py-1.5 rounded-full text-xs font-bold transition-all border flex items-center gap-1 {{ $smartFilterActive ? 'bg-brand-accent text-black border-brand-accent' : 'border-border-strong text-text-secondary hover:text-zinc-200 hover:border-zinc-700 bg-transparent' }}">
-                    <span>✦ Smart Filter</span>
-                </button>
+                    class="disabled:opacity-70 disabled:cursor-not-allowed relative px-3.5 py-1.5 rounded-full text-xs font-bold transition-all border flex items-center gap-1 {{ $smartFilterActive ? 'bg-brand-accent text-black border-brand-accent' : 'border-border-strong text-text-secondary hover:text-zinc-200 hover:border-zinc-700 bg-transparent' }}" wire:loading.attr="disabled" wire:target="toggleSmartFilter">
+                <span wire:loading.remove wire:target="toggleSmartFilter"><span>✦ Smart Filter</span></span>
+                <span wire:loading wire:target="toggleSmartFilter" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             </div>
 
             <!-- Sort and Add Contact on the right -->
@@ -132,12 +156,18 @@
             <div class="flex gap-2">
                 <input wire:model.debounce.300ms="smartQuery" type="text" placeholder="e.g. Show me buyers in Lekki with budget over {{ $currencySymbol }}80M not contacted this week"
                     class="flex-1 px-3 py-2 bg-surface-page border border-border-strong focus:border-brand-accent rounded-md text-text-primary placeholder-zinc-600 text-xs focus:ring-1 focus:ring-brand-accent/20 focus:outline-none font-mono-geist">
-                <button wire:click="applySmartFilter" class="px-4 py-2 bg-brand-accent hover:bg-amber-600 text-black text-xs font-bold rounded-md transition-colors">
-                    Apply
-                </button>
-                <button wire:click="clearSmartFilter" class="px-3 py-2 bg-surface-card hover:bg-zinc-700 text-zinc-300 text-xs font-bold rounded-md transition-colors">
-                    Clear
-                </button>
+                <button wire:click="applySmartFilter" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 bg-brand-accent hover:bg-amber-600 text-black text-xs font-bold rounded-md transition-colors" wire:loading.attr="disabled" wire:target="applySmartFilter">
+                <span wire:loading.remove wire:target="applySmartFilter">Apply</span>
+                <span wire:loading wire:target="applySmartFilter" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
+                <button wire:click="clearSmartFilter" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-3 py-2 bg-surface-card hover:bg-zinc-700 text-zinc-300 text-xs font-bold rounded-md transition-colors" wire:loading.attr="disabled" wire:target="clearSmartFilter">
+                <span wire:loading.remove wire:target="clearSmartFilter">Clear</span>
+                <span wire:loading wire:target="clearSmartFilter" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             </div>
         </div>
     </div>
@@ -257,15 +287,24 @@
                         <!-- Actions -->
                         <td class="px-4 py-4 whitespace-nowrap text-right text-xs font-bold" @click.stop>
                             <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-                                <button wire:click="openDraftModal('whatsapp')" class="p-1 text-text-secondary hover:text-brand-accent hover:bg-surface-card rounded transition-colors" title="WhatsApp">
-                                    💬
-                                </button>
-                                <button wire:click="openDraftModal('email')" class="p-1 text-text-secondary hover:text-brand-primary hover:bg-surface-card rounded transition-colors" title="Email">
-                                    ✉️
-                                </button>
-                                <button wire:click="selectContact({{ $contact->id }})" class="p-1 text-text-secondary hover:text-text-primary hover:bg-surface-card rounded transition-colors" title="View Detail">
-                                    👁
-                                </button>
+                                <button wire:click="openDraftModal('whatsapp')" class="disabled:opacity-70 disabled:cursor-not-allowed relative p-1 text-text-secondary hover:text-brand-accent hover:bg-surface-card rounded transition-colors" title="WhatsApp" wire:loading.attr="disabled" wire:target="openDraftModal">
+                <span wire:loading.remove wire:target="openDraftModal">💬</span>
+                <span wire:loading wire:target="openDraftModal" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
+                                <button wire:click="openDraftModal('email')" class="disabled:opacity-70 disabled:cursor-not-allowed relative p-1 text-text-secondary hover:text-brand-primary hover:bg-surface-card rounded transition-colors" title="Email" wire:loading.attr="disabled" wire:target="openDraftModal">
+                <span wire:loading.remove wire:target="openDraftModal">✉️</span>
+                <span wire:loading wire:target="openDraftModal" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
+                                <button wire:click="selectContact({{ $contact->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative p-1 text-text-secondary hover:text-text-primary hover:bg-surface-card rounded transition-colors" title="View Detail" wire:loading.attr="disabled" wire:target="selectContact">
+                <span wire:loading.remove wire:target="selectContact">👁</span>
+                <span wire:loading wire:target="selectContact" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                             </div>
                         </td>
                     </tr>
@@ -278,9 +317,12 @@
                                 <p class="text-xs text-text-tertiary leading-relaxed font-sans">
                                     Try removing the budget filter, or use the <strong>Smart Filter</strong> for more natural language control over your queries.
                                 </p>
-                                <button wire:click="toggleSmartFilter" class="px-4 py-2 bg-zinc-850 hover:bg-surface-card border border-border-strong rounded-md text-xs font-bold text-zinc-300 transition-colors">
-                                    Open Smart Filter
-                                </button>
+                                <button wire:click="toggleSmartFilter" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-4 py-2 bg-zinc-850 hover:bg-surface-card border border-border-strong rounded-md text-xs font-bold text-zinc-300 transition-colors" wire:loading.attr="disabled" wire:target="toggleSmartFilter">
+                <span wire:loading.remove wire:target="toggleSmartFilter">Open Smart Filter</span>
+                <span wire:loading wire:target="toggleSmartFilter" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                             </div>
                         </td>
                     </tr>
@@ -309,14 +351,23 @@
         <div class="h-4 w-px bg-surface-card"></div>
         
         <div class="flex items-center gap-2">
-            <button wire:click="bulkUpdateStatus('active')" class="px-3 py-1.5 bg-surface-raised hover:bg-surface-card border border-border-strong text-zinc-300 hover:text-text-primary rounded text-xs font-bold transition-all">
-                Mark Active
+            <button wire:click="bulkUpdateStatus('active')" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-3 py-1.5 bg-surface-raised hover:bg-surface-card border border-border-strong text-zinc-300 hover:text-text-primary rounded text-xs font-bold transition-all" wire:loading.attr="disabled" wire:target="bulkUpdateStatus">
+                <span wire:loading.remove wire:target="bulkUpdateStatus">Mark Active</span>
+                <span wire:loading wire:target="bulkUpdateStatus" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
             </button>
-            <button wire:click="bulkUpdateStatus('qualified')" class="px-3 py-1.5 bg-surface-raised hover:bg-surface-card border border-border-strong text-zinc-300 hover:text-text-primary rounded text-xs font-bold transition-all">
-                Mark Qualified
+            <button wire:click="bulkUpdateStatus('qualified')" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-3 py-1.5 bg-surface-raised hover:bg-surface-card border border-border-strong text-zinc-300 hover:text-text-primary rounded text-xs font-bold transition-all" wire:loading.attr="disabled" wire:target="bulkUpdateStatus">
+                <span wire:loading.remove wire:target="bulkUpdateStatus">Mark Qualified</span>
+                <span wire:loading wire:target="bulkUpdateStatus" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
             </button>
-            <button wire:click="bulkUpdateStatus('closed')" class="px-3 py-1.5 bg-surface-raised hover:bg-surface-card border border-border-strong text-zinc-300 hover:text-text-primary rounded text-xs font-bold transition-all">
-                Mark Closed
+            <button wire:click="bulkUpdateStatus('closed')" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-3 py-1.5 bg-surface-raised hover:bg-surface-card border border-border-strong text-zinc-300 hover:text-text-primary rounded text-xs font-bold transition-all" wire:loading.attr="disabled" wire:target="bulkUpdateStatus">
+                <span wire:loading.remove wire:target="bulkUpdateStatus">Mark Closed</span>
+                <span wire:loading wire:target="bulkUpdateStatus" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
             </button>
             
             <div class="relative" x-data="{ openMenu: false }" @click.away="openMenu = false">
@@ -326,17 +377,23 @@
                 </button>
                 <div x-show="openMenu" class="absolute bottom-full mb-2 right-0 w-48 rounded shadow-lg bg-surface-sunken border border-border-strong z-50 py-1" style="display: none;">
                     @foreach($agents as $agent)
-                    <button wire:click="bulkAssignAgent({{ $agent->id }})" class="block w-full text-left px-4 py-2 text-xs text-text-secondary hover:text-text-primary hover:bg-surface-raised transition-colors">
-                        {{ $agent->first_name }} {{ $agent->last_name }}
-                    </button>
+                    <button wire:click="bulkAssignAgent({{ $agent->id }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative block w-full text-left px-4 py-2 text-xs text-text-secondary hover:text-text-primary hover:bg-surface-raised transition-colors" wire:loading.attr="disabled" wire:target="bulkAssignAgent">
+                <span wire:loading.remove wire:target="bulkAssignAgent">{{ $agent->first_name }} {{ $agent->last_name }}</span>
+                <span wire:loading wire:target="bulkAssignAgent" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     @endforeach
                 </div>
             </div>
             
             <div class="h-4 w-px bg-surface-card"></div>
             
-            <button wire:click="bulkDelete()" onclick="return confirm('Delete selected contacts?')" class="px-3 py-1.5 bg-danger-500/10 hover:bg-danger-500/20 text-danger-500 rounded text-xs font-bold transition-all border border-danger-500/10">
-                Delete Selected
+            <button wire:click="bulkDelete()" onclick="return confirm('Delete selected contacts?')" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-3 py-1.5 bg-danger-500/10 hover:bg-danger-500/20 text-danger-500 rounded text-xs font-bold transition-all border border-danger-500/10" wire:loading.attr="disabled" wire:target="bulkDelete">
+                <span wire:loading.remove wire:target="bulkDelete">Delete Selected</span>
+                <span wire:loading wire:target="bulkDelete" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
             </button>
         </div>
     </div>
@@ -352,9 +409,12 @@
                         <div class="flex h-full flex-col overflow-y-scroll bg-surface-card shadow-2xl border-l border-border-strong">
                             <div class="bg-surface-sunken px-4 py-6 sm:px-6 border-b border-border-strong flex items-center justify-between">
                                 <h2 class="text-xl font-bold text-text-primary">Create New Contact</h2>
-                                <button wire:click="$set('showCreateModal', false)" type="button" class="rounded text-text-tertiary hover:text-text-primary">
-                                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-                                </button>
+                                <button wire:click="$set('showCreateModal', false)" type="button" class="disabled:opacity-70 disabled:cursor-not-allowed relative rounded text-text-tertiary hover:text-text-primary" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set"><svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                             </div>
                             <div class="relative flex-1 px-4 py-6 sm:px-6">
 
@@ -365,16 +425,27 @@
                                     @foreach($duplicates as $dup)
                                     <div class="text-[11px] text-text-secondary mb-1 flex items-center justify-between">
                                         <span>{{ $dup['name'] }} — {{ $dup['email'] ?? $dup['phone'] }}</span>
-                                        <button wire:click="selectContact({{ $dup['id'] }})" class="underline text-brand-primary">View</button>
+                                        <button wire:click="selectContact({{ $dup['id'] }})" class="disabled:opacity-70 disabled:cursor-not-allowed relative underline text-brand-primary" wire:loading.attr="disabled" wire:target="selectContact">
+                <span wire:loading.remove wire:target="selectContact">View</span>
+                <span wire:loading wire:target="selectContact" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                                     </div>
                                     @endforeach
                                     <div class="mt-3 flex gap-2">
-                                        <button wire:click="dismissDuplicates" class="px-3 py-1 bg-brand-accent text-black rounded text-[10px] font-bold hover:bg-amber-600">
-                                            Create Anyway
-                                        </button>
-                                        <button wire:click="$set('duplicates', [])" class="px-3 py-1 border border-zinc-700 text-zinc-300 rounded text-[10px] font-bold hover:bg-surface-card">
-                                            Cancel
-                                        </button>
+                                        <button wire:click="dismissDuplicates" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-3 py-1 bg-brand-accent text-black rounded text-[10px] font-bold hover:bg-amber-600" wire:loading.attr="disabled" wire:target="dismissDuplicates">
+                <span wire:loading.remove wire:target="dismissDuplicates">Create Anyway</span>
+                <span wire:loading wire:target="dismissDuplicates" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
+                                        <button wire:click="$set('duplicates', [])" class="disabled:opacity-70 disabled:cursor-not-allowed relative px-3 py-1 border border-zinc-700 text-zinc-300 rounded text-[10px] font-bold hover:bg-surface-card" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Cancel</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                                     </div>
                                 </div>
                                 @endif
@@ -533,18 +604,27 @@
                                 <span class="text-sm group-hover:scale-110 transition-transform">📞</span>
                                 <span class="text-[9px] font-black text-text-secondary group-hover:text-text-primary mt-1 uppercase tracking-wider">Call</span>
                             </a>
-                            <button wire:click="openDraftModal('whatsapp')" class="flex flex-col items-center justify-center py-2.5 rounded bg-surface-raised/70 border border-border-strong hover:border-brand-primary/45 hover:bg-surface-card/40 transition-all text-center group">
-                                <span class="text-sm group-hover:scale-110 transition-transform">💬</span>
-                                <span class="text-[9px] font-black text-text-secondary group-hover:text-text-primary mt-1 uppercase tracking-wider">WhatsApp</span>
-                            </button>
-                            <button wire:click="openDraftModal('email')" class="flex flex-col items-center justify-center py-2.5 rounded bg-surface-raised/70 border border-border-strong hover:border-brand-primary/45 hover:bg-surface-card/40 transition-all text-center group">
-                                <span class="text-sm group-hover:scale-110 transition-transform">✉️</span>
-                                <span class="text-[9px] font-black text-text-secondary group-hover:text-text-primary mt-1 uppercase tracking-wider">Email</span>
-                            </button>
-                            <button wire:click="$set('activeTab', 'overview')" class="flex flex-col items-center justify-center py-2.5 rounded bg-surface-raised/70 border border-border-strong hover:border-brand-primary/45 hover:bg-surface-card/40 transition-all text-center group">
-                                <span class="text-sm group-hover:scale-110 transition-transform">👁</span>
-                                <span class="text-[9px] font-black text-text-secondary group-hover:text-text-primary mt-1 uppercase tracking-wider">Viewing</span>
-                            </button>
+                            <button wire:click="openDraftModal('whatsapp')" class="disabled:opacity-70 disabled:cursor-not-allowed relative flex flex-col items-center justify-center py-2.5 rounded bg-surface-raised/70 border border-border-strong hover:border-brand-primary/45 hover:bg-surface-card/40 transition-all text-center group" wire:loading.attr="disabled" wire:target="openDraftModal">
+                <span wire:loading.remove wire:target="openDraftModal"><span class="text-sm group-hover:scale-110 transition-transform">💬</span>
+                                <span class="text-[9px] font-black text-text-secondary group-hover:text-text-primary mt-1 uppercase tracking-wider">WhatsApp</span></span>
+                <span wire:loading wire:target="openDraftModal" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
+                            <button wire:click="openDraftModal('email')" class="disabled:opacity-70 disabled:cursor-not-allowed relative flex flex-col items-center justify-center py-2.5 rounded bg-surface-raised/70 border border-border-strong hover:border-brand-primary/45 hover:bg-surface-card/40 transition-all text-center group" wire:loading.attr="disabled" wire:target="openDraftModal">
+                <span wire:loading.remove wire:target="openDraftModal"><span class="text-sm group-hover:scale-110 transition-transform">✉️</span>
+                                <span class="text-[9px] font-black text-text-secondary group-hover:text-text-primary mt-1 uppercase tracking-wider">Email</span></span>
+                <span wire:loading wire:target="openDraftModal" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
+                            <button wire:click="$set('activeTab', 'overview')" class="disabled:opacity-70 disabled:cursor-not-allowed relative flex flex-col items-center justify-center py-2.5 rounded bg-surface-raised/70 border border-border-strong hover:border-brand-primary/45 hover:bg-surface-card/40 transition-all text-center group" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set"><span class="text-sm group-hover:scale-110 transition-transform">👁</span>
+                                <span class="text-[9px] font-black text-text-secondary group-hover:text-text-primary mt-1 uppercase tracking-wider">Viewing</span></span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         </div>
                     </div>
 
@@ -553,14 +633,17 @@
                         <div class="flex gap-4">
                             @foreach(['overview' => 'Overview', 'timeline' => 'Timeline', 'listings' => 'Listings', 'documents' => 'Documents', 'notes' => 'Notes'] as $tab => $label)
                             <button wire:click="$set('activeTab', '{{ $tab }}')" 
-                                class="py-3 text-[11px] font-black transition-all border-b-2 relative {{ $activeTab === $tab ? 'border-brand-primary text-brand-primary' : 'border-transparent text-text-secondary hover:text-zinc-200' }} uppercase tracking-wider">
-                                {{ $label }}
+                                class="disabled:opacity-70 disabled:cursor-not-allowed relative py-3 text-[11px] font-black transition-all border-b-2 relative {{ $activeTab === $tab ? 'border-brand-primary text-brand-primary' : 'border-transparent text-text-secondary hover:text-zinc-200' }} uppercase tracking-wider" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">{{ $label }}
                                 @if($tab === 'listings' && $this->matchedListings->count() > 0)
                                 <span class="absolute top-1.5 -right-3 bg-brand-primary text-black text-[8px] font-black h-3.5 w-3.5 rounded-full flex items-center justify-center font-mono-geist">
                                     {{ $this->matchedListings->count() }}
                                 </span>
-                                @endif
-                            </button>
+                                @endif</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                             @endforeach
                         </div>
                     </div>
@@ -674,17 +757,23 @@
                                     <div class="flex gap-1">
                                         @foreach(['note' => 'Note', 'call' => 'Call', 'email' => 'Mail', 'sms' => 'SMS'] as $v => $l)
                                         <button type="button" wire:click="$set('activityType', '{{ $v }}')"
-                                            class="flex-1 py-1 rounded text-[10px] font-bold transition-all border {{ $activityType === $v ? 'bg-brand-primary text-black border-brand-primary' : 'border-border-strong text-text-secondary hover:text-zinc-200' }}">
-                                            {{ $l }}
-                                        </button>
+                                            class="disabled:opacity-70 disabled:cursor-not-allowed relative flex-1 py-1 rounded text-[10px] font-bold transition-all border {{ $activityType === $v ? 'bg-brand-primary text-black border-brand-primary' : 'border-border-strong text-text-secondary hover:text-zinc-200' }}" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">{{ $l }}</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                                         @endforeach
                                     </div>
                                     <textarea wire:model.defer="activityBody" rows="2" placeholder="Write interaction summary..."
                                         class="w-full text-xs p-2 bg-surface-sunken border border-border-default rounded text-text-primary focus:border-brand-primary focus:outline-none resize-none font-sans"></textarea>
                                     @error('activityBody') <span class="text-[10px] text-danger-500 block">{{ $message }}</span> @enderror
-                                    <button type="submit" class="w-full py-1.5 bg-brand-primary hover:bg-emerald-600 text-black text-xs font-bold rounded transition-colors shadow-brand-sm">
-                                        Save Activity Log
-                                    </button>
+                                    <button type="submit" class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full py-1.5 bg-brand-primary hover:bg-emerald-600 text-black text-xs font-bold rounded transition-colors shadow-brand-sm" wire:loading.attr="disabled">
+                <span wire:loading.remove>Save Activity Log</span>
+                <span wire:loading class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                                 </form>
                             </div>
 
@@ -839,9 +928,12 @@
                                 <textarea wire:model.defer="newNote" rows="8" placeholder="Type key details, preferences, and private comments here..."
                                     class="w-full text-xs p-3.5 bg-surface-sunken border border-border-default rounded-lg text-text-primary focus:border-brand-primary focus:outline-none resize-none font-sans leading-relaxed"></textarea>
                                 
-                                <button wire:click="saveContactNotes" class="w-full py-2 bg-brand-primary hover:bg-emerald-600 text-black text-xs font-black rounded transition-colors shadow-brand-sm">
-                                    Save Notes
-                                </button>
+                                <button wire:click="saveContactNotes" class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full py-2 bg-brand-primary hover:bg-emerald-600 text-black text-xs font-black rounded transition-colors shadow-brand-sm" wire:loading.attr="disabled" wire:target="saveContactNotes">
+                <span wire:loading.remove wire:target="saveContactNotes">Save Notes</span>
+                <span wire:loading wire:target="saveContactNotes" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                             </div>
                         </div>
                         @endif
@@ -850,9 +942,12 @@
 
                     <!-- Floating AI Draft button at bottom right of the drawer (amber FAB) -->
                     <div class="absolute bottom-6 right-6 z-20 font-geist">
-                        <button wire:click="openDraftModal('whatsapp')" class="flex items-center gap-1.5 px-4.5 py-3 rounded-full bg-brand-accent hover:bg-amber-600 text-black text-xs font-black shadow-brand-lg transform hover-spring active:scale-95 transition-all">
-                            <span>✦ Draft Message</span>
-                        </button>
+                        <button wire:click="openDraftModal('whatsapp')" class="disabled:opacity-70 disabled:cursor-not-allowed relative flex items-center gap-1.5 px-4.5 py-3 rounded-full bg-brand-accent hover:bg-amber-600 text-black text-xs font-black shadow-brand-lg transform hover-spring active:scale-95 transition-all" wire:loading.attr="disabled" wire:target="openDraftModal">
+                <span wire:loading.remove wire:target="openDraftModal"><span>✦ Draft Message</span></span>
+                <span wire:loading wire:target="openDraftModal" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     </div>
 
                     @endif
@@ -872,7 +967,12 @@
                     <h3 class="text-sm font-black text-brand-accent flex items-center gap-1.5 uppercase tracking-wider font-mono-geist">
                         <span>✦ AI Draft Assistant</span>
                     </h3>
-                    <button wire:click="$set('showDraftModal', false)" class="text-text-tertiary hover:text-text-primary text-lg">&times;</button>
+                    <button wire:click="$set('showDraftModal', false)" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-text-tertiary hover:text-text-primary text-lg" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">&times;</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 </div>
                 
                 <!-- Channel Selector -->
@@ -881,9 +981,12 @@
                     <div class="flex gap-2">
                         @foreach(['whatsapp' => '💬 WhatsApp', 'sms' => '📱 SMS', 'email' => '✉️ Email'] as $ch => $lbl)
                         <button wire:click="openDraftModal('{{ $ch }}')" 
-                            class="flex-1 py-1.5 rounded text-xs font-bold transition-all border {{ $draftChannel === $ch ? 'bg-brand-accent text-black border-brand-accent shadow-brand-sm' : 'border-border-strong text-text-secondary hover:text-zinc-200 bg-transparent' }}">
-                            {{ $lbl }}
-                        </button>
+                            class="disabled:opacity-70 disabled:cursor-not-allowed relative flex-1 py-1.5 rounded text-xs font-bold transition-all border {{ $draftChannel === $ch ? 'bg-brand-accent text-black border-brand-accent shadow-brand-sm' : 'border-border-strong text-text-secondary hover:text-zinc-200 bg-transparent' }}" wire:loading.attr="disabled" wire:target="openDraftModal">
+                <span wire:loading.remove wire:target="openDraftModal">{{ $lbl }}</span>
+                <span wire:loading wire:target="openDraftModal" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                         @endforeach
                     </div>
                 </div>
@@ -897,12 +1000,18 @@
                 
                 <!-- Footer Actions -->
                 <div class="flex gap-3 pt-2">
-                    <button wire:click="$set('showDraftModal', false)" class="flex-1 py-2 bg-surface-card hover:bg-zinc-700 text-zinc-300 text-xs font-bold rounded transition-colors">
-                        Cancel
-                    </button>
-                    <button wire:click="sendDraftMessage" class="flex-1 py-2 bg-brand-accent hover:bg-amber-600 text-black text-xs font-black rounded transition-colors shadow-brand-sm">
-                        Send Message
-                    </button>
+                    <button wire:click="$set('showDraftModal', false)" class="disabled:opacity-70 disabled:cursor-not-allowed relative flex-1 py-2 bg-surface-card hover:bg-zinc-700 text-zinc-300 text-xs font-bold rounded transition-colors" wire:loading.attr="disabled" wire:target="$set">
+                <span wire:loading.remove wire:target="$set">Cancel</span>
+                <span wire:loading wire:target="$set" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
+                    <button wire:click="sendDraftMessage" class="disabled:opacity-70 disabled:cursor-not-allowed relative flex-1 py-2 bg-brand-accent hover:bg-amber-600 text-black text-xs font-black rounded transition-colors shadow-brand-sm" wire:loading.attr="disabled" wire:target="sendDraftMessage">
+                <span wire:loading.remove wire:target="sendDraftMessage">Send Message</span>
+                <span wire:loading wire:target="sendDraftMessage" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 </div>
             </div>
         </div>

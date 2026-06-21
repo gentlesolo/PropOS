@@ -70,9 +70,12 @@
                 <div>
                     <div class="flex justify-between items-center mb-1.5">
                         <label for="password" class="block text-xs font-semibold uppercase tracking-wider text-[#A1A1AA]">Password</label>
-                        <button type="button" wire:click="showForgotPassword" class="text-xs font-semibold text-[#F59E0B] hover:underline focus:outline-none">
-                            Forgot password?
-                        </button>
+                        <button type="button" wire:click="showForgotPassword" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs font-semibold text-[#F59E0B] hover:underline focus:outline-none" wire:loading.attr="disabled" wire:target="showForgotPassword">
+                <span wire:loading.remove wire:target="showForgotPassword">Forgot password?</span>
+                <span wire:loading wire:target="showForgotPassword" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                     </div>
                     <div class="relative">
                         <input wire:model="password" id="password" type="password" required placeholder="••••••••"
@@ -159,9 +162,12 @@
 
             <!-- Bottom Redirect -->
             <div class="mt-8 pt-6 border-t border-white/5 text-center">
-                <button type="button" wire:click="showLogin" class="text-xs text-[#A1A1AA] hover:text-[#FAFAFA] transition-colors focus:outline-none">
-                    Back to login
-                </button>
+                <button type="button" wire:click="showLogin" class="disabled:opacity-70 disabled:cursor-not-allowed relative text-xs text-[#A1A1AA] hover:text-[#FAFAFA] transition-colors focus:outline-none" wire:loading.attr="disabled" wire:target="showLogin">
+                <span wire:loading.remove wire:target="showLogin">Back to login</span>
+                <span wire:loading wire:target="showLogin" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             </div>
         </div>
     @endif
@@ -183,9 +189,12 @@
             </div>
 
             <div class="pt-4">
-                <button type="button" wire:click="showLogin" class="inline-flex items-center justify-center px-6 h-10 border border-white/10 rounded-md text-xs text-[#FAFAFA] hover:bg-white/5 transition-all">
-                    Return to sign in
-                </button>
+                <button type="button" wire:click="showLogin" class="disabled:opacity-70 disabled:cursor-not-allowed relative inline-flex items-center justify-center px-6 h-10 border border-white/10 rounded-md text-xs text-[#FAFAFA] hover:bg-white/5 transition-all" wire:loading.attr="disabled" wire:target="showLogin">
+                <span wire:loading.remove wire:target="showLogin">Return to sign in</span>
+                <span wire:loading wire:target="showLogin" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             </div>
         </div>
     @endif

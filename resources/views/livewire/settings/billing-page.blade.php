@@ -59,9 +59,12 @@
                     R{{ number_format($pack['price']) }}
                 </div>
                 <p class="text-text-secondary text-sm mb-6">+{{ number_format($pack['credits']) }} AI Credits</p>
-                <button wire:click="buyTopUp('{{ $id }}')" class="w-full py-2 px-4 rounded-lg text-sm font-medium text-white bg-gradient-to-br from-brand-primary to-brand-primary/80 shadow-brand-sm ring-1 ring-white/10 hover:bg-brand-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary transition">
-                    Buy Top-up
-                </button>
+                <button wire:click="buyTopUp('{{ $id }}')" class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full py-2 px-4 rounded-lg text-sm font-medium text-white bg-gradient-to-br from-brand-primary to-brand-primary/80 shadow-brand-sm ring-1 ring-white/10 hover:bg-brand-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary transition" wire:loading.attr="disabled" wire:target="buyTopUp">
+                <span wire:loading.remove wire:target="buyTopUp">Buy Top-up</span>
+                <span wire:loading wire:target="buyTopUp" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
             </div>
             @endforeach
         </div>
@@ -70,10 +73,13 @@
     <!-- Plan Toggle -->
     <div class="flex justify-center items-center space-x-4 mb-10">
         <span class="text-sm font-medium {{ !$isAnnual ? 'text-text-primary' : 'text-text-secondary' }}">Monthly</span>
-        <button wire:click="toggleBillingCycle" type="button" class="relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary bg-brand-primary" role="switch" aria-checked="{{ $isAnnual ? 'true' : 'false' }}">
-            <span class="sr-only">Toggle Annual Billing</span>
-            <span aria-hidden="true" class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200 {{ $isAnnual ? 'translate-x-5' : 'translate-x-0' }}"></span>
-        </button>
+        <button wire:click="toggleBillingCycle" type="button" class="disabled:opacity-70 disabled:cursor-not-allowed relative relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary bg-brand-primary" role="switch" aria-checked="{{ $isAnnual ? 'true' : 'false' }}" wire:loading.attr="disabled" wire:target="toggleBillingCycle">
+                <span wire:loading.remove wire:target="toggleBillingCycle"><span class="sr-only">Toggle Annual Billing</span>
+            <span aria-hidden="true" class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200 {{ $isAnnual ? 'translate-x-5' : 'translate-x-0' }}"></span></span>
+                <span wire:loading wire:target="toggleBillingCycle" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
         <span class="text-sm font-medium {{ $isAnnual ? 'text-text-primary' : 'text-text-secondary' }}">Annually <span class="text-success-600 text-xs ml-1">(2 months free)</span></span>
     </div>
 
@@ -129,9 +135,12 @@
                         Current Plan
                     </button>
                 @else
-                    <button wire:click="upgradeToPlan('{{ $id }}')" class="w-full py-3 px-4 rounded-lg text-sm font-medium transition {{ $id === 'agency_pro' ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 hover:bg-brand-secondary focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary' : 'bg-surface-page border border-border-default text-text-primary hover:bg-surface-hover focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary' }}">
-                        {{ $id === 'enterprise' ? 'Contact Sales' : 'Upgrade to ' . $plan['name'] }}
-                    </button>
+                    <button wire:click="upgradeToPlan('{{ $id }}')" class="disabled:opacity-70 disabled:cursor-not-allowed relative w-full py-3 px-4 rounded-lg text-sm font-medium transition {{ $id === 'agency_pro' ? 'bg-gradient-to-br from-brand-primary to-brand-primary/80 text-white shadow-brand-sm ring-1 ring-white/10 hover:bg-brand-secondary focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary' : 'bg-surface-page border border-border-default text-text-primary hover:bg-surface-hover focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary' }}" wire:loading.attr="disabled" wire:target="upgradeToPlan">
+                <span wire:loading.remove wire:target="upgradeToPlan">{{ $id === 'enterprise' ? 'Contact Sales' : 'Upgrade to ' . $plan['name'] }}</span>
+                <span wire:loading wire:target="upgradeToPlan" class="flex items-center space-x-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </span>
+            </button>
                 @endif
             </div>
         </div>
