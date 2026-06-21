@@ -241,7 +241,7 @@ export function ProfileScreen() {
           >
             <View style={{width: 48, height: 4, backgroundColor: tokens.borderStrong, borderRadius: 999, alignSelf: 'center', marginBottom: 20}} />
             <Text style={{color: tokens.textPrimary, fontSize: 18, fontWeight: '900', marginBottom: 4}}>Appearance</Text>
-            <Text style={{color: tokens.textSecondary, fontSize: 12, marginBottom: 20}}>Choose how PropOS looks on this device.</Text>
+            <Text style={{color: tokens.textSecondary, fontSize: 12, marginBottom: 20}}>Choose how VillaCRM looks on this device.</Text>
 
             <View style={{gap: 10}}>
               {APPEARANCE_OPTIONS.map((opt) => {

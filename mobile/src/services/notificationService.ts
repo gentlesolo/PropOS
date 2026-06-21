@@ -21,7 +21,7 @@ export const notificationService = {
       platform: Platform.OS as 'ios' | 'android',
       push_token: token,
       push_type: Platform.OS === 'ios' ? 'apns' : 'fcm',
-      device_name: 'ProposMobile',
+      device_name: 'VillaCRMMobile',
     });
 
     // Re-register if FCM rotates the token
@@ -30,7 +30,7 @@ export const notificationService = {
         platform: Platform.OS as 'ios' | 'android',
         push_token: newToken,
         push_type: Platform.OS === 'ios' ? 'apns' : 'fcm',
-        device_name: 'ProposMobile',
+        device_name: 'VillaCRMMobile',
       });
     });
   },

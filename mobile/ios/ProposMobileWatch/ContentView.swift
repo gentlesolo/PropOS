@@ -65,7 +65,7 @@ struct ContentView: View {
         TabView {
             // Stats page
             VStack(spacing: 6) {
-                Text("PropOS")
+                Text("VillaCRM")
                     .font(.headline)
                     .foregroundColor(.blue)
 

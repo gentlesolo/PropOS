@@ -1,6 +1,6 @@
 import {createMMKV} from 'react-native-mmkv';
 
-const cache = createMMKV({id: 'propos_cache'});
+const cache = createMMKV({id: 'villacrm_cache'});
 
 const TTL = {
   contacts: 5 * 60 * 1000,   // 5 minutes

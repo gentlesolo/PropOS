@@ -10,7 +10,7 @@ let voice: Voice | null = null;
 
 const CALLKEEP_OPTIONS = {
   ios: {
-    appName: 'PropOS',
+    appName: 'VillaCRM',
     supportsVideo: false,
     maximumCallGroups: '1',
     maximumCallsPerCallGroup: '1',
@@ -18,15 +18,15 @@ const CALLKEEP_OPTIONS = {
   },
   android: {
     alertTitle: 'Permissions required',
-    alertDescription: 'PropOS needs to manage phone calls',
+    alertDescription: 'VillaCRM needs to manage phone calls',
     cancelButton: 'Cancel',
     okButton: 'Allow',
     imageName: 'ic_launcher',
     additionalPermissions: [],
     foregroundService: {
-      channelId: 'propos_calls',
-      channelName: 'PropOS Calls',
-      notificationTitle: 'PropOS is running a call',
+      channelId: 'villacrm_calls',
+      channelName: 'VillaCRM Calls',
+      notificationTitle: 'VillaCRM is running a call',
     },
   },
 };

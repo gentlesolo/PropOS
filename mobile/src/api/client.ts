@@ -5,7 +5,7 @@ export const storage = createMMKV();
 
 const BASE_URL = __DEV__
   ? 'http://localhost:8000/api/mobile'  // Android device → host via ADB reverse tunnel (adb reverse tcp:8000 tcp:8000)
-  : 'https://your-propos-domain.com/api/mobile';
+  : 'https://villacrm.com/api/mobile';
 
 export const apiClient = axios.create({
   baseURL: BASE_URL,

@@ -105,7 +105,7 @@ export function CallDetailScreen() {
   const handleShare = async () => {
     Vibration.vibrate(15);
     if (!summary) return;
-    const shareText = `PropOS Call Summary with ${displayName} (${formatCallTime(call.started_at)})
+    const shareText = `VillaCRM Call Summary with ${displayName} (${formatCallTime(call.started_at)})
 Duration: ${call.duration_formatted}
 Sentiment: ${summary.sentiment.toUpperCase()}
 

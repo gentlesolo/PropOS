@@ -497,7 +497,7 @@ export function ViewingsScreen() {
               Verify On-Site Location
             </Text>
             <Text style={{fontSize: 12, textAlign: 'center', color: tokens.textSecondary, lineHeight: 20, marginBottom: 20}}>
-              PropOS requires a quick geofence check to confirm your arrival at this listing site. This helps keep client timelines accurate.
+              VillaCRM requires a quick geofence check to confirm your arrival at this listing site. This helps keep client timelines accurate.
             </Text>
             <View style={{gap: 8}}>
               <Pressable onPress={confirmLocationCheckIn} style={{backgroundColor: tokens.brandPrimary, borderRadius: 12, paddingVertical: 12, alignItems: 'center'}}>

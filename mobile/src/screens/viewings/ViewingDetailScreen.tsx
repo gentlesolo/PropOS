@@ -363,7 +363,7 @@ export function ViewingDetailScreen() {
             </View>
             <Text style={{fontSize: 16, fontWeight: '800', textAlign: 'center', marginBottom: 8, color: tokens.textPrimary}}>Verify On-Site Location</Text>
             <Text style={{fontSize: 12, textAlign: 'center', lineHeight: 20, marginBottom: 20, color: tokens.textSecondary}}>
-              PropOS requires a quick, one-time geofence check to confirm your arrival at this listing site. This helps keep client timelines accurate.
+              VillaCRM requires a quick, one-time geofence check to confirm your arrival at this listing site. This helps keep client timelines accurate.
             </Text>
             <Pressable
               onPress={() => { setLocationModalVisible(false); checkIn.mutate(); }}

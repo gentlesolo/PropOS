@@ -109,6 +109,13 @@ android {
     }
 }
 
+configurations.all {
+    // Both @livekit/react-native (davidliu fork) and @twilio/voice-react-native-sdk ship
+    // com.twilio.audioswitch.AudioDevice. Keeping both causes Kotlin "Cannot access class"
+    // errors. Exclude the Twilio-published artifact and rely on LiveKit's fork instead.
+    exclude group: 'com.twilio', module: 'audioswitch'
+}
+
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")

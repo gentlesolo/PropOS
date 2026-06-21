@@ -15,7 +15,7 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
-const STORAGE_KEY = 'propos-theme-preference';
+const STORAGE_KEY = 'villacrm-theme-preference';
 
 export function ThemeProvider({children}: {children: React.ReactNode}) {
   const {setColorScheme} = useNWColorScheme();
