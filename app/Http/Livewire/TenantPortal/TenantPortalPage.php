@@ -4,6 +4,7 @@ namespace App\Http\Livewire\TenantPortal;
 
 use App\Infrastructure\Notifications\NotificationService;
 use App\Infrastructure\Persistence\Models\MaintenanceRequest;
+use App\Infrastructure\Persistence\Models\QuitNotice;
 use App\Infrastructure\Persistence\Models\RentPayment;
 use App\Infrastructure\Persistence\Models\Tenant;
 use Livewire\Component;
@@ -137,6 +138,13 @@ class TenantPortalPage extends Component
             ->latest()
             ->get();
 
+        $quitNotices = QuitNotice::where('tenant_id', $tenant->id)
+            ->whereIn('status', ['sent', 'acknowledged', 'disputed'])
+            ->orderByDesc('created_at')
+            ->get();
+
+        $activeQuitNotice = $quitNotices->first();
+
         $currencySymbol = $tenant->agency?->currency_symbol ?? '₦';
 
         return view('livewire.tenant-portal.tenant-portal-page', compact(
@@ -146,6 +154,8 @@ class TenantPortalPage extends Component
             'nextPayment',
             'openMaintenanceCount',
             'maintenanceRequests',
+            'quitNotices',
+            'activeQuitNotice',
             'currencySymbol',
         ))->layout('layouts.portal');
     }

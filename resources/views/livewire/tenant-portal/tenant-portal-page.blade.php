@@ -1,4 +1,4 @@
-<div x-data="{ tab: 'lease' }">
+<div x-data="{ tab: '{{ $activeQuitNotice ? 'notices' : 'lease' }}' }">
 
     {{-- ── Welcome Header ─────────────────────────────────────────────────────── --}}
     <div class="mb-6">
@@ -26,6 +26,27 @@
         <div>
             <p class="text-sm font-semibold text-danger-800">Outstanding balance: {{ $currencySymbol }}{{ number_format($outstandingBalance, 2) }}</p>
             <p class="text-xs text-danger-700 mt-0.5">Please make payment as soon as possible to avoid penalties. See payment instructions on the Lease tab.</p>
+        </div>
+    </div>
+    @endif
+
+    {{-- ── Quit Notice Alert ───────────────────────────────────────────────────── --}}
+    @if($activeQuitNotice)
+    <div class="mb-6 rounded-2xl border-2 border-danger-400 bg-danger-50 overflow-hidden">
+        <div class="flex items-center gap-2 px-4 py-2 bg-danger-600">
+            <svg class="w-4 h-4 text-white flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+            </svg>
+            <span class="text-sm font-bold text-white tracking-wide uppercase">Important Notice</span>
+            <span class="ml-auto text-xs text-danger-100 font-mono">{{ $activeQuitNotice->reference }}</span>
+        </div>
+        <div class="px-4 py-4">
+            <p class="text-sm font-semibold text-danger-900">You have received a Quit Notice for this property.</p>
+            <p class="text-xs text-danger-800 mt-1">
+                You are required to vacate the premises by
+                <span class="font-bold">{{ $activeQuitNotice->vacate_by_date->format('d F Y') }}</span>.
+                Please review the full notice in the <button @click="tab = 'notices'" class="underline font-semibold">Notices tab</button> and contact your property manager if you have questions.
+            </p>
         </div>
     </div>
     @endif
@@ -76,6 +97,18 @@
             {{ $label }}
         </button>
         @endforeach
+        @if($quitNotices->isNotEmpty())
+        <button @click="tab = 'notices'"
+            :class="tab === 'notices' ? 'bg-danger-600 text-white shadow-sm' : 'text-danger-600 hover:bg-danger-50'"
+            class="px-4 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
+            Notices
+            <span class="inline-flex items-center justify-center w-4 h-4 text-xs font-bold rounded-full"
+                :class="tab === 'notices' ? 'bg-white text-danger-600' : 'bg-danger-600 text-white'">
+                {{ $quitNotices->count() }}
+            </span>
+        </button>
+        @endif
     </div>
 
     {{-- ═══════════════════════════════════════════════════════════════════════════ --}}
@@ -577,6 +610,85 @@
             @endif
         </div>
     </div>
+
+    {{-- ═══════════════════════════════════════════════════════════════════════════ --}}
+    {{-- NOTICES TAB                                                                  --}}
+    {{-- ═══════════════════════════════════════════════════════════════════════════ --}}
+    @if($quitNotices->isNotEmpty())
+    <div x-show="tab === 'notices'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" style="display:none">
+        <div class="space-y-4">
+            <div>
+                <h2 class="text-base font-semibold text-text-primary">Quit Notices</h2>
+                <p class="text-xs text-text-secondary mt-0.5">Formal notices issued by your property manager. Please read carefully.</p>
+            </div>
+
+            @foreach($quitNotices as $notice)
+            @php
+                $isActive = in_array($notice->status, ['sent', 'acknowledged']);
+            @endphp
+            <div class="bg-surface-card rounded-2xl border {{ $isActive ? 'border-danger-300' : 'border-border-default' }} overflow-hidden">
+
+                {{-- Notice header --}}
+                <div class="flex items-center justify-between px-5 py-3 {{ $isActive ? 'bg-danger-50' : 'bg-surface-hover/40' }} border-b {{ $isActive ? 'border-danger-200' : 'border-border-default' }}">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 {{ $isActive ? 'text-danger-600' : 'text-text-tertiary' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+                        </svg>
+                        <span class="text-sm font-semibold {{ $isActive ? 'text-danger-800' : 'text-text-secondary' }}">Quit Notice</span>
+                        <span class="font-mono text-xs text-text-tertiary">{{ $notice->reference }}</span>
+                    </div>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold
+                        @if($notice->status === 'sent') bg-brand-primary/10 text-brand-primary border border-brand-primary/20
+                        @elseif($notice->status === 'acknowledged') bg-warning-500/10 text-warning-700 border border-warning-500/20
+                        @elseif($notice->status === 'disputed') bg-danger-500/10 text-danger-700 border border-danger-500/20
+                        @else bg-surface-raised text-text-tertiary border border-border-default @endif">
+                        {{ ucfirst($notice->status) }}
+                    </span>
+                </div>
+
+                {{-- Vacate date highlight --}}
+                @if($isActive)
+                <div class="px-5 py-3 bg-danger-600 flex items-center justify-between">
+                    <span class="text-xs font-semibold text-danger-100 uppercase tracking-wider">You must vacate by</span>
+                    <span class="text-lg font-black text-white">{{ $notice->vacate_by_date->format('d F Y') }}</span>
+                </div>
+                @endif
+
+                {{-- Meta --}}
+                <div class="px-5 py-3 border-b border-border-default grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
+                    <div>
+                        <p class="text-text-tertiary">Issue Date</p>
+                        <p class="font-medium text-text-primary mt-0.5">{{ $notice->issue_date->format('d M Y') }}</p>
+                    </div>
+                    <div>
+                        <p class="text-text-tertiary">Reason</p>
+                        <p class="font-medium text-text-primary mt-0.5">{{ $notice->reason }}</p>
+                    </div>
+                    <div>
+                        <p class="text-text-tertiary">Sent Via</p>
+                        <p class="font-medium text-text-primary mt-0.5">{{ ucfirst(str_replace('_', ' ', $notice->delivery_method)) }}</p>
+                    </div>
+                </div>
+
+                {{-- Notice body --}}
+                <div class="px-5 py-4">
+                    <p class="text-xs font-medium text-text-tertiary uppercase tracking-wider mb-2">Notice Content</p>
+                    <div class="bg-surface-raised rounded-xl border border-border-default p-4 text-sm text-text-primary leading-relaxed whitespace-pre-wrap font-mono">{{ $notice->notice_body }}</div>
+                </div>
+
+                {{-- Issued by --}}
+                @if($notice->issuedBy)
+                <div class="px-5 pb-4 text-xs text-text-tertiary">
+                    Issued by {{ $notice->issuedBy->name }}
+                    @if($notice->sent_at) on {{ $notice->sent_at->format('d M Y') }}@endif
+                </div>
+                @endif
+
+            </div>
+            @endforeach
+        </div>
+    </div>
+    @endif
 
     {{-- ── Agency Contact Card ──────────────────────────────────────────────────── --}}
     @if($tenant->agency)
