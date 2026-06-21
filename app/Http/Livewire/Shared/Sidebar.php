@@ -80,10 +80,11 @@ class Sidebar extends Component
             [
                 'label' => 'Property Management',
                 'items' => [
-                    ['title' => 'Tenants',         'route' => 'pm.tenants',         'icon' => 'users',      'permission' => 'transactions.view_own'],
-                    ['title' => 'Leases',           'route' => 'pm.leases',          'icon' => 'key',        'permission' => 'transactions.view_own'],
-                    ['title' => 'Rent Collection',  'route' => 'pm.rent-collection', 'icon' => 'banknotes',  'permission' => 'transactions.view_own'],
-                    ['title' => 'Deposits',         'route' => 'pm.deposits',        'icon' => 'wallet',     'permission' => 'transactions.view_own'],
+                    ['title' => 'Tenants',         'route' => 'pm.tenants',         'icon' => 'users',         'permission' => 'transactions.view_own'],
+                    ['title' => 'Leases',           'route' => 'pm.leases',          'icon' => 'key',           'permission' => 'transactions.view_own'],
+                    ['title' => 'Rent Collection',  'route' => 'pm.rent-collection', 'icon' => 'banknotes',     'permission' => 'transactions.view_own'],
+                    ['title' => 'Deposits',         'route' => 'pm.deposits',        'icon' => 'wallet',        'permission' => 'transactions.view_own'],
+                    ['title' => 'Quit Notices',     'route' => 'pm.quit-notices',    'icon' => 'document-text', 'permission' => 'transactions.view_own'],
                 ],
             ],
             [

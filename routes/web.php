@@ -183,6 +183,7 @@ Route::middleware(['auth', 'tenant'])->group(function () {
         Route::get('/property-management/leases', \App\Http\Livewire\PropertyManagement\LeaseManagementPage::class)->name('pm.leases');
         Route::get('/property-management/rent-collection', \App\Http\Livewire\PropertyManagement\RentCollectionDashboardPage::class)->name('pm.rent-collection');
         Route::get('/property-management/deposits', \App\Http\Livewire\PropertyManagement\DepositManagementPage::class)->name('pm.deposits');
+        Route::get('/property-management/quit-notices', \App\Http\Livewire\PropertyManagement\QuitNoticeManagementPage::class)->name('pm.quit-notices');
     });
 
     // ── Inspections ───────────────────────────────────────────────────────────
