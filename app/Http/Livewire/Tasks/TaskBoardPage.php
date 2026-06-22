@@ -6,6 +6,7 @@ use App\Infrastructure\Persistence\Models\Contact;
 use App\Infrastructure\Persistence\Models\Deal;
 use App\Infrastructure\Persistence\Models\Task;
 use App\Infrastructure\Persistence\Models\User;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 class TaskBoardPage extends Component
@@ -54,9 +55,9 @@ class TaskBoardPage extends Component
             'type'        => 'required|in:call,email,meeting,document,follow_up,viewing,other',
             'priority'    => 'required|in:low,medium,high,urgent',
             'status'      => 'required|in:pending,in_progress,completed,cancelled',
-            'assigned_to' => 'nullable|exists:users,id',
-            'contact_id'  => 'nullable|exists:contacts,id',
-            'deal_id'     => 'nullable|exists:deals,id',
+            'assigned_to' => ['nullable', Rule::exists('users', 'id')->where('agency_id', auth()->user()->agency_id)],
+            'contact_id'  => ['nullable', Rule::exists('contacts', 'id')->where('agency_id', auth()->user()->agency_id)],
+            'deal_id'     => ['nullable', Rule::exists('deals', 'id')->where('agency_id', auth()->user()->agency_id)],
             'due_at'      => 'nullable|date',
         ];
     }

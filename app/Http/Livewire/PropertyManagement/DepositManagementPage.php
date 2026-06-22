@@ -4,6 +4,7 @@ namespace App\Http\Livewire\PropertyManagement;
 
 use App\Infrastructure\Persistence\Models\Lease;
 use Carbon\Carbon;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -44,8 +45,9 @@ class DepositManagementPage extends Component
 
     public function processRefund(): void
     {
+        $agencyId = auth()->user()->agency_id;
         $this->validate([
-            'refund_lease_id' => 'required|exists:leases,id',
+            'refund_lease_id' => ['required', Rule::exists('leases', 'id')->where('agency_id', $agencyId)],
             'refund_date'     => 'required|date',
         ]);
 

@@ -10,6 +10,7 @@ use App\Infrastructure\Persistence\Models\Invoice;
 use App\Infrastructure\Persistence\Models\InvoiceLineItem;
 use App\Infrastructure\Persistence\Models\Lease;
 use App\Infrastructure\Persistence\Models\Tenant;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -120,8 +121,9 @@ class InvoicesPage extends Component
 
     public function createInvoice(): void
     {
+        $agencyId = auth()->user()->agency_id;
         $this->validate([
-            'form_lease_id'              => 'required|exists:leases,id',
+            'form_lease_id'              => ['required', Rule::exists('leases', 'id')->where('agency_id', $agencyId)],
             'form_type'                  => 'required|string',
             'form_due_date'              => 'required|date',
             'form_line_items'            => 'required|array|min:1',
@@ -269,11 +271,12 @@ class InvoicesPage extends Component
 
     public function recordPayment(MarkInvoicePaidAction $action): void
     {
+        $agencyId = auth()->user()->agency_id;
         $this->validate([
             'paymentAmount'    => 'required|numeric|min:0.01',
             'paymentMethod'    => 'required|string',
             'paymentDate'      => 'required|date',
-            'selectedInvoiceId'=> 'required|exists:invoices,id',
+            'selectedInvoiceId'=> ['required', Rule::exists('invoices', 'id')->where('agency_id', $agencyId)],
         ]);
 
         $invoice = $this->scopedInvoice($this->selectedInvoiceId);

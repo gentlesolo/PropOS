@@ -12,6 +12,7 @@ use App\Infrastructure\Persistence\Models\Listing;
 use App\Infrastructure\Persistence\Models\PipelineStage;
 use App\Infrastructure\Persistence\Models\User;
 use App\Infrastructure\Persistence\Models\ContactActivity;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 class PipelineBoard extends Component
@@ -99,11 +100,12 @@ class PipelineBoard extends Component
 
     public function saveDeal(CalculateDealMomentumAction $momentum, \App\Application\CRM\Actions\GenerateAutomatedChecklistItemsAction $checklistGenerator)
     {
+        $agencyId = auth()->user()->agency_id;
         $this->validate([
             'title' => 'required|string|max:255',
-            'contact_id' => 'required|exists:contacts,id',
+            'contact_id' => ['required', Rule::exists('contacts', 'id')->where('agency_id', $agencyId)],
             'value' => 'required|numeric|min:0',
-            'pipeline_stage_id' => 'required|exists:pipeline_stages,id',
+            'pipeline_stage_id' => ['required', Rule::exists('pipeline_stages', 'id')->where('agency_id', $agencyId)],
             'notes' => 'nullable|string',
         ]);
 
@@ -152,10 +154,11 @@ class PipelineBoard extends Component
 
     public function saveModalDeal(CalculateDealMomentumAction $momentum, \App\Application\CRM\Actions\GenerateAutomatedChecklistItemsAction $checklistGenerator)
     {
+        $agencyId = auth()->user()->agency_id;
         $this->validate([
             'editTitle' => 'required|string|max:255',
             'editValue' => 'required|numeric|min:0',
-            'editStageId' => 'required|exists:pipeline_stages,id',
+            'editStageId' => ['required', Rule::exists('pipeline_stages', 'id')->where('agency_id', $agencyId)],
             'editNotes' => 'nullable|string',
         ]);
 

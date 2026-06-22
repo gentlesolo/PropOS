@@ -6,6 +6,7 @@ use App\Infrastructure\Persistence\Models\ComplianceReminder;
 use App\Infrastructure\Persistence\Models\Deal;
 use App\Infrastructure\Persistence\Models\Inspection;
 use App\Infrastructure\Persistence\Models\Listing;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -34,9 +35,10 @@ class InspectionsPage extends Component
 
     public function createInspection(): void
     {
+        $agencyId = auth()->user()->agency_id;
         $this->validate([
-            'listing_id' => 'nullable|exists:listings,id',
-            'deal_id' => 'nullable|exists:deals,id',
+            'listing_id' => ['nullable', Rule::exists('listings', 'id')->where('agency_id', $agencyId)],
+            'deal_id' => ['nullable', Rule::exists('deals', 'id')->where('agency_id', $agencyId)],
             'type' => 'required|in:pre_purchase,pre_rental,routine,exit,appraisal,building,pest,electrical,plumbing',
             'scheduled_at' => 'required|date',
             'cost' => 'nullable|numeric|min:0',

@@ -7,6 +7,7 @@ use App\Infrastructure\Persistence\Models\Contact;
 use App\Infrastructure\Persistence\Models\Deal;
 use App\Infrastructure\Persistence\Models\Listing;
 use App\Infrastructure\Persistence\Models\Offer;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -93,9 +94,10 @@ class OffersPage extends Component
 
     public function createOffer(): void
     {
+        $agencyId = auth()->user()->agency_id;
         $this->validate([
-            'deal_id'    => 'required|exists:deals,id',
-            'contact_id' => 'required|exists:contacts,id',
+            'deal_id'    => ['required', Rule::exists('deals', 'id')->where('agency_id', $agencyId)],
+            'contact_id' => ['required', Rule::exists('contacts', 'id')->where('agency_id', $agencyId)],
             'amount'     => 'required|numeric|min:1',
             'type'       => 'required|in:sale,rental',
             'expiry_date'=> 'nullable|date|after:today',

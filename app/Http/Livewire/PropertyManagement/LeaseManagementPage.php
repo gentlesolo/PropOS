@@ -12,6 +12,7 @@ use App\Infrastructure\Persistence\Models\RentPayment;
 use App\Infrastructure\Persistence\Models\Tenant;
 use App\Infrastructure\Persistence\Models\Listing;
 use Carbon\Carbon;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -65,9 +66,10 @@ class LeaseManagementPage extends Component
 
     public function createLease(CreateLeaseAction $action): void
     {
+        $agencyId = auth()->user()->agency_id;
         $this->validate([
-            'tenant_id'          => 'required|exists:tenants,id',
-            'listing_id'         => 'required|exists:listings,id',
+            'tenant_id'          => ['required', Rule::exists('tenants', 'id')->where('agency_id', $agencyId)],
+            'listing_id'         => ['required', Rule::exists('listings', 'id')->where('agency_id', $agencyId)],
             'start_date'         => 'required|date',
             'end_date'           => 'required|date|after:start_date',
             'rent_input'         => 'required|numeric|min:1',
@@ -118,8 +120,9 @@ class LeaseManagementPage extends Component
 
     public function recordPayment(ProcessRentPaymentAction $action): void
     {
+        $agencyId = auth()->user()->agency_id;
         $this->validate([
-            'payment_lease_id' => 'required|exists:leases,id',
+            'payment_lease_id' => ['required', Rule::exists('leases', 'id')->where('agency_id', $agencyId)],
             'amount_paid'      => 'required|numeric|min:0.01',
             'paid_date'        => 'required|date',
             'payment_method'   => 'required|string',
@@ -163,8 +166,9 @@ class LeaseManagementPage extends Component
 
     public function terminateLease(TerminateLeaseAction $action): void
     {
+        $agencyId = auth()->user()->agency_id;
         $this->validate([
-            'terminate_lease_id' => 'required|exists:leases,id',
+            'terminate_lease_id' => ['required', Rule::exists('leases', 'id')->where('agency_id', $agencyId)],
             'termination_reason' => 'required|string|min:5',
             'termination_date'   => 'required|date',
         ]);
