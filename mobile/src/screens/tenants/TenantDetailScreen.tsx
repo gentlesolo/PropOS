@@ -17,6 +17,7 @@ import type {RouteProp} from '@react-navigation/native';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/Feather';
 import {tenantsApi, leasesApi, TenantDetail, PaymentItem} from '../../api/tenants';
+import {quitNoticesApi, QuitNotice, STATUS_LABELS, STATUS_COLORS} from '../../api/quitNotices';
 import type {TenantsStackParamList} from '../../navigation/stacks/TenantsStack';
 import {useTheme} from '../../theme/ThemeProvider';
 import {useTranslation} from '../../i18n';
@@ -61,7 +62,7 @@ export function TenantDetailScreen() {
   const queryClient = useQueryClient();
 
   // Screen UI state
-  const [activeTab, setActiveTab] = useState<'docs' | 'notes'>('docs');
+  const [activeTab, setActiveTab] = useState<'docs' | 'notes' | 'notices'>('docs');
   const [showPayModal, setShowPayModal] = useState(false);
   const [showRenewalBanner, setShowRenewalBanner] = useState(true);
 
@@ -76,6 +77,12 @@ export function TenantDetailScreen() {
   const {data, isLoading} = useQuery({
     queryKey: ['tenant', tenantId],
     queryFn: () => tenantsApi.show(tenantId),
+  });
+
+  const {data: quitNotices = [], isLoading: isLoadingNotices} = useQuery({
+    queryKey: ['quitNotices', tenantId],
+    queryFn: () => quitNoticesApi.forTenant(tenantId),
+    enabled: activeTab === 'notices',
   });
 
   const tenant = data?.data;
@@ -618,7 +625,7 @@ export function TenantDetailScreen() {
           </View>
         </View>
 
-        {/* TABS SELECTOR (Documents / Notes) */}
+        {/* TABS SELECTOR (Documents / Notes / Notices) */}
         <View style={{flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: tokens.borderDefault, marginHorizontal: 20, marginTop: 24}}>
           <Pressable
             onPress={() => setActiveTab('docs')}
@@ -640,17 +647,131 @@ export function TenantDetailScreen() {
               paddingVertical: 10,
               borderBottomWidth: 2,
               borderBottomColor: activeTab === 'notes' ? tokens.brandPrimary : 'transparent',
+              marginRight: 24,
             }}
           >
             <Text style={{color: activeTab === 'notes' ? tokens.textPrimary : tokens.textTertiary, fontSize: 13, fontWeight: '800'}}>
               Notes
             </Text>
           </Pressable>
+
+          <Pressable
+            onPress={() => setActiveTab('notices')}
+            style={{
+              paddingVertical: 10,
+              borderBottomWidth: 2,
+              borderBottomColor: activeTab === 'notices' ? tokens.brandPrimary : 'transparent',
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 5,
+            }}
+          >
+            <Text style={{color: activeTab === 'notices' ? tokens.textPrimary : tokens.textTertiary, fontSize: 13, fontWeight: '800'}}>
+              Notices
+            </Text>
+            {quitNotices.length > 0 && (
+              <View style={{backgroundColor: '#EF4444', borderRadius: 8, minWidth: 16, height: 16, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4}}>
+                <Text style={{color: '#ffffff', fontSize: 9, fontWeight: '800'}}>{quitNotices.length}</Text>
+              </View>
+            )}
+          </Pressable>
         </View>
 
         {/* TAB CONTENTS */}
         <View style={{marginHorizontal: 20, marginTop: 12}}>
-          {activeTab === 'docs' ? (
+          {activeTab === 'notices' ? (
+            /* Quit Notices Tab */
+            <View>
+              {/* Create button */}
+              {lease && (
+                <Pressable
+                  onPress={() =>
+                    navigation.navigate('CreateQuitNotice', {
+                      tenantId,
+                      leaseId: lease.id,
+                      tenantName: tenant.full_name ?? 'Tenant',
+                    })
+                  }
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 8,
+                    backgroundColor: tokens.brandPrimary,
+                    borderRadius: 12,
+                    paddingVertical: 11,
+                    marginBottom: 14,
+                  }}
+                >
+                  <Icon name="plus" size={15} color="#ffffff" />
+                  <Text style={{color: '#ffffff', fontSize: 13, fontWeight: '800'}}>
+                    New Quit Notice
+                  </Text>
+                </Pressable>
+              )}
+
+              {isLoadingNotices ? (
+                <ActivityIndicator color={tokens.brandPrimary} style={{marginTop: 20}} />
+              ) : quitNotices.length === 0 ? (
+                <View style={{alignItems: 'center', paddingVertical: 32}}>
+                  <Icon name="file-text" size={28} color={tokens.textTertiary} />
+                  <Text style={{color: tokens.textTertiary, fontSize: 13, fontWeight: '600', marginTop: 10}}>
+                    No quit notices issued
+                  </Text>
+                </View>
+              ) : (
+                <View style={{gap: 10}}>
+                  {quitNotices.map((notice: import('../../api/quitNotices').QuitNotice) => {
+                    const sc = STATUS_COLORS[notice.status];
+                    return (
+                      <Pressable
+                        key={notice.id}
+                        onPress={() => navigation.navigate('QuitNoticeDetail', {noticeId: notice.id, tenantId})}
+                        style={{
+                          backgroundColor: tokens.surfaceCard,
+                          borderWidth: 1,
+                          borderColor: tokens.borderDefault,
+                          borderRadius: 14,
+                          padding: 14,
+                          ...tokens.shadowSm,
+                        }}
+                      >
+                        <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8}}>
+                          <Text style={{color: tokens.textPrimary, fontSize: 13, fontWeight: '800'}}>
+                            {notice.reference}
+                          </Text>
+                          <View style={{backgroundColor: sc.bg, borderWidth: 1, borderColor: sc.border, borderRadius: 20, paddingHorizontal: 10, paddingVertical: 3}}>
+                            <Text style={{color: sc.text, fontSize: 11, fontWeight: '800'}}>
+                              {STATUS_LABELS[notice.status]}
+                            </Text>
+                          </View>
+                        </View>
+
+                        <Text style={{color: tokens.textSecondary, fontSize: 12, marginBottom: 6}} numberOfLines={2}>
+                          {notice.reason}
+                        </Text>
+
+                        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                          <Text style={{color: tokens.textTertiary, fontSize: 11}}>
+                            Vacate by {notice.vacate_by_date}
+                          </Text>
+                          {notice.notice_period_days > 0 ? (
+                            <Text style={{color: '#F59E0B', fontSize: 11, fontWeight: '700'}}>
+                              {notice.notice_period_days}d remaining
+                            </Text>
+                          ) : (
+                            <Text style={{color: '#EF4444', fontSize: 11, fontWeight: '700'}}>
+                              Past due
+                            </Text>
+                          )}
+                        </View>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              )}
+            </View>
+          ) : activeTab === 'docs' ? (
             /* Documents List */
             <View style={{gap: 8}}>
               {[

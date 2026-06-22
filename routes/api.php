@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\Mobile\AgentNumberController;
 use App\Http\Controllers\Api\Mobile\MobileLeaseController;
 use App\Http\Controllers\Api\Mobile\MobileNotificationController;
 use App\Http\Controllers\Api\Mobile\MobileTenantController;
+use App\Http\Controllers\Api\Mobile\MobileQuitNoticeController;
 use App\Http\Controllers\Api\Mobile\CallAnalyticsController;
 use App\Http\Controllers\Api\Mobile\CallController;
 use App\Http\Controllers\Api\Mobile\InCallHintsController;
@@ -204,6 +205,13 @@ Route::prefix('mobile')->name('api.mobile.')->group(function () {
         // ── Phase 5: Property Management ──────────────────────────────────
         Route::get('/tenants', [MobileTenantController::class, 'index'])->name('tenants.index');
         Route::get('/tenants/{tenant}', [MobileTenantController::class, 'show'])->name('tenants.show');
+        Route::get('/tenants/{tenant}/quit-notices', [MobileQuitNoticeController::class, 'forTenant'])->name('tenants.quit-notices.index');
+
+        Route::post('/quit-notices/generate-content', [MobileQuitNoticeController::class, 'generateContent'])->name('quit-notices.generate');
+        Route::post('/quit-notices', [MobileQuitNoticeController::class, 'store'])->name('quit-notices.store');
+        Route::get('/quit-notices/{quitNotice}', [MobileQuitNoticeController::class, 'show'])->name('quit-notices.show');
+        Route::post('/quit-notices/{quitNotice}/send', [MobileQuitNoticeController::class, 'send'])->name('quit-notices.send');
+        Route::post('/quit-notices/{quitNotice}/withdraw', [MobileQuitNoticeController::class, 'withdraw'])->name('quit-notices.withdraw');
 
         Route::get('/leases', [MobileLeaseController::class, 'index'])->name('leases.index');
         Route::get('/leases/{lease}', [MobileLeaseController::class, 'show'])->name('leases.show');
