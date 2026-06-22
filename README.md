@@ -1,58 +1,112 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# VillaCRM
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Welcome to **VillaCRM**, the complete command center for modern real estate agencies. Designed to be a high-performance Property Operating System, VillaCRM unifies CRM, property management, financial accounting, and tenant portals under one elegant, lightning-fast platform powered by Laravel and Livewire v3.
 
-## About Laravel
+## 🚀 Key Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### 🏢 Agency & Team Management
+- **Multi-Tenant Architecture**: Supports multiple real estate agencies with customized branding, custom domains, and configurable billing cycles.
+- **Role-Based Access**: Granular permissions for Principals, Agents, and Admins.
+- **Commission Splits**: Advanced configuration for team payouts and lead routing logic.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 💼 Intelligent CRM & Lead Pipeline
+- **Pipeline Stages**: Fully customizable drag-and-drop Kanban boards for tracking leads and active deals.
+- **Automated Lead Routing**: Intelligently assign incoming leads to agents based on round-robin or performance metrics.
+- **Omnichannel Communication**: Built-in email account integration, call management (via LiveKit/Twilio), and SMS notifications.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 🏡 Property & Listing Management
+- **Rich Listings**: Manage properties, media, and marketing copy in one place.
+- **Viewings & Open Houses**: Schedule day-views, track RSVPs via public portals, and collect automated public feedback via geo-fenced check-ins.
+- **Offers & Contracts**: Digital offer management and e-signature tracking.
 
-## Learning Laravel
+### 💰 Financial Accounting & Rent Collection
+- **End-to-End Accounting**: Built-in ledgers for expenses, invoices, and budgets.
+- **Lease & Deposit Management**: Track active leases, automate renewal reminders, and manage security deposits securely.
+- **Rent Collection Dashboard**: Seamless integrations with local gateways (like Paystack) for automated tenant billing and reconciliation.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 🤝 Tenant Portal
+- **Self-Service**: Empower tenants with a dedicated portal to view their active leases, submit maintenance requests, and pay rent online.
+- **Compliance & Quit Notices**: Automated compliance reminders and formal notice generation.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 🧠 AI & Agent Training
+- **Skills Library & Role-Play**: Internal coaching tools to help agents practice objection handling and refine their sales pitches using AI simulation.
+- **Smart Insights**: AI-powered call summaries, sentiment analysis, and dashboard widgets.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+### 📱 Native Mobile App
+- **VillaCRMMobile**: A companion React Native mobile application for agents on the go.
+- **Features**: Push notifications, geo-fenced viewing check-ins, LiveKit native call integrations, and an Apple Watch companion app for quick daily briefs.
 
-## Agentic Development
+## 🛠 Tech Stack
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### Web Application
+- **Framework**: Laravel 11.x
+- **Frontend**: Livewire v3, Alpine.js, Tailwind CSS
+- **Database**: MySQL
+- **Real-Time**: Pusher / WebSockets
+- **Media/Voice**: LiveKit
 
+### Mobile Application (`/mobile`)
+- **Framework**: React Native (0.85.x)
+- **Styling**: NativeWind (Tailwind)
+- **State Management**: Zustand
+- **Local Storage**: react-native-mmkv
+- **Integrations**: LiveKit React Native SDK, CallKeep, Firebase Cloud Messaging
+
+## ⚙️ Getting Started
+
+### Prerequisites
+- PHP 8.2+
+- Composer
+- Node.js & npm/yarn
+- MySQL
+- Laravel Herd / Valet (Recommended for local development)
+
+### Installation
+
+1. **Clone the repository and install dependencies:**
+   ```bash
+   composer install
+   npm install
+   ```
+
+2. **Environment Setup:**
+   Copy the `.env.example` to `.env` and configure your database, LiveKit, and Paystack credentials.
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+
+3. **Database Migration & Seeding:**
+   Run the database migrations and populate the platform with initial roles and demo agency data.
+   ```bash
+   php artisan migrate:fresh --seed
+   ```
+
+4. **Build Assets:**
+   Compile the Tailwind CSS and JS assets.
+   ```bash
+   npm run dev
+   ```
+
+5. **Start Services:**
+   Make sure your queue worker and Reverb/WebSockets server are running.
+   ```bash
+   php artisan queue:work
+   php artisan reverb:start
+   ```
+
+### Mobile App Development
+To run the companion React Native app:
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+cd mobile
+npm install
+npm run ios # or npm run android
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## 🔒 Security & Compliance
+- Enforced password policies and passkey/biometric support.
+- Mandatory 2FA for sensitive agency data access.
+- API Key management and Webhook subscriptions for secure 3rd party integrations.
 
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+*VillaCRM - Your Real Estate Operating System.*
